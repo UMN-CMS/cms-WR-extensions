@@ -22,6 +22,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include <memory>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -41,8 +42,11 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
-
+//ROOT includes
 #include "TH1D.h"
+#include "TTree.h"
+//local includes
+#include "eventBits.h"
 
 //
 // class declaration
@@ -66,30 +70,33 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       virtual void beginJob() override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
-
+      // ----------member functions---------------------
+     
       // ----------member data ---------------------------
       edm::EDGetToken m_genParticleToken;
+ 
+      TTree* hardProcessKinematics;
+      
 
-      TH1D* parton1Et;
-      TH1D* parton2Et;
-      TH1D* muonFirstEt;
-      TH1D* muonSecondEt;
-      TH1D* muonHighestEt;
-      TH1D* muonSecondHighestEt;
+      double parton1Et;
+      double parton2Et;
+      double muonFirstEt;
+      double muonSecondEt;
+      double muonHighestEt;
+      double muonSecondHighestEt;
+      double parton1Eta;
+      double parton2Eta;
+      double muonFirstEta;
+      double muonSecondEta;
+      double muonHighestEtEta;
+      double muonSecondHighestEtEta;
+      double dRparton1parton2;
+      double dRmuon1muon2;
+      double dRparton1muon2;
+      double dRparton1muon1;
+      double dRparton2muon2;
+      double dRparton2muon1;         
 
-      TH1D* parton1Eta;
-      TH1D* parton2Eta;
-      TH1D* muonFirstEta;
-      TH1D* muonSecondEta;
-      TH1D* muonHighestEtEta;
-      TH1D* muonSecondHighestEtEta;
-
-      TH1D*  dRparton1parton2;
-      TH1D*  dRmuon1muon2;
-      TH1D*  dRparton1muon2;
-      TH1D*  dRparton1muon1;
-      TH1D*  dRparton2muon2;
-      TH1D*  dRparton2muon1;
 
 
 };
@@ -112,26 +119,28 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    //now do what ever initialization is needed
    usesResource("TFileService");
    edm::Service<TFileService> fs;
-   parton1Et = fs->make<TH1D>("parton1Et", "Parton 1 Et", 100, 0.0, 2000);
-   parton2Et = fs->make<TH1D>("parton2Et", "Parton 2 Et", 100, 0.0, 2000);
-   muonFirstEt = fs->make<TH1D>("muonFirstEt", "First Muon Et", 100, 0.0, 2000);
-   muonSecondEt = fs->make<TH1D>("muonSecondEt", "Second Muon Et", 100, 0.0, 2000);
-   muonHighestEt = fs->make<TH1D>("muonHighestEt", "Highest Et Muon Et", 100, 0.0, 2000);
-   muonSecondHighestEt = fs->make<TH1D>("muonSecondHighestEt", "Second Highest Et Muon Et", 100, 0.0, 2000);
+   hardProcessKinematics = fs->make<TTree>("hardProcessKinematics", "Kinematic Variables of the Hard Process");
 
-   parton1Eta = fs->make<TH1D>("parton1Eta", "Parton 1 Eta", 100, -4.0, 4.0);
-   parton2Eta = fs->make<TH1D>("parton2Eta", "Parton 2 Eta", 100, -4.0, 4.0);
-   muonFirstEta = fs->make<TH1D>("muonFirstEta", "First muon eta", 100, -4.0, 4.0);
-   muonSecondEta = fs->make<TH1D>("muonSecondEta", "Second muon eta",                           100, -4.0, 4.0);
-   muonHighestEtEta = fs->make<TH1D>("muonHighestEtEta", "Highest Et muon eta",                 100, -4.0, 4.0);
-   muonSecondHighestEtEta = fs->make<TH1D>("muonSecondHighestEtEta", "2nd Highest Et muon eta", 100, -4.0, 4.0);
+   hardProcessKinematics->Branch("parton1Et"              ,&parton1Et              ,"parton 1 Et");
+   hardProcessKinematics->Branch("parton2Et"              ,&parton2Et              ,"parton 2 Et");
+   hardProcessKinematics->Branch("muonFirstEt"            ,&muonFirstEt            ,"first muon Et");
+   hardProcessKinematics->Branch("muonSecondEt"           ,&muonSecondEt           ,"second muon Et");
+   hardProcessKinematics->Branch("muonHighestEt"          ,&muonHighestEt          ,"highest et muon Et");
+   hardProcessKinematics->Branch("muonSecondHighestEt"    ,&muonSecondHighestEt    ,"second highest et muon Et");
 
-   dRparton1parton2 = fs->make<TH1D>("dRparton1parton2", "deltaR between partons",       100, 0.0, 12.0); 
-   dRmuon1muon2 = fs->make<TH1D>("dRmuon1muon2", "deltaR between muons",                 100, 0.0, 12.0); 
-   dRparton1muon2 = fs->make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2", 100, 0.0, 12.0); 
-   dRparton1muon1 = fs->make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1", 100, 0.0, 12.0); 
-   dRparton2muon2 = fs->make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0); 
-   dRparton2muon1 = fs->make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0); 
+   hardProcessKinematics->Branch("parton1Eta"             ,&parton1Eta             ,"parton 1 eta");
+   hardProcessKinematics->Branch("parton2Eta"             ,&parton2Eta             ,"parton 2 eta");
+   hardProcessKinematics->Branch("muonFirstEta"           ,&muonFirstEta           ,"first muon eta");
+   hardProcessKinematics->Branch("muonSecondEta"          ,&muonSecondEta          ,"second muon eta");
+   hardProcessKinematics->Branch("muonHighestEtEta"       ,&muonHighestEtEta       ,"highest et muon eta");
+   hardProcessKinematics->Branch("muonSecondHighestEtEta" ,&muonSecondHighestEtEta ,"second highest et muon eta");
+
+   hardProcessKinematics->Branch("dRparton1parton2"       ,&dRparton1parton2       ,"deltaR between partons");
+   hardProcessKinematics->Branch("dRmuon1muon2"           ,&dRmuon1muon2           ,"deltaR between muons");
+   hardProcessKinematics->Branch("dRparton1muon2"         ,&dRparton1muon2         ,"deltaR between parton1 and muon2");
+   hardProcessKinematics->Branch("dRparton1muon1"         ,&dRparton1muon1         ,"deltaR between parton1 and muon2");
+   hardProcessKinematics->Branch("dRparton2muon2"         ,&dRparton2muon2         ,"deltaR between parton2 and muon2");
+   hardProcessKinematics->Branch("dRparton2muon1"         ,&dRparton2muon1         ,"deltaR between parton2 and muon1");
 
 }
 
@@ -148,7 +157,12 @@ cmsWRextension::~cmsWRextension()
 //
 // member functions
 //
+//HELPER COMPARISON FUNCTION
+static bool compareEt(const reco::GenParticle* particle1, const reco::GenParticle* particle2) {
+  if ( particle1->et() > particle2->et() ) return true;
+  return false;
 
+}
 // ------------ method called for each event  ------------
 void
 cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
@@ -157,81 +171,61 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
    Handle<std::vector<reco::GenParticle>> pIn;
    iEvent.getByToken(m_genParticleToken, pIn);
+
+   eventBits myEvent;
   
-   std::vector<const reco::GenParticle*> outgoingPartonPair;
-   std::vector<const reco::GenParticle*> outgoingMuons;
-
-   const reco::GenParticle* highestEtMuon;
-   const reco::GenParticle* secondHighestEtMuon;
-   const reco::GenParticle* firstMuon;
-   const reco::GenParticle* secondMuon;
-
-   const reco::GenParticle* highestEtParton;
-   const reco::GenParticle* secondHighestEtParton;
- 
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = pIn->begin(); iParticle != pIn->end(); iParticle++) {
      if(iParticle->isHardProcess() ) {
         std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-        if(iParticle->status() == 23 && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) outgoingPartonPair.push_back(&(*iParticle));
-        if(iParticle->status() == 23 && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) outgoingMuons.push_back(&(*iParticle));
+        if(iParticle->status() == 23 && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back(&(*iParticle));
+        if(iParticle->status() == 23 && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back(&(*iParticle));
      }
    }
    //CHECK THAT THE EVENT MAKES SENSE
-   if (outgoingPartonPair.size() != 2 || outgoingMuons.size() != 2) {
-     std::cout << "ERROR! STRANGE EVENT, DID NOT FIND 2 PARTONS OR 2 MUONS"<< std::endl;
+   if (myEvent.outgoingPartons.size() < 2 || myEvent.outgoingMuons.size() < 2) {
+     std::cout << "ERROR! STRANGE EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
     return;
    }
-   //SORT GENMUONS AND PARTONS
-   if(outgoingPartonPair.at(0)->et() < outgoingPartonPair.at(1)->et()) {
-     highestEtParton = outgoingPartonPair.at(1);
-     secondHighestEtParton = outgoingPartonPair.at(0);
-   } else {
-     highestEtParton = outgoingPartonPair.at(0);
-     secondHighestEtParton = outgoingPartonPair.at(1);
-   }
- //   dRpartonPair = reco::deltaR2(outgoingPartonPair.at(0).eta(),outgoingPartonPair.at(0).phi(),outgoingPartonPair.at(1).eta(),outgoingPartonPair.at(1).phi());
-   if(outgoingMuons.at(0)->et() < outgoingMuons.at(1)->et()) {
-     highestEtMuon = outgoingMuons.at(1);
-     secondHighestEtMuon = outgoingMuons.at(0);
-   } else {
-     highestEtMuon = outgoingMuons.at(0);
-     secondHighestEtMuon = outgoingMuons.at(1);
-   }
+   //SORT GEN MUONS AND PARTONS BY ET
+   std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),compareEt);
+   std::sort(myEvent.outgoingMuons.begin(),myEvent.outgoingMuons.end(),compareEt);
+
    //DOES THE FIRST MUON IN THE LIST COME FROM THE WR?
-   if(outgoingMuons.at(0)->mother()->pdgId() == 9900024 || outgoingMuons.at(0)->mother()->pdgId() == -9900024) {
-     firstMuon = outgoingMuons.at(0);
-     secondMuon = outgoingMuons.at(1);
-   } else if(outgoingMuons.at(1)->mother()->pdgId() == 9900024 || outgoingMuons.at(1)->mother()->pdgId() == -9900024) {
-     firstMuon = outgoingMuons.at(1);
-     secondMuon = outgoingMuons.at(0);
+   if(myEvent.outgoingMuons.at(0)->mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(0)->mother()->pdgId() == -9900024) {
+     myEvent.firstMuon = myEvent.outgoingMuons.at(0);
+     myEvent.secondMuon = myEvent.outgoingMuons.at(1);
+   } else if(myEvent.outgoingMuons.at(1)->mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(1)->mother()->pdgId() == -9900024) {
+     myEvent.firstMuon = myEvent.outgoingMuons.at(1);
+     myEvent.secondMuon = myEvent.outgoingMuons.at(0);
    } else {
      std::cout << "ERROR! NO MUON HAS A WR MOTHER" << std::endl;
      return;
    }
    //NOW THAT WE HAVE THE MUONS AND PARTONS WE WANT, WE FILL ALL OF OUR HISTOGRAMS
-   parton1Et->Fill(highestEtParton->et());
-   parton2Et->Fill(secondHighestEtParton->et());
-   muonFirstEt->Fill(firstMuon->et());
-   muonSecondEt->Fill(secondMuon->et());
-   muonHighestEt->Fill(highestEtMuon->et());
-   muonSecondHighestEt->Fill(secondHighestEtMuon->et());
+   parton1Et = myEvent.highestEtParton->et();
+   parton2Et = myEvent.secondHighestEtParton->et();
+   muonFirstEt = myEvent.firstMuon->et();
+   muonSecondEt = myEvent.secondMuon->et();
+   muonHighestEt = myEvent.highestEtMuon->et();
+   muonSecondHighestEt = myEvent.secondHighestEtMuon->et();
 
-   parton1Eta->Fill(highestEtParton->eta());
-   parton2Eta->Fill(secondHighestEtParton->eta());
-   muonFirstEta->Fill(firstMuon->eta());
-   muonSecondEta->Fill(secondMuon->eta());
-   muonHighestEtEta->Fill(highestEtMuon->eta());
-   muonSecondHighestEtEta->Fill(secondHighestEtMuon->eta());
+   parton1Eta = myEvent.highestEtParton->eta();
+   parton2Eta = myEvent.secondHighestEtParton->eta();
+   muonFirstEta = myEvent.firstMuon->eta();
+   muonSecondEta = myEvent.secondMuon->eta();
+   muonHighestEtEta = myEvent.highestEtMuon->eta();
+   muonSecondHighestEtEta = myEvent.secondHighestEtMuon->eta();
 
-   dRparton1parton2->Fill(deltaR2(*highestEtParton,*secondHighestEtParton));
-   dRmuon1muon2->Fill(deltaR2(*firstMuon,*secondMuon));
-   dRparton1muon2->Fill(deltaR2(*highestEtParton,*secondMuon));
-   dRparton1muon1->Fill(deltaR2(*highestEtParton,*firstMuon));
-   dRparton2muon2->Fill(deltaR2(*secondHighestEtParton,*secondMuon));
-   dRparton2muon1->Fill(deltaR2(*secondHighestEtParton,*firstMuon));
+   dRparton1parton2 = deltaR2(*myEvent.highestEtParton,*myEvent.secondHighestEtParton);
+   dRmuon1muon2 = deltaR2(*myEvent.firstMuon,*myEvent.secondMuon);
+   dRparton1muon2 = deltaR2(*myEvent.highestEtParton,*myEvent.secondMuon);
+   dRparton1muon1 = deltaR2(*myEvent.highestEtParton,*myEvent.firstMuon);
+   dRparton2muon2 = deltaR2(*myEvent.secondHighestEtParton,*myEvent.secondMuon);
+   dRparton2muon1 = deltaR2(*myEvent.secondHighestEtParton,*myEvent.firstMuon);
 
 
+   hardProcessKinematics->Fill();
 }
 
 
