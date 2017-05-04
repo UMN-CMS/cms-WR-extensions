@@ -47,6 +47,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "TTree.h"
 //local includes
 #include "eventBits.h"
+#include "tools.h"
 
 //
 // class declaration
@@ -71,33 +72,13 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       // ----------member functions---------------------
+      void makePlots();
      
       // ----------member data ---------------------------
+      std::vector<eventBits> m_events;
       edm::EDGetToken m_genParticleToken;
  
       TTree* hardProcessKinematics;
-      
-
-      double parton1Et;
-      double parton2Et;
-      double muonFirstEt;
-      double muonSecondEt;
-      double muonHighestEt;
-      double muonSecondHighestEt;
-      double parton1Eta;
-      double parton2Eta;
-      double muonFirstEta;
-      double muonSecondEta;
-      double muonHighestEtEta;
-      double muonSecondHighestEtEta;
-      double dRparton1parton2;
-      double dRmuon1muon2;
-      double dRparton1muon2;
-      double dRparton1muon1;
-      double dRparton2muon2;
-      double dRparton2muon1;         
-
-
 
 };
 
@@ -118,29 +99,6 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 {
    //now do what ever initialization is needed
    usesResource("TFileService");
-   edm::Service<TFileService> fs;
-   hardProcessKinematics = fs->make<TTree>("hardProcessKinematics", "Kinematic Variables of the Hard Process");
-
-   hardProcessKinematics->Branch("parton1Et"              ,&parton1Et              ,"parton 1 Et");
-   hardProcessKinematics->Branch("parton2Et"              ,&parton2Et              ,"parton 2 Et");
-   hardProcessKinematics->Branch("muonFirstEt"            ,&muonFirstEt            ,"first muon Et");
-   hardProcessKinematics->Branch("muonSecondEt"           ,&muonSecondEt           ,"second muon Et");
-   hardProcessKinematics->Branch("muonHighestEt"          ,&muonHighestEt          ,"highest et muon Et");
-   hardProcessKinematics->Branch("muonSecondHighestEt"    ,&muonSecondHighestEt    ,"second highest et muon Et");
-
-   hardProcessKinematics->Branch("parton1Eta"             ,&parton1Eta             ,"parton 1 eta");
-   hardProcessKinematics->Branch("parton2Eta"             ,&parton2Eta             ,"parton 2 eta");
-   hardProcessKinematics->Branch("muonFirstEta"           ,&muonFirstEta           ,"first muon eta");
-   hardProcessKinematics->Branch("muonSecondEta"          ,&muonSecondEta          ,"second muon eta");
-   hardProcessKinematics->Branch("muonHighestEtEta"       ,&muonHighestEtEta       ,"highest et muon eta");
-   hardProcessKinematics->Branch("muonSecondHighestEtEta" ,&muonSecondHighestEtEta ,"second highest et muon eta");
-
-   hardProcessKinematics->Branch("dRparton1parton2"       ,&dRparton1parton2       ,"deltaR between partons");
-   hardProcessKinematics->Branch("dRmuon1muon2"           ,&dRmuon1muon2           ,"deltaR between muons");
-   hardProcessKinematics->Branch("dRparton1muon2"         ,&dRparton1muon2         ,"deltaR between parton1 and muon2");
-   hardProcessKinematics->Branch("dRparton1muon1"         ,&dRparton1muon1         ,"deltaR between parton1 and muon2");
-   hardProcessKinematics->Branch("dRparton2muon2"         ,&dRparton2muon2         ,"deltaR between parton2 and muon2");
-   hardProcessKinematics->Branch("dRparton2muon1"         ,&dRparton2muon1         ,"deltaR between parton2 and muon1");
 
 }
 
@@ -157,12 +115,6 @@ cmsWRextension::~cmsWRextension()
 //
 // member functions
 //
-//HELPER COMPARISON FUNCTION
-static bool compareEt(const reco::GenParticle* particle1, const reco::GenParticle* particle2) {
-  if ( particle1->et() > particle2->et() ) return true;
-  return false;
-
-}
 // ------------ method called for each event  ------------
 void
 cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
@@ -188,8 +140,14 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
     return;
    }
    //SORT GEN MUONS AND PARTONS BY ET
-   std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),compareEt);
-   std::sort(myEvent.outgoingMuons.begin(),myEvent.outgoingMuons.end(),compareEt);
+   std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
+   std::sort(myEvent.outgoingMuons.begin(),myEvent.outgoingMuons.end(),::wrTools::compareEt);
+
+   myEvent.highestEtParton = myEvent.outgoingPartons.at(0);
+   myEvent.secondHighestEtParton = myEvent.outgoingPartons.at(1);
+
+   myEvent.highestEtMuon = myEvent.outgoingMuons.at(0);
+   myEvent.secondHighestEtMuon = myEvent.outgoingMuons.at(1);
 
    //DOES THE FIRST MUON IN THE LIST COME FROM THE WR?
    if(myEvent.outgoingMuons.at(0)->mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(0)->mother()->pdgId() == -9900024) {
@@ -202,32 +160,64 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      std::cout << "ERROR! NO MUON HAS A WR MOTHER" << std::endl;
      return;
    }
+   m_events.push_back(myEvent);
    //NOW THAT WE HAVE THE MUONS AND PARTONS WE WANT, WE FILL ALL OF OUR HISTOGRAMS
-   parton1Et = myEvent.highestEtParton->et();
-   parton2Et = myEvent.secondHighestEtParton->et();
-   muonFirstEt = myEvent.firstMuon->et();
-   muonSecondEt = myEvent.secondMuon->et();
-   muonHighestEt = myEvent.highestEtMuon->et();
-   muonSecondHighestEt = myEvent.secondHighestEtMuon->et();
-
-   parton1Eta = myEvent.highestEtParton->eta();
-   parton2Eta = myEvent.secondHighestEtParton->eta();
-   muonFirstEta = myEvent.firstMuon->eta();
-   muonSecondEta = myEvent.secondMuon->eta();
-   muonHighestEtEta = myEvent.highestEtMuon->eta();
-   muonSecondHighestEtEta = myEvent.secondHighestEtMuon->eta();
-
-   dRparton1parton2 = deltaR2(*myEvent.highestEtParton,*myEvent.secondHighestEtParton);
-   dRmuon1muon2 = deltaR2(*myEvent.firstMuon,*myEvent.secondMuon);
-   dRparton1muon2 = deltaR2(*myEvent.highestEtParton,*myEvent.secondMuon);
-   dRparton1muon1 = deltaR2(*myEvent.highestEtParton,*myEvent.firstMuon);
-   dRparton2muon2 = deltaR2(*myEvent.secondHighestEtParton,*myEvent.secondMuon);
-   dRparton2muon1 = deltaR2(*myEvent.secondHighestEtParton,*myEvent.firstMuon);
-
-
-   hardProcessKinematics->Fill();
+//   makePlots(myEvent);
 }
+void cmsWRextension::makePlots()
+{
+  if(!(m_events.size() > 0)) return;
+  std::cout << "processing: " << m_events.size() <<"events"<< std::endl;
+   edm::Service<TFileService> fs;
+   TH1D* parton1Et = fs->make<TH1D>("parton1Et", "Parton 1 Et", 100, 0.0, 2000);
+   TH1D* parton2Et = fs->make<TH1D>("parton2Et", "Parton 2 Et", 100, 0.0, 2000);
+   TH1D* muonFirstEt = fs->make<TH1D>("muonFirstEt", "First Muon Et", 100, 0.0, 2000);
+   TH1D* muonSecondEt = fs->make<TH1D>("muonSecondEt", "Second Muon Et", 100, 0.0, 2000);
+   TH1D* muonHighestEt = fs->make<TH1D>("muonHighestEt", "Highest Et Muon Et", 100, 0.0, 2000);
+   TH1D* muonSecondHighestEt = fs->make<TH1D>("muonSecondHighestEt", "Second Highest Et Muon Et", 100, 0.0, 2000);
 
+   TH1D* parton1Eta = fs->make<TH1D>("parton1Eta", "Parton 1 Eta", 100, -4.0, 4.0);
+   TH1D* parton2Eta = fs->make<TH1D>("parton2Eta", "Parton 2 Eta", 100, -4.0, 4.0);
+   TH1D* muonFirstEta = fs->make<TH1D>("muonFirstEta", "First muon eta", 100, -4.0, 4.0);
+   TH1D* muonSecondEta = fs->make<TH1D>("muonSecondEta", "Second muon eta",                           100, -4.0, 4.0);
+   TH1D* muonHighestEtEta = fs->make<TH1D>("muonHighestEtEta", "Highest Et muon eta",                 100, -4.0, 4.0);
+   TH1D* muonSecondHighestEtEta = fs->make<TH1D>("muonSecondHighestEtEta", "2nd Highest Et muon eta", 100, -4.0, 4.0);
+
+   TH1D* dRparton1parton2 = fs->make<TH1D>("dRparton1parton2", "deltaR between partons",       100, 0.0, 12.0); 
+   TH1D* dRmuon1muon2 = fs->make<TH1D>("dRmuon1muon2", "deltaR between muons",                 100, 0.0, 12.0); 
+   TH1D* dRparton1muon2 = fs->make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2", 100, 0.0, 12.0); 
+   TH1D* dRparton1muon1 = fs->make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1", 100, 0.0, 12.0); 
+   TH1D* dRparton2muon2 = fs->make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0); 
+   TH1D* dRparton2muon1 = fs->make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0); 
+   
+   std::cout <<"looping over events now"<< std::endl;;
+   for(std::vector<eventBits>::iterator ievent = m_events.begin(); ievent != m_events.end(); ievent++) {
+     std::cout <<"accessing event quantities..."<<std::endl;
+     parton1Et->Fill(ievent->highestEtParton->et());
+     parton2Et->Fill(ievent->secondHighestEtParton->et());
+     muonFirstEt->Fill(ievent->firstMuon->et());
+     muonSecondEt->Fill(ievent->secondMuon->et());
+     muonHighestEt->Fill(ievent->highestEtMuon->et());
+     muonSecondHighestEt->Fill(ievent->secondHighestEtMuon->et());
+
+     parton1Eta->Fill(ievent->highestEtParton->eta());
+     parton2Eta->Fill(ievent->secondHighestEtParton->eta());
+     muonFirstEta->Fill(ievent->firstMuon->eta());
+     muonSecondEta->Fill(ievent->secondMuon->eta());
+     muonHighestEtEta->Fill(ievent->highestEtMuon->eta());
+     muonSecondHighestEtEta->Fill(ievent->secondHighestEtMuon->eta());
+
+     dRparton1parton2->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->secondHighestEtParton)));
+     dRmuon1muon2->Fill(deltaR2(*(ievent->firstMuon),*(ievent->secondMuon)));
+     dRparton1muon2->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->secondMuon)));
+     dRparton1muon1->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->firstMuon)));
+     dRparton2muon2->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->secondMuon)));
+     dRparton2muon1->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->firstMuon)));
+   }
+   std::cout <<"DONE!"<<std::endl;
+   return;  
+
+}
 
 // ------------ method called once each job just before starting event loop  ------------
 void 
@@ -239,6 +229,7 @@ cmsWRextension::beginJob()
 void 
 cmsWRextension::endJob() 
 {
+  makePlots();
 }
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
