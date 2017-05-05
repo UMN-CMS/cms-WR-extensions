@@ -8,16 +8,14 @@ class eventBits {
 public:
 
   eventBits();
-  ~eventBits();
   void clear();
 
   int run;
   int lumi;
   uint64_t event;
   
-  std::vector<reco::GenParticle>* genParticles;
-  std::vector<const reco::GenParticle*> outgoingPartons;
-  std::vector<const reco::GenParticle*> outgoingMuons;
+  std::vector<reco::GenParticle> outgoingPartons;
+  std::vector<reco::GenParticle> outgoingMuons;
 
   const reco::GenParticle* highestEtMuon;
   const reco::GenParticle* secondHighestEtMuon;

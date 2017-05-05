@@ -9,7 +9,8 @@
 
 namespace wrTools {
 
- bool compareEt(const reco::GenParticle* particle1, const reco::GenParticle* particle2); 
+ bool compareEtPointer(const reco::GenParticle* particle1, const reco::GenParticle* particle2); 
+ bool compareEt(reco::GenParticle particle1, reco::GenParticle particle2); 
 
 
 

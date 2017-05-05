@@ -6,9 +6,6 @@ eventBits::eventBits() {
   lumi = -1;
   event = 0;
 }
-eventBits::~eventBits() {
-
-}
 void eventBits::clear() {
 
 

@@ -130,8 +130,8 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    for (std::vector<reco::GenParticle>::const_iterator iParticle = pIn->begin(); iParticle != pIn->end(); iParticle++) {
      if(iParticle->isHardProcess() ) {
         std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-        if(iParticle->status() == 23 && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back(&(*iParticle));
-        if(iParticle->status() == 23 && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back(&(*iParticle));
+        if(iParticle->status() == 23 && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
+        if(iParticle->status() == 23 && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
      }
    }
    //CHECK THAT THE EVENT MAKES SENSE
@@ -143,19 +143,19 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
    std::sort(myEvent.outgoingMuons.begin(),myEvent.outgoingMuons.end(),::wrTools::compareEt);
 
-   myEvent.highestEtParton = myEvent.outgoingPartons.at(0);
-   myEvent.secondHighestEtParton = myEvent.outgoingPartons.at(1);
+   myEvent.highestEtParton = &myEvent.outgoingPartons.at(0);
+   myEvent.secondHighestEtParton = &myEvent.outgoingPartons.at(1);
 
-   myEvent.highestEtMuon = myEvent.outgoingMuons.at(0);
-   myEvent.secondHighestEtMuon = myEvent.outgoingMuons.at(1);
+   myEvent.highestEtMuon = &myEvent.outgoingMuons.at(0);
+   myEvent.secondHighestEtMuon = &myEvent.outgoingMuons.at(1);
 
    //DOES THE FIRST MUON IN THE LIST COME FROM THE WR?
-   if(myEvent.outgoingMuons.at(0)->mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(0)->mother()->pdgId() == -9900024) {
-     myEvent.firstMuon = myEvent.outgoingMuons.at(0);
-     myEvent.secondMuon = myEvent.outgoingMuons.at(1);
-   } else if(myEvent.outgoingMuons.at(1)->mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(1)->mother()->pdgId() == -9900024) {
-     myEvent.firstMuon = myEvent.outgoingMuons.at(1);
-     myEvent.secondMuon = myEvent.outgoingMuons.at(0);
+   if(myEvent.outgoingMuons.at(0).mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(0).mother()->pdgId() == -9900024) {
+     myEvent.firstMuon = &myEvent.outgoingMuons.at(0);
+     myEvent.secondMuon = &myEvent.outgoingMuons.at(1);
+   } else if(myEvent.outgoingMuons.at(1).mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(1).mother()->pdgId() == -9900024) {
+     myEvent.firstMuon = &myEvent.outgoingMuons.at(1);
+     myEvent.secondMuon = &myEvent.outgoingMuons.at(0);
    } else {
      std::cout << "ERROR! NO MUON HAS A WR MOTHER" << std::endl;
      return;
