@@ -19,8 +19,6 @@ public:
 
   const reco::GenParticle* highestEtMuon;
   const reco::GenParticle* secondHighestEtMuon;
-  const reco::GenParticle* firstMuon;
-  const reco::GenParticle* secondMuon;
 
   const reco::GenParticle* highestEtParton;
   const reco::GenParticle* secondHighestEtParton;
