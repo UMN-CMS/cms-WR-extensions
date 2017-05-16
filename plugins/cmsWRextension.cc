@@ -205,6 +205,15 @@ void cmsWRextension::makePlots()
    TH1D* dRparton1muon1 = fs->make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1", 100, 0.0, 12.0); 
    TH1D* dRparton2muon2 = fs->make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0); 
    TH1D* dRparton2muon1 = fs->make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0); 
+
+   TH1D* firstPartonJetEtTotal =      fs->make<TH1D>("firstPartonJetEtTotal", "Total Jet Et for Leading Parton",            100,0.0,2000);
+   TH1D* secondPartonJetEtTotal =     fs->make<TH1D>("secondPartonJetEtTotal","Total Jet Et for Subleading Parton",         100,0.0,2000);
+   TH1D* firstPartonJetEtHadronic =   fs->make<TH1D>("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton",      100,0.0,2000);
+   TH1D* secondPartonJetEtHadronic =  fs->make<TH1D>("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton",   100,0.0,2000);
+   TH1D* firstPartonJetEtEM =         fs->make<TH1D>("firstPartonJetEtEM", "EM Jet Et for Leading Parton",                  100,0.0,2000);
+   TH1D* secondPartonJetEtEM =        fs->make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton",               100,0.0,2000);
+   TH1D* firstPartonJetEtInvisible =  fs->make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,2000);
+   TH1D* secondPartonJetEtInvisible = fs->make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,2000);
    
    std::cout <<"looping over events now"<< std::endl;;
    for(std::vector<eventBits>::iterator ievent = m_events.begin(); ievent != m_events.end(); ievent++) {
@@ -225,6 +234,15 @@ void cmsWRextension::makePlots()
      dRparton1muon1->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->highestEtMuon)));
      dRparton2muon2->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->secondHighestEtMuon)));
      dRparton2muon1->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->highestEtMuon)));
+
+     firstPartonJetEtTotal->Fill(ievent->firstPartonGenJet->et());   
+     secondPartonJetEtTotal->Fill(ievent->secondPartonGenJet->et());  
+     firstPartonJetEtHadronic->Fill(ievent->firstPartonGenJet->hadEnergy());
+     secondPartonJetEtHadronic->Fill(ievent->secondPartonGenJet->hadEnergy());
+     firstPartonJetEtEM->Fill(ievent->firstPartonGenJet->emEnergy());      
+     secondPartonJetEtEM->Fill(ievent->secondPartonGenJet->emEnergy());     
+     firstPartonJetEtInvisible->Fill(ievent->firstPartonGenJet->invisibleEnergy());
+     secondPartonJetEtInvisible->Fill(ievent->secondPartonGenJet->invisibleEnergy());
    }
    std::cout <<"DONE!"<<std::endl;
    return;  
