@@ -21,7 +21,8 @@ process.options = cms.untracked.PSet(
 process.TFileService = cms.Service("TFileService", fileName = cms.string("file:WRjetStudy.root"))   #for MC
 
 
-process.demo = cms.EDAnalyzer('cmsWRextension'
+process.demo = cms.EDAnalyzer('cmsWRextension',
+                              genJets = cms.InputTag("ak8GenJets")
 )
 
 

@@ -124,13 +124,16 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
 
-   Handle<std::vector<reco::GenParticle>> pIn;
-   iEvent.getByToken(m_genParticleToken, pIn);
+   Handle<std::vector<reco::GenParticle>> genParticles;
+   iEvent.getByToken(m_genParticleToken, genParticles);
+
+   Handle<std::vector<reco::GenJet>> genJets;
+   iEvent.getByToken(m_genJetsToken, genJets);
 
    eventBits myEvent;
   
    //LOOP OVER GEN PARTICLES
-   for (std::vector<reco::GenParticle>::const_iterator iParticle = pIn->begin(); iParticle != pIn->end(); iParticle++) {
+   for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
      if(iParticle->isHardProcess() && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
      if(iParticle->isPromptFinalState() && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
