@@ -123,6 +123,8 @@ void
 cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
+  
+   float partonJetMatchDR = .1;
 
    Handle<std::vector<reco::GenParticle>> genParticles;
    iEvent.getByToken(m_genParticleToken, genParticles);
@@ -141,7 +143,7 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    //CHECK THAT THE EVENT MAKES SENSE
    if (myEvent.outgoingPartons.size() < 2 || myEvent.outgoingMuons.size() < 2) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
-    return;
+     return;
    }
    //SORT GEN MUONS AND PARTONS BY ET
    std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
@@ -153,9 +155,34 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    myEvent.highestEtMuon = &myEvent.outgoingMuons.at(0);
    myEvent.secondHighestEtMuon = &myEvent.outgoingMuons.at(1);
 
+   //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
+   //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
+   for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
+     if(iJet->et() >= 10) myEvent.genJets.push_back(*iJet);
+   }
+   if( myEvent.genJets.size() < 2 ) {
+     std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 JETS WITH ET > 10 GEV"<< std::endl;
+     return;
+   }
+   bool foundFirst = false;
+   bool foundSecond = false;
+   for (std::vector<reco::GenJet>::const_iterator iJet = myEvent.genJets.begin(); iJet != myEvent.genJets.end(); iJet++) {
+     //THE ASSUMPTION HERE IS THAT ONLY 1 JET WILL BE THAT CLOSE
+     if(deltaR2(*iJet,*(myEvent.highestEtParton)) <= partonJetMatchDR) {
+       myEvent.firstPartonGenJet = &(*iJet);
+       foundFirst = true;
+     }
+     if(deltaR2(*iJet,*(myEvent.secondHighestEtParton)) <= partonJetMatchDR) {
+      myEvent.secondPartonGenJet = &(*iJet);
+      foundSecond = true;
+     }  
+   }
+   if (!foundFirst || !foundSecond) {
+     std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
+     return;
+   }
+
    m_events.push_back(myEvent);
-   //NOW THAT WE HAVE THE MUONS AND PARTONS WE WANT, WE FILL ALL OF OUR HISTOGRAMS
-//   makePlots(myEvent);
 }
 void cmsWRextension::makePlots()
 {

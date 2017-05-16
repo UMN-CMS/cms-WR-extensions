@@ -26,8 +26,8 @@ public:
   const reco::GenParticle* highestEtParton;
   const reco::GenParticle* secondHighestEtParton;
 
-  const reco::GenParticle* firstPartonGenJet;    //deltaR MATCHED
-  const reco::GenParticle* secondPartonGenJet;
+  const reco::GenJet* firstPartonGenJet;    //deltaR MATCHED
+  const reco::GenJet* secondPartonGenJet;
  
 
 private:
