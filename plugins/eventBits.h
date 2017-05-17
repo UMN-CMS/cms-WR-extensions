@@ -2,6 +2,8 @@
 #define eventBits_h
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
+
 #include <vector>
 
 class eventBits {
@@ -16,14 +18,16 @@ public:
   
   std::vector<reco::GenParticle> outgoingPartons;
   std::vector<reco::GenParticle> outgoingMuons;
+  std::vector<reco::GenJet>      genJets;
 
   const reco::GenParticle* highestEtMuon;
   const reco::GenParticle* secondHighestEtMuon;
-  const reco::GenParticle* firstMuon;
-  const reco::GenParticle* secondMuon;
 
   const reco::GenParticle* highestEtParton;
   const reco::GenParticle* secondHighestEtParton;
+
+  const reco::GenJet* firstPartonGenJet;    //deltaR MATCHED
+  const reco::GenJet* secondPartonGenJet;
  
 
 private:

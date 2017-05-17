@@ -36,6 +36,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
 
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
@@ -80,9 +81,8 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       std::vector<eventBits> m_events;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_recoMuonToken;
- 
+      edm::EDGetToken m_genJetsToken;
       TTree* hardProcessKinematics;
-
 };
 
 //
@@ -97,7 +97,8 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 // constructors and destructor
 //
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
-  m_genParticleToken (consumes<std::vector<reco::GenParticle>> (edm::InputTag("prunedGenParticles"))),
+   m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
+   m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets")))
    m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("slimmedMuons")))
 
 {
@@ -124,6 +125,8 @@ void
 cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    using namespace edm;
+  
+   float partonJetMatchDR = .1;
 
    Handle<std::vector<pat::Muon>> pIn_Muon;
    iEvent.getByToken(m_recoMuonToken, pIn_Muon);
@@ -134,23 +137,24 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
      else std::cout << "NOT high pt" <<std::endl;
    }
  
-   Handle<std::vector<reco::GenParticle>> pIn;
-   iEvent.getByToken(m_genParticleToken, pIn);
+   Handle<std::vector<reco::GenParticle>> genParticles;
+   iEvent.getByToken(m_genParticleToken, genParticles);
+
+   Handle<std::vector<reco::GenJet>> genJets;
+   iEvent.getByToken(m_genJetsToken, genJets);
 
    eventBits myEvent;
   
    //LOOP OVER GEN PARTICLES
-   for (std::vector<reco::GenParticle>::const_iterator iParticle = pIn->begin(); iParticle != pIn->end(); iParticle++) {
-     if(iParticle->isHardProcess() ) {
-        std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-        if(iParticle->status() == 23 && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
-        if(iParticle->status() == 23 && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
-     }
+   for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
+     if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
+     if(iParticle->isHardProcess() && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
+     if(iParticle->isLastCopy() && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
    }
    //CHECK THAT THE EVENT MAKES SENSE
    if (myEvent.outgoingPartons.size() < 2 || myEvent.outgoingMuons.size() < 2) {
-     std::cout << "ERROR! STRANGE EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
-    return;
+     std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
+     return;
    }
    //SORT GEN MUONS AND PARTONS BY ET
    std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
@@ -162,20 +166,34 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    myEvent.highestEtMuon = &myEvent.outgoingMuons.at(0);
    myEvent.secondHighestEtMuon = &myEvent.outgoingMuons.at(1);
 
-   //DOES THE FIRST MUON IN THE LIST COME FROM THE WR?
-   if(myEvent.outgoingMuons.at(0).mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(0).mother()->pdgId() == -9900024) {
-     myEvent.firstMuon = &myEvent.outgoingMuons.at(0);
-     myEvent.secondMuon = &myEvent.outgoingMuons.at(1);
-   } else if(myEvent.outgoingMuons.at(1).mother()->pdgId() == 9900024 || myEvent.outgoingMuons.at(1).mother()->pdgId() == -9900024) {
-     myEvent.firstMuon = &myEvent.outgoingMuons.at(1);
-     myEvent.secondMuon = &myEvent.outgoingMuons.at(0);
-   } else {
-     std::cout << "ERROR! NO MUON HAS A WR MOTHER" << std::endl;
+   //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
+   //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
+   for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
+     if(iJet->et() >= 10) myEvent.genJets.push_back(*iJet);
+   }
+   if( myEvent.genJets.size() < 2 ) {
+     std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 JETS WITH ET > 10 GEV"<< std::endl;
      return;
    }
+   bool foundFirst = false;
+   bool foundSecond = false;
+   for (std::vector<reco::GenJet>::const_iterator iJet = myEvent.genJets.begin(); iJet != myEvent.genJets.end(); iJet++) {
+     //THE ASSUMPTION HERE IS THAT ONLY 1 JET WILL BE THAT CLOSE
+     if(deltaR2(*iJet,*(myEvent.highestEtParton)) <= partonJetMatchDR) {
+       myEvent.firstPartonGenJet = &(*iJet);
+       foundFirst = true;
+     }
+     if(deltaR2(*iJet,*(myEvent.secondHighestEtParton)) <= partonJetMatchDR) {
+      myEvent.secondPartonGenJet = &(*iJet);
+      foundSecond = true;
+     }  
+   }
+   if (!foundFirst || !foundSecond) {
+     std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
+     return;
+   }
+
    m_events.push_back(myEvent);
-   //NOW THAT WE HAVE THE MUONS AND PARTONS WE WANT, WE FILL ALL OF OUR HISTOGRAMS
-//   makePlots(myEvent);
 }
 void cmsWRextension::makePlots()
 {
@@ -184,15 +202,11 @@ void cmsWRextension::makePlots()
    edm::Service<TFileService> fs;
    TH1D* parton1Et = fs->make<TH1D>("parton1Et", "Parton 1 Et", 100, 0.0, 2000);
    TH1D* parton2Et = fs->make<TH1D>("parton2Et", "Parton 2 Et", 100, 0.0, 2000);
-   TH1D* muonFirstEt = fs->make<TH1D>("muonFirstEt", "First Muon Et", 100, 0.0, 2000);
-   TH1D* muonSecondEt = fs->make<TH1D>("muonSecondEt", "Second Muon Et", 100, 0.0, 2000);
    TH1D* muonHighestEt = fs->make<TH1D>("muonHighestEt", "Highest Et Muon Et", 100, 0.0, 2000);
    TH1D* muonSecondHighestEt = fs->make<TH1D>("muonSecondHighestEt", "Second Highest Et Muon Et", 100, 0.0, 2000);
 
    TH1D* parton1Eta = fs->make<TH1D>("parton1Eta", "Parton 1 Eta", 100, -4.0, 4.0);
    TH1D* parton2Eta = fs->make<TH1D>("parton2Eta", "Parton 2 Eta", 100, -4.0, 4.0);
-   TH1D* muonFirstEta = fs->make<TH1D>("muonFirstEta", "First muon eta", 100, -4.0, 4.0);
-   TH1D* muonSecondEta = fs->make<TH1D>("muonSecondEta", "Second muon eta",                           100, -4.0, 4.0);
    TH1D* muonHighestEtEta = fs->make<TH1D>("muonHighestEtEta", "Highest Et muon eta",                 100, -4.0, 4.0);
    TH1D* muonSecondHighestEtEta = fs->make<TH1D>("muonSecondHighestEtEta", "2nd Highest Et muon eta", 100, -4.0, 4.0);
 
@@ -202,32 +216,50 @@ void cmsWRextension::makePlots()
    TH1D* dRparton1muon1 = fs->make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1", 100, 0.0, 12.0); 
    TH1D* dRparton2muon2 = fs->make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0); 
    TH1D* dRparton2muon1 = fs->make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0); 
+
+   TH1D* firstPartonJetEtTotal =      fs->make<TH1D>("firstPartonJetEtTotal", "Total Jet Et for Leading Parton",            100,0.0,2000);
+   TH1D* secondPartonJetEtTotal =     fs->make<TH1D>("secondPartonJetEtTotal","Total Jet Et for Subleading Parton",         100,0.0,2000);
+   TH1D* firstPartonJetEtHadronic =   fs->make<TH1D>("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton",      100,0.0,2000);
+   TH1D* secondPartonJetEtHadronic =  fs->make<TH1D>("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton",   100,0.0,2000);
+   TH1D* firstPartonJetEtEM =         fs->make<TH1D>("firstPartonJetEtEM", "EM Jet Et for Leading Parton",                  100,0.0,2000);
+   TH1D* secondPartonJetEtEM =        fs->make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton",               100,0.0,2000);
+   TH1D* firstPartonJetEtInvisible =  fs->make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,2000);
+   TH1D* secondPartonJetEtInvisible = fs->make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,2000);
+
+   TH1D* leadSubleadingJetMuonMass  = fs->make<TH1D>("leadingSubleadingJetMuonMass","Four Object Mass of the 2 leading Jets and Muons",100, 0.0,6000);
    
-   std::cout <<"looping over events now"<< std::endl;;
+   //std::cout <<"looping over events now"<< std::endl;;
    for(std::vector<eventBits>::iterator ievent = m_events.begin(); ievent != m_events.end(); ievent++) {
-     std::cout <<"accessing event quantities..."<<std::endl;
+   //  std::cout <<"accessing event quantities..."<<std::endl;
      parton1Et->Fill(ievent->highestEtParton->et());
      parton2Et->Fill(ievent->secondHighestEtParton->et());
-     muonFirstEt->Fill(ievent->firstMuon->et());
-     muonSecondEt->Fill(ievent->secondMuon->et());
      muonHighestEt->Fill(ievent->highestEtMuon->et());
      muonSecondHighestEt->Fill(ievent->secondHighestEtMuon->et());
 
      parton1Eta->Fill(ievent->highestEtParton->eta());
      parton2Eta->Fill(ievent->secondHighestEtParton->eta());
-     muonFirstEta->Fill(ievent->firstMuon->eta());
-     muonSecondEta->Fill(ievent->secondMuon->eta());
      muonHighestEtEta->Fill(ievent->highestEtMuon->eta());
      muonSecondHighestEtEta->Fill(ievent->secondHighestEtMuon->eta());
 
      dRparton1parton2->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->secondHighestEtParton)));
-     dRmuon1muon2->Fill(deltaR2(*(ievent->firstMuon),*(ievent->secondMuon)));
-     dRparton1muon2->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->secondMuon)));
-     dRparton1muon1->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->firstMuon)));
-     dRparton2muon2->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->secondMuon)));
-     dRparton2muon1->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->firstMuon)));
+     dRmuon1muon2->Fill(deltaR2(*(ievent->highestEtMuon),*(ievent->secondHighestEtMuon)));
+     dRparton1muon2->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->secondHighestEtMuon)));
+     dRparton1muon1->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->highestEtMuon)));
+     dRparton2muon2->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->secondHighestEtMuon)));
+     dRparton2muon1->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->highestEtMuon)));
+
+     firstPartonJetEtTotal->Fill(ievent->firstPartonGenJet->et());   
+     secondPartonJetEtTotal->Fill(ievent->secondPartonGenJet->et());  
+     firstPartonJetEtHadronic->Fill(ievent->firstPartonGenJet->hadEnergy());
+     secondPartonJetEtHadronic->Fill(ievent->secondPartonGenJet->hadEnergy());
+     firstPartonJetEtEM->Fill(ievent->firstPartonGenJet->emEnergy());      
+     secondPartonJetEtEM->Fill(ievent->secondPartonGenJet->emEnergy());     
+     firstPartonJetEtInvisible->Fill(ievent->firstPartonGenJet->invisibleEnergy());
+     secondPartonJetEtInvisible->Fill(ievent->secondPartonGenJet->invisibleEnergy());
+
+     leadSubleadingJetMuonMass->Fill((ievent->secondPartonGenJet->p4()+ievent->firstPartonGenJet->p4()+ievent->highestEtMuon->p4()+ievent->secondHighestEtMuon->p4()).mass());
    }
-   std::cout <<"DONE!"<<std::endl;
+   //std::cout <<"DONE!"<<std::endl;
    return;  
 
 }

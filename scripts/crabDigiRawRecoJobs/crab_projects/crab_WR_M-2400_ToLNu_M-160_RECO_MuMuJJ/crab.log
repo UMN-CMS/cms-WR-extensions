@@ -1,0 +1,172 @@
+ ################################################################### 
+ # WARNING: this module is deprecated.                             # 
+ # Please use CondCore.CondDB.CondDB_cfi.py                        # 
+ ################################################################### 
+L1TCalorimeter Sequence configured for Run1 (Legacy) trigger. 
+L1TMuon Sequence configured for Legacy trigger (Run1 and Run 2015). 
+L1TGlobal Sequence configured for Legacy trigger (Run1 and Run 2015). 
+L1TDigiToRaw Sequence configured for Run1 (Legacy) trigger. 
+L1TRawToDigi Sequence configured for Run1 (Legacy) trigger. 
+L1TReco Sequence configured for Run1 (Legacy) trigger. 
+# Conditions read from  CMS_CONDITIONS  via FrontierProd 
+
+        #
+        # -- Warning! You are using a deprecated customisation function. --
+        #
+        # It will probably run fine, but the customisations you are getting may be out of date.
+        # You should update your configuration file by
+        #   If using cmsDriver:
+        #       1) remove the "--customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1" option
+        #       2) add the option "--era Run2_25ns" 
+        #   If using a pre-made configuration file:
+        #       1) remove or comment out the "process = customisePostLS1(process)" line.
+        #       2) add "from Configuration.StandardSequences.Eras import eras" to the TOP of the config file (above
+        #          the process declaration).
+        #       3) add "eras.Run2_25ns" as a parameter to the process object, e.g. "process = cms.Process('HLT',eras.Run2_25ns)" 
+        #
+        # There is more information at https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideCmsDriverEras
+        #
+        
+WARNING:  L1Trigger/L1TCommon/python/caloStage1LegacyFormatDigis_cfi.py has been deprecated...
+WARNING:  please use L1Trigger/L1TCalorimeter/python/caloStage1LegacyFormatDigis_cfi.py
+DEBUG 2017-05-12 13:51:01,585: 	 Executing command: 'submit'
+DEBUG 2017-05-12 13:51:01,586: 	 Found CRAB cache file /afs/cern.ch/user/a/aevans/.crab3
+DEBUG 2017-05-12 13:51:01,602: 	 Checking credentials
+DEBUG 2017-05-12 13:51:01,603: 	 Found proxy file /tmp/x509up_u70979
+DEBUG 2017-05-12 13:51:01,603: 	 Getting proxy life time left
+DEBUG 2017-05-12 13:51:02,838: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u70979 -timeleft
+ output : 74372
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:03,653: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u70979 -actimeleft
+ output : 74371
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:03,653: 	 Proxy valid for 20:39:32 hours
+INFO 2017-05-12 13:51:03,653: 	 Will use CRAB configuration file crabConfig_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ.py
+DEBUG 2017-05-12 13:51:03,653: 	 Loading CRAB configuration file.
+DEBUG 2017-05-12 13:51:03,657: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+DEBUG 2017-05-12 13:51:03,905: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:03,905: 	 Checking credentials
+DEBUG 2017-05-12 13:51:03,905: 	 Found proxy file /tmp/x509up_u70979
+DEBUG 2017-05-12 13:51:03,905: 	 Getting proxy life time left
+DEBUG 2017-05-12 13:51:05,025: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u70979 -timeleft
+ output : 74370
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:06,045: 	 Executing : 
+ command : voms-proxy-info -file /tmp/x509up_u70979 -actimeleft
+ output : 74368
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:06,046: 	 Proxy valid for 20:39:30 hours
+DEBUG 2017-05-12 13:51:06,970: 	 Executing : 
+ command : env X509_USER_PROXY=/tmp/x509up_u70979 voms-proxy-info -fqan
+ output : /cms/Role=NULL/Capability=NULL
+/cms/uscms/Role=NULL/Capability=NULL
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:07,405: 	 Registering user credentials for server /DC=ch/DC=cern/OU=computers/CN=vocms(045|052|021|031|0118|0118a|0119|0108|0105|0109).cern.ch
+DEBUG 2017-05-12 13:51:07,517: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:07,517: 	 Getting myproxy life time left for myproxy.cern.ch
+DEBUG 2017-05-12 13:51:07,517: 	 Calculating hash of /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans_cmsweb.cern.ch for credential name
+DEBUG 2017-05-12 13:51:08,123: 	 Executing : 
+ command : myproxy-info -l 6e8b596a0ecb88668ea3603b5574bc53bcfde64c -s myproxy.cern.ch
+ output : username: 6e8b596a0ecb88668ea3603b5574bc53bcfde64c
+owner: /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans
+  renewal policy: /DC=ch/DC=cern/OU=computers/CN=vocms(045|052|021|031|0118|0118a|0119|0108|0105|0109).cern.ch
+  trusted retrieval policy: /DC=ch/DC=cern/OU=computers/CN=vocms(045|052|021|031|0118|0118a|0119|0108|0105|0109).cern.ch
+  timeleft: 694:40:45  (28.9 days)
+
+ error: 
+ retcode : 0
+DEBUG 2017-05-12 13:51:08,125: 	 Myproxy is valid: 2500845
+DEBUG 2017-05-12 13:51:08,125: 	 Command use: submit
+DEBUG 2017-05-12 13:51:08,125: 	 Options use: ['-c', 'crabConfig_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ.py']
+DEBUG 2017-05-12 13:51:08,578: 	 CRABClient version: 3.3.1705.patch3
+DEBUG 2017-05-12 13:51:08,578: 	 Instance is prod
+DEBUG 2017-05-12 13:51:08,578: 	 Server base url is cmsweb.cern.ch
+DEBUG 2017-05-12 13:51:08,578: 	 Command url /crabserver/prod/workflow
+DEBUG 2017-05-12 13:51:08,578: 	 Started submission
+DEBUG 2017-05-12 13:51:08,578: 	 Working on /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWRextension/scripts/crabDigiRawRecoJobs/crab_projects/crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ
+DEBUG 2017-05-12 13:51:09,301: 	 Loading required information from the environment
+DEBUG 2017-05-12 13:51:09,301: 	 Found CMSSW_8_0_24_patch1 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1
+DEBUG 2017-05-12 13:51:09,301: 	 Loading required information from the environment
+DEBUG 2017-05-12 13:51:09,301: 	 Found CMSSW_8_0_24_patch1 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1
+DEBUG 2017-05-12 13:51:09,324: 	 UNIQUE NAME: tarUUID e27ae6b3-9422-4fc5-b235-a2542fdf05df 
+DEBUG 2017-05-12 13:51:09,325: 	 self.config: from WMCore.Configuration import Configuration
+config = Configuration()
+config.section_('General')
+config.General.transferLogs = True
+config.General.transferOutputs = True
+config.General.workArea = 'crab_projects'
+config.General.requestName = 'WR_M-2400_ToLNu_M-160_RECO_MuMuJJ'
+config.section_('JobType')
+config.JobType.psetName = 'WR_M-2400_ToLNu_M-160_RECO_MuMuJJ.py'
+config.JobType.pluginName = 'Analysis'
+config.section_('Data')
+config.Data.inputDataset = '/WRToMuMuJJ_MW-2400_MNu-160_TuneCUETP8M1_13TeV-pythia8/gnegro-RunIIWinter16_80X_GEN-SIM-e2ebad1b90caaf241f3a6c8cb5bb0f15/USER'
+config.Data.outputDatasetTag = 'RunIIWinter16_80X_mcRun2_asymptotic_2016_miniAODv2_v1_AODSIM'
+config.Data.publication = True
+config.Data.unitsPerJob = 1
+config.Data.ignoreLocality = True
+config.Data.inputDBS = 'phys03'
+config.Data.splitting = 'FileBased'
+config.Data.outLFNDirBase = '/store/user/aevans/'
+config.Data.totalUnits = -1
+config.section_('Site')
+config.Site.blacklist = ['T3_US_UCR', 'T2_US_Vanderbilt', 'T2_EE_Estonia', 'T3_US_UMiss']
+config.Site.storageSite = 'T2_CH_CERN'
+config.section_('User')
+config.section_('Debug')
+
+DEBUG 2017-05-12 13:51:09,325: 	 self.config.JobType.psetName: WR_M-2400_ToLNu_M-160_RECO_MuMuJJ.py
+INFO 2017-05-12 13:51:09,325: 	 Importing CMSSW configuration WR_M-2400_ToLNu_M-160_RECO_MuMuJJ.py
+INFO 2017-05-12 13:51:17,699: 	 Finished importing CMSSW configuration WR_M-2400_ToLNu_M-160_RECO_MuMuJJ.py
+DEBUG 2017-05-12 13:51:17,699: 	 Writing CMSSW configuration to /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWRextension/scripts/crabDigiRawRecoJobs/crab_projects/crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ/inputs/PSet.py
+DEBUG 2017-05-12 13:51:23,285: 	 The following EDM output files will be collected: ['WR_ToLNu_ToLLJJ_MNuUndef_2400_13TeV_NNUUMMPU_RAW_RECO.root']
+DEBUG 2017-05-12 13:51:23,285: 	 The following TFile output files will be collected: []
+DEBUG 2017-05-12 13:51:23,285: 	 The following user output files will be collected: []
+DEBUG 2017-05-12 13:51:23,285: 	 Loading required information from the environment
+DEBUG 2017-05-12 13:51:23,285: 	 Found CMSSW_8_0_24_patch1 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1
+DEBUG 2017-05-12 13:51:23,285: 	 Making tarball in /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWRextension/scripts/crabDigiRawRecoJobs/crab_projects/crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ/inputs/e27ae6b3-9422-4fc5-b235-a2542fdf05dfdefault.tgz
+DEBUG 2017-05-12 13:51:23,379: 	 Checking directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/lib
+DEBUG 2017-05-12 13:51:23,379: 	 Adding directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/lib to tarball
+DEBUG 2017-05-12 13:51:23,593: 	 Checking directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/biglib
+DEBUG 2017-05-12 13:51:23,593: 	 Adding directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/biglib to tarball
+DEBUG 2017-05-12 13:51:23,596: 	 Checking directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/module
+DEBUG 2017-05-12 13:51:24,010: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWR/data to tarball
+DEBUG 2017-05-12 13:51:26,704: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWR/interface to tarball
+DEBUG 2017-05-12 13:51:28,453: 	 Uploading archive /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWRextension/scripts/crabDigiRawRecoJobs/crab_projects/crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ/inputs/e27ae6b3-9422-4fc5-b235-a2542fdf05dfdefault.tgz (3.042969.1 MB) to the CRAB cache. Using URI https://cmsweb.cern.ch/crabcache
+DEBUG 2017-05-12 13:51:29,757: 	 Loading required information from the environment
+DEBUG 2017-05-12 13:51:29,757: 	 Found CMSSW_8_0_24_patch1 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1
+DEBUG 2017-05-12 13:51:29,758: 	 Making tarball in /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWRextension/scripts/crabDigiRawRecoJobs/crab_projects/crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ/inputs/debugFiles.tgz
+DEBUG 2017-05-12 13:51:29,766: 	 Uploading archive /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWRextension/scripts/crabDigiRawRecoJobs/crab_projects/crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ/inputs/debugFiles.tgz (2 KB) to the CRAB cache. Using URI https://cmsweb.cern.ch/crabcache
+DEBUG 2017-05-12 13:51:31,434: 	 Result uploading input files: 8c9a4059ee330c2bf31715f11db256cc5b89742d1cc2aedafc6a19748761f2cc.tar.gz 
+INFO 2017-05-12 13:51:31,434: 	 Sending the request to the server
+DEBUG 2017-05-12 13:51:31,435: 	 Submitting {'maxjobruntime': 1250, 'extrajdl': [], 'ignorelocality': 1, 'savelogsflag': 1, 'useparent': 0, 'asyncdest': 'T2_CH_CERN', 'algoargs': 1, 'cachefilename': '8c9a4059ee330c2bf31715f11db256cc5b89742d1cc2aedafc6a19748761f2cc.tar.gz', 'numcores': 1, 'addoutputfiles': [], 'generator': 'pythia', 'maxmemory': 2000, 'publishdbsurl': 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter', 'priority': 10, 'jobsw': 'CMSSW_8_0_24_patch1', 'edmoutfiles': ['WR_ToLNu_ToLLJJ_MNuUndef_2400_13TeV_NNUUMMPU_RAW_RECO.root'], 'userfiles': [], 'primarydataset': '', 'inputdata': '/WRToMuMuJJ_MW-2400_MNu-160_TuneCUETP8M1_13TeV-pythia8/gnegro-RunIIWinter16_80X_GEN-SIM-e2ebad1b90caaf241f3a6c8cb5bb0f15/USER', 'lfn': '/store/user/aevans/', 'dryrun': 0, 'workflow': 'crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ', 'cacheurl': u'https://cmsweb.cern.ch/crabcache', 'nonprodsw': 0, 'tfileoutfiles': [], 'oneEventMode': 0, 'debugfilename': '7ebcbac6d03856c373684c5e839dcf89ebde7fbf9049c2c8ca8b15ada5fc3b29.tar.gz', 'saveoutput': 1, 'publication': 1, 'jobarch': 'slc6_amd64_gcc530', 'totalunits': -1, 'splitalgo': 'FileBased', 'ignoreglobalblacklist': 0, 'nonvaliddata': 0, 'dbsurl': 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader', 'publishgroupname': 0, 'jobtype': 'Analysis', 'siteblacklist': ['T3_US_UCR', 'T2_US_Vanderbilt', 'T2_EE_Estonia', 'T3_US_UMiss'], 'publishname2': 'RunIIWinter16_80X_mcRun2_asymptotic_2016_miniAODv2_v1_AODSIM'} 
+DEBUG 2017-05-12 13:51:31,435: 	 Encoded submit request: maxjobruntime=1250&ignorelocality=1&savelogsflag=1&useparent=0&asyncdest=T2_CH_CERN&algoargs=1&cachefilename=8c9a4059ee330c2bf31715f11db256cc5b89742d1cc2aedafc6a19748761f2cc.tar.gz&numcores=1&generator=pythia&maxmemory=2000&publishdbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fphys03%2FDBSWriter&priority=10&jobsw=CMSSW_8_0_24_patch1&primarydataset=&inputdata=%2FWRToMuMuJJ_MW-2400_MNu-160_TuneCUETP8M1_13TeV-pythia8%2Fgnegro-RunIIWinter16_80X_GEN-SIM-e2ebad1b90caaf241f3a6c8cb5bb0f15%2FUSER&lfn=%2Fstore%2Fuser%2Faevans%2F&dryrun=0&workflow=crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ&cacheurl=https%3A%2F%2Fcmsweb.cern.ch%2Fcrabcache&nonprodsw=0&oneEventMode=0&debugfilename=7ebcbac6d03856c373684c5e839dcf89ebde7fbf9049c2c8ca8b15ada5fc3b29.tar.gz&saveoutput=1&publication=1&jobarch=slc6_amd64_gcc530&totalunits=-1&splitalgo=FileBased&ignoreglobalblacklist=0&nonvaliddata=0&dbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fphys03%2FDBSReader&publishgroupname=0&jobtype=Analysis&publishname2=RunIIWinter16_80X_mcRun2_asymptotic_2016_miniAODv2_v1_AODSIM&siteblacklist=T3_US_UCR&siteblacklist=T2_US_Vanderbilt&siteblacklist=T2_EE_Estonia&siteblacklist=T3_US_UMiss&edmoutfiles=WR_ToLNu_ToLLJJ_MNuUndef_2400_13TeV_NNUUMMPU_RAW_RECO.root
+DEBUG 2017-05-12 13:51:32,550: 	 Result: {u'result': [{u'RequestName': u'170512_115131:aevans_crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ'}]}
+INFO 2017-05-12 13:51:32,553: 	 Success: Your task has been delivered to the CRAB3 server.
+INFO 2017-05-12 13:51:32,553: 	 Task name: 170512_115131:aevans_crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ
+INFO 2017-05-12 13:51:32,554: 	 Please use 'crab status' to check how the submission process proceeds.
+DEBUG 2017-05-12 13:51:32,554: 	 About to return
+INFO 2017-05-12 13:51:32,556: 	 Log file is /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_24_patch1/src/ExoAnalysis/cmsWRextension/scripts/crabDigiRawRecoJobs/crab_projects/crab_WR_M-2400_ToLNu_M-160_RECO_MuMuJJ/crab.log

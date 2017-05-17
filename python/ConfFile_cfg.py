@@ -24,7 +24,7 @@ process.source = cms.Source ("PoolSource",
 process.options = cms.untracked.PSet(
     SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
-process.TFileService = cms.Service("TFileService", fileName = cms.string("file:WRjetStudy.root"))   #for MC
+process.TFileService = cms.Service("TFileService", fileName = cms.string(options.outputFile))   #for MC
 
 process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
     muons = cms.InputTag("slimmedMuons"),
@@ -44,9 +44,10 @@ process.removeBadAndCloneGlobalMuons = cms.EDProducer("MuonRefPruner",
     toremove2 = cms.InputTag("process.cloneGlobalMuonTagger", "bad")
 )
 
-
-
-process.demo = cms.EDAnalyzer('cmsWRextension')
+process.demo = cms.EDAnalyzer('cmsWRextension',
+                              genJets = cms.InputTag("ak8GenJets"),
+                              genParticles = cms.InputTag("genParticles")
+)
 
 process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons)
 
