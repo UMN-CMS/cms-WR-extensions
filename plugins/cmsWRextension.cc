@@ -79,8 +79,6 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       std::vector<eventBits> m_events;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
- 
-      TTree* hardProcessKinematics;
 
 };
 
@@ -96,7 +94,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 // constructors and destructor
 //
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
-   m_genParticleToken (consumes<std::vector<reco::GenParticle>> (edm::InputTag("genParticles"))),
+   m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets")))
 
 {
@@ -138,7 +136,7 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
      if(iParticle->isHardProcess() && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
-     if(iParticle->isPromptFinalState() && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
+     if(iParticle->isLastCopy() && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
    }
    //CHECK THAT THE EVENT MAKES SENSE
    if (myEvent.outgoingPartons.size() < 2 || myEvent.outgoingMuons.size() < 2) {
@@ -214,10 +212,12 @@ void cmsWRextension::makePlots()
    TH1D* secondPartonJetEtEM =        fs->make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton",               100,0.0,2000);
    TH1D* firstPartonJetEtInvisible =  fs->make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,2000);
    TH1D* secondPartonJetEtInvisible = fs->make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,2000);
+
+   TH1D* leadSubleadingJetMuonMass  = fs->make<TH1D>("leadingSubleadingJetMuonMass","Four Object Mass of the 2 leading Jets and Muons",100, 0.0,6000);
    
-   std::cout <<"looping over events now"<< std::endl;;
+   //std::cout <<"looping over events now"<< std::endl;;
    for(std::vector<eventBits>::iterator ievent = m_events.begin(); ievent != m_events.end(); ievent++) {
-     std::cout <<"accessing event quantities..."<<std::endl;
+   //  std::cout <<"accessing event quantities..."<<std::endl;
      parton1Et->Fill(ievent->highestEtParton->et());
      parton2Et->Fill(ievent->secondHighestEtParton->et());
      muonHighestEt->Fill(ievent->highestEtMuon->et());
@@ -243,8 +243,10 @@ void cmsWRextension::makePlots()
      secondPartonJetEtEM->Fill(ievent->secondPartonGenJet->emEnergy());     
      firstPartonJetEtInvisible->Fill(ievent->firstPartonGenJet->invisibleEnergy());
      secondPartonJetEtInvisible->Fill(ievent->secondPartonGenJet->invisibleEnergy());
+
+     leadSubleadingJetMuonMass->Fill((ievent->secondPartonGenJet->p4()+ievent->firstPartonGenJet->p4()+ievent->highestEtMuon->p4()+ievent->secondHighestEtMuon->p4()).mass());
    }
-   std::cout <<"DONE!"<<std::endl;
+   //std::cout <<"DONE!"<<std::endl;
    return;  
 
 }
