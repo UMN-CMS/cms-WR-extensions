@@ -34,6 +34,8 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 
 #include "FWCore/Utilities/interface/InputTag.h"
@@ -78,8 +80,9 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       // ----------member data ---------------------------
       std::vector<eventBits> m_events;
       edm::EDGetToken m_genParticleToken;
+      edm::EDGetToken m_recoMuonToken;
       edm::EDGetToken m_genJetsToken;
-
+      TTree* hardProcessKinematics;
 };
 
 //
@@ -96,6 +99,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets")))
+   m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("slimmedMuons")))
 
 {
    //now do what ever initialization is needed
@@ -124,6 +128,15 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
   
    float partonJetMatchDR = .1;
 
+   Handle<std::vector<pat::Muon>> pIn_Muon;
+   iEvent.getByToken(m_recoMuonToken, pIn_Muon);
+   for (std::vector<pat::Muon>::const_iterator iParticle = pIn_Muon->begin(); iParticle != pIn_Muon->end(); iParticle++) {
+     if(iParticle->tunePMuonBestTrack().isAvailable() ) {
+        std::cout << "Particle is high pt" <<std::endl;
+     }
+     else std::cout << "NOT high pt" <<std::endl;
+   }
+ 
    Handle<std::vector<reco::GenParticle>> genParticles;
    iEvent.getByToken(m_genParticleToken, genParticles);
 
