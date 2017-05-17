@@ -8,7 +8,13 @@ options.parseArguments()
 
 process = cms.Process("Demo")
 
-process.load("FWCore.MessageService.MessageLogger_cfi")
+process.load('Configuration.StandardSequences.Services_cff')
+process.load('FWCore.MessageService.MessageLogger_cfi')
+process.load('Configuration.EventContent.EventContent_cff')
+process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.EndOfProcess_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
@@ -20,9 +26,29 @@ process.options = cms.untracked.PSet(
 )
 process.TFileService = cms.Service("TFileService", fileName = cms.string("file:WRjetStudy.root"))   #for MC
 
+process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
+    muons = cms.InputTag("slimmedMuons"),
+    vtx   = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    muonPtCut = cms.double(20),
+    selectClones = cms.bool(False),
+    taggingMode = cms.bool(True),
+    verbose     = cms.untracked.bool(False)
+)
+process.cloneGlobalMuonTagger = process.badGlobalMuonTagger.clone(
+    selectClones = cms.bool(True)
+)
 
-process.demo = cms.EDAnalyzer('cmsWRextension'
+process.removeBadAndCloneGlobalMuons = cms.EDProducer("MuonRefPruner",
+    input = cms.InputTag("slimmedMuons"),
+    toremove = cms.InputTag("process.badGlobalMuonTagger", "bad"),
+    toremove2 = cms.InputTag("process.cloneGlobalMuonTagger", "bad")
 )
 
 
-process.p = cms.Path(process.demo)
+
+process.demo = cms.EDAnalyzer('cmsWRextension')
+
+process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons)
+
+process.p = cms.Path(process.muonSelectionSeq * process.demo)
+
