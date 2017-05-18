@@ -1,0 +1,9 @@
+Executable = /home/aevans/bin/batch_cmsRun
+Universe = vanilla
+Output = /data/whybee0b/user/aevans/logs/output
+Error = /data/whybee0b/user/aevans/logs/error
+request_memory = 400
+Requirements = (Arch=="X86_64") && (Machine != "zebra01.spa.umn.edu" && Machine != "zebra02.spa.umn.edu" && Machine != "zebra03.spa.umn.edu" && Machine != "zebra04.spa.umn.edu" && Machine != "caffeine.spa.umn.edu") && (Machine != "gc1-ce.spa.umn.edu" && Machine != "gc1-hn.spa.umn.edu" && Machine != "gc1-se.spa.umn.edu" && Machine != "red.spa.umn.edu" && Machine != "hadoop-test.spa.umn.edu")
++CondorGroup="cmsfarm"
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_24_patch1 /data/whybee0b/user/aevans/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ /data/whybee0b/user/aevans/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ/cfg/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ_000_cfg.py /data/whybee0b/user/aevans/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ/log/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ_000.log /data/whybee0b/user/aevans/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ/log/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ_000.err /data/whybee0b/user/aevans/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ/WR_M-6000_ToLNu_M-1200_GEN-SIM_MuMuJJ_000.root 2 CONDOR JOBS ARE EXECUTED WITH THE COMMAND: condor_filelist.py 
+Queue
