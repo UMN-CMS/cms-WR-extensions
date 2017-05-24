@@ -1,0 +1,11 @@
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/1840679A-5CD0-E511-9A69-0025905C96EA.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/184700A9-5DD0-E511-BBE6-008CFAF21460.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/1870FFFB-5AD0-E511-9B36-008CFA0F50F4.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/1896718B-42D0-E511-B9D6-24BE05C45BF1.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/18B5A810-5DD0-E511-A546-1CC1DE1CF44E.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/18BA05A5-66D0-E511-B37B-0CC47A4D760A.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/18C115C3-5ED0-E511-90C4-0025904C67BA.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/18CE01AC-68D0-E511-9284-D4AE52651C5F.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/18D76D19-5ED0-E511-9027-0025905C96EA.root
+/data/whybee0b/user/aevans/RunIISummer15GS_MinBias_TuneCUETP8M1_13TeV-pythia8_GEN-SIM_MCRUN2_71_V1_ext1-v1/18E7E4E9-65D0-E511-ABCE-047D7BD6DEAE.root
+

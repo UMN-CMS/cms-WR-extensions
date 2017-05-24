@@ -24,7 +24,7 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10000)
+    input = cms.untracked.int32(1000)
 )
 
 # Input source
@@ -52,7 +52,7 @@ process.FEVTDEBUGoutput = cms.OutputModule("PoolOutputModule",
         filterName = cms.untracked.string('')
     ),
     eventAutoFlushCompressedSize = cms.untracked.int32(5242880),
-    fileName = cms.untracked.string('file:WR_M-800_ToLNu_M-160_GEN-SIM_13TeV-2016.root'),
+    fileName = cms.untracked.string('file:/data/whybee0b/user/aevans/WR_M-800_ToLNu_M-160_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-160_GEN-SIM_MuMuJJ_000.root'),
     outputCommands = process.FEVTDEBUGEventContent.outputCommands,
     splitLevel = cms.untracked.int32(0)
 )
