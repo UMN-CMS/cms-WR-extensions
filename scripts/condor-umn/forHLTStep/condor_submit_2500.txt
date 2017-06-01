@@ -1,0 +1,19 @@
+Executable = /home/aevans/bin/batch_cmsRun
+Universe = vanilla
+Output = /data/whybee0b/user/aevans/logs/output
+Error = /data/whybee0b/user/aevans/logs/error
+request_memory = 400
+Requirements = (Arch=="X86_64") && (Machine != "zebra01.spa.umn.edu" && Machine != "zebra02.spa.umn.edu" && Machine != "zebra03.spa.umn.edu" && Machine != "zebra04.spa.umn.edu" && Machine != "caffeine.spa.umn.edu") && (Machine != "gc1-ce.spa.umn.edu" && Machine != "gc1-hn.spa.umn.edu" && Machine != "gc1-se.spa.umn.edu" && Machine != "red.spa.umn.edu" && Machine != "hadoop-test.spa.umn.edu")
++CondorGroup="cmsfarm"
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_24_patch1 /data/whybee0b/user/aevans/2500 /data/whybee0b/user/aevans/2500/cfg/2500_000_cfg.py /data/whybee0b/user/aevans/2500/log/2500_000.log /data/whybee0b/user/aevans/2500/log/2500_000.err  2 # Auto generated configuration file 
+Queue
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_24_patch1 /data/whybee0b/user/aevans/2500 /data/whybee0b/user/aevans/2500/cfg/2500_001_cfg.py /data/whybee0b/user/aevans/2500/log/2500_001.log /data/whybee0b/user/aevans/2500/log/2500_001.err  4 process.load('Configuration.StandardSequences.SimL1Emulator_cff') 
+Queue
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_24_patch1 /data/whybee0b/user/aevans/2500 /data/whybee0b/user/aevans/2500/cfg/2500_002_cfg.py /data/whybee0b/user/aevans/2500/log/2500_002.log /data/whybee0b/user/aevans/2500/log/2500_002.err  6         'drop *_ak4GenJets_*_*',  
+Queue
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_24_patch1 /data/whybee0b/user/aevans/2500 /data/whybee0b/user/aevans/2500/cfg/2500_003_cfg.py /data/whybee0b/user/aevans/2500/log/2500_003.log /data/whybee0b/user/aevans/2500/log/2500_003.err  8     name = cms.untracked.string('Applications'), 
+Queue
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_24_patch1 /data/whybee0b/user/aevans/2500 /data/whybee0b/user/aevans/2500/cfg/2500_004_cfg.py /data/whybee0b/user/aevans/2500/log/2500_004.log /data/whybee0b/user/aevans/2500/log/2500_004.err  10 process.mix.input.fileNames = cms.untracked.vstring([ 
+Queue
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_24_patch1 /data/whybee0b/user/aevans/2500 /data/whybee0b/user/aevans/2500/cfg/2500_005_cfg.py /data/whybee0b/user/aevans/2500/log/2500_005.log /data/whybee0b/user/aevans/2500/log/2500_005.err  12 process.endjob_step = cms.EndPath(process.endOfProcess) 
+Queue

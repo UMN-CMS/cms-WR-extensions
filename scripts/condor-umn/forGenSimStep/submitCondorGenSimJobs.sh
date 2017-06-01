@@ -7,6 +7,6 @@ NuMasses=( 80  160  240  320  400  600 160  320  480  640  800 1200 233  533  80
 for h in ${!WrMasses[*]}
 do
 
-	eval 'condor_submit condor_submit_WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_GEN-SIM_MuMuJJ.txt'
+	eval 'condor_prod.perl WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_GEN-SIM_MuMuJJ.py 10'
 
 done
