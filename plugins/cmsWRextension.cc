@@ -81,6 +81,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_recoMuonToken;
+      bool m_wantHardProcessMuons;
       TTree* hardProcessKinematics;
 };
 
@@ -98,12 +99,13 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"))),
-   m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("slimmedMuons")))
+   m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("slimmedMuons"))),
+   m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true))
 
 {
    //now do what ever initialization is needed
    usesResource("TFileService");
-
+   
 }
 
 
@@ -143,12 +145,14 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    iEvent.getByToken(m_genJetsToken, genJets);
 
    eventBits myEvent;
+
+  
   
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
      if((iParticle->isHardProcess() && iParticle->status() == 23) && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
-     if(iParticle->isLastCopy() && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
+     if(((iParticle->isLastCopy()&&!m_wantHardProcessMuons) || iParticle->isHardProcess()) && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
    }
    //CHECK THAT THE EVENT MAKES SENSE
    if (myEvent.outgoingPartons.size() < 2 || myEvent.outgoingMuons.size() < 2) {

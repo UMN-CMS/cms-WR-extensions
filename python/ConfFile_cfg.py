@@ -47,7 +47,8 @@ process.removeBadAndCloneGlobalMuons = cms.EDProducer("MuonRefPruner",
 
 process.demo = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("ak8GenJets"),
-                              genParticles = cms.InputTag("genParticles")
+                              genParticles = cms.InputTag("genParticles"),
+                              wantHardProcessMuons = cms.bool(True)
 )
 
 process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons)
