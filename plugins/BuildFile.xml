@@ -6,5 +6,7 @@
 <use name="CommonTools/UtilAlgos"/>
 <use name="DataFormats/HepMCCandidate"/>
 <use name="DataFormats/JetReco"/>
+<use name="DataFormats/MuonReco"/>
+<use name="DataFormats/PatCandidates"/>
 <use name="DataFormats/Math"/>
 <flags EDM_PLUGIN="1"/>
