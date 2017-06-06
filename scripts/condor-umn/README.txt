@@ -9,4 +9,4 @@ Text files contain root files can be found in the *Samples directories at the
 root of the repository
 
 In order for the scripts to run properly, you must use the
-condor_prod_mod.perl in place of the usual one
+condor_filelist.perl that's been commmitted in place of the usual one

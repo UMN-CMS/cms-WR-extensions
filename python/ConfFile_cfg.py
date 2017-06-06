@@ -27,10 +27,29 @@ process.options = cms.untracked.PSet(
 process.TFileService = cms.Service("TFileService", fileName = cms.string(options.outputFile))   #for MC
 
 
+process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
+    muons = cms.InputTag("slimmedMuons"),
+    vtx   = cms.InputTag("offlineSlimmedPrimaryVertices"),
+    muonPtCut = cms.double(20),
+    selectClones = cms.bool(False),
+    taggingMode = cms.bool(True),
+    verbose     = cms.untracked.bool(False)
+)
+process.cloneGlobalMuonTagger = process.badGlobalMuonTagger.clone(
+    selectClones = cms.bool(True)
+)
+
+process.removeBadAndCloneGlobalMuons = cms.EDProducer("MuonRefPruner",
+    input = cms.InputTag("slimmedMuons"),
+    toremove = cms.InputTag("process.badGlobalMuonTagger", "bad"),
+    toremove2 = cms.InputTag("process.cloneGlobalMuonTagger", "bad")
+)
+
 process.demo = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("ak8GenJets"),
                               genParticles = cms.InputTag("genParticles")
 )
 
-process.p = cms.Path(process.demo)
+process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons)
 
+process.p = cms.Path(process.muonSelectionSeq * process.demo)

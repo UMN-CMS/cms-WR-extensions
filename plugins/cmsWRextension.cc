@@ -17,7 +17,6 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 //
 //
 
-
 // system include files
 #include <memory>
 #include <vector>
