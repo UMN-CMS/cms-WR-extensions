@@ -28,6 +28,8 @@ public:
 
   const reco::GenJet* firstPartonGenJet;    //deltaR MATCHED
   const reco::GenJet* secondPartonGenJet;
+
+  bool passesGenCuts();
  
 
 private:
