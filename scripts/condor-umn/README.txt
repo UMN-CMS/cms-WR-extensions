@@ -1,7 +1,7 @@
-CONDOR JOBS ARE EXECUTED WITH THE COMMAND: condor_filelist.py
+CONDOR JOBS ARE ARE GENERALLY EXECUTED WITH THE COMMAND: condor_filelist.perl
 
 An example of which:
-condor_filelist.py --batch 1 --prodSpace /data/cmszfs1/user/lesko/aMCatNloScaleUncertaintyOutput/PowhegCombined SMPVJ_MC_cfg.py PowHegCombined.txt
+condor_filelist.perl --batch 1 --prodSpace /data/cmszfs1/user/lesko/aMCatNloScaleUncertaintyOutput/PowhegCombined SMPVJ_MC_cfg.py PowHegCombined.txt
 
 command  --batch (jobs per file) --prodSpace (where to put the data) cmsRunConfigFile.py InputRootFiles.txt
 
