@@ -5,6 +5,7 @@ options = VarParsing ('analysis')
 
 options.maxEvents = -1
 options.parseArguments()
+muonID =' userInt("highPtID") == 1'
 
 process = cms.Process("Demo")
 
@@ -45,11 +46,24 @@ process.removeBadAndCloneGlobalMuons = cms.EDProducer("MuonRefPruner",
     toremove2 = cms.InputTag("process.cloneGlobalMuonTagger", "bad")
 )
 
+process.tunePMuons = cms.EDProducer("TunePMuonProducer",
+		src = cms.InputTag("process.removeBadAndCloneGlobalMuons")
+		#src = cms.InputTag("slimmedMuons")
+		)
+
+### muon ID and isolation
+# make a collection of TuneP muons which pass isHighPt ID
+process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
+                               src = cms.InputTag("process.tunePMuons"),
+                               cut = cms.string(muonID),
+                               )
+                                   
+process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
+
 process.demo = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("ak8GenJets"),
                               genParticles = cms.InputTag("genParticles")
 )
 
-process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons)
 
 process.p = cms.Path(process.muonSelectionSeq * process.demo)
