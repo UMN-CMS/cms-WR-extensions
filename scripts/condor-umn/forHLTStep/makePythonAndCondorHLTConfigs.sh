@@ -10,7 +10,7 @@ do
 	## MuMuJJ
 	#make python config file for GEN-SIM step
 	eval "sed 's/MASSWR/${WrMasses[$h]}/g ; s/MASSNU/${NuMasses[$h]}/g ; s/N_EVENTS/${N_EVENTS}/g'  WR_M-UNDEF_ToLNu_M-UNDEF_HLT_MuMuJJ_cfg.py > WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_HLT_MuMuJJ_cfg.py"    
-    eval "ls ${DataSetsDirectory}/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_GEN-SIM_MuMuJJ/*.root > WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_GEN-SIM_MuMuJJ.txt"
+    eval "ls ${DataSetsDirectory}/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_GEN-SIM_MuMuJJ/*001.root > WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_GEN-SIM_MuMuJJ.txt"
 
     eval 'condor_filelist.perl --batch 20 --nosubmit WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_HLT_MuMuJJ_cfg.py WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_GEN-SIM_MuMuJJ.txt --memreq 2500'
 

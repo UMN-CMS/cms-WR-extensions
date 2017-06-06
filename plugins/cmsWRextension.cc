@@ -148,7 +148,7 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-     if(iParticle->isHardProcess() && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
+     if((iParticle->isHardProcess() && iParticle->status() == 23) && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
      if(iParticle->isLastCopy() && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
    }
    //CHECK THAT THE EVENT MAKES SENSE
@@ -226,6 +226,7 @@ void cmsWRextension::makePlots()
    TH1D* firstPartonJetEtInvisible =  fs->make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,2000);
    TH1D* secondPartonJetEtInvisible = fs->make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,2000);
 
+   TH1D* leadSubleadingPartonMuonMass  = fs->make<TH1D>("leadingSubleadingPartonMuonMass","Four Object Mass of the 2 leading Partons and Muons",100, 0.0,6000);
    TH1D* leadSubleadingJetMuonMass  = fs->make<TH1D>("leadingSubleadingJetMuonMass","Four Object Mass of the 2 leading Jets and Muons",100, 0.0,6000);
    
    //std::cout <<"looping over events now"<< std::endl;;
@@ -257,6 +258,7 @@ void cmsWRextension::makePlots()
      firstPartonJetEtInvisible->Fill(ievent->firstPartonGenJet->invisibleEnergy());
      secondPartonJetEtInvisible->Fill(ievent->secondPartonGenJet->invisibleEnergy());
 
+     leadSubleadingPartonMuonMass->Fill((ievent->secondHighestEtParton->p4()+ievent->highestEtParton->p4()+ievent->highestEtMuon->p4()+ievent->secondHighestEtMuon->p4()).mass())
      leadSubleadingJetMuonMass->Fill((ievent->secondPartonGenJet->p4()+ievent->firstPartonGenJet->p4()+ievent->highestEtMuon->p4()+ievent->secondHighestEtMuon->p4()).mass());
    }
    //std::cout <<"DONE!"<<std::endl;
