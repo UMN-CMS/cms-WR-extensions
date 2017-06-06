@@ -26,6 +26,7 @@ process.options = cms.untracked.PSet(
 )
 process.TFileService = cms.Service("TFileService", fileName = cms.string(options.outputFile))   #for MC
 
+
 process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
     muons = cms.InputTag("slimmedMuons"),
     vtx   = cms.InputTag("offlineSlimmedPrimaryVertices"),
@@ -52,4 +53,3 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
 process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons)
 
 process.p = cms.Path(process.muonSelectionSeq * process.demo)
-

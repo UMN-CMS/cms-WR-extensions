@@ -17,7 +17,6 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 //
 //
 
-
 // system include files
 #include <memory>
 #include <vector>
@@ -80,8 +79,8 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       // ----------member data ---------------------------
       std::vector<eventBits> m_events;
       edm::EDGetToken m_genParticleToken;
-      edm::EDGetToken m_recoMuonToken;
       edm::EDGetToken m_genJetsToken;
+      edm::EDGetToken m_recoMuonToken;
       TTree* hardProcessKinematics;
 };
 
@@ -98,7 +97,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 //
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
-   m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets")))
+   m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"))),
    m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("slimmedMuons")))
 
 {
