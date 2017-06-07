@@ -33,6 +33,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
@@ -43,6 +44,8 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "DataFormats/Math/interface/deltaR.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+
+
 
 //ROOT includes
 #include "TH1D.h"
@@ -74,14 +77,18 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       // ----------member functions---------------------
+      void selectMuons(const edm::Event&, eventBits&);
+      bool selectGenParticles(const edm::Event&, eventBits&);
+      void makeGenPlots();
       void makePlots();
-     
       // ----------member data ---------------------------
       std::vector<eventBits> m_events;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_recoMuonToken;
+      std::string m_mcMuonMatchMap;
       bool m_wantHardProcessMuons;
+      bool m_doGen;
       TTree* hardProcessKinematics;
 };
 
@@ -99,8 +106,10 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"))),
-   m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("slimmedMuons"))),
-   m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true))
+   m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("recoMuons"))),
+   m_mcMuonMatchMap (iConfig.getUntrackedParameter<std::string>("MuonRecoMCMatchMap","")),
+   m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
+   m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false))
 
 {
    //now do what ever initialization is needed
@@ -122,21 +131,26 @@ cmsWRextension::~cmsWRextension()
 // member functions
 //
 // ------------ method called for each event  ------------
-void
-cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
+{
+   eventBits myEvent;
+
+   selectMuons(iEvent, myEvent);
+   bool genpass=true;
+   if (m_doGen) {
+     genpass=selectGenParticles(iEvent, myEvent);
+     if (!genpass) return;
+   }
+
+   std::cout << "NOTE! SAVING EVENT DATA" << std::endl;
+   m_events.push_back(myEvent);
+}
+  
+bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myEvent)
 {
    using namespace edm;
   
    float partonJetMatchDR = .1;
-  //JUST COMMENTING THIS OUT FOR NOW
-  // Handle<std::vector<pat::Muon>> pIn_Muon;
-  // iEvent.getByToken(m_recoMuonToken, pIn_Muon);
-  // for (std::vector<pat::Muon>::const_iterator iParticle = pIn_Muon->begin(); iParticle != pIn_Muon->end(); iParticle++) {
-  //   if(iParticle->tunePMuonBestTrack().isAvailable() ) {
-  //      std::cout << "Particle is high pt" <<std::endl;
-  //   }
-  //   else std::cout << "NOT high pt" <<std::endl;
-  // }
  
    Handle<std::vector<reco::GenParticle>> genParticles;
    iEvent.getByToken(m_genParticleToken, genParticles);
@@ -144,10 +158,6 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    Handle<std::vector<reco::GenJet>> genJets;
    iEvent.getByToken(m_genJetsToken, genJets);
 
-   eventBits myEvent;
-
-  
-  
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
@@ -157,7 +167,7 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    //CHECK THAT THE EVENT MAKES SENSE
    if (myEvent.outgoingPartons.size() < 2 || myEvent.outgoingMuons.size() < 2) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
-     return;
+     return false;
    }
    //SORT GEN MUONS AND PARTONS BY ET
    std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
@@ -176,12 +186,12 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    }
    if( myEvent.genJets.size() < 2 ) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 JETS"<< std::endl;
-     return;
+     return false;
    }
    //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
    if(!myEvent.passesGenCuts()) {
      std::cout << "NOTE! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
-     return;
+     return false;
    }
 
    //HERE WE COMPARE OUR EVENTS
@@ -200,16 +210,35 @@ cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    }
    if (!foundFirst || !foundSecond) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
-     return;
+     return false;
+   }
+   return true;
+}
+
+void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
+{
+   using namespace edm;
+   
+   Handle<std::vector<pat::Muon>> recoMuons;
+   iEvent.getByToken(m_recoMuonToken, recoMuons);
+   
+   for (std::vector<pat::Muon>::const_iterator iParticle = recoMuons->begin(); iParticle != recoMuons->end(); iParticle++) {
+     myEvent.selectedMuons.push_back(*iParticle);
    }
 
-   std::cout << "NOTE! SAVING EVENT DATA" << std::endl;
-   m_events.push_back(myEvent);
+   Handle<reco::GenParticleMatch> match;
+   iEvent.getByLabel(m_mcMuonMatchMap,match);
+
 }
 void cmsWRextension::makePlots()
 {
-  if(!(m_events.size() > 0)) return;
-  std::cout << "processing: " << m_events.size() <<"events"<< std::endl;
+   if(!(m_events.size() > 0)) return;
+   std::cout << "processing: " << m_events.size() <<"events"<< std::endl;
+   makeGenPlots();
+}
+
+void cmsWRextension::makeGenPlots()
+{
   edm::Service<TFileService> fs;
   TH1D* parton1Et = fs->make<TH1D>("parton1Et", "Parton 1 Et", 100, 0.0, 2000);
   TH1D* parton2Et = fs->make<TH1D>("parton2Et", "Parton 2 Et", 100, 0.0, 2000);

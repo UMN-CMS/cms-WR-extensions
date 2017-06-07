@@ -3,6 +3,7 @@
 
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
 
 #include <vector>
 
@@ -31,6 +32,8 @@ public:
 
   bool passesGenCuts();
  
+  std::vector<pat::Muon>         selectedMuons;
+  std::vector<pat::Muon>         MCmatchedMuons;
 
 private:
 
