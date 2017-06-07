@@ -62,7 +62,8 @@ process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cl
 
 process.demo = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("ak8GenJets"),
-                              genParticles = cms.InputTag("genParticles")
+                              genParticles = cms.InputTag("genParticles"),
+                              wantHardProcessMuons = cms.bool(True)
 )
 
 

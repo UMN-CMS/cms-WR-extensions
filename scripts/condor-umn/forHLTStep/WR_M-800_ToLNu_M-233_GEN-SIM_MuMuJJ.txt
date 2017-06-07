@@ -1,10 +1,1 @@
 /data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_001.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_002.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_003.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_004.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_005.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_006.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_007.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_008.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_009.root
-/data/whybee0b/user/aevans//WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ/WR_M-800_ToLNu_M-233_GEN-SIM_MuMuJJ_010.root
