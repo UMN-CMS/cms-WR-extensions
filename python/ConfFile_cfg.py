@@ -45,38 +45,30 @@ process.cloneGlobalMuonTagger = process.badGlobalMuonTagger.clone(
 
 process.removeBadAndCloneGlobalMuons = cms.EDProducer("MuonRefPruner",
     input = cms.InputTag("slimmedMuons"),
-    toremove = cms.InputTag("process.badGlobalMuonTagger", "bad"),
-    toremove2 = cms.InputTag("process.cloneGlobalMuonTagger", "bad")
+    toremove = cms.InputTag("badGlobalMuonTagger", "bad"),
+    toremove2 = cms.InputTag("cloneGlobalMuonTagger", "bad")
 )
 
 process.tunePMuons = cms.EDProducer("TunePMuonProducer",
-		src = cms.InputTag("process.removeBadAndCloneGlobalMuons")
+		src = cms.InputTag("removeBadAndCloneGlobalMuons")
 		#src = cms.InputTag("slimmedMuons")
 )
 
 ### muon ID and isolation
 # make a collection of TuneP muons which pass isHighPt ID
 process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
-                               src = cms.InputTag("process.tunePMuons"),
+                               src = cms.InputTag("tunePMuons"),
                                cut = cms.string(muonID),
 )
                                    
-process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
-
-process.muonGenMatching = cms.EDProducer("MCTruthDeltaRMatcher",
-                              src = cms.InputTag("process.tuneIDMuons"),
-                              distMin = cms.double(0.15),
-                              matchPDGId = cms.vint32(13, -13),
-                              matched = cms.InputTag("genParticles")
-)
+process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
 process.demo = cms.EDAnalyzer('cmsWRextension',
-                              genJets = cms.InputTag("ak8GenJets"),
-                              genParticles = cms.InputTag("genParticles"),
-                              recoMuons = cms.InputTag("process.tuneIDMuons"),
-                              MuonRecoMCMatch = cms.untracked.string("process.muonGenMatching"),
+                              genJets = cms.InputTag("slimmedGenJetsAK8"),
+                              genParticles = cms.InputTag("prunedGenParticles"),
+                              recoMuons = cms.InputTag("tuneIDMuons"),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True)
 )
 
-process.p = cms.Path(process.muonSelectionSeq * process.muonGenMatching * process.demo)
+process.p = cms.Path(process.muonSelectionSeq * process.demo)

@@ -86,7 +86,6 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_recoMuonToken;
-      std::string m_mcMuonMatchMap;
       bool m_wantHardProcessMuons;
       bool m_doGen;
       TTree* hardProcessKinematics;
@@ -106,8 +105,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"))),
-   m_recoMuonToken (consumes<std::vector<pat::Muon>> (edm::InputTag("recoMuons"))),
-   m_mcMuonMatchMap (iConfig.getUntrackedParameter<std::string>("MuonRecoMCMatchMap","")),
+   m_recoMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("recoMuons"))),
    m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
    m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false))
 
@@ -226,8 +224,6 @@ void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
      myEvent.selectedMuons.push_back(*iParticle);
    }
 
-   Handle<reco::GenParticleMatch> match;
-   iEvent.getByLabel(m_mcMuonMatchMap,match);
 
 }
 void cmsWRextension::makePlots()
