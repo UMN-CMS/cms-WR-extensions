@@ -134,13 +134,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    eventBits myEvent;
 
    selectMuons(iEvent, myEvent);
-   bool genpass=true;
+   bool genpass=false;
    if (m_doGen) {
      genpass=selectGenParticles(iEvent, myEvent);
      if (!genpass) return;
    }
 
    std::cout << "NOTE! SAVING EVENT DATA" << std::endl;
+   myEvent.event = iEvent.id().event();
    m_events.push_back(myEvent);
 }
   
@@ -188,7 +189,7 @@ bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myE
    }
    //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
    if(!myEvent.passesGenCuts()) {
-     std::cout << "NOTE! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
+     std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
      return false;
    }
 
@@ -229,7 +230,7 @@ void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
 void cmsWRextension::makePlots()
 {
    if(!(m_events.size() > 0)) return;
-   std::cout << "processing: " << m_events.size() <<"events"<< std::endl;
+   std::cout << "processing: " << m_events.size() <<" events"<< std::endl;
    if(m_doGen)
      makeGenPlots();
 }
@@ -268,8 +269,9 @@ void cmsWRextension::makeGenPlots()
   
   //std::cout <<"looping over events now"<< std::endl;;
   for(std::vector<eventBits>::iterator ievent = m_events.begin(); ievent != m_events.end(); ievent++) {
+    std::cout << "Making GEN plots for " <<m_events.size()<<" events"<< std::endl;
   //  std::cout <<"accessing event quantities..."<<std::endl;
-    if(!ievent->passesGenCuts()) {
+    if(!(ievent->passesGenCuts())) {
       std::cout << "ERROR! THIS EVENT SHOULD HAVE FAILED" <<std::endl;
       continue;
     }
