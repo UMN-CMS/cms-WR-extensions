@@ -230,7 +230,8 @@ void cmsWRextension::makePlots()
 {
    if(!(m_events.size() > 0)) return;
    std::cout << "processing: " << m_events.size() <<"events"<< std::endl;
-   makeGenPlots();
+   if(m_doGen)
+     makeGenPlots();
 }
 
 void cmsWRextension::makeGenPlots()
