@@ -172,11 +172,11 @@ bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myE
    std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
    std::sort(myEvent.outgoingMuons.begin(),myEvent.outgoingMuons.end(),::wrTools::compareEt);
 
-   myEvent.highestEtParton = &myEvent.outgoingPartons.at(0);
-   myEvent.secondHighestEtParton = &myEvent.outgoingPartons.at(1);
+   myEvent.setHighestEtParton(0);
+   myEvent.setSecondHighestEtParton(1);
 
-   myEvent.highestEtMuon = &myEvent.outgoingMuons.at(0);
-   myEvent.secondHighestEtMuon = &myEvent.outgoingMuons.at(1);
+   myEvent.setHighestEtMuon(0);
+   myEvent.setSecondHighestEtMuon(1);
 
    //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
    //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
@@ -196,16 +196,25 @@ bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myE
    //HERE WE COMPARE OUR EVENTS
    bool foundFirst = false;
    bool foundSecond = false;
+   float bestFirstJetMatch = 10.0;
+   float bestSecondJetMatch = 10.0;
+   int index = 0;
    for (std::vector<reco::GenJet>::const_iterator iJet = myEvent.genJets.begin(); iJet != myEvent.genJets.end(); iJet++) {
-     //THE ASSUMPTION HERE IS THAT ONLY 1 JET WILL BE THAT CLOSE
-     if(deltaR2(*iJet,*(myEvent.highestEtParton)) <= partonJetMatchDR) {
-       myEvent.firstPartonGenJet = &(*iJet);
-       foundFirst = true;
+     if(bestFirstJetMatch > deltaR2(*iJet,*(myEvent.getHighestEtParton()))) {
+       bestFirstJetMatch = deltaR2(*iJet,*(myEvent.getHighestEtParton()));
+       if(bestFirstJetMatch <= partonJetMatchDR) {
+         myEvent.setFirstPartonGenJet(index);
+         foundFirst = true;
+       }
      }
-     if(deltaR2(*iJet,*(myEvent.secondHighestEtParton)) <= partonJetMatchDR) {
-      myEvent.secondPartonGenJet = &(*iJet);
-      foundSecond = true;
+     if(bestSecondJetMatch > deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()))) {
+      bestSecondJetMatch = deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()));
+      if(bestSecondJetMatch <= partonJetMatchDR) {
+        myEvent.setSecondPartonGenJet(index);
+        foundSecond = true;
+      }
      }  
+     index++;
    }
    if (!foundFirst || !foundSecond) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
@@ -275,34 +284,34 @@ void cmsWRextension::makeGenPlots()
       std::cout << "ERROR! THIS EVENT SHOULD HAVE FAILED" <<std::endl;
       continue;
     }
-    parton1Et->Fill(ievent->highestEtParton->et());
-    parton2Et->Fill(ievent->secondHighestEtParton->et());
-    muonHighestEt->Fill(ievent->highestEtMuon->et());
-    muonSecondHighestEt->Fill(ievent->secondHighestEtMuon->et());
+    parton1Et->Fill(ievent->getHighestEtParton()->et());
+    parton2Et->Fill(ievent->getSecondHighestEtParton()->et());
+    muonHighestEt->Fill(ievent->getHighestEtMuon()->et());
+    muonSecondHighestEt->Fill(ievent->getSecondHighestEtMuon()->et());
 
-    parton1Eta->Fill(ievent->highestEtParton->eta());
-    parton2Eta->Fill(ievent->secondHighestEtParton->eta());
-    muonHighestEtEta->Fill(ievent->highestEtMuon->eta());
-    muonSecondHighestEtEta->Fill(ievent->secondHighestEtMuon->eta());
+    parton1Eta->Fill(ievent->getHighestEtParton()->eta());
+    parton2Eta->Fill(ievent->getSecondHighestEtParton()->eta());
+    muonHighestEtEta->Fill(ievent->getHighestEtMuon()->eta());
+    muonSecondHighestEtEta->Fill(ievent->getSecondHighestEtMuon()->eta());
 
-    dRparton1parton2->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->secondHighestEtParton)));
-    dRmuon1muon2->Fill(deltaR2(*(ievent->highestEtMuon),*(ievent->secondHighestEtMuon)));
-    dRparton1muon2->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->secondHighestEtMuon)));
-    dRparton1muon1->Fill(deltaR2(*(ievent->highestEtParton),*(ievent->highestEtMuon)));
-    dRparton2muon2->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->secondHighestEtMuon)));
-    dRparton2muon1->Fill(deltaR2(*(ievent->secondHighestEtParton),*(ievent->highestEtMuon)));
+    dRparton1parton2->Fill(deltaR2(*(ievent->getHighestEtParton()),*(ievent->getSecondHighestEtParton())));
+    dRmuon1muon2->Fill(deltaR2(*(ievent->getHighestEtMuon()),*(ievent->getSecondHighestEtMuon())));
+    dRparton1muon2->Fill(deltaR2(*(ievent->getHighestEtParton()),*(ievent->getSecondHighestEtMuon())));
+    dRparton1muon1->Fill(deltaR2(*(ievent->getHighestEtParton()),*(ievent->getHighestEtMuon())));
+    dRparton2muon2->Fill(deltaR2(*(ievent->getSecondHighestEtParton()),*(ievent->getSecondHighestEtMuon())));
+    dRparton2muon1->Fill(deltaR2(*(ievent->getSecondHighestEtParton()),*(ievent->getHighestEtMuon())));
 
-    firstPartonJetEtTotal->Fill(ievent->firstPartonGenJet->et());   
-    secondPartonJetEtTotal->Fill(ievent->secondPartonGenJet->et());  
-    firstPartonJetEtHadronic->Fill(ievent->firstPartonGenJet->hadEnergy());
-    secondPartonJetEtHadronic->Fill(ievent->secondPartonGenJet->hadEnergy());
-    firstPartonJetEtEM->Fill(ievent->firstPartonGenJet->emEnergy());      
-    secondPartonJetEtEM->Fill(ievent->secondPartonGenJet->emEnergy());     
-    firstPartonJetEtInvisible->Fill(ievent->firstPartonGenJet->invisibleEnergy());
-    secondPartonJetEtInvisible->Fill(ievent->secondPartonGenJet->invisibleEnergy());
+    firstPartonJetEtTotal->Fill(ievent->getFirstPartonGenJet()->et());   
+    secondPartonJetEtTotal->Fill(ievent->getSecondPartonGenJet()->et());  
+    firstPartonJetEtHadronic->Fill(ievent->getFirstPartonGenJet()->hadEnergy());
+    secondPartonJetEtHadronic->Fill(ievent->getSecondPartonGenJet()->hadEnergy());
+    firstPartonJetEtEM->Fill(ievent->getFirstPartonGenJet()->emEnergy());      
+    secondPartonJetEtEM->Fill(ievent->getSecondPartonGenJet()->emEnergy());     
+    firstPartonJetEtInvisible->Fill(ievent->getFirstPartonGenJet()->invisibleEnergy());
+    secondPartonJetEtInvisible->Fill(ievent->getSecondPartonGenJet()->invisibleEnergy());
 
-    leadSubleadingPartonMuonMass->Fill((ievent->highestEtParton->p4()+ievent->secondHighestEtParton->p4()+ievent->highestEtMuon->p4()+ievent->secondHighestEtMuon->p4()).mass());
-    leadSubleadingJetMuonMass->Fill((ievent->secondPartonGenJet->p4()+ievent->firstPartonGenJet->p4()+ievent->highestEtMuon->p4()+ievent->secondHighestEtMuon->p4()).mass());
+    leadSubleadingPartonMuonMass->Fill((ievent->getHighestEtParton()->p4()+ievent->getSecondHighestEtParton()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).mass());
+    leadSubleadingJetMuonMass->Fill((ievent->getSecondPartonGenJet()->p4()+ievent->getFirstPartonGenJet()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).mass());
   }
   //std::cout <<"DONE!"<<std::endl;
   return;  
