@@ -149,7 +149,7 @@ bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myE
 {
    using namespace edm;
   
-   float partonJetMatchDR = .1;
+   float partonJetMatchDR = .5;
  
    Handle<std::vector<reco::GenParticle>> genParticles;
    iEvent.getByToken(m_genParticleToken, genParticles);
@@ -247,10 +247,10 @@ void cmsWRextension::makePlots()
 void cmsWRextension::makeGenPlots()
 {
   edm::Service<TFileService> fs;
-  TH1D* parton1Et = fs->make<TH1D>("parton1Et", "Parton 1 Et", 100, 0.0, 2000);
-  TH1D* parton2Et = fs->make<TH1D>("parton2Et", "Parton 2 Et", 100, 0.0, 2000);
-  TH1D* muonHighestEt = fs->make<TH1D>("muonHighestEt", "Highest Et Muon Et", 100, 0.0, 2000);
-  TH1D* muonSecondHighestEt = fs->make<TH1D>("muonSecondHighestEt", "Second Highest Et Muon Et", 100, 0.0, 2000);
+  TH1D* parton1Et = fs->make<TH1D>("parton1Et", "Parton 1 Et", 100, 0.0, 8000);
+  TH1D* parton2Et = fs->make<TH1D>("parton2Et", "Parton 2 Et", 100, 0.0, 8000);
+  TH1D* muonHighestEt = fs->make<TH1D>("muonHighestEt", "Highest Et Muon Et", 100, 0.0, 8000);
+  TH1D* muonSecondHighestEt = fs->make<TH1D>("muonSecondHighestEt", "Second Highest Et Muon Et", 100, 0.0, 8000);
 
   TH1D* parton1Eta = fs->make<TH1D>("parton1Eta", "Parton 1 Eta", 100, -4.0, 4.0);
   TH1D* parton2Eta = fs->make<TH1D>("parton2Eta", "Parton 2 Eta", 100, -4.0, 4.0);
@@ -264,18 +264,23 @@ void cmsWRextension::makeGenPlots()
   TH1D* dRparton2muon2 = fs->make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0); 
   TH1D* dRparton2muon1 = fs->make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0); 
 
-  TH1D* firstPartonJetEtTotal =      fs->make<TH1D>("firstPartonJetEtTotal", "Total Jet Et for Leading Parton",            100,0.0,2000);
-  TH1D* secondPartonJetEtTotal =     fs->make<TH1D>("secondPartonJetEtTotal","Total Jet Et for Subleading Parton",         100,0.0,2000);
-  TH1D* firstPartonJetEtHadronic =   fs->make<TH1D>("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton",      100,0.0,2000);
-  TH1D* secondPartonJetEtHadronic =  fs->make<TH1D>("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton",   100,0.0,2000);
-  TH1D* firstPartonJetEtEM =         fs->make<TH1D>("firstPartonJetEtEM", "EM Jet Et for Leading Parton",                  100,0.0,2000);
-  TH1D* secondPartonJetEtEM =        fs->make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton",               100,0.0,2000);
-  TH1D* firstPartonJetEtInvisible =  fs->make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,2000);
-  TH1D* secondPartonJetEtInvisible = fs->make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,2000);
+  TH1D* firstPartonJetEtTotal =      fs->make<TH1D>("firstPartonJetEtTotal", "Total Jet Et for Leading Parton",            100,0.0,8000);
+  TH1D* secondPartonJetEtTotal =     fs->make<TH1D>("secondPartonJetEtTotal","Total Jet Et for Subleading Parton",         100,0.0,8000);
+  TH1D* firstPartonJetEtHadronic =   fs->make<TH1D>("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton",      100,0.0,8000);
+  TH1D* secondPartonJetEtHadronic =  fs->make<TH1D>("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton",   100,0.0,8000);
+  TH1D* firstPartonJetEtEM =         fs->make<TH1D>("firstPartonJetEtEM", "EM Jet Et for Leading Parton",                  100,0.0,8000);
+  TH1D* secondPartonJetEtEM =        fs->make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton",               100,0.0,8000);
+  TH1D* firstPartonJetEtInvisible =  fs->make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,8000);
+  TH1D* secondPartonJetEtInvisible = fs->make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,8000);
 
-  TH1D* leadSubleadingJetMuonMass  =    fs->make<TH1D>("leadingSubleadingJetMuonMass","Four Object Mass of the 2 leading Jets and Muons",100, 0.0,6000);
-  TH1D* leadSubleadingPartonMuonMass  = fs->make<TH1D>("leadingSubleadingPartonMuonMass","Four Object Mass of the 2 leading Partons and Muons",100, 0.0,6000);
+  TH1D* leadSubleadingJetsMuonsMass  =    fs->make<TH1D>("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons",100, 0.0,8000);
+  TH1D* leadSubleadingPartonsMuonsMass  = fs->make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons",100, 0.0,8000);
   
+  TH1D* leadSubleadingJetsMuonsPt  =    fs->make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons",100, 0.0,8000);
+  TH1D* leadSubleadingPartonsMuonsPt  =  fs->make<TH1D>("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons",100, 0.0,8000);
+
+  TH1D* leadSubleadingJetsMuonsEta  =    fs->make<TH1D>("leadingSubleadingJetsMuonsEta","Four Object Eta of the 2 leading Jets and Muons",100, -4.0,4.0);
+  TH1D* leadSubleadingPartonsMuonsEta  =  fs->make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",100, -4.0,4.0);
   //std::cout <<"looping over events now"<< std::endl;;
   for(std::vector<eventBits>::iterator ievent = m_events.begin(); ievent != m_events.end(); ievent++) {
     std::cout << "Making GEN plots for " <<m_events.size()<<" events"<< std::endl;
@@ -310,8 +315,14 @@ void cmsWRextension::makeGenPlots()
     firstPartonJetEtInvisible->Fill(ievent->getFirstPartonGenJet()->invisibleEnergy());
     secondPartonJetEtInvisible->Fill(ievent->getSecondPartonGenJet()->invisibleEnergy());
 
-    leadSubleadingPartonMuonMass->Fill((ievent->getHighestEtParton()->p4()+ievent->getSecondHighestEtParton()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).mass());
-    leadSubleadingJetMuonMass->Fill((ievent->getSecondPartonGenJet()->p4()+ievent->getFirstPartonGenJet()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).mass());
+    leadSubleadingPartonsMuonsMass->Fill((ievent->getHighestEtParton()->p4()+ievent->getSecondHighestEtParton()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).mass());
+    leadSubleadingJetsMuonsMass->Fill((ievent->getSecondPartonGenJet()->p4()+ievent->getFirstPartonGenJet()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).mass());
+
+    leadSubleadingPartonsMuonsPt->Fill((ievent->getHighestEtParton()->p4()+ievent->getSecondHighestEtParton()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).pt());
+    leadSubleadingJetsMuonsPt->Fill((ievent->getSecondPartonGenJet()->p4()+ievent->getFirstPartonGenJet()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).pt());
+
+    leadSubleadingPartonsMuonsEta->Fill((ievent->getHighestEtParton()->p4()+ievent->getSecondHighestEtParton()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).eta());
+    leadSubleadingJetsMuonsEta->Fill((ievent->getSecondPartonGenJet()->p4()+ievent->getFirstPartonGenJet()->p4()+ievent->getHighestEtMuon()->p4()+ievent->getSecondHighestEtMuon()->p4()).eta());
   }
   //std::cout <<"DONE!"<<std::endl;
   return;  
