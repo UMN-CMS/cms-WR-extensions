@@ -16,5 +16,6 @@ git cms-merge-topic gpetruc:badMuonFilters_80X
 mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cms-WR-extensions.git
+cd ..
 scram b -j 4
 ```
