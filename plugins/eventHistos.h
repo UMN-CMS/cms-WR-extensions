@@ -1,3 +1,6 @@
+#ifndef eventHistos_h
+#define eventHistos_h
+
 //CMSSW CLASSES
 #include "DataFormats/Math/interface/deltaR.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
@@ -21,53 +24,55 @@ class eventHistos {
   public:
   eventHistos();
   void book(TDirectory* histoFolder, uint16_t flavor);
-  void fill(eventBits event);
+  void fill(eventBits& event);
 
 
 
   private:
-  void fillGen();
-  void fillReco();
+  void fillGen(eventBits& event);
+  void fillReco(eventBits& event);
 
  
   TDirectory* m_histoFolder;
   uint32_t m_flavor;
 
   //GEN PLOTS
-  TH1D m_parton1Et;
-  TH1D m_parton2Et;
-  TH1D m_muonHighestEt;
-  TH1D m_muonSecondHighestEt;
+  TH1D* m_parton1Et;
+  TH1D* m_parton2Et;
+  TH1D* m_muonHighestEt;
+  TH1D* m_muonSecondHighestEt;
 
-  TH1D m_parton1Eta;
-  TH1D m_parton2Eta;
-  TH1D m_muonHighestEtEta;
-  TH1D m_muonSecondHighestEtEta;
+  TH1D* m_parton1Eta;
+  TH1D* m_parton2Eta;
+  TH1D* m_muonHighestEtEta;
+  TH1D* m_muonSecondHighestEtEta;
 
-  TH1D m_dRparton1parton2;
-  TH1D m_dRmuon1muon2;
-  TH1D m_dRparton1muon2;
-  TH1D m_dRparton1muon1;
-  TH1D m_dRparton2muon2;
-  TH1D m_dRparton2muon1;
+  TH1D* m_dRparton1parton2;
+  TH1D* m_dRmuon1muon2;
+  TH1D* m_dRparton1muon2;
+  TH1D* m_dRparton1muon1;
+  TH1D* m_dRparton2muon2;
+  TH1D* m_dRparton2muon1;
 
-  TH1D m_firstPartonJetEtTotal;
-  TH1D m_secondPartonJetEtTotal;
-  TH1D m_firstPartonJetEtHadronic;
-  TH1D m_secondPartonJetEtHadronic;
-  TH1D m_firstPartonJetEtEM;
-  TH1D m_secondPartonJetEtEM;
-  TH1D m_firstPartonJetEtInvisible;
-  TH1D m_secondPartonJetEtInvisible;
+  TH1D* m_firstPartonJetEtTotal;
+  TH1D* m_secondPartonJetEtTotal;
+  TH1D* m_firstPartonJetEtHadronic;
+  TH1D* m_secondPartonJetEtHadronic;
+  TH1D* m_firstPartonJetEtEM;
+  TH1D* m_secondPartonJetEtEM;
+  TH1D* m_firstPartonJetEtInvisible;
+  TH1D* m_secondPartonJetEtInvisible;
 
-  TH1D m_leadSubleadingJetsMuonsMass ;
-  TH1D m_leadSubleadingPartonsMuonsMass ;
+  TH1D* m_leadSubleadingJetsMuonsMass ;
+  TH1D* m_leadSubleadingPartonsMuonsMass ;
 
-  TH1D m_leadSubleadingJetsMuonsPt ;
-  TH1D m_leadSubleadingPartonsMuonsPt ;
+  TH1D* m_leadSubleadingJetsMuonsPt ;
+  TH1D* m_leadSubleadingPartonsMuonsPt ;
 
-  TH1D m_leadSubleadingJetsMuonsEta ;
-  TH1D m_leadSubleadingPartonsMuonsEta ;
+  TH1D* m_leadSubleadingJetsMuonsEta ;
+  TH1D* m_leadSubleadingPartonsMuonsEta ;
   //RECO PLOTS
 
 };
+
+#endif
