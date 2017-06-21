@@ -15,7 +15,11 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 // Original Author:  Andrew Christopher Evans
 //         Created:  Thu, 30 Mar 2017 09:00:20 GMT
 //
-//
+//local includes
+#include "cmsWRextension.h"
+#include "eventHistos.h"
+#include "eventBits.h"
+#include "tools.h"
 
 // system include files
 #include <memory>
@@ -50,46 +54,6 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 //ROOT includes
 #include "TH1D.h"
 #include "TTree.h"
-//local includes
-#include "eventBits.h"
-#include "tools.h"
-
-//
-// class declaration
-//
-
-// If the analyzer does not use TFileService, please remove
-// the template argument to the base class so the class inherits
-// from  edm::one::EDAnalyzer<> and also remove the line from
-// constructor "usesResource("TFileService");"
-// This will improve performance in multithreaded jobs.
-
-class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
-   public:
-      explicit cmsWRextension(const edm::ParameterSet&);
-      ~cmsWRextension();
-
-      static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
-
-
-   private:
-      virtual void beginJob() override;
-      virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
-      virtual void endJob() override;
-      // ----------member functions---------------------
-      void selectMuons(const edm::Event&, eventBits&);
-      bool selectGenParticles(const edm::Event&, eventBits&);
-      void makeGenPlots();
-      void makePlots();
-      // ----------member data ---------------------------
-      std::vector<eventBits> m_events;
-      edm::EDGetToken m_genParticleToken;
-      edm::EDGetToken m_genJetsToken;
-      edm::EDGetToken m_recoMuonToken;
-      bool m_wantHardProcessMuons;
-      bool m_doGen;
-      TTree* hardProcessKinematics;
-};
 
 //
 // constants, enums and typedefs
@@ -112,7 +76,6 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 {
    //now do what ever initialization is needed
    usesResource("TFileService");
-   
 }
 
 
@@ -142,7 +105,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
    std::cout << "NOTE! SAVING EVENT DATA" << std::endl;
    myEvent.event = iEvent.id().event();
-   m_events.push_back(myEvent);
 }
   
 bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myEvent)
@@ -241,6 +203,10 @@ void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
 void 
 cmsWRextension::beginJob()
 {
+   edm::Service<TFileService> fs; 
+   m_allEvents.book((fs->mkdir("allEvents")), 1);           //(1) GEN ONLY PLOTS FOR NOW
+   m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1); 
+   m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1);
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

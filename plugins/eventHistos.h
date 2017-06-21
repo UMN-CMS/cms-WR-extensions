@@ -5,6 +5,7 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "CommonTools/Utils/interface/TFileDirectory.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticleFwd.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
@@ -13,17 +14,17 @@
 //ROOT CLASSES
 #include "TH1D.h"
 #include "TH2D.h"
-#include "TDirectory.h"
 //C++ CLASSES
 #include <iostream>
 //LOCAL CLASSES
+#include "eventHistos.h"
 #include "eventBits.h"
 #include "tools.h"
 
 class eventHistos {
   public:
   eventHistos();
-  void book(TDirectory* histoFolder, uint16_t flavor);
+  void book(TFileDirectory histoFolder, uint16_t flavor);
   void fill(eventBits& event);
 
 
@@ -33,7 +34,7 @@ class eventHistos {
   void fillReco(eventBits& event);
 
  
-  TDirectory* m_histoFolder;
+  TFileDirectory m_histoFolder;
   uint32_t m_flavor;
 
   //GEN PLOTS

@@ -1,7 +1,7 @@
 #include "eventHistos.h"
 #include "DataFormats/Math/interface/deltaR.h"
+#include "CommonTools/Utils/interface/TFileDirectory.h"
 #include "TH2D.h"
-#include "TDirectory.h"
 //C++ CLASSES
 #include <iostream>
 ////LOCAL CLASSES
@@ -12,12 +12,12 @@
 
 
 
+eventHistos::eventHistos () {}
 
 
 
 
-
-void eventHistos::book(TDirectory* histoFolder, uint16_t flavor) {
+void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 
   //CREATED FOLDER IN HISTOFILE WITH FLAVOR SPECIFIED
   m_flavor = flavor;
@@ -25,40 +25,42 @@ void eventHistos::book(TDirectory* histoFolder, uint16_t flavor) {
 
   if (m_flavor == 1) {
   //MAKE GEN PLOTS
-    m_parton1Et =           new TH1D("parton1Et", "Parton 1 Et",                         100, 0.0, 8000);
-    m_parton2Et =           new TH1D("parton2Et", "Parton 2 Et",                         100, 0.0, 8000);
-    m_muonHighestEt =       new TH1D("muonHighestEt", "Highest Et Muon Et",              100, 0.0, 8000);
-    m_muonSecondHighestEt = new TH1D("muonSecondHighestEt", "Second Highest Et Muon Et", 100, 0.0, 8000);
+    m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et",                         100, 0.0, 8000);
+    m_parton2Et =                       m_histoFolder.make<TH1D>("parton2Et", "Parton 2 Et",                         100, 0.0, 8000);
+    m_muonHighestEt =                   m_histoFolder.make<TH1D>("muonHighestEt", "Highest Et Muon Et",              100, 0.0, 8000);
+    m_muonSecondHighestEt =             m_histoFolder.make<TH1D>("muonSecondHighestEt", "Second Highest Et Muon Et", 100, 0.0, 8000);
 
-    m_parton1Eta =             new TH1D("parton1Eta", "Parton 1 Eta",                        100, -4.0, 4.0);
-    m_parton2Eta =             new TH1D("parton2Eta", "Parton 2 Eta",                        100, -4.0, 4.0);
-    m_muonHighestEtEta =       new TH1D("muonHighestEtEta", "Highest Et muon eta",           100, -4.0, 4.0);
-    m_muonSecondHighestEtEta = new TH1D("muonSecondHighestEtEta", "2nd Highest Et muon eta", 100, -4.0, 4.0);
+    m_parton1Eta =                      m_histoFolder.make<TH1D>("parton1Eta", "Parton 1 Eta",                        100, -4.0, 4.0);
+    m_parton2Eta =                      m_histoFolder.make<TH1D>("parton2Eta", "Parton 2 Eta",                        100, -4.0, 4.0);
+    m_muonHighestEtEta =                m_histoFolder.make<TH1D>("muonHighestEtEta", "Highest Et muon eta",           100, -4.0, 4.0);
+    m_muonSecondHighestEtEta =          m_histoFolder.make<TH1D>("muonSecondHighestEtEta", "2nd Highest Et muon eta", 100, -4.0, 4.0);
 
-    m_dRparton1parton2 = new TH1D("dRparton1parton2", "deltaR between partons",         100, 0.0, 12.0);
-    m_dRmuon1muon2 =     new TH1D("dRmuon1muon2", "deltaR between muons",               100, 0.0, 12.0);
-    m_dRparton1muon2 =   new TH1D("dRparton1muon2", "deltaR between parton1 and muon2", 100, 0.0, 12.0);
-    m_dRparton1muon1 =   new TH1D("dRparton1muon1", "deltaR between parton1 and muon1", 100, 0.0, 12.0);
-    m_dRparton2muon2 =   new TH1D("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0);
-    m_dRparton2muon1 =   new TH1D("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0);
+    m_dRparton1parton2 =                m_histoFolder.make<TH1D>("dRparton1parton2", "deltaR between partons",         100, 0.0, 12.0);
+    m_dRmuon1muon2 =                    m_histoFolder.make<TH1D>("dRmuon1muon2", "deltaR between muons",               100, 0.0, 12.0);
+    m_dRparton1muon2 =                  m_histoFolder.make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2", 100, 0.0, 12.0);
+    m_dRparton1muon1 =                  m_histoFolder.make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1", 100, 0.0, 12.0);
+    m_dRparton2muon2 =                  m_histoFolder.make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0);
+    m_dRparton2muon1 =                  m_histoFolder.make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0);
 
-    m_firstPartonJetEtTotal =      new TH1D("firstPartonJetEtTotal", "Total Jet Et for Leading Parton",            100,0.0,8000);
-    m_secondPartonJetEtTotal =     new TH1D("secondPartonJetEtTotal","Total Jet Et for Subleading Parton",         100,0.0,8000);
-    m_firstPartonJetEtHadronic =   new TH1D("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton",      100,0.0,8000);
-    m_secondPartonJetEtHadronic =  new TH1D("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton",   100,0.0,8000);
-    m_firstPartonJetEtEM =         new TH1D("firstPartonJetEtEM", "EM Jet Et for Leading Parton",                  100,0.0,8000);
-    m_secondPartonJetEtEM =        new TH1D("secondPartonJetEtEM","EM Jet Et for Subleading Parton",               100,0.0,8000);
-    m_firstPartonJetEtInvisible =  new TH1D("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,8000);
-    m_secondPartonJetEtInvisible = new TH1D("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,8000);
+    m_firstPartonJetEtTotal =           m_histoFolder.make<TH1D>("firstPartonJetEtTotal", "Total Jet Et for Leading Parton",            100,0.0,8000);
+    m_secondPartonJetEtTotal =          m_histoFolder.make<TH1D>("secondPartonJetEtTotal","Total Jet Et for Subleading Parton",         100,0.0,8000);
+    m_firstPartonJetEtHadronic =        m_histoFolder.make<TH1D>("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton",      100,0.0,8000);
+    m_secondPartonJetEtHadronic =       m_histoFolder.make<TH1D>("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton",   100,0.0,8000);
+    m_firstPartonJetEtEM =              m_histoFolder.make<TH1D>("firstPartonJetEtEM", "EM Jet Et for Leading Parton",                  100,0.0,8000);
+    m_secondPartonJetEtEM =             m_histoFolder.make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton",               100,0.0,8000);
+    m_firstPartonJetEtInvisible =       m_histoFolder.make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,8000);
+    m_secondPartonJetEtInvisible =      m_histoFolder.make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,8000);
 
-    m_leadSubleadingJetsMuonsMass  =    new TH1D("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons",      100, 0.0,8000);
-    m_leadSubleadingPartonsMuonsMass  = new TH1D("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons",100, 0.0,8000);
+    m_leadSubleadingJetsMuonsMass  =    m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons",      100, 0.0,8000);
+    m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons",100, 0.0,8000);
 
-    m_leadSubleadingJetsMuonsPt  =      new TH1D("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons",          100, 0.0,8000);
-    m_leadSubleadingPartonsMuonsPt  =   new TH1D("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons",    100, 0.0,8000);
+    m_leadSubleadingJetsMuonsPt  =      m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons",          100, 0.0,8000);
+    m_leadSubleadingPartonsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons",    100, 0.0,8000);
 
-    m_leadSubleadingJetsMuonsEta  =     new TH1D("leadingSubleadingJetsMuonsEta","Four Object Eta of the 2 leading Jets and Muons",        100, -4.0,4.0);
-    m_leadSubleadingPartonsMuonsEta  =  new TH1D("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  100, -4.0,4.0);
+    m_leadSubleadingJetsMuonsEta  =     m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsEta","Four Object Eta of the 2 leading Jets and Muons",        100, -4.0,4.0);
+    m_leadSubleadingPartonsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  100, -4.0,4.0);
+
+
 
     
 
