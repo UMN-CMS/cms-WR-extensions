@@ -7,7 +7,7 @@ https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2786.html
 
 Pulling the code out of there and cloning this repo is enough to get started
 
-As of 21-6-17:
+As of 21-6-17 the sequence is:
 cmsrel CMSSW_8_0_25
 cd CMSSW_8_0_25/src/
 cmsenv
