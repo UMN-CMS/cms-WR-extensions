@@ -103,8 +103,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
      if (!genpass) return;
    }
 
-   std::cout << "NOTE! SAVING EVENT DATA" << std::endl;
+   std::cout << "NOTE! SAVING EVENT HISTOGRAMS" << std::endl;
    myEvent.event = iEvent.id().event();
+   m_eventsPassingExtension.fill(myEvent);
 }
   
 bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myEvent)
@@ -225,6 +226,3 @@ cmsWRextension::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
   desc.setUnknown();
   descriptions.addDefault(desc);
 }
-
-//define this as a plug-in
-DEFINE_FWK_MODULE(cmsWRextension);
