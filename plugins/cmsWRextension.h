@@ -79,7 +79,10 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       virtual void endJob() override;
       // ----------member functions---------------------
       void selectMuons(const edm::Event&, eventBits&);
-      bool selectGenParticles(const edm::Event&, eventBits&);
+      bool preSelectGen (const edm::Event&, eventBits&);
+      bool preSelectReco (const edm::Event&, eventBits&);
+      bool passWR2016 (const edm::Event&, eventBits&);
+      bool passExtension (const edm::Event&, eventBits&);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;

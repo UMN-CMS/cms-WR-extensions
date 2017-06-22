@@ -95,20 +95,25 @@ cmsWRextension::~cmsWRextension()
 void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
    eventBits myEvent;
+   
+   if (m_doGen) {
+     if(preSelectGen(iEvent, myEvent));
+     m_allEvents.fill(myEvent);    
+   } else {
+     if(preSelectReco(iEvent, myEvent));
+     m_allEvents.fill(myEvent);
+
+
+
+   }
+   if(passWR2016(iEvent, myEvent)) m_eventsPassingWR2016.fill(myEvent);
+   if(passExtension(iEvent, myEvent)) m_eventsPassingExtension.fill(myEvent);
 
    selectMuons(iEvent, myEvent);
-   bool genpass=false;
-   if (m_doGen) {
-     genpass=selectGenParticles(iEvent, myEvent);
-     if (!genpass) return;
-   }
 
-   std::cout << "NOTE! SAVING EVENT HISTOGRAMS" << std::endl;
-   myEvent.event = iEvent.id().event();
-   m_eventsPassingExtension.fill(myEvent);
 }
   
-bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myEvent)
+bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 {
    using namespace edm;
   
@@ -185,6 +190,19 @@ bool cmsWRextension::selectGenParticles(const edm::Event& iEvent, eventBits& myE
    }
    return true;
 }
+bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent) {
+  selectMuons(iEvent, myEvent);
+
+
+  return false;
+
+}
+bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
+  return false;
+}
+bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent) {
+  return false;
+}
 
 void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
 {
@@ -205,9 +223,15 @@ void
 cmsWRextension::beginJob()
 {
    edm::Service<TFileService> fs; 
-   m_allEvents.book((fs->mkdir("allEvents")), 1);           //(1) GEN ONLY PLOTS FOR NOW
-   m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1); 
-   m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1);
+   if(m_doGen) {
+     m_allEvents.book((fs->mkdir("allEvents")), 1);           //(1) GEN ONLY PLOTS FOR NOW
+     m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1); 
+     m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1);
+   } else {
+     m_allEvents.book((fs->mkdir("allEvents")), 3);           //(1) GEN ONLY PLOTS FOR NOW
+     m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3); 
+     m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3);
+   }
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
