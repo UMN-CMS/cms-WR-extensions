@@ -140,7 +140,11 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
      return false;
    }
-   //SORT GEN MUONS AND PARTONS BY ET
+   if (myGenPartons.size() != 2 || myGenMuons.size() != 2) {
+     std::cout << "ERROR! Found more than 2 partons ("<<myGenPartons.size()<<") or muons("<<myGenMuons.size()<<")."<< std::endl;
+   }
+
+  //SORT GEN MUONS AND PARTONS BY ET
    std::sort(myGenPartons.begin(),myGenPartons.end(),::wrTools::compareEtPointer);
    std::sort(myGenMuons.begin(),myGenMuons.end(),::wrTools::compareEtPointer);
 
@@ -148,27 +152,19 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    myEvent.parton1EtaVal = myGenPartons[0]->eta();
    myEvent.parton2EtVal = myGenPartons[1]->et();
    myEvent.parton2EtaVal = myGenPartons[1]->eta();
-
-
    myEvent.muonHighestEtVal = myGenMuons[0]->et();
    myEvent.muonHighestEtEtaVal = myGenMuons[0]->eta();
    myEvent.muonSecondHighestEtVal = myGenMuons[1]->et();
    myEvent.muonSecondHighestEtEtaVal = myGenMuons[1]->eta();
 
-   //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
-   //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
-   for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
-     myGenJets.push_back(&(*iJet));
-   }
-   if( myGenJets.size() < 2 ) {
-     std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 JETS"<< std::endl;
-     return false;
-   }
    //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
    if(!myEvent.passesGenCuts()) {
      std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
      return false;
    }
+
+   //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
+   //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
 
    //HERE WE COMPARE OUR EVENTS
    bool foundFirst = false;
@@ -177,22 +173,24 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    float bestSecondJetMatch = 10.0;
    reco::GenJet* firstPartonGenJet;
    reco::GenJet* secondPartonGenJet;
-   for (std::vector<reco::GenJet>::const_iterator iJet = myGenJets.begin(); iJet != myGenJets.end(); iJet++) {
-     if(bestFirstJetMatch > deltaR2(*iJet,*(myGenPartons[0]))) {
-       bestFirstJetMatch = deltaR2(*iJet,*(myGenPartons[0]));
-       if(bestFirstJetMatch <= partonJetMatchDR) {
-         firstPartonGenJet = &(*(iJet));
-         foundFirst = true;
-       }
-     }
-     if(bestSecondJetMatch > deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()))) {
-      bestSecondJetMatch = deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()));
-      if(bestSecondJetMatch <= partonJetMatchDR) {
-        secondPartonGenJet = &(*(iJet));
-        foundSecond = true;
-      }
-     }  
-     index++;
+   for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
+     // if ()
+
+     // if(bestFirstJetMatch > deltaR2(*iJet,*(myGenPartons[0]))) {
+     //   bestFirstJetMatch = deltaR2(*iJet,*(myGenPartons[0]));
+     //   if(bestFirstJetMatch <= partonJetMatchDR) {
+     //     firstPartonGenJet = &(*(iJet));
+     //     foundFirst = true;
+     //   }
+     // }
+     // if(bestSecondJetMatch > deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()))) {
+     //  bestSecondJetMatch = deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()));
+     //  if(bestSecondJetMatch <= partonJetMatchDR) {
+     //    secondPartonGenJet = &(*(iJet));
+     //    foundSecond = true;
+     //  }
+     // }  
+     // index++;
    }
    if (!foundFirst || !foundSecond) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
