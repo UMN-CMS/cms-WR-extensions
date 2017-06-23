@@ -196,16 +196,27 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      std::cout << "WARNING! DID NOT MATCH BOTH PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
    }
 
-   myEvent.firstPartonJetEtVal = firstPartonGenJet->et();
-   myEvent.firstPartonJetEtHadronicVal = firstPartonGenJet->hadEnergy();
-   myEvent.firstPartonJetEtEMVal = firstPartonGenJet->emEnergy();
-   myEvent.firstPartonJetEtInvisibleVal = firstPartonGenJet->invisibleEnergy();
-
-   myEvent.firstPartonJetEtVal = secondPartonGenJet->et();
-   myEvent.firstPartonJetEtHadronicVal = secondPartonGenJet->hadEnergy();
-   myEvent.firstPartonJetEtEMVal = secondPartonGenJet->emEnergy();
-   myEvent.firstPartonJetEtInvisibleVal = secondPartonGenJet->invisibleEnergy();
-
+   if (firstPartonGenJet!=0){
+     myEvent.firstPartonJetEtVal = firstPartonGenJet->et();
+     myEvent.firstPartonJetEtHadronicVal = firstPartonGenJet->hadEnergy();
+     myEvent.firstPartonJetEtEMVal = firstPartonGenJet->emEnergy();
+     myEvent.firstPartonJetEtInvisibleVal = firstPartonGenJet->invisibleEnergy();
+     myEvent.firstPartonJetEtaVal = firstPartonGenJet->eta();
+     myEvent.firstPartonJetPhiVal = firstPartonGenJet->phi();
+     myEvent.dRparton1jetVal= foundFirst;
+   }
+   if (secondPartonGenJet!=0 && secondPartonGenJet!=firstPartonGenJet){   
+     myEvent.secondPartonJetEtVal = secondPartonGenJet->et();
+     myEvent.secondPartonJetEtHadronicVal = secondPartonGenJet->hadEnergy();
+     myEvent.secondPartonJetEtEMVal = secondPartonGenJet->emEnergy();
+     myEvent.secondPartonJetEtInvisibleVal = secondPartonGenJet->invisibleEnergy();
+     myEvent.secondPartonJetEtaVal = secondPartonGenJet->eta();
+     myEvent.secondPartonJetPhiVal = secondPartonGenJet->phi();
+     myEvent.dRparton2jetVal= foundSecond;
+   }
+   else if (secondPartonGenJet!=0){
+     myEvent.dRparton2jetVal= foundSecond;
+   }
    return true;
 }
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent) {
