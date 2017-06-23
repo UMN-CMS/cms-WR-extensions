@@ -196,12 +196,12 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
      return false;
    }
-   myEvent.firstPartonJetEtTotalVal = firstPartonGenJet->et();
+   myEvent.firstPartonJetEtVal = firstPartonGenJet->et();
    myEvent.firstPartonJetEtHadronicVal = firstPartonGenJet->hadEnergy();
    myEvent.firstPartonJetEtEMVal = firstPartonGenJet->emEnergy();
    myEvent.firstPartonJetEtInvisibleVal = firstPartonGenJet->invisibleEnergy();
 
-   myEvent.firstPartonJetEtTotalVal = secondPartonGenJet->et();
+   myEvent.firstPartonJetEtVal = secondPartonGenJet->et();
    myEvent.firstPartonJetEtHadronicVal = secondPartonGenJet->hadEnergy();
    myEvent.firstPartonJetEtEMVal = secondPartonGenJet->emEnergy();
    myEvent.firstPartonJetEtInvisibleVal = secondPartonGenJet->invisibleEnergy();
