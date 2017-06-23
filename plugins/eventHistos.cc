@@ -51,13 +51,24 @@ eventHistos::eventHistos () {}
     m_firstPartonJetEtInvisible =       m_histoFolder.make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton",    100,0.0,8000);
     m_secondPartonJetEtInvisible =      m_histoFolder.make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton", 100,0.0,8000);
 
+    m_firstPartonAK8JetEtTotal =        m_histoFolder.make<TH1D>("firstPartonAK8JetEtTotal", "Total AK8Jet Et for Leading Parton",            100,0.0,8000);
+    m_secondPartonAK8JetEtTotal =       m_histoFolder.make<TH1D>("secondPartonAK8JetEtTotal","Total AK8Jet Et for Subleading Parton",         100,0.0,8000);
+    m_firstPartonAK8JetEtHadronic =     m_histoFolder.make<TH1D>("firstPartonAK8JetEtHadronic", "Hadronic AK8Jet Et for Leading Parton",      100,0.0,8000);
+    m_secondPartonAK8JetEtHadronic =    m_histoFolder.make<TH1D>("secondPartonAK8JetEtHadronic","Hadronic AK8Jet Et for Subleading Parton",   100,0.0,8000);
+    m_firstPartonAK8JetEtEM =           m_histoFolder.make<TH1D>("firstPartonAK8JetEtEM", "EM AK8Jet Et for Leading Parton",                  100,0.0,8000);
+    m_secondPartonAK8JetEtEM =          m_histoFolder.make<TH1D>("secondPartonAK8JetEtEM","EM AK8Jet Et for Subleading Parton",               100,0.0,8000);
+    m_firstPartonAK8JetEtInvisible =    m_histoFolder.make<TH1D>("firstPartonAK8JetEtInvisible", "Invisible AK8Jet Et for Leading Parton",    100,0.0,8000);
+    m_secondPartonAK8JetEtInvisible =   m_histoFolder.make<TH1D>("secondPartonAK8JetEtInvisible","Invisible AK8Jet Et for Subleading Parton", 100,0.0,8000);
+
+
     m_leadSubleadingJetsMuonsMass  =    m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons",      100, 0.0,8000);
+    m_leadSubleadingAK8JetsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsMass","Four Object Mass of the 2 leading AK8Jets and Muons",100, 0.0,8000);
     m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons",100, 0.0,8000);
 
-    m_leadSubleadingJetsMuonsPt  =      m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons",          100, 0.0,8000);
+    m_leadSubleadingAK8JetsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsPt","Four Object Pt of the 2 leading AK8Jets and Muons",    100, 0.0,8000);
     m_leadSubleadingPartonsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons",    100, 0.0,8000);
 
-    m_leadSubleadingJetsMuonsEta  =     m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsEta","Four Object Eta of the 2 leading Jets and Muons",        100, -4.0,4.0);
+    m_leadSubleadingAK8JetsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsEta","Four Object Eta of the 2 leading AK8Jets and Muons",  100, -4.0,4.0);
     m_leadSubleadingPartonsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  100, -4.0,4.0);
 
 
@@ -124,14 +135,25 @@ void eventHistos::fillGen(eventBits& event) {
   m_firstPartonJetEtInvisible->Fill(event.firstPartonJetEtInvisibleVal);
   m_secondPartonJetEtInvisible->Fill(event.secondPartonJetEtInvisibleVal);
   
+
+  m_firstPartonAK8JetEtTotal->Fill(event.firstPartonAK8JetEtTotalVal);
+  m_secondPartonAK8JetEtTotal->Fill(event.secondPartonAK8JetEtTotalVal);
+  m_firstPartonAK8JetEtHadronic->Fill(event.firstPartonAK8JetEtHadronicVal);
+  m_secondPartonAK8JetEtHadronic->Fill(event.secondPartonAK8JetEtHadronicVal);
+  m_firstPartonAK8JetEtEM->Fill(event.firstPartonAK8JetEtEMVal);
+  m_secondPartonAK8JetEtEM->Fill(event.secondPartonAK8JetEtEMVal);
+  m_firstPartonAK8JetEtInvisible->Fill(event.firstPartonAK8JetEtInvisibleVal);
+  m_secondPartonAK8JetEtInvisible->Fill(event.secondPartonAK8JetEtInvisibleVal);
+
   m_leadSubleadingPartonsMuonsMassVal->Fill(event.leadSubleadingPartonsMuonsMassVal);
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal);
+  m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal);
 
   m_leadSubleadingPartonsMuonsPtVal->Fill(event.leadSubleadingPartonsMuonsPtVal);
-  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal);
+  m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal);
 
   m_leadSubleadingPartonsMuonsEtaVal->Fill(event.leadSubleadingPartonsMuonsEtaVal):
-  m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal);
+  m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal);
 
 
 
