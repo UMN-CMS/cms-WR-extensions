@@ -2,6 +2,8 @@
 #define eventBits_h
 
 #include <stdint.h>
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
 
 class eventBits {
 public:
@@ -15,6 +17,12 @@ public:
 
   //BASIC FUNCTIONS
   bool passesGenCuts();
+
+  //EVENT COLLECTIONS
+  std::vector<const reco::GenJet*> myGenJets;
+  std::vector<const reco::GenJet*> myAK8GenJets;
+  std::vector<const reco::GenParticle*> myGenPartons;
+  std::vector<const reco::GenParticle*> myGenMuons;
 
   //EVENT VALUES
   double parton1EtVal;
@@ -50,6 +58,8 @@ public:
   double dRparton1muon1Val;
   double dRparton2muon2Val;
   double dRparton2muon1Val;
+  double dRparton1jetVal;
+  double dRparton2jetVal;
 
   double firstPartonJetEtHadronicVal;
   double secondPartonJetEtHadronicVal;
@@ -68,14 +78,17 @@ public:
   double leadSubleadingAK8JetsMuonsMassVal;
   double leadSubleadingJetsMuonsMassVal;
   double leadSubleadingPartonsMuonsMassVal;
+  double leadAK8JetMuonMassVal;
 
   double leadSubleadingAK8JetsMuonsPtVal;
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
+  double leadAK8JetMuonPtVal;
 
   double leadSubleadingAK8JetsMuonsEtaVal;
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
+  double leadAK8JetMuonEtaVal;
   
 
 private:

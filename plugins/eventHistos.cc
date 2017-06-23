@@ -38,12 +38,14 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_muonHighestEtEta =                m_histoFolder.make<TH1D>("muonHighestEtEta", "Highest Et muon eta",           100, -4.0, 4.0);
     m_muonSecondHighestEtEta =          m_histoFolder.make<TH1D>("muonSecondHighestEtEta", "2nd Highest Et muon eta", 100, -4.0, 4.0);
 
-    m_dRparton1parton2 =                m_histoFolder.make<TH1D>("dRparton1parton2", "deltaR between partons",         100, 0.0, 12.0);
-    m_dRmuon1muon2 =                    m_histoFolder.make<TH1D>("dRmuon1muon2", "deltaR between muons",               100, 0.0, 12.0);
-    m_dRparton1muon2 =                  m_histoFolder.make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2", 100, 0.0, 12.0);
-    m_dRparton1muon1 =                  m_histoFolder.make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1", 100, 0.0, 12.0);
-    m_dRparton2muon2 =                  m_histoFolder.make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2", 100, 0.0, 12.0);
-    m_dRparton2muon1 =                  m_histoFolder.make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1", 100, 0.0, 12.0);
+    m_dRparton1parton2 =                m_histoFolder.make<TH1D>("dRparton1parton2", "deltaR between partons",             100, 0.0, 12.0);
+    m_dRmuon1muon2 =                    m_histoFolder.make<TH1D>("dRmuon1muon2", "deltaR between muons",                   100, 0.0, 12.0);
+    m_dRparton1muon2 =                  m_histoFolder.make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2",     100, 0.0, 12.0);
+    m_dRparton1muon1 =                  m_histoFolder.make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1",     100, 0.0, 12.0);
+    m_dRparton2muon2 =                  m_histoFolder.make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2",     100, 0.0, 12.0);
+    m_dRparton2muon1 =                  m_histoFolder.make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1",     100, 0.0, 12.0);
+    m_dRparton1jet =                    m_histoFolder.make<TH1D>("dRparton1jet", "deltaR between parton1 and closest jet", 100, 0.0, 12.0);
+    m_dRparton2jet =                    m_histoFolder.make<TH1D>("dRparton2jet", "deltaR between parton2 and closest jet", 100, 0.0, 12.0);
 
     m_firstPartonJetEt =                m_histoFolder.make<TH1D>("firstPartonJetEt", " Jet Et for Leading Parton",            100,0.0,8000);
     m_secondPartonJetEt =               m_histoFolder.make<TH1D>("secondPartonJetEt"," Jet Et for Subleading Parton",         100,0.0,8000);
@@ -67,12 +69,17 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_leadSubleadingJetsMuonsMass  =    m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons",      100, 0.0,8000);
     m_leadSubleadingAK8JetsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsMass","Four Object Mass of the 2 leading AK8Jets and Muons",100, 0.0,8000);
     m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons",100, 0.0,8000);
+    m_leadAK8JetMuonMass  =             m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon"                         ,100, 0.0,8000);
 
+    m_leadSubleadingJetsMuonsPt  =      m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons",          100, 0.0,8000);
     m_leadSubleadingAK8JetsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsPt","Four Object Pt of the 2 leading AK8Jets and Muons",    100, 0.0,8000);
     m_leadSubleadingPartonsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons",    100, 0.0,8000);
+    m_leadAK8JetMuonPt  =               m_histoFolder.make<TH1D>("leadAK8JetMuonPt","2 Object Pt of the leading Jet and Muon"                             ,100, 0.0,8000);
 
+    m_leadSubleadingJetsMuonsEta  =     m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsEta","Four Object Eta of the 2 leading Jets and Muons",        100, -4.0,4.0);
     m_leadSubleadingAK8JetsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsEta","Four Object Eta of the 2 leading AK8Jets and Muons",  100, -4.0,4.0);
     m_leadSubleadingPartonsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  100, -4.0,4.0);
+    m_leadAK8JetMuonEta  =              m_histoFolder.make<TH1D>("leadAK8JetMuonEta","2 Object Eta of the leading Jet and Muon"                           ,100, -4.0,4.0);
 
 
 
@@ -145,6 +152,10 @@ void eventHistos::fillGen(eventBits& event) {
   m_dRparton1muon1->Fill(event.dRparton1muon1Val);
   m_dRparton2muon2->Fill(event.dRparton2muon2Val);
   m_dRparton2muon1->Fill(event.dRparton2muon1Val);
+  m_dRparton1jet->Fill(event.dRparton1jetVal);
+  m_dRparton2jet->Fill(event.dRparton2jetVal);
+
+
 
   m_firstPartonJetEtHadronic->Fill(event.firstPartonJetEtHadronicVal);
   m_secondPartonJetEtHadronic->Fill(event.secondPartonJetEtHadronicVal);
@@ -164,12 +175,17 @@ void eventHistos::fillGen(eventBits& event) {
   m_leadSubleadingPartonsMuonsMass->Fill(event.leadSubleadingPartonsMuonsMassVal);
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal);
   m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal);
+  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal);
 
+  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal);
   m_leadSubleadingPartonsMuonsPt->Fill(event.leadSubleadingPartonsMuonsPtVal);
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal);
+  m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal);
 
+  m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal);
   m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal);
   m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal);
+  m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal);
 
 
 
