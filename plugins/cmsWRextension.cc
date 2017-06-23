@@ -125,9 +125,9 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    Handle<std::vector<reco::GenJet>> genJets;
    iEvent.getByToken(m_genJetsToken, genJets);
 
-   std::vector<reco::GenJet*> myGenJets;
-   std::vector<reco::GenParticle*> myGenPartons;
-   std::vector<reco::GenParticle*> myGenMuons;
+   std::vector<const reco::GenJet*> myGenJets;
+   std::vector<const reco::GenParticle*> myGenPartons;
+   std::vector<const reco::GenParticle*> myGenMuons;
 
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {

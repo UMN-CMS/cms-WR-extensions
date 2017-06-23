@@ -1,6 +1,9 @@
 #include "eventHistos.h"
 #include "DataFormats/Math/interface/deltaR.h"
-#include "CommonTools/Utils/interface/T
+#include "CommonTools/Utils/interface/TFileDirectory.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+
 #include "TH2D.h"
 //C++ CLASSES
 #include <iostream>
@@ -17,7 +20,7 @@ eventHistos::eventHistos () {}
 
 
 
- void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
+void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 
   //CREATED FOLDER IN HISTO
   m_flavor = flavor;
