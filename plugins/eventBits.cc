@@ -38,6 +38,21 @@ eventBits::eventBits() {
 
   leadSubleadingJetsMuonsEtaVal = 0.0;
   leadSubleadingPartonsMuonsEtaVal = 0.0;
+  firstPartonJetEtTotalVal = 0.0;
+
+  secondPartonAK8JetEtTotalVal = 0.0;
+  firstPartonAK8JetEtHadronicVal = 0.0;
+  secondPartonAK8JetEtHadronicVal = 0.0;
+  firstPartonAK8JetEtEMVal = 0.0;
+  secondPartonAK8JetEtEMVal = 0.0;
+  firstPartonAK8JetEtInvisibleVal = 0.0;
+  secondPartonAK8JetEtInvisibleVal = 0.0;
+
+  leadSubleadingAK8JetsMuonsMassVal = 0.0;
+
+  leadSubleadingAK8JetsMuonsPtVal = 0.0;
+
+  leadSubleadingAK8JetsMuonsEtaVal = 0.0;
 
 
 
@@ -82,6 +97,20 @@ void eventBits::clear() {
 
   leadSubleadingJetsMuonsEtaVal = 0.0;
   leadSubleadingPartonsMuonsEtaVal = 0.0;
+
+  secondPartonAK8JetEtTotalVal = 0.0;
+  firstPartonAK8JetEtHadronicVal = 0.0;
+  secondPartonAK8JetEtHadronicVal = 0.0;
+  firstPartonAK8JetEtEMVal = 0.0;
+  secondPartonAK8JetEtEMVal = 0.0;
+  firstPartonAK8JetEtInvisibleVal = 0.0;
+  secondPartonAK8JetEtInvisibleVal = 0.0;
+
+  leadSubleadingAK8JetsMuonsMassVal = 0.0;
+
+  leadSubleadingAK8JetsMuonsPtVal = 0.0;
+
+  leadSubleadingAK8JetsMuonsEtaVal = 0.0;
 
 
 
