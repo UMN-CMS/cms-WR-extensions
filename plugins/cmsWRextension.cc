@@ -169,33 +169,24 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    //HERE WE COMPARE OUR EVENTS
    bool foundFirst = false;
    bool foundSecond = false;
-   float bestFirstJetMatch = 10.0;
-   float bestSecondJetMatch = 10.0;
-   reco::GenJet* firstPartonGenJet;
-   reco::GenJet* secondPartonGenJet;
    for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
-     // if ()
+     if (iJet->et()<20.0) continue;
+     bool match1=(deltaR2(iJet,*(myGenPartons[0]))<partonJetMatchDR) ? true : false;
+     bool match2=(deltaR2(iJet,*(myGenPartons[1]))<partonJetMatchDR) ? true : false;
+     if (match1 || match2) myGenJets.push_back(&(*iJet));
 
-     // if(bestFirstJetMatch > deltaR2(*iJet,*(myGenPartons[0]))) {
-     //   bestFirstJetMatch = deltaR2(*iJet,*(myGenPartons[0]));
-     //   if(bestFirstJetMatch <= partonJetMatchDR) {
-     //     firstPartonGenJet = &(*(iJet));
-     //     foundFirst = true;
-     //   }
-     // }
-     // if(bestSecondJetMatch > deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()))) {
-     //  bestSecondJetMatch = deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()));
-     //  if(bestSecondJetMatch <= partonJetMatchDR) {
-     //    secondPartonGenJet = &(*(iJet));
-     //    foundSecond = true;
-     //  }
-     // }  
-     // index++;
+     if (match1 && foundFirst || match2 && foundSecond){
+       std::cout << "WARNING: multiple gen jets matched to the same parton"<< std::endl;
+     }
+     
+     if (match1) foundFirst=true;
+     if (match2) foundSecond=true;
    }
+
    if (!foundFirst || !foundSecond) {
-     std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
-     return false;
+     std::cout << "WARNING! DID NOT MATCH BOTH PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
    }
+
    myEvent.firstPartonJetEtTotalVal = firstPartonGenJet->et();
    myEvent.firstPartonJetEtHadronicVal = firstPartonGenJet->hadEnergy();
    myEvent.firstPartonJetEtEMVal = firstPartonGenJet->emEnergy();
