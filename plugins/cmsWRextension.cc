@@ -167,25 +167,35 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
 
    //HERE WE COMPARE OUR EVENTS
-   bool foundFirst = false;
-   bool foundSecond = false;
+   double foundFirst = partonJetMatchDR;
+   double foundSecond = partonJetMatchDR;
+   const reco::GenJet* firstPartonGenJet=0; 
+   const reco::GenJet* secondPartonGenJet=0; 
+
    for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
      if (iJet->et()<20.0) continue;
-     bool match1=(deltaR2(iJet,*(myGenPartons[0]))<partonJetMatchDR) ? true : false;
-     bool match2=(deltaR2(iJet,*(myGenPartons[1]))<partonJetMatchDR) ? true : false;
-     if (match1 || match2) myGenJets.push_back(&(*iJet));
+     float match1=deltaR2(*iJet,*(myGenPartons[0]))<partonJetMatchDR;
+     float match2=deltaR2(*iJet,*(myGenPartons[1]))<partonJetMatchDR;
+     if (match1<partonJetMatchDR || match2<partonJetMatchDR) myGenJets.push_back(&(*iJet));
 
-     if (match1 && foundFirst || match2 && foundSecond){
+     if ((match1<partonJetMatchDR && foundFirst<partonJetMatchDR) || (match2<partonJetMatchDR && foundSecond<partonJetMatchDR)){
        std::cout << "WARNING: multiple gen jets matched to the same parton"<< std::endl;
      }
      
-     if (match1) foundFirst=true;
-     if (match2) foundSecond=true;
+     if (match1<foundFirst) {
+       foundFirst=match1;
+       firstPartonGenJet=&(*(iJet));
+     }
+     if (match2<foundSecond) {
+       foundSecond=match2;
+       secondPartonGenJet=&(*(iJet));
+     }
    }
 
-   if (!foundFirst || !foundSecond) {
+   if (!(foundFirst<0.5) || !(foundSecond<0.5)) {
      std::cout << "WARNING! DID NOT MATCH BOTH PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
    }
+
    myEvent.firstPartonJetEtVal = firstPartonGenJet->et();
    myEvent.firstPartonJetEtHadronicVal = firstPartonGenJet->hadEnergy();
    myEvent.firstPartonJetEtEMVal = firstPartonGenJet->emEnergy();
