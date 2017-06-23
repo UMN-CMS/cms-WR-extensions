@@ -21,11 +21,28 @@ public:
   double parton2EtVal;
   double muonHighestEtVal;
   double muonSecondHighestEtVal;
+  double firstPartonJetEtVal;
+  double secondPartonJetEtVal;
+  double firstPartonAK8JetEtVal;
+  double secondPartonAK8JetEtVal;
 
   double parton1EtaVal;
   double parton2EtaVal;
   double muonHighestEtEtaVal;
   double muonSecondHighestEtEtaVal;
+  double firstPartonJetEtaVal;
+  double secondPartonJetEtaVal;
+  double firstPartonAK8JetEtaVal;
+  double secondPartonAK8JetEtaVal;
+
+  double parton1PhiVal;
+  double parton2PhiVal;
+  double muonHighestEtPhiVal;
+  double muonSecondHighestEtPhiVal;
+  double firstPartonJetPhiVal;
+  double secondPartonJetPhiVal;
+  double firstPartonAK8JetPhiVal;
+  double secondPartonAK8JetPhiVal;
 
   double dRparton1parton2Val;
   double dRmuon1muon2Val;
@@ -34,8 +51,6 @@ public:
   double dRparton2muon2Val;
   double dRparton2muon1Val;
 
-  double firstPartonJetEtTotalVal;
-  double secondPartonJetEtTotalVal;
   double firstPartonJetEtHadronicVal;
   double secondPartonJetEtHadronicVal;
   double firstPartonJetEtEMVal;
@@ -43,8 +58,6 @@ public:
   double firstPartonJetEtInvisibleVal;
   double secondPartonJetEtInvisibleVal;
 
-  double firstPartonAK8JetEtTotalVal;
-  double secondPartonAK8JetEtTotalVal;
   double firstPartonAK8JetEtHadronicVal;
   double secondPartonAK8JetEtHadronicVal;
   double firstPartonAK8JetEtEMVal;

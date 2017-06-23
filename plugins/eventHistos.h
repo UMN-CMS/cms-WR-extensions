@@ -42,11 +42,28 @@ class eventHistos {
   TH1D* m_parton2Et;
   TH1D* m_muonHighestEt;
   TH1D* m_muonSecondHighestEt;
+  TH1D* m_firstPartonJetEt;
+  TH1D* m_secondPartonJetEt;
+  TH1D* m_firstPartonAK8JetEt;
+  TH1D* m_secondPartonAK8JetEt;
 
   TH1D* m_parton1Eta;
   TH1D* m_parton2Eta;
   TH1D* m_muonHighestEtEta;
   TH1D* m_muonSecondHighestEtEta;
+  TH1D* m_firstPartonJetEta;
+  TH1D* m_secondPartonJetEta;
+  TH1D* m_firstPartonAK8JetEta;
+  TH1D* m_secondPartonAK8JetEta;
+
+  TH1D* m_parton1Phi;
+  TH1D* m_parton2Phi;
+  TH1D* m_muonHighestEtPhi;
+  TH1D* m_muonSecondHighestEtPhi;
+  TH1D* m_firstPartonJetPhi;
+  TH1D* m_secondPartonJetPhi;
+  TH1D* m_firstPartonAK8JetPhi;
+  TH1D* m_secondPartonAK8JetPhi;
 
   TH1D* m_dRparton1parton2;
   TH1D* m_dRmuon1muon2;
@@ -55,8 +72,6 @@ class eventHistos {
   TH1D* m_dRparton2muon2;
   TH1D* m_dRparton2muon1;
 
-  TH1D* m_firstPartonJetEtTotal;
-  TH1D* m_secondPartonJetEtTotal;
   TH1D* m_firstPartonJetEtHadronic;
   TH1D* m_secondPartonJetEtHadronic;
   TH1D* m_firstPartonJetEtEM;
@@ -64,8 +79,6 @@ class eventHistos {
   TH1D* m_firstPartonJetEtInvisible;
   TH1D* m_secondPartonJetEtInvisible;
 
-  TH1D* m_firstPartonAK8JetEtTotal;
-  TH1D* m_secondPartonAK8JetEtTotal;
   TH1D* m_firstPartonAK8JetEtHadronic;
   TH1D* m_secondPartonAK8JetEtHadronic;
   TH1D* m_firstPartonAK8JetEtEM;
