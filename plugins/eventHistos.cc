@@ -1,6 +1,6 @@
 #include "eventHistos.h"
 #include "DataFormats/Math/interface/deltaR.h"
-#include "CommonTools/Utils/interface/TFileDirectory.h"
+#include "CommonTools/Utils/interface/T
 #include "TH2D.h"
 //C++ CLASSES
 #include <iostream>
@@ -17,9 +17,9 @@ eventHistos::eventHistos () {}
 
 
 
-void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
+ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 
-  //CREATED FOLDER IN HISTOFILE WITH FLAVOR SPECIFIED
+  //CREATED FOLDER IN HISTO
   m_flavor = flavor;
   m_histoFolder = histoFolder;
 
@@ -82,62 +82,61 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 
 }
 void eventHistos::fill(eventBits& event) {
-  if(m_flavor == 1) fillGen(event);
-  else if(m_flavor == 2) fillReco(event);
+  if(m_flavor == 1) 
+  else if(m_flavor == 2) 
   else if(m_flavor == 3) {
-    fillGen(event);
-    fillReco(event);
+    
+    
   }
   else return;
 }
 
-//SPECIFIC FILLER CLASSES
+//SPECIFIC 
 void eventHistos::fillGen(eventBits& event) {
   std::cout << "Making GEN plots" << std::endl;
   if(!(event.passesGenCuts())) {
     std::cout << "ERROR! THIS EVENT SHOULD HAVE FAILED" <<std::endl;
     return;
   }
-  m_parton1Et->Fill(event.getHighestEtParton()->et());
-  m_parton2Et->Fill(event.getSecondHighestEtParton()->et());
-  m_muonHighestEt->Fill(event.getHighestEtMuon()->et());
-  m_muonSecondHighestEt->Fill(event.getSecondHighestEtMuon()->et());
+  m_parton1Et->Fill(event.parton1EtVal);
+  m_parton2Et->Fill(event.parton2EtVal);
+  m_muonHighestEt->Fill(event.muonHighestEtVal);
+  m_muonSecondHighestEt->Fill(event.muonSecondHighestEtVal);
 
-  m_parton1Eta->Fill(event.getHighestEtParton()->eta());
-  m_parton2Eta->Fill(event.getSecondHighestEtParton()->eta());
-  m_muonHighestEtEta->Fill(event.getHighestEtMuon()->eta());
-  m_muonSecondHighestEtEta->Fill(event.getSecondHighestEtMuon()->eta());
+  m_parton1Eta->Fill(event.parton1EtaVal);
+  m_parton2Eta->Fill(event.parton2EtaVal);
+  m_muonHighestEtEta->Fill(event.muonHighestEtEtaVal);
+  m_muonSecondHighestEtEta->Fill(event.muonSecondHighestEtEtaVal);
 
-  m_dRparton1parton2->Fill(deltaR2(*(event.getHighestEtParton()),*(event.getSecondHighestEtParton())));
-  m_dRmuon1muon2->Fill(deltaR2(*(event.getHighestEtMuon()),*(event.getSecondHighestEtMuon())));
-  m_dRparton1muon2->Fill(deltaR2(*(event.getHighestEtParton()),*(event.getSecondHighestEtMuon())));
-  m_dRparton1muon1->Fill(deltaR2(*(event.getHighestEtParton()),*(event.getHighestEtMuon())));
-  m_dRparton2muon2->Fill(deltaR2(*(event.getSecondHighestEtParton()),*(event.getSecondHighestEtMuon())));
-  m_dRparton2muon1->Fill(deltaR2(*(event.getSecondHighestEtParton()),*(event.getHighestEtMuon())));
+  m_dRparton1parton2->Fill(event.dRparton1parton2Val);
+  m_dRmuon1muon2->Fill(event.dRmuon1muon2Val);
+  m_dRparton1muon2->Fill(event.dRparton1muon2Val);
+  m_dRparton1muon1->Fill(event.dRparton1muon1Val);
+  m_dRparton2muon2->Fill(event.dRparton2muon2Val);
+  m_dRparton2muon1->Fill(event.dRparton2muon1Val);
 
-  m_firstPartonJetEtTotal->Fill(event.getFirstPartonGenJet()->et());   
-  m_secondPartonJetEtTotal->Fill(event.getSecondPartonGenJet()->et());  
-  m_firstPartonJetEtHadronic->Fill(event.getFirstPartonGenJet()->hadEnergy());
-  m_secondPartonJetEtHadronic->Fill(event.getSecondPartonGenJet()->hadEnergy());
-  m_firstPartonJetEtEM->Fill(event.getFirstPartonGenJet()->emEnergy());      
-  m_secondPartonJetEtEM->Fill(event.getSecondPartonGenJet()->emEnergy());     
-  m_firstPartonJetEtInvisible->Fill(event.getFirstPartonGenJet()->invisibleEnergy());
-  m_secondPartonJetEtInvisible->Fill(event.getSecondPartonGenJet()->invisibleEnergy());
+  m_firstPartonJetEtTotal->Fill(event.firstPartonJetEtTotalVal);
+  m_secondPartonJetEtTotal->Fill(event.secondPartonJetEtTotalVal);
+  m_firstPartonJetEtHadronic->Fill(event.firstPartonJetEtHadronicVal);
+  m_secondPartonJetEtHadronic->Fill(event.secondPartonJetEtHadronicVal);
+  m_firstPartonJetEtEM->Fill(event.firstPartonJetEtEMVal);
+  m_secondPartonJetEtEM->Fill(event.secondPartonJetEtEMVal);
+  m_firstPartonJetEtInvisible->Fill(event.firstPartonJetEtInvisibleVal);
+  m_secondPartonJetEtInvisible->Fill(event.secondPartonJetEtInvisibleVal);
+  
+  m_leadSubleadingPartonsMuonsMassVal->Fill(event.leadSubleadingPartonsMuonsMassVal);
+  m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal);
 
-  m_leadSubleadingPartonsMuonsMass->Fill((event.getHighestEtParton()->p4()+event.getSecondHighestEtParton()->p4()+event.getHighestEtMuon()->p4()+event.getSecondHighestEtMuon()->p4()).mass());
-  m_leadSubleadingJetsMuonsMass->Fill((event.getSecondPartonGenJet()->p4()+event.getFirstPartonGenJet()->p4()+event.getHighestEtMuon()->p4()+event.getSecondHighestEtMuon()->p4()).mass());
+  m_leadSubleadingPartonsMuonsPtVal->Fill(event.leadSubleadingPartonsMuonsPtVal);
+  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal);
 
-  m_leadSubleadingPartonsMuonsPt->Fill((event.getHighestEtParton()->p4()+event.getSecondHighestEtParton()->p4()+event.getHighestEtMuon()->p4()+event.getSecondHighestEtMuon()->p4()).pt());
-  m_leadSubleadingJetsMuonsPt->Fill((event.getSecondPartonGenJet()->p4()+event.getFirstPartonGenJet()->p4()+event.getHighestEtMuon()->p4()+event.getSecondHighestEtMuon()->p4()).pt());
-
-  m_leadSubleadingPartonsMuonsEta->Fill((event.getHighestEtParton()->p4()+event.getSecondHighestEtParton()->p4()+event.getHighestEtMuon()->p4()+event.getSecondHighestEtMuon()->p4()).eta());
-  m_leadSubleadingJetsMuonsEta->Fill((event.getSecondPartonGenJet()->p4()+event.getFirstPartonGenJet()->p4()+event.getHighestEtMuon()->p4()+event.getSecondHighestEtMuon()->p4()).eta());
+  m_leadSubleadingPartonsMuonsEtaVal->Fill(event.leadSubleadingPartonsMuonsEtaVal):
+  m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal);
 
 
 
 }
 void eventHistos::fillReco(eventBits& event) {
-
 
 
 }

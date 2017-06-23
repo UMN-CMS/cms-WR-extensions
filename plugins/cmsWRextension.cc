@@ -125,31 +125,37 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    Handle<std::vector<reco::GenJet>> genJets;
    iEvent.getByToken(m_genJetsToken, genJets);
 
+   std::vector<reco::GenJet*> myGenJets;
+   std::vector<reco::GenParticle*> myGenPartons;
+   std::vector<reco::GenParticle*> myGenMuons;
+
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-     if((iParticle->isHardProcess() && iParticle->status() == 23) && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myEvent.outgoingPartons.push_back((*iParticle));
-     if(((iParticle->isLastCopy()&&!m_wantHardProcessMuons) || iParticle->isHardProcess()) && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myEvent.outgoingMuons.push_back((*iParticle));
+     if((iParticle->isHardProcess() && iParticle->status() == 23) && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myGenPartons.push_back(&(*iParticle));
+     if(((iParticle->isLastCopy()&&!m_wantHardProcessMuons) || iParticle->isHardProcess()) && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myGenMuons.push_back(&(*iParticle));
    }
    //CHECK THAT THE EVENT MAKES SENSE
-   if (myEvent.outgoingPartons.size() < 2 || myEvent.outgoingMuons.size() < 2) {
+   if (myGenPartons.size() < 2 || myGenMuons.size() < 2) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
      return false;
    }
-   //SORT GEN MUONS AND PARTONS BY ET
-   std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
-   std::sort(myEvent.outgoingMuons.begin(),myEvent.outgoingMuons.end(),::wrTools::compareEt);
-
-   //CHECK THAT THE EVENT MAKES SENSE
-   if (myEvent.outgoingPartons.size() != 2 || myEvent.outgoingMuons.size() != 2) {
-     std::cout << "ERROR! Found more than 2 partons ("<<myEvent.outgoingPartons.size()<<") or muons("<<myEvent.outgoingMuons.size()<<")."<< std::endl;
+   if (myGenPartons.size() != 2 || myGenMuons.size() != 2) {
+     std::cout << "ERROR! Found more than 2 partons ("<<myGenPartons.size()<<") or muons("<<myGenMuons.size()<<")."<< std::endl;
    }
 
-   myEvent.setHighestEtParton(0);
-   myEvent.setSecondHighestEtParton(1);
+  //SORT GEN MUONS AND PARTONS BY ET
+   std::sort(myGenPartons.begin(),myGenPartons.end(),::wrTools::compareEtPointer);
+   std::sort(myGenMuons.begin(),myGenMuons.end(),::wrTools::compareEtPointer);
 
-   myEvent.setHighestEtMuon(0);
-   myEvent.setSecondHighestEtMuon(1);
+   myEvent.parton1EtVal = myGenPartons[0]->et();
+   myEvent.parton1EtaVal = myGenPartons[0]->eta();
+   myEvent.parton2EtVal = myGenPartons[1]->et();
+   myEvent.parton2EtaVal = myGenPartons[1]->eta();
+   myEvent.muonHighestEtVal = myGenMuons[0]->et();
+   myEvent.muonHighestEtEtaVal = myGenMuons[0]->eta();
+   myEvent.muonSecondHighestEtVal = myGenMuons[1]->et();
+   myEvent.muonSecondHighestEtEtaVal = myGenMuons[1]->eta();
 
    //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
    if(!myEvent.passesGenCuts()) {
@@ -159,41 +165,47 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
    //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
    //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
-   for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
-     myEvent.genJets.push_back(*iJet);
-   }
-   if( myEvent.genJets.size() < 2 ) {
-     std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 JETS"<< std::endl;
-     return false;
-   }
 
    //HERE WE COMPARE OUR EVENTS
    bool foundFirst = false;
    bool foundSecond = false;
    float bestFirstJetMatch = 10.0;
    float bestSecondJetMatch = 10.0;
-   int index = 0;
-   for (std::vector<reco::GenJet>::const_iterator iJet = myEvent.genJets.begin(); iJet != myEvent.genJets.end(); iJet++) {
-     if(bestFirstJetMatch > deltaR2(*iJet,*(myEvent.getHighestEtParton()))) {
-       bestFirstJetMatch = deltaR2(*iJet,*(myEvent.getHighestEtParton()));
-       if(bestFirstJetMatch <= partonJetMatchDR) {
-         myEvent.setFirstPartonGenJet(index);
-         foundFirst = true;
-       }
-     }
-     if(bestSecondJetMatch > deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()))) {
-      bestSecondJetMatch = deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()));
-      if(bestSecondJetMatch <= partonJetMatchDR) {
-        myEvent.setSecondPartonGenJet(index);
-        foundSecond = true;
-      }
-     }  
-     index++;
+   reco::GenJet* firstPartonGenJet;
+   reco::GenJet* secondPartonGenJet;
+   for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
+     // if ()
+
+     // if(bestFirstJetMatch > deltaR2(*iJet,*(myGenPartons[0]))) {
+     //   bestFirstJetMatch = deltaR2(*iJet,*(myGenPartons[0]));
+     //   if(bestFirstJetMatch <= partonJetMatchDR) {
+     //     firstPartonGenJet = &(*(iJet));
+     //     foundFirst = true;
+     //   }
+     // }
+     // if(bestSecondJetMatch > deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()))) {
+     //  bestSecondJetMatch = deltaR2(*iJet,*(myEvent.getSecondHighestEtParton()));
+     //  if(bestSecondJetMatch <= partonJetMatchDR) {
+     //    secondPartonGenJet = &(*(iJet));
+     //    foundSecond = true;
+     //  }
+     // }  
+     // index++;
    }
    if (!foundFirst || !foundSecond) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT MATCH EITHER PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
      return false;
    }
+   myEvent.firstPartonJetEtTotalVal = firstPartonGenJet->et();
+   myEvent.firstPartonJetEtHadronicVal = firstPartonGenJet->hadEnergy();
+   myEvent.firstPartonJetEtEMVal = firstPartonGenJet->emEnergy();
+   myEvent.firstPartonJetEtInvisibleVal = firstPartonGenJet->invisibleEnergy();
+
+   myEvent.firstPartonJetEtTotalVal = secondPartonGenJet->et();
+   myEvent.firstPartonJetEtHadronicVal = secondPartonGenJet->hadEnergy();
+   myEvent.firstPartonJetEtEMVal = secondPartonGenJet->emEnergy();
+   myEvent.firstPartonJetEtInvisibleVal = secondPartonGenJet->invisibleEnergy();
+
    return true;
 }
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent) {
@@ -234,7 +246,7 @@ cmsWRextension::beginJob()
      m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1); 
      m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1);
    } else {
-     m_allEvents.book((fs->mkdir("allEvents")), 3);           //(1) GEN ONLY PLOTS FOR NOW
+     m_allEvents.book((fs->mkdir("allEvents")), 3);           //(1) GEN AND RECO PLOTS
      m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3); 
      m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3);
    }

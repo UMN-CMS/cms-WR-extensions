@@ -1,11 +1,6 @@
 #ifndef eventBits_h
 #define eventBits_h
 
-#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
-#include "DataFormats/JetReco/interface/GenJet.h"
-#include "DataFormats/PatCandidates/interface/Muon.h"
-
-#include <vector>
 
 class eventBits {
 public:
@@ -16,46 +11,48 @@ public:
   int run;
   int lumi;
   uint64_t event;
-  //Collections
-  std::vector<reco::GenParticle> outgoingPartons;
-  std::vector<reco::GenParticle> outgoingMuons;
-  std::vector<reco::GenJet>      genJets;
- 
-  std::vector<pat::Muon>         selectedMuons;
-  std::vector<pat::Muon>         MCmatchedMuons;
 
-  //indices in collections
-  const reco::GenParticle* getHighestEtMuon();
-  const reco::GenParticle* getSecondHighestEtMuon();
-
-  const reco::GenParticle* getHighestEtParton();
-  const reco::GenParticle* getSecondHighestEtParton();
-
-  const reco::GenJet* getFirstPartonGenJet();    //deltaR MATCHED
-  const reco::GenJet* getSecondPartonGenJet();
-
-  void setHighestEtMuon(uint32_t index);
-  void setSecondHighestEtMuon(uint32_t index);
-
-  void setHighestEtParton(uint32_t index);
-  void setSecondHighestEtParton(uint32_t index);
-
-  void setFirstPartonGenJet(uint32_t index);    //deltaR MATCHED
-  void setSecondPartonGenJet(uint32_t index);
-
+  //BASIC FUNCTIONS
   bool passesGenCuts();
+
+  //EVENT VALUES
+  double parton1EtVal;
+  double parton2EtVal;
+  double muonHighestEtVal;
+  double muonSecondHighestEtVal;
+
+  double parton1EtaVal;
+  double parton2EtaVal;
+  double muonHighestEtEtaVal;
+  double muonSecondHighestEtEtaVal;
+
+  double dRparton1parton2Val;
+  double dRmuon1muon2Val;
+  double dRparton1muon2Val;
+  double dRparton1muon1Val;
+  double dRparton2muon2Val;
+  double dRparton2muon1Val;
+
+  double firstPartonJetEtTotalVal;
+  double secondPartonJetEtTotalVal;
+  double firstPartonJetEtHadronicVal;
+  double secondPartonJetEtHadronicVal;
+  double firstPartonJetEtEMVal;
+  double secondPartonJetEtEMVal;
+  double firstPartonJetEtInvisibleVal;
+  double secondPartonJetEtInvisibleVal;
+
+  double leadSubleadingJetsMuonsMassVal;
+  double leadSubleadingPartonsMuonsMassVal;
+
+  double leadSubleadingJetsMuonsPtVal;
+  double leadSubleadingPartonsMuonsPtVal;
+
+  double leadSubleadingJetsMuonsEtaVal;
+  double leadSubleadingPartonsMuonsEtaVal;
+  
+
 private:
-
-  int highestEtMuon;
-  int secondHighestEtMuon;
-
-  int highestEtParton;
-  int secondHighestEtParton;
-
-  int firstPartonGenJet;    //deltaR MATCHED
-  int secondPartonGenJet;
-
-
 
 
 
