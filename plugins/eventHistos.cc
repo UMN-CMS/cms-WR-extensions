@@ -96,11 +96,11 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 
 }
 void eventHistos::fill(eventBits& event) {
-  if(m_flavor == 1) 
-  else if(m_flavor == 2) 
+  if(m_flavor == 1) fillGen(event);
+  else if(m_flavor == 2) fillReco(event);
   else if(m_flavor == 3) {
-    
-    
+    fillGen(event);
+    fillReco(event);
   }
   else return;
 }
@@ -148,14 +148,14 @@ void eventHistos::fillGen(eventBits& event) {
   m_firstPartonAK8JetEtInvisible->Fill(event.firstPartonAK8JetEtInvisibleVal);
   m_secondPartonAK8JetEtInvisible->Fill(event.secondPartonAK8JetEtInvisibleVal);
 
-  m_leadSubleadingPartonsMuonsMassVal->Fill(event.leadSubleadingPartonsMuonsMassVal);
+  m_leadSubleadingPartonsMuonsMass->Fill(event.leadSubleadingPartonsMuonsMassVal);
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal);
   m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal);
 
-  m_leadSubleadingPartonsMuonsPtVal->Fill(event.leadSubleadingPartonsMuonsPtVal);
+  m_leadSubleadingPartonsMuonsPt->Fill(event.leadSubleadingPartonsMuonsPtVal);
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal);
 
-  m_leadSubleadingPartonsMuonsEtaVal->Fill(event.leadSubleadingPartonsMuonsEtaVal):
+  m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal);
   m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal);
 
 

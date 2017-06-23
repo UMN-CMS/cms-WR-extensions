@@ -1,6 +1,7 @@
 #ifndef eventBits_h
 #define eventBits_h
 
+#include <stdint.h>
 
 class eventBits {
 public:
@@ -10,7 +11,7 @@ public:
   //Misc numbers
   int run;
   int lumi;
-  uint64_t event;
+  int event;
 
   //BASIC FUNCTIONS
   bool passesGenCuts();
@@ -42,12 +43,24 @@ public:
   double firstPartonJetEtInvisibleVal;
   double secondPartonJetEtInvisibleVal;
 
+  double firstPartonAK8JetEtTotalVal;
+  double secondPartonAK8JetEtTotalVal;
+  double firstPartonAK8JetEtHadronicVal;
+  double secondPartonAK8JetEtHadronicVal;
+  double firstPartonAK8JetEtEMVal;
+  double secondPartonAK8JetEtEMVal;
+  double firstPartonAK8JetEtInvisibleVal;
+  double secondPartonAK8JetEtInvisibleVal;
+
+  double leadSubleadingAK8JetsMuonsMassVal;
   double leadSubleadingJetsMuonsMassVal;
   double leadSubleadingPartonsMuonsMassVal;
 
+  double leadSubleadingAK8JetsMuonsPtVal;
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
 
+  double leadSubleadingAK8JetsMuonsEtaVal;
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
   

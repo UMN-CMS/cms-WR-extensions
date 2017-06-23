@@ -230,7 +230,7 @@ void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
    iEvent.getByToken(m_recoMuonToken, recoMuons);
    
    for (std::vector<pat::Muon>::const_iterator iParticle = recoMuons->begin(); iParticle != recoMuons->end(); iParticle++) {
-     myEvent.selectedMuons.push_back(*iParticle);
+   //NEEDS UPDATING
    }
 
 

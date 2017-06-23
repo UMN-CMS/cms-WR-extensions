@@ -74,14 +74,14 @@ void eventBits::clear() {
   firstPartonJetEtInvisibleVal = 0.0;
   secondPartonJetEtInvisibleVal = 0.0;
 
-  leadSubleadingJetsMuonsMass Val = 0.0;
-  leadSubleadingPartonsMuonsMass Val = 0.0;
+  leadSubleadingJetsMuonsMassVal = 0.0;
+  leadSubleadingPartonsMuonsMassVal = 0.0;
 
-  leadSubleadingJetsMuonsPt Val = 0.0;
-  leadSubleadingPartonsMuonsPt Val = 0.0;
+  leadSubleadingJetsMuonsPtVal = 0.0;
+  leadSubleadingPartonsMuonsPtVal = 0.0;
 
-  leadSubleadingJetsMuonsEta Val = 0.0;
-  leadSubleadingPartonsMuonsEta Val = 0.0;
+  leadSubleadingJetsMuonsEtaVal = 0.0;
+  leadSubleadingPartonsMuonsEtaVal = 0.0;
 
 
 
