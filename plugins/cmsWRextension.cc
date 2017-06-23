@@ -140,11 +140,22 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    std::sort(myEvent.outgoingPartons.begin(),myEvent.outgoingPartons.end(),::wrTools::compareEt);
    std::sort(myEvent.outgoingMuons.begin(),myEvent.outgoingMuons.end(),::wrTools::compareEt);
 
+   //CHECK THAT THE EVENT MAKES SENSE
+   if (myEvent.outgoingPartons.size() != 2 || myEvent.outgoingMuons.size() != 2) {
+     std::cout << "ERROR! Found more than 2 partons ("<<myEvent.outgoingPartons.size()<<") or muons("<<myEvent.outgoingMuons.size()<<")."<< std::endl;
+   }
+
    myEvent.setHighestEtParton(0);
    myEvent.setSecondHighestEtParton(1);
 
    myEvent.setHighestEtMuon(0);
    myEvent.setSecondHighestEtMuon(1);
+
+   //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
+   if(!myEvent.passesGenCuts()) {
+     std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
+     return false;
+   }
 
    //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
    //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
@@ -153,11 +164,6 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    }
    if( myEvent.genJets.size() < 2 ) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 JETS"<< std::endl;
-     return false;
-   }
-   //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
-   if(!myEvent.passesGenCuts()) {
-     std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
      return false;
    }
 
