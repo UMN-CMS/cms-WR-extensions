@@ -50,6 +50,8 @@ public:
   double dRparton1muon1Val;
   double dRparton2muon2Val;
   double dRparton2muon1Val;
+  double dRparton1jetVal;
+  double dRparton2jetVal;
 
   double firstPartonJetEtHadronicVal;
   double secondPartonJetEtHadronicVal;
