@@ -1,9 +1,81 @@
 #include "eventBits.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+#include "DataFormats/JetReco/interface/GenJet.h"
 
 eventBits::eventBits() {
   run = -1;
   lumi = -1;
   event = 0;
+
+
+
+  parton1EtVal = -10000.0;
+  parton2EtVal = -10000.0;
+  muonHighestEtVal = -10000.0;
+  muonSecondHighestEtVal = -10000.0;
+  firstPartonJetEtVal = -10000.0;
+  secondPartonJetEtVal = -10000.0;
+  firstPartonAK8JetEtVal = -10000.0;
+  secondPartonAK8JetEtVal = -10000.0;
+
+  parton1EtaVal = -10000.0;
+  parton2EtaVal = -10000.0;
+  muonHighestEtEtaVal = -10000.0;
+  muonSecondHighestEtEtaVal = -10000.0;
+  firstPartonJetEtaVal = -10000.0;
+  secondPartonJetEtaVal = -10000.0;
+  firstPartonAK8JetEtaVal = -10000.0;
+  secondPartonAK8JetEtaVal = -10000.0;
+
+  parton1PhiVal = -10000.0;
+  parton2PhiVal = -10000.0;
+  muonHighestEtPhiVal = -10000.0;
+  muonSecondHighestEtPhiVal = -10000.0;
+  firstPartonJetPhiVal = -10000.0;
+  secondPartonJetPhiVal = -10000.0;
+  firstPartonAK8JetPhiVal = -10000.0;
+  secondPartonAK8JetPhiVal = -10000.0;
+
+  dRparton1parton2Val = -10000.0;
+  dRmuon1muon2Val = -10000.0;
+  dRparton1muon2Val = -10000.0;
+  dRparton1muon1Val = -10000.0;
+  dRparton2muon2Val = -10000.0;
+  dRparton2muon1Val = -10000.0;
+  dRparton1jetVal = -10000.0;
+  dRparton2jetVal = -10000.0;
+
+  firstPartonJetEtHadronicVal = -10000.0;
+  secondPartonJetEtHadronicVal = -10000.0;
+  firstPartonJetEtEMVal = -10000.0;
+  secondPartonJetEtEMVal = -10000.0;
+  firstPartonJetEtInvisibleVal = -10000.0;
+  secondPartonJetEtInvisibleVal = -10000.0;
+
+  leadSubleadingJetsMuonsMassVal = -10000.0;
+  leadSubleadingPartonsMuonsMassVal = -10000.0;
+
+  leadSubleadingJetsMuonsPtVal = -10000.0;
+  leadSubleadingPartonsMuonsPtVal = -10000.0;
+
+  leadSubleadingJetsMuonsEtaVal = -10000.0;
+  leadSubleadingPartonsMuonsEtaVal = -10000.0;
+
+  firstPartonAK8JetEtHadronicVal = -10000.0;
+  secondPartonAK8JetEtHadronicVal = -10000.0;
+  firstPartonAK8JetEtEMVal = -10000.0;
+  secondPartonAK8JetEtEMVal = -10000.0;
+  firstPartonAK8JetEtInvisibleVal = -10000.0;
+  secondPartonAK8JetEtInvisibleVal = -10000.0;
+
+  leadSubleadingAK8JetsMuonsMassVal = -10000.0;
+  leadSubleadingAK8JetsMuonsPtVal = -10000.0;
+  leadSubleadingAK8JetsMuonsEtaVal = -10000.0;
+
+  leadAK8JetMuonMassVal = -10000.0;
+  leadAK8JetMuonPtVal = -10000.0;
+  leadAK8JetMuonEtaVal = -10000.0;
+
 }
 void eventBits::clear() {
   run = -1;
@@ -70,14 +142,12 @@ void eventBits::clear() {
   secondPartonAK8JetEtInvisibleVal = 0.0;
 
   leadSubleadingAK8JetsMuonsMassVal = 0.0;
-
   leadSubleadingAK8JetsMuonsPtVal = 0.0;
-
   leadSubleadingAK8JetsMuonsEtaVal = 0.0;
 
-
-
-
+  leadAK8JetMuonMassVal = 0.0;
+  leadAK8JetMuonPtVal = 0.0;
+  leadAK8JetMuonEtaVal = 0.0;
 
 
 

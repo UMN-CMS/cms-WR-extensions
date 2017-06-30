@@ -64,7 +64,8 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
 process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
 process.demo = cms.EDAnalyzer('cmsWRextension',
-                              genJets = cms.InputTag("slimmedGenJetsAK8"),
+                              genJets = cms.InputTag("slimmedGenJets"),
+                              AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
                               recoMuons = cms.InputTag("tuneIDMuons"),
                               wantHardProcessMuons = cms.untracked.bool(True),

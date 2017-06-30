@@ -69,6 +69,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genParticleToken (consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"))),
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"))),
+   m_AK8genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"))),
    m_recoMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("recoMuons"))),
    m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
    m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false))
@@ -97,19 +98,15 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    eventBits myEvent;
    
    if (m_doGen) {
-     if(preSelectGen(iEvent, myEvent));
-     m_allEvents.fill(myEvent);    
-   } else {
-     if(preSelectReco(iEvent, myEvent));
-     m_allEvents.fill(myEvent);
-
-
-
+     if(preSelectGen(iEvent, myEvent)) {
+       std::cout << "plotting all events" << std::endl;
+       m_allEvents.fill(myEvent);    
+       std::cout << "analyzing WR2016" << std::endl;
+       if(passWR2016(iEvent, myEvent)) m_eventsPassingWR2016.fill(myEvent);
+       std::cout << "analyzing extension" << std::endl;
+       if(passExtension(iEvent, myEvent)) m_eventsPassingExtension.fill(myEvent);
+     }
    }
-   if(passWR2016(iEvent, myEvent)) m_eventsPassingWR2016.fill(myEvent);
-   if(passExtension(iEvent, myEvent)) m_eventsPassingExtension.fill(myEvent);
-
-   selectMuons(iEvent, myEvent);
 
 }
   
@@ -125,7 +122,11 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    Handle<std::vector<reco::GenJet>> genJets;
    iEvent.getByToken(m_genJetsToken, genJets);
 
+   Handle<std::vector<reco::GenJet>> AK8GenJets;
+   iEvent.getByToken(m_AK8genJetsToken, AK8GenJets);
+
    std::vector<const reco::GenJet*> myGenJets;
+   std::vector<const reco::GenJet*> myAK8GenJets;
    std::vector<const reco::GenParticle*> myGenPartons;
    std::vector<const reco::GenParticle*> myGenMuons;
 
@@ -161,6 +162,17 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    if(!myEvent.passesGenCuts()) {
      std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
      return false;
+   }
+  //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
+   size_t index = 0;
+   for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
+     for(size_t iMom = 0; iMom < (*iMuon)->numberOfMothers(); iMom++) {
+       if((*iMuon)->mother(iMom)->pdgId() == 9900014)
+         myEvent.secondInDecayMuon = index;
+     }
+     index++;
+
+
    }
 
    //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
@@ -217,6 +229,17 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    else if (secondPartonGenJet!=0){
      myEvent.dRparton2jetVal= foundSecond;
    }
+//NO MATCHING ON AK8 GENJETS YET
+   for (std::vector<reco::GenJet>::const_iterator iJet = AK8GenJets->begin(); iJet != AK8GenJets->end(); iJet++) {
+     if (iJet->et()<20.0) continue;
+     myAK8GenJets.push_back(&(*iJet));
+   }  
+   myEvent.myGenJets = myGenJets;
+   myEvent.myAK8GenJets = myAK8GenJets;
+   myEvent.myGenPartons = myGenPartons;
+   myEvent.myGenMuons = myGenMuons;
+   
+   
    return true;
 }
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent) {
@@ -227,10 +250,42 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent)
 
 }
 bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
-  return false;
+ // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenJets.size() < 2) {
+    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT" << std::endl;
+    return false;
+  }
+ // std::cout <<"SORTING JETS" <<std::endl;
+  std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
+//  std::cout <<"CALCULATING MASS" <<std::endl;
+  myEvent.leadSubleadingJetsMuonsMassVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).mass();
+ // std::cout<< "CALCULATING PT" <<std::endl;
+  myEvent.leadSubleadingJetsMuonsPtVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).pt();
+//  std::cout <<"CALCULATING ETA" <<std::endl;
+  myEvent.leadSubleadingJetsMuonsEtaVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).eta();
+//  std::cout <<"DONE!" <<std::endl;
+  
+  return true;
 }
 bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent) {
-  return false;
+ // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myAK8GenJets.size() << std::endl;
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myAK8GenJets.size() < 2) {
+    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT" << std::endl;
+    return false;
+  }
+ // std::cout <<"SORTING JETS" <<std::endl;
+  std::sort(myEvent.myAK8GenJets.begin(),myEvent.myAK8GenJets.end(),::wrTools::compareEtJetPointer);
+  if(myEvent.secondInDecayMuon != 0) {
+    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
+    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
+  } else  {
+    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
+    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
+    std::cout << "MUON SWITCH!" << std::endl;
+  }
+  return true;
 }
 
 void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
