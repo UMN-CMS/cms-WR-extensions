@@ -163,6 +163,17 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
      return false;
    }
+  //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
+   size_t index = 0;
+   for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
+     for(size_t iMom = 0; iMom < (*iMuon)->numberOfMothers(); iMom++) {
+       if((*iMuon)->mother(iMom)->pdgId() == 9900014)
+         myEvent.secondInDecayMuon = index;
+     }
+     index++;
+
+
+   }
 
    //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
    //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
@@ -223,7 +234,6 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      if (iJet->et()<20.0) continue;
      myAK8GenJets.push_back(&(*iJet));
    }  
-   if (myGenJets.size() < 2) return false;
    myEvent.myGenJets = myGenJets;
    myEvent.myAK8GenJets = myAK8GenJets;
    myEvent.myGenPartons = myGenPartons;
@@ -240,25 +250,41 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent)
 
 }
 bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
-  std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
-  std::cout <<"SORTING JETS" <<std::endl;
+ // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenJets.size() < 2) {
+    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT" << std::endl;
+    return false;
+  }
+ // std::cout <<"SORTING JETS" <<std::endl;
   std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
-  std::cout <<"CALCULATING MASS" <<std::endl;
+//  std::cout <<"CALCULATING MASS" <<std::endl;
   myEvent.leadSubleadingJetsMuonsMassVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).mass();
-  std::cout<< "CALCULATING PT" <<std::endl;
+ // std::cout<< "CALCULATING PT" <<std::endl;
   myEvent.leadSubleadingJetsMuonsPtVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).pt();
-  std::cout <<"CALCULATING ETA" <<std::endl;
+//  std::cout <<"CALCULATING ETA" <<std::endl;
   myEvent.leadSubleadingJetsMuonsEtaVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).eta();
-  std::cout <<"DONE!" <<std::endl;
+//  std::cout <<"DONE!" <<std::endl;
   
   return true;
 }
 bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent) {
+ // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myAK8GenJets.size() << std::endl;
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myAK8GenJets.size() < 2) {
+    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT" << std::endl;
+    return false;
+  }
+ // std::cout <<"SORTING JETS" <<std::endl;
   std::sort(myEvent.myAK8GenJets.begin(),myEvent.myAK8GenJets.end(),::wrTools::compareEtJetPointer);
-  myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
-  myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
-  myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
-  
+  if(myEvent.secondInDecayMuon != 0) {
+    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
+    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
+  } else  {
+    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
+    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
+    std::cout << "MUON SWITCH!" << std::endl;
+  }
   return true;
 }
 

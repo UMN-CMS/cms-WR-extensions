@@ -23,6 +23,7 @@ public:
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
+  size_t secondInDecayMuon;
 
   //EVENT VALUES
   double parton1EtVal;
