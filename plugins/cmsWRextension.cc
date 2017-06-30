@@ -99,8 +99,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    
    if (m_doGen) {
      if(preSelectGen(iEvent, myEvent)) {
+       std::cout << "plotting all events" << std::endl;
        m_allEvents.fill(myEvent);    
+       std::cout << "analyzing WR2016" << std::endl;
        if(passWR2016(iEvent, myEvent)) m_eventsPassingWR2016.fill(myEvent);
+       std::cout << "analyzing extension" << std::endl;
        if(passExtension(iEvent, myEvent)) m_eventsPassingExtension.fill(myEvent);
      }
    }
@@ -220,11 +223,12 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      if (iJet->et()<20.0) continue;
      myAK8GenJets.push_back(&(*iJet));
    }  
+   if (myGenJets.size() < 2) return false;
    myEvent.myGenJets = myGenJets;
    myEvent.myAK8GenJets = myAK8GenJets;
    myEvent.myGenPartons = myGenPartons;
    myEvent.myGenMuons = myGenMuons;
-
+   
    
    return true;
 }
@@ -236,10 +240,16 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent)
 
 }
 bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
+  std::cout <<"SORTING JETS" <<std::endl;
   std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
+  std::cout <<"CALCULATING MASS" <<std::endl;
   myEvent.leadSubleadingJetsMuonsMassVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).mass();
+  std::cout<< "CALCULATING PT" <<std::endl;
   myEvent.leadSubleadingJetsMuonsPtVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).pt();
+  std::cout <<"CALCULATING ETA" <<std::endl;
   myEvent.leadSubleadingJetsMuonsEtaVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).eta();
+  std::cout <<"DONE!" <<std::endl;
   
   return true;
 }

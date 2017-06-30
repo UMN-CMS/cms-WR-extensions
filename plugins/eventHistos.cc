@@ -37,6 +37,19 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_parton2Eta =                      m_histoFolder.make<TH1D>("parton2Eta", "Parton 2 Eta",                        100, -4.0, 4.0);
     m_muonHighestEtEta =                m_histoFolder.make<TH1D>("muonHighestEtEta", "Highest Et muon eta",           100, -4.0, 4.0);
     m_muonSecondHighestEtEta =          m_histoFolder.make<TH1D>("muonSecondHighestEtEta", "2nd Highest Et muon eta", 100, -4.0, 4.0);
+    m_firstPartonJetEta     =           m_histoFolder.make<TH1D>("firstPartonJetEta", "Parton 1 Eta",                 100, -4.0, 4.0);
+    m_secondPartonJetEta    =           m_histoFolder.make<TH1D>("secondPartonJetEta", "Parton 1 Eta",                100, -4.0, 4.0);
+    m_firstPartonAK8JetEta  =           m_histoFolder.make<TH1D>("firstPartonAK8JetEta", "Parton 1 Eta",              100, -4.0, 4.0); 
+    m_secondPartonAK8JetEta =           m_histoFolder.make<TH1D>("secondPartonAK8JetEta", "Parton 1 Eta",             100, -4.0, 4.0);
+
+    m_parton1Phi             =          m_histoFolder.make<TH1D>("parton1Phi", "Parton 1 Phi",                        100, -4.0, 4.0);        
+    m_parton2Phi             =          m_histoFolder.make<TH1D>("parton2Phi", "Parton 1 Phi",                        100, -4.0, 4.0);       
+    m_muonHighestEtPhi       =          m_histoFolder.make<TH1D>("muonHighestEtPhi", "Parton 1 Phi",                  100, -4.0, 4.0);        
+    m_muonSecondHighestEtPhi =          m_histoFolder.make<TH1D>("muonSecondHighestEtPhi", "Parton 1 Phi",            100, -4.0, 4.0);        
+    m_firstPartonJetPhi      =          m_histoFolder.make<TH1D>("firstPartonJetPhi", "Parton 1 Phi",                 100, -4.0, 4.0);     
+    m_secondPartonJetPhi     =          m_histoFolder.make<TH1D>("secondPartonJetPhi", "Parton 1 Phi",                100, -4.0, 4.0);       
+    m_firstPartonAK8JetPhi   =          m_histoFolder.make<TH1D>("firstPartonAK8JetPhi", "Parton 1 Phi",              100, -4.0, 4.0);        
+    m_secondPartonAK8JetPhi  =          m_histoFolder.make<TH1D>("secondPartonAK8JetPhi", "Parton 1 Phi",             100, -4.0, 4.0);           
 
     m_dRparton1parton2 =                m_histoFolder.make<TH1D>("dRparton1parton2", "deltaR between partons",             100, 0.0, 12.0);
     m_dRmuon1muon2 =                    m_histoFolder.make<TH1D>("dRmuon1muon2", "deltaR between muons",                   100, 0.0, 12.0);
@@ -119,6 +132,7 @@ void eventHistos::fillGen(eventBits& event) {
     std::cout << "ERROR! THIS EVENT SHOULD HAVE FAILED" <<std::endl;
     return;
   }
+  std::cout << "Filling Event plots" << std::endl;
   m_parton1Et->Fill(event.parton1EtVal);
   m_parton2Et->Fill(event.parton2EtVal);
   m_muonHighestEt->Fill(event.muonHighestEtVal);
@@ -127,6 +141,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetEt->Fill(event.secondPartonJetEtVal);
   m_firstPartonAK8JetEt->Fill(event.firstPartonAK8JetEtVal);
   m_secondPartonAK8JetEt->Fill(event.secondPartonAK8JetEtVal);
+  std::cout << "FILLING 1"<<std::endl;
 
   m_parton1Eta->Fill(event.parton1EtaVal);
   m_parton2Eta->Fill(event.parton2EtaVal);
@@ -136,6 +151,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetEta->Fill(event.secondPartonJetEtaVal);
   m_firstPartonAK8JetEta->Fill(event.firstPartonAK8JetEtaVal);
   m_secondPartonAK8JetEta->Fill(event.secondPartonAK8JetEtaVal);
+  std::cout << "FILLING 2"<<std::endl;
 
   m_parton1Phi->Fill(event.parton1PhiVal);
   m_parton2Phi->Fill(event.parton2PhiVal);
@@ -145,6 +161,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetPhi->Fill(event.secondPartonJetPhiVal);
   m_firstPartonAK8JetPhi->Fill(event.firstPartonAK8JetPhiVal);
   m_secondPartonAK8JetPhi->Fill(event.secondPartonAK8JetPhiVal);
+  std::cout << "FILLING 3"<<std::endl;
 
   m_dRparton1parton2->Fill(event.dRparton1parton2Val);
   m_dRmuon1muon2->Fill(event.dRmuon1muon2Val);
@@ -154,6 +171,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_dRparton2muon1->Fill(event.dRparton2muon1Val);
   m_dRparton1jet->Fill(event.dRparton1jetVal);
   m_dRparton2jet->Fill(event.dRparton2jetVal);
+  std::cout << "FILLING 4"<<std::endl;
 
 
 
@@ -163,6 +181,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetEtEM->Fill(event.secondPartonJetEtEMVal);
   m_firstPartonJetEtInvisible->Fill(event.firstPartonJetEtInvisibleVal);
   m_secondPartonJetEtInvisible->Fill(event.secondPartonJetEtInvisibleVal);
+  std::cout << "FILLING 5"<<std::endl;
   
 
   m_firstPartonAK8JetEtHadronic->Fill(event.firstPartonAK8JetEtHadronicVal);
@@ -171,21 +190,25 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonAK8JetEtEM->Fill(event.secondPartonAK8JetEtEMVal);
   m_firstPartonAK8JetEtInvisible->Fill(event.firstPartonAK8JetEtInvisibleVal);
   m_secondPartonAK8JetEtInvisible->Fill(event.secondPartonAK8JetEtInvisibleVal);
+  std::cout << "FILLING 6"<<std::endl;
 
   m_leadSubleadingPartonsMuonsMass->Fill(event.leadSubleadingPartonsMuonsMassVal);
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal);
   m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal);
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal);
+  std::cout << "FILLING 7"<<std::endl;
 
   m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal);
   m_leadSubleadingPartonsMuonsPt->Fill(event.leadSubleadingPartonsMuonsPtVal);
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal);
   m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal);
+  std::cout << "FILLING 8"<<std::endl;
 
   m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal);
   m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal);
   m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal);
   m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal);
+  std::cout << "FILLING 9"<<std::endl;
 
 
 
