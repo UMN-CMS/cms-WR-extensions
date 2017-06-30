@@ -43,6 +43,8 @@ void eventBits::clear() {
   dRparton1muon1Val = 0.0;
   dRparton2muon2Val = 0.0;
   dRparton2muon1Val = 0.0;
+  dRparton1jetVal = 0.0;
+  dRparton2jetVal = 0.0;
 
   firstPartonJetEtHadronicVal = 0.0;
   secondPartonJetEtHadronicVal = 0.0;
