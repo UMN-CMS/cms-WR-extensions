@@ -183,6 +183,8 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    double foundSecond = partonJetMatchDR;
    const reco::GenJet* firstPartonGenJet=0; 
    const reco::GenJet* secondPartonGenJet=0; 
+   const reco::GenJet* firstPartonAK8GenJet=0; 
+   const reco::GenJet* secondPartonAK8GenJet=0; 
 
    for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
      if (iJet->et()<20.0) continue;
@@ -203,11 +205,9 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
        secondPartonGenJet=&(*(iJet));
      }
    }
-
    if (!(foundFirst<0.5) || !(foundSecond<0.5)) {
      std::cout << "WARNING! DID NOT MATCH BOTH PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
    }
-
    if (firstPartonGenJet!=0){
      myEvent.firstPartonJetEtVal = firstPartonGenJet->et();
      myEvent.firstPartonJetEtHadronicVal = firstPartonGenJet->hadEnergy();
@@ -229,11 +229,55 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    else if (secondPartonGenJet!=0){
      myEvent.dRparton2jetVal= foundSecond;
    }
-//NO MATCHING ON AK8 GENJETS YET
+   //REPEATED FOR AK8 GENJETS
+   foundFirst = partonJetMatchDR;
+   foundSecond = partonJetMatchDR;
    for (std::vector<reco::GenJet>::const_iterator iJet = AK8GenJets->begin(); iJet != AK8GenJets->end(); iJet++) {
      if (iJet->et()<20.0) continue;
-     myAK8GenJets.push_back(&(*iJet));
-   }  
+     float match1=deltaR2(*iJet,*(myGenPartons[0]))<partonJetMatchDR;
+     float match2=deltaR2(*iJet,*(myGenPartons[1]))<partonJetMatchDR;
+     if (match1<partonJetMatchDR || match2<partonJetMatchDR) myAK8GenJets.push_back(&(*iJet));
+
+     if ((match1<partonJetMatchDR && foundFirst<partonJetMatchDR) || (match2<partonJetMatchDR && foundSecond<partonJetMatchDR)){
+       std::cout << "WARNING: multiple gen jets matched to the same parton"<< std::endl;
+     }
+     
+     if (match1<foundFirst) {
+       foundFirst=match1;
+       firstPartonAK8GenJet=&(*(iJet));
+     }
+     if (match2<foundSecond) {
+       foundSecond=match2;
+       secondPartonAK8GenJet=&(*(iJet));
+     }
+   }
+
+   if (!(foundFirst<0.5) || !(foundSecond<0.5)) {
+     std::cout << "WARNING! DID NOT MATCH BOTH PARTONS WITH AN AK8 JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
+   }
+   if (firstPartonAK8GenJet!=0){
+     myEvent.firstPartonAK8JetEtVal = firstPartonAK8GenJet->et();
+     myEvent.firstPartonAK8JetEtHadronicVal = firstPartonAK8GenJet->hadEnergy();
+     myEvent.firstPartonAK8JetEtEMVal = firstPartonAK8GenJet->emEnergy();
+     myEvent.firstPartonAK8JetEtInvisibleVal = firstPartonAK8GenJet->invisibleEnergy();
+     myEvent.firstPartonAK8JetEtaVal = firstPartonAK8GenJet->eta();
+     myEvent.firstPartonAK8JetPhiVal = firstPartonAK8GenJet->phi();
+//     myEvent.dRparton1jetVal= foundFirst;
+   }
+   if (secondPartonAK8GenJet!=0 && secondPartonAK8GenJet!=firstPartonAK8GenJet){   
+     myEvent.secondPartonAK8JetEtVal = secondPartonAK8GenJet->et();
+     myEvent.secondPartonAK8JetEtHadronicVal = secondPartonAK8GenJet->hadEnergy();
+     myEvent.secondPartonAK8JetEtEMVal = secondPartonAK8GenJet->emEnergy();
+     myEvent.secondPartonAK8JetEtInvisibleVal = secondPartonAK8GenJet->invisibleEnergy();
+     myEvent.secondPartonAK8JetEtaVal = secondPartonAK8GenJet->eta();
+     myEvent.secondPartonAK8JetPhiVal = secondPartonAK8GenJet->phi();
+//     myEvent.dRparton2jetVal= foundSecond;
+   }
+   else if (secondPartonAK8GenJet!=0){
+  //   myEvent.dRparton2jetVal= foundSecond;
+   }
+
+
    myEvent.myGenJets = myGenJets;
    myEvent.myAK8GenJets = myAK8GenJets;
    myEvent.myGenPartons = myGenPartons;
