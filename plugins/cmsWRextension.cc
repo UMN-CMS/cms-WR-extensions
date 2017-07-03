@@ -133,9 +133,24 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-     if((iParticle->isHardProcess() && iParticle->status() == 23) && iParticle->pdgId() <= 6 && iParticle->pdgId() >= -6) myGenPartons.push_back(&(*iParticle));
-     if(((iParticle->isLastCopy()&&!m_wantHardProcessMuons) || iParticle->isHardProcess()) && (iParticle->pdgId() == 13 || iParticle->pdgId() == -13)) myGenMuons.push_back(&(*iParticle));
+     if((iParticle->isHardProcess() && iParticle->status() == 22) && abs(iParticle->pdgId()) == 6) myGenPartons.push_back(&(*iParticle)); //KEEP TOPS, NOT Bs FROM TOPS
+     if((iParticle->isHardProcess() && iParticle->status() == 23) && (iParticle->pdgId() <= 6) && (iParticle->pdgId() >= -6) && (abs(iParticle->mother()->pdgId()) != 6)) myGenPartons.push_back(&(*iParticle));
+     if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
    }
+   //LOOP OVER GEN MUONS TO FILTER OUT TOP GENERATED ONES
+   std::vector<const reco::GenParticle*>::iterator badMuon;
+   bool hasBadMuon = false;
+   for(std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
+     for(size_t iMom = 0; iMom < (*iMuon)->numberOfMothers(); iMom++) {
+       std::cout << "looping over "<<(*iMuon)->numberOfMothers()<<" moms" << std::endl;
+       if(abs((*iMuon)->mother(iMom)->pdgId()) == 24) {
+         badMuon = iMuon;
+         hasBadMuon = true;
+         std::cout << "Found Muon from top decay" << std::endl;
+       }
+     }
+   }
+   if(hasBadMuon) myGenMuons.erase(badMuon);
    //CHECK THAT THE EVENT MAKES SENSE
    if (myGenPartons.size() < 2 || myGenMuons.size() < 2) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
@@ -239,7 +254,7 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      if (match1<partonJetMatchDR || match2<partonJetMatchDR) myAK8GenJets.push_back(&(*iJet));
 
      if ((match1<partonJetMatchDR && foundFirst<partonJetMatchDR) || (match2<partonJetMatchDR && foundSecond<partonJetMatchDR)){
-       std::cout << "WARNING: multiple gen jets matched to the same parton"<< std::endl;
+       std::cout << "WARNING: multiple ak8 gen jets matched to the same parton"<< std::endl;
      }
      
      if (match1<foundFirst) {
@@ -296,7 +311,7 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent)
 bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
  // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
   if(myEvent.myGenMuons.size() < 2 || myEvent.myGenJets.size() < 2) {
-    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT" << std::endl;
+    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" jets"<< std::endl;
     return false;
   }
  // std::cout <<"SORTING JETS" <<std::endl;
@@ -313,8 +328,8 @@ bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
 }
 bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent) {
  // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myAK8GenJets.size() << std::endl;
-  if(myEvent.myGenMuons.size() < 2 || myEvent.myAK8GenJets.size() < 2) {
-    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT" << std::endl;
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myAK8GenJets.size() < 1) {
+    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myAK8GenJets.size()<<" ak8 jets"<< std::endl;
     return false;
   }
  // std::cout <<"SORTING JETS" <<std::endl;
