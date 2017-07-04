@@ -270,7 +270,7 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      float match1=sqrt(deltaR2(*iJet,*(myGenPartons[0])));
      float match2=sqrt(deltaR2(*iJet,*(myGenPartons[1])));
      if (match1<partonJetMatchDR || match2<partonJetMatchDR) {
-       std::cout << "Pushing back jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
+       std::cout << "Pushing back ak8 jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
        myAK8GenJets.push_back(&(*iJet));
      }
      if ((match1<partonJetMatchDR && foundFirst<partonJetMatchDR) || (match2<partonJetMatchDR && foundSecond<partonJetMatchDR)){
