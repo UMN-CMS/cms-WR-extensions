@@ -167,28 +167,43 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    myEvent.parton1EtaVal = myGenPartons[0]->eta();
    myEvent.parton2EtVal = myGenPartons[1]->et();
    myEvent.parton2EtaVal = myGenPartons[1]->eta();
+
+ //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
+   size_t index = 0;
+   for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
+     for(size_t iMom = 0; iMom < (*iMuon)->numberOfMothers(); iMom++) {
+       if((*iMuon)->mother(iMom)->pdgId() == 9900014){
+         if (myEvent.secondInDecayMuon<=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
+	 myEvent.secondInDecayMuon = index;
+       }
+     }
+     index++;
+   }
+
+   if (myEvent.secondInDecayMuon!=1){
+     std::cout<<"Highest ET muon, is not first in decay"<<std::endl;
+     if (myEvent.secondInDecayMuon==0) std::swap(myGenMuons[0],myGenMuons[1]);
+     else std::cout<<"myEvent.secondInDecayMuon is "<<myEvent.secondInDecayMuon<<". I don't know what to do"<<std::endl;
+   }
+
    myEvent.muonHighestEtVal = myGenMuons[0]->et();
    myEvent.muonHighestEtEtaVal = myGenMuons[0]->eta();
    myEvent.muonSecondHighestEtVal = myGenMuons[1]->et();
    myEvent.muonSecondHighestEtEtaVal = myGenMuons[1]->eta();
 
+   myEvent.dRparton1parton2Val = deltaR2(*(myGenPartons[0]),*(myGenPartons[1]));
+   myEvent.dRmuon1muon2Val   = deltaR2(*(myGenMuons[0]),*(myGenMuons[1]));
+   myEvent.dRparton1muon2Val = deltaR2(*(myGenPartons[0]),*(myGenMuons[0]));
+   myEvent.dRparton1muon1Val = deltaR2(*(myGenPartons[0]),*(myGenMuons[1]));
+   myEvent.dRparton2muon2Val = deltaR2(*(myGenPartons[1]),*(myGenMuons[0]));
+   myEvent.dRparton2muon1Val = deltaR2(*(myGenPartons[1]),*(myGenMuons[1])); 
+   
    //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
    if(!myEvent.passesGenCuts()) {
      std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
      return false;
    }
-  //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
-   size_t index = 0;
-   for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-     for(size_t iMom = 0; iMom < (*iMuon)->numberOfMothers(); iMom++) {
-       if((*iMuon)->mother(iMom)->pdgId() == 9900014)
-         myEvent.secondInDecayMuon = index;
-     }
-     index++;
-
-
-   }
-
+ 
    //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
    //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
 
@@ -333,16 +348,17 @@ bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent)
   }
  // std::cout <<"SORTING JETS" <<std::endl;
   std::sort(myEvent.myAK8GenJets.begin(),myEvent.myAK8GenJets.end(),::wrTools::compareEtJetPointer);
-  if(myEvent.secondInDecayMuon != 0) {
+  std::cout<<"There are "<<myEvent.myAK8GenJets.size()<<" AK8GenJets selected"<<std::endl;
+  // if(myEvent.secondInDecayMuon != 0) {
     myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
     myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
     myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
-  } else  {
-    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
-    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
-    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
-    std::cout << "MUON SWITCH!" << std::endl;
-  }
+  // } else  {
+  //   myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
+  //   myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
+  //   myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
+  //   std::cout << "MUON SWITCH!" << std::endl;
+  // }
   return true;
 }
 
