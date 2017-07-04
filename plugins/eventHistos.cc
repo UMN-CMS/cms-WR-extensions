@@ -94,9 +94,10 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_leadSubleadingPartonsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  100, -4.0,4.0);
     m_leadAK8JetMuonEta  =              m_histoFolder.make<TH1D>("leadAK8JetMuonEta","2 Object Eta of the leading Jet and Muon"                           ,100, -4.0,4.0);
 
+    m_EtPlacementMuon2 =                m_histoFolder.make<TH1D>("EtPlacementMuon2", "Et ranking idx of muon 2",                                           10, 0, 10);
+    m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                             10, 0, 10);
+    m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", "# of matched AK8Jets",                                                       10, 0, 10);
 
-
-    
 
 
   } else if (m_flavor == 2) {
@@ -210,8 +211,9 @@ void eventHistos::fillGen(eventBits& event) {
   m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal);
  // std::cout << "FILLING 9"<<std::endl;
 
-
-
+  m_EtPlacementMuon2->Fill(event.secondInDecayMuon);
+  m_nJets->Fill(event.myGenJets.size());
+  m_nAK8Jets->Fill(event.myAK8GenJets.size());
 }
 void eventHistos::fillReco(eventBits& event) {
 
