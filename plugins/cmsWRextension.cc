@@ -174,7 +174,7 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    int index = 0;
    for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
      if(::wrTools::particleIsFromABS((*iMuon),9900014)){
-       if (myEvent.secondInDecayMuon<=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
+       if (myEvent.secondInDecayMuon>=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
        myEvent.secondInDecayMuon = index;
      }
      index++;
@@ -193,12 +193,12 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    myEvent.muon2EtaVal = myGenMuons[1]->eta();
    myEvent.muon2PhiVal = myGenMuons[1]->phi();
 
-   myEvent.dRparton1parton2Val = deltaR2(*(myGenPartons[0]),*(myGenPartons[1]));
-   myEvent.dRmuon1muon2Val   = deltaR2(*(myGenMuons[0]),*(myGenMuons[1]));
-   myEvent.dRparton1muon2Val = deltaR2(*(myGenPartons[0]),*(myGenMuons[0]));
-   myEvent.dRparton1muon1Val = deltaR2(*(myGenPartons[0]),*(myGenMuons[1]));
-   myEvent.dRparton2muon2Val = deltaR2(*(myGenPartons[1]),*(myGenMuons[0]));
-   myEvent.dRparton2muon1Val = deltaR2(*(myGenPartons[1]),*(myGenMuons[1])); 
+   myEvent.dRparton1parton2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenPartons[1])));
+   myEvent.dRmuon1muon2Val   = sqrt(deltaR2(*(myGenMuons[0]),*(myGenMuons[1])));
+   myEvent.dRparton1muon1Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenMuons[0])));
+   myEvent.dRparton1muon2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenMuons[1])));
+   myEvent.dRparton2muon1Val = sqrt(deltaR2(*(myGenPartons[1]),*(myGenMuons[0])));
+   myEvent.dRparton2muon2Val = sqrt(deltaR2(*(myGenPartons[1]),*(myGenMuons[1]))); 
    
    //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
    if(!myEvent.passesGenCuts()) {
@@ -219,8 +219,8 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
    for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
      if (iJet->et()<20.0) continue;
-     float match1=deltaR2(*iJet,*(myGenPartons[0]));
-     float match2=deltaR2(*iJet,*(myGenPartons[1]));
+     float match1=sqrt(deltaR2(*iJet,*(myGenPartons[0])));
+     float match2=sqrt(deltaR2(*iJet,*(myGenPartons[1])));
      if (match1<partonJetMatchDR || match2<partonJetMatchDR){
        std::cout << "Pushing back jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
        myGenJets.push_back(&(*iJet));
@@ -238,7 +238,7 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
        secondPartonGenJet=&(*(iJet));
      }
    }
-   if (!(foundFirst<0.5) || !(foundSecond<0.5)) {
+   if (!(foundFirst<partonJetMatchDR) || !(foundSecond<partonJetMatchDR)) {
      std::cout << "WARNING! DID NOT MATCH BOTH PARTONS WITH A JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
    }
    if (firstPartonGenJet!=0){
@@ -267,8 +267,8 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    foundSecond = partonJetMatchDR;
    for (std::vector<reco::GenJet>::const_iterator iJet = AK8GenJets->begin(); iJet != AK8GenJets->end(); iJet++) {
      if (iJet->et()<20.0) continue;
-     float match1=deltaR2(*iJet,*(myGenPartons[0]));
-     float match2=deltaR2(*iJet,*(myGenPartons[1]));
+     float match1=sqrt(deltaR2(*iJet,*(myGenPartons[0])));
+     float match2=sqrt(deltaR2(*iJet,*(myGenPartons[1])));
      if (match1<partonJetMatchDR || match2<partonJetMatchDR) {
        std::cout << "Pushing back jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
        myAK8GenJets.push_back(&(*iJet));
@@ -287,7 +287,7 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      }
    }
 
-   if (!(foundFirst<0.5) || !(foundSecond<0.5)) {
+   if (!(foundFirst<partonJetMatchDR) || !(foundSecond<partonJetMatchDR)) {
      std::cout << "WARNING! DID NOT MATCH BOTH PARTONS WITH AN AK8 JET WITHIN: "<< partonJetMatchDR<<" dR"<<std::endl;
    }
    if (firstPartonAK8GenJet!=0){
