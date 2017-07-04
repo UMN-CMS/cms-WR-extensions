@@ -7,12 +7,12 @@ eventBits::eventBits() {
   lumi = -1;
   event = 0;
 
-
+  secondInDecayMuon = -10000.0;
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
-  muonHighestEtVal = -10000.0;
-  muonSecondHighestEtVal = -10000.0;
+  muon1EtVal = -10000.0;
+  muon2EtVal = -10000.0;
   firstPartonJetEtVal = -10000.0;
   secondPartonJetEtVal = -10000.0;
   firstPartonAK8JetEtVal = -10000.0;
@@ -20,8 +20,8 @@ eventBits::eventBits() {
 
   parton1EtaVal = -10000.0;
   parton2EtaVal = -10000.0;
-  muonHighestEtEtaVal = -10000.0;
-  muonSecondHighestEtEtaVal = -10000.0;
+  muon1EtaVal = -10000.0;
+  muon2EtaVal = -10000.0;
   firstPartonJetEtaVal = -10000.0;
   secondPartonJetEtaVal = -10000.0;
   firstPartonAK8JetEtaVal = -10000.0;
@@ -29,8 +29,8 @@ eventBits::eventBits() {
 
   parton1PhiVal = -10000.0;
   parton2PhiVal = -10000.0;
-  muonHighestEtPhiVal = -10000.0;
-  muonSecondHighestEtPhiVal = -10000.0;
+  muon1PhiVal = -10000.0;
+  muon2PhiVal = -10000.0;
   firstPartonJetPhiVal = -10000.0;
   secondPartonJetPhiVal = -10000.0;
   firstPartonAK8JetPhiVal = -10000.0;
@@ -84,8 +84,8 @@ void eventBits::clear() {
 
   parton1EtVal = 0.0;
   parton2EtVal = 0.0;
-  muonHighestEtVal = 0.0;
-  muonSecondHighestEtVal = 0.0;
+  muon1EtVal = 0.0;
+  muon2EtVal = 0.0;
   firstPartonJetEtVal = 0.0;
   secondPartonJetEtVal = 0.0;
   firstPartonAK8JetEtVal = 0.0;
@@ -93,8 +93,8 @@ void eventBits::clear() {
 
   parton1EtaVal = 0.0;
   parton2EtaVal = 0.0;
-  muonHighestEtEtaVal = 0.0;
-  muonSecondHighestEtEtaVal = 0.0;
+  muon1EtaVal = 0.0;
+  muon2EtaVal = 0.0;
   firstPartonJetEtaVal = 0.0;
   secondPartonJetEtaVal = 0.0;
   firstPartonAK8JetEtaVal = 0.0;
@@ -102,8 +102,8 @@ void eventBits::clear() {
 
   parton1PhiVal = 0.0;
   parton2PhiVal = 0.0;
-  muonHighestEtPhiVal = 0.0;
-  muonSecondHighestEtPhiVal = 0.0;
+  muon1PhiVal = 0.0;
+  muon2PhiVal = 0.0;
   firstPartonJetPhiVal = 0.0;
   secondPartonJetPhiVal = 0.0;
   firstPartonAK8JetPhiVal = 0.0;
@@ -154,8 +154,8 @@ void eventBits::clear() {
 }
 bool eventBits::passesGenCuts() {
 
-  if(muonHighestEtVal <= 20)         return false;
-  if(muonSecondHighestEtVal <= 20)   return false;
+  if(muon1EtVal <= 20)               return false;
+  if(muon2EtVal <= 20)               return false;
   if(parton1EtVal <= 20)             return false;
   if(parton2EtVal <= 20)             return false;
 

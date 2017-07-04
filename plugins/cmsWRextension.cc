@@ -133,23 +133,23 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-     if(iParticle->mother()) { if(abs(iParticle->mother()->pdgId()) == 24) continue; }//no W-SM mothered particles
+     if(iParticle->mother()) { if(::wrTools::particleIsFromABS(&(*iParticle),24)) continue; }//no W-SM mothered particles
      if((iParticle->isHardProcess() && iParticle->status() == 22) && abs(iParticle->pdgId()) == 6) myGenPartons.push_back(&(*iParticle)); //KEEP TOPS, NOT Qs FROM TOPS
-     if((iParticle->isHardProcess() && iParticle->status() == 23) && (iParticle->pdgId() <= 6) && (iParticle->pdgId() >= -6) && (abs(iParticle->mother()->pdgId()) != 6)) myGenPartons.push_back(&(*iParticle));
+     if((iParticle->isHardProcess() && iParticle->status() == 23) && (iParticle->pdgId() <= 6) && (iParticle->pdgId() >= -6) && !(::wrTools::particleIsFromABS(&(*iParticle),6))) myGenPartons.push_back(&(*iParticle));
      if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
    }
    //LOOP OVER GEN MUONS TO FILTER OUT TOP GENERATED ONES
-   std::vector<const reco::GenParticle*>::iterator badMuon;
-   bool hasBadMuon = false;
-   for(std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-     std::cout << "Muon mom type: "<<(*iMuon)->mother()->pdgId() << std::endl;
-     if(::wrTools::particleIsFromABS((*iMuon),24)) {
-       std::cout << "Found Muon from top decay" << std::endl;
-       hasBadMuon = true;
-       badMuon = iMuon;
-     }
-   }
-   if(hasBadMuon) myGenMuons.erase(badMuon);
+   // std::vector<const reco::GenParticle*>::iterator badMuon;
+   // bool hasBadMuon = false;
+   // for(std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
+   //   std::cout << "Muon mom type: "<<(*iMuon)->mother()->pdgId() << std::endl;
+   //   if(::wrTools::particleIsFromABS((*iMuon),24)) {
+   //     std::cout << "Found Muon from top decay" << std::endl;
+   //     hasBadMuon = true;
+   //     badMuon = iMuon;
+   //   }
+   // }
+   // if(hasBadMuon) myGenMuons.erase(badMuon);
    //CHECK THAT THE EVENT MAKES SENSE
    if (myGenPartons.size() < 2 || myGenMuons.size() < 2) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
@@ -165,17 +165,17 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
    myEvent.parton1EtVal = myGenPartons[0]->et();
    myEvent.parton1EtaVal = myGenPartons[0]->eta();
+   myEvent.parton1PhiVal = myGenPartons[0]->phi();
    myEvent.parton2EtVal = myGenPartons[1]->et();
    myEvent.parton2EtaVal = myGenPartons[1]->eta();
+   myEvent.parton2PhiVal = myGenPartons[1]->phi();
 
- //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
-   size_t index = 0;
+   //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
+   int index = 0;
    for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-     for(size_t iMom = 0; iMom < (*iMuon)->numberOfMothers(); iMom++) {
-       if((*iMuon)->mother(iMom)->pdgId() == 9900014){
-         if (myEvent.secondInDecayMuon<=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
-	 myEvent.secondInDecayMuon = index;
-       }
+     if(::wrTools::particleIsFromABS((*iMuon),9900014)){
+       if (myEvent.secondInDecayMuon<=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
+       myEvent.secondInDecayMuon = index;
      }
      index++;
    }
@@ -186,10 +186,12 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      else std::cout<<"myEvent.secondInDecayMuon is "<<myEvent.secondInDecayMuon<<". I don't know what to do"<<std::endl;
    }
 
-   myEvent.muonHighestEtVal = myGenMuons[0]->et();
-   myEvent.muonHighestEtEtaVal = myGenMuons[0]->eta();
-   myEvent.muonSecondHighestEtVal = myGenMuons[1]->et();
-   myEvent.muonSecondHighestEtEtaVal = myGenMuons[1]->eta();
+   myEvent.muon1EtVal = myGenMuons[0]->et();
+   myEvent.muon1EtaVal = myGenMuons[0]->eta();
+   myEvent.muon1PhiVal = myGenMuons[0]->phi();
+   myEvent.muon2EtVal = myGenMuons[1]->et();
+   myEvent.muon2EtaVal = myGenMuons[1]->eta();
+   myEvent.muon2PhiVal = myGenMuons[1]->phi();
 
    myEvent.dRparton1parton2Val = deltaR2(*(myGenPartons[0]),*(myGenPartons[1]));
    myEvent.dRmuon1muon2Val   = deltaR2(*(myGenMuons[0]),*(myGenMuons[1]));
