@@ -217,10 +217,12 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
    for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
      if (iJet->et()<20.0) continue;
-     float match1=deltaR2(*iJet,*(myGenPartons[0]))<partonJetMatchDR;
-     float match2=deltaR2(*iJet,*(myGenPartons[1]))<partonJetMatchDR;
-     if (match1<partonJetMatchDR || match2<partonJetMatchDR) myGenJets.push_back(&(*iJet));
-
+     float match1=deltaR2(*iJet,*(myGenPartons[0]));
+     float match2=deltaR2(*iJet,*(myGenPartons[1]));
+     if (match1<partonJetMatchDR || match2<partonJetMatchDR){
+       std::cout << "Pushing back jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
+       myGenJets.push_back(&(*iJet));
+     }
      if ((match1<partonJetMatchDR && foundFirst<partonJetMatchDR) || (match2<partonJetMatchDR && foundSecond<partonJetMatchDR)){
        std::cout << "WARNING: multiple gen jets matched to the same parton"<< std::endl;
      }
@@ -263,10 +265,12 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    foundSecond = partonJetMatchDR;
    for (std::vector<reco::GenJet>::const_iterator iJet = AK8GenJets->begin(); iJet != AK8GenJets->end(); iJet++) {
      if (iJet->et()<20.0) continue;
-     float match1=deltaR2(*iJet,*(myGenPartons[0]))<partonJetMatchDR;
-     float match2=deltaR2(*iJet,*(myGenPartons[1]))<partonJetMatchDR;
-     if (match1<partonJetMatchDR || match2<partonJetMatchDR) myAK8GenJets.push_back(&(*iJet));
-
+     float match1=deltaR2(*iJet,*(myGenPartons[0]));
+     float match2=deltaR2(*iJet,*(myGenPartons[1]));
+     if (match1<partonJetMatchDR || match2<partonJetMatchDR) {
+       std::cout << "Pushing back jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
+       myAK8GenJets.push_back(&(*iJet));
+     }
      if ((match1<partonJetMatchDR && foundFirst<partonJetMatchDR) || (match2<partonJetMatchDR && foundSecond<partonJetMatchDR)){
        std::cout << "WARNING: multiple ak8 gen jets matched to the same parton"<< std::endl;
      }
