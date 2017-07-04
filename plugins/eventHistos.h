@@ -74,7 +74,6 @@ class eventHistos {
   TH1D* m_dRparton1jet;
   TH1D* m_dRparton2jet;
 
-
   TH1D* m_firstPartonJetEtHadronic;
   TH1D* m_secondPartonJetEtHadronic;
   TH1D* m_firstPartonJetEtEM;
@@ -104,6 +103,10 @@ class eventHistos {
   TH1D* m_leadSubleadingPartonsMuonsEta ;
   TH1D* m_leadAK8JetMuonEta;
   //RECO PLOTS
+
+  TH1D* m_EtPlacementMuon2;
+  TH1D* m_nJets;
+  TH1D* m_nAK8Jets;
 
 };
 
