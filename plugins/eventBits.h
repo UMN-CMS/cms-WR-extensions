@@ -23,13 +23,13 @@ public:
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
-  size_t secondInDecayMuon;
+  int secondInDecayMuon;
 
   //EVENT VALUES
   double parton1EtVal;
   double parton2EtVal;
-  double muonHighestEtVal;
-  double muonSecondHighestEtVal;
+  double muon1EtVal;
+  double muon2EtVal;
   double firstPartonJetEtVal;
   double secondPartonJetEtVal;
   double firstPartonAK8JetEtVal;
@@ -37,8 +37,8 @@ public:
 
   double parton1EtaVal;
   double parton2EtaVal;
-  double muonHighestEtEtaVal;
-  double muonSecondHighestEtEtaVal;
+  double muon1EtaVal;
+  double muon2EtaVal;
   double firstPartonJetEtaVal;
   double secondPartonJetEtaVal;
   double firstPartonAK8JetEtaVal;
@@ -46,8 +46,8 @@ public:
 
   double parton1PhiVal;
   double parton2PhiVal;
-  double muonHighestEtPhiVal;
-  double muonSecondHighestEtPhiVal;
+  double muon1PhiVal;
+  double muon2PhiVal;
   double firstPartonJetPhiVal;
   double secondPartonJetPhiVal;
   double firstPartonAK8JetPhiVal;

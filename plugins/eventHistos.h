@@ -40,8 +40,8 @@ class eventHistos {
   //GEN PLOTS
   TH1D* m_parton1Et;
   TH1D* m_parton2Et;
-  TH1D* m_muonHighestEt;
-  TH1D* m_muonSecondHighestEt;
+  TH1D* m_muon1Et;
+  TH1D* m_muon2Et;
   TH1D* m_firstPartonJetEt;
   TH1D* m_secondPartonJetEt;
   TH1D* m_firstPartonAK8JetEt;
@@ -49,8 +49,8 @@ class eventHistos {
 
   TH1D* m_parton1Eta;
   TH1D* m_parton2Eta;
-  TH1D* m_muonHighestEtEta;
-  TH1D* m_muonSecondHighestEtEta;
+  TH1D* m_muon1Eta;
+  TH1D* m_muon2Eta;
   TH1D* m_firstPartonJetEta;
   TH1D* m_secondPartonJetEta;
   TH1D* m_firstPartonAK8JetEta;
@@ -58,8 +58,8 @@ class eventHistos {
 
   TH1D* m_parton1Phi;
   TH1D* m_parton2Phi;
-  TH1D* m_muonHighestEtPhi;
-  TH1D* m_muonSecondHighestEtPhi;
+  TH1D* m_muon1Phi;
+  TH1D* m_muon2Phi;
   TH1D* m_firstPartonJetPhi;
   TH1D* m_secondPartonJetPhi;
   TH1D* m_firstPartonAK8JetPhi;
