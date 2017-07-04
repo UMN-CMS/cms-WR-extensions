@@ -133,7 +133,8 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    //LOOP OVER GEN PARTICLES
    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
      if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-     if((iParticle->isHardProcess() && iParticle->status() == 22) && abs(iParticle->pdgId()) == 6) myGenPartons.push_back(&(*iParticle)); //KEEP TOPS, NOT Bs FROM TOPS
+     if(iParticle->mother()) { if(abs(iParticle->mother()->pdgId()) == 24) continue; }//no W-SM mothered particles
+     if((iParticle->isHardProcess() && iParticle->status() == 22) && abs(iParticle->pdgId()) == 6) myGenPartons.push_back(&(*iParticle)); //KEEP TOPS, NOT Qs FROM TOPS
      if((iParticle->isHardProcess() && iParticle->status() == 23) && (iParticle->pdgId() <= 6) && (iParticle->pdgId() >= -6) && (abs(iParticle->mother()->pdgId()) != 6)) myGenPartons.push_back(&(*iParticle));
      if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
    }
@@ -141,13 +142,11 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    std::vector<const reco::GenParticle*>::iterator badMuon;
    bool hasBadMuon = false;
    for(std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-     for(size_t iMom = 0; iMom < (*iMuon)->numberOfMothers(); iMom++) {
-       std::cout << "looping over "<<(*iMuon)->numberOfMothers()<<" moms" << std::endl;
-       if(abs((*iMuon)->mother(iMom)->pdgId()) == 24) {
-         badMuon = iMuon;
-         hasBadMuon = true;
-         std::cout << "Found Muon from top decay" << std::endl;
-       }
+     std::cout << "Muon mom type: "<<(*iMuon)->mother()->pdgId() << std::endl;
+     if(::wrTools::particleIsFromABS((*iMuon),24)) {
+       std::cout << "Found Muon from top decay" << std::endl;
+       hasBadMuon = true;
+       badMuon = iMuon;
      }
    }
    if(hasBadMuon) myGenMuons.erase(badMuon);
