@@ -1,6 +1,8 @@
 import ROOT
 import sys
 import datetime
+import subprocess
+import os
 
 """
 Style options mostly from CMS's tdrStyle.C
@@ -71,8 +73,7 @@ def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols 
 
     c.SaveAs(outname)
 
-def saveHists(file,prefix="",filter=""):
-    if prefix: prefix += '_'
+def saveHists(file,directory="",prefix="",filter=""):
     customROOTstyle()
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
@@ -81,13 +82,16 @@ def saveHists(file,prefix="",filter=""):
     for key in file.GetListOfKeys():
         if key.IsFolder():
             dir = file.Get(key.GetName())
-            saveHists(dir,prefix=prefix + key.GetName(), filter=filter)
+            newDir=directory+"/"+key.GetName()
+            if(not (os.path.isdir(newDir))):
+                subprocess.call(["mkdir", newDir])
+            saveHists(dir,directory=newDir, prefix=prefix,filter=filter)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
-            drawoptions = ""
+            drawoptions = "se"
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            drawHist(hist,prefix + key.GetName() +"_"+str(datetime.datetime.today()) +".png", drawoptions = drawoptions)
+            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png", drawoptions = drawoptions)
 
 def drawHist(hist,name,width=500,height=500, drawoptions=""):
     customROOTstyle()
@@ -151,4 +155,4 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
     canv.SaveAs(filename)
 
 
-saveHists(ROOT.TFile.Open(sys.argv[1], "read"),"/home/aevans/public_html/plots/"+"_"+sys.argv[2]+"_")
+saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3])

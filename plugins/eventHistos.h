@@ -73,6 +73,8 @@ class eventHistos {
   TH1D* m_dRparton2muon1;
   TH1D* m_dRparton1jet;
   TH1D* m_dRparton2jet;
+  TH1D* m_dRparton1AK8jet;
+  TH1D* m_dRparton2AK8jet;
 
   TH1D* m_firstPartonJetEtHadronic;
   TH1D* m_secondPartonJetEtHadronic;
