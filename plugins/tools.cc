@@ -29,4 +29,30 @@ namespace wrTools {
     }
     return false;
   }
+  bool particleInGenJet(const reco::Candidate* particle, const reco::GenJet* jet) {
+    //loop over jet candidates
+    std::vector<const reco::Candidate*> constituents = jet->getJetConstituentsQuick();
+    for(std::vector<const reco::Candidate*>::const_iterator iConst = constituents.begin(); iConst != constituents.end(); iConst++) {
+      if((*iConst)->pdgId() != particle->pdgId()) continue;
+      std::cout << "Found daughter with PT: "<<(*iConst)->pt() <<" compared to: "<<particle->pt() << std::endl;
+
+    }
+    //for (unsigned i = 0;  i < jet->numberOfDaughters (); i++) {
+    //  //loop through to get candidate pointer
+    //  reco::Candidate::const_iterator daugh = begin ();
+    //  for (; --i >= 0 && daugh != end (); daugh++) {}
+    //  if (daugh != end ()) { // in range
+    //    const reco::Candidate* constituent = &*daugh; // deref
+    //  }      
+    //  //CHECK daughter against requested candidate   
+    //  if(constituent->pdgId() != particle->pdgId()) continue;
+    //  std::cout << "Found daughter with PT: "<<constituent->pt() <<" compared to: "<<particle->pt() << std::endl;
+
+    //}
+    
+
+
+
+    return false;
+  }
 }

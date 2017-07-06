@@ -359,15 +359,7 @@ bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent)
   std::cout<<"There are "<<myEvent.myAK8GenJets.size()<<" AK8GenJets selected"<<std::endl;
 
   bool Muon2included=false;
-  std::vector <const reco::GenParticle*> constituents=myEvent.myAK8GenJets[0]->getGenConstituents();
-  for (std::vector<const reco::GenParticle*>::const_iterator iParticle = constituents.begin(); iParticle != constituents.end(); iParticle++) {
-    if ((*iParticle)->pdgId()!=myEvent.myGenMuons[1]->pdgId())continue;
-    //  if (fabs(((*iParticle)->pt()-myEvent.myGenMuons[1]->pt())/myEvent.myGenMuons[1]->pt())>0.05)continue;
-    //  if (sqrt(deltaR2(*(*iParticle),*(myEvent.myGenMuons[1])))>0.01) continue;
-    std::cout<<"Muon matched with jet constituents, pt's are:"<<(*iParticle)->pt()<<" "<<myEvent.myGenMuons[1]->pt()<<std::endl;
-    Muon2included=true;
-    break;
-  }
+  Muon2included = ::wrTools::particleInGenJet(myEvent.myGenMuons[1], myEvent.myAK8GenJets[0]);
   
   if(Muon2included) {
     myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
