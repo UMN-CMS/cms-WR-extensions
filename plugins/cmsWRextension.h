@@ -37,6 +37,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
@@ -93,6 +94,8 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
       edm::EDGetToken m_recoMuonToken;
+      edm::EDGetToken m_recoJetsToken;
+      edm::EDGetToken m_AK8recoJetsToken;
       bool m_wantHardProcessMuons;
       bool m_doGen;
       TTree* hardProcessKinematics;

@@ -71,6 +71,8 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"))),
    m_AK8genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"))),
    m_recoMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("recoMuons"))),
+   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
+   m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
    m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
    m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false))
 
@@ -112,7 +114,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 }
   
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent) {
-  selectMuons(iEvent, myEvent);
 
 
   return false;
@@ -137,20 +138,6 @@ bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
   return true;
 }
 
-void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
-{
-   using namespace edm;
-   
-   Handle<std::vector<pat::Muon>> recoMuons;
-   iEvent.getByToken(m_recoMuonToken, recoMuons);
-   
-   for (std::vector<pat::Muon>::const_iterator iParticle = recoMuons->begin(); iParticle != recoMuons->end(); iParticle++) {
-     std::cout<<iParticle->pt()<<std::endl;
-     //NEEDS UPDATING
-   }
-
-
-}
 
 // ------------ method called once each job just before starting event loop  ------------
 void 
