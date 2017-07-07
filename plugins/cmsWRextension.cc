@@ -71,8 +71,8 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"))),
    m_AK8genJetsToken (consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"))),
    m_recoMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("recoMuons"))),
-   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
-   m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
+   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
+   m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
    m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
    m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false))
 
@@ -128,21 +128,94 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent)
 //all leptons and jets with |η| < 2.4
 //dilepton mass mll > 200 GeV: to suppress DY+jets contribution ∆R > 0.4 between all objects in the final state (leptons and jets) Mlljj > 600 GeV
 using namespace edm;
-bool cmsWRextension::selectWR2016Muons(const edm::Event& iEvent, eventBits& myEvent) {
+bool cmsWRextension::passWR2016Reco(const edm::Event& iEvent, eventBits& myEvent) {
 
-   Handle<std::vector<pat::Muon>> recoMuons;
-   iEvent.getByToken(m_recoMuonToken, recoMuons);
-   std::vector<const pat::Muon*> candMuons;
-   for (std::vector<pat::Muon>::const_iterator iParticle = recoMuons->begin(); iParticle != recoMuons->end(); iParticle++) {
-     //NEEDS UPDATING
-     if((iParticle->pt() > 53) && (abs(iParticle->eta()) < 2.4)) candMuons.push_back(&(*iParticle));
-   }
-   //SORT CANDIDATE MUON COLLECTION IN PT AND TAKE TOP TWO  ////IN AN EVENT WITH LOTS OF POSSIBLE MUONS, CUT ORDER COULD MATTER A BUNCH
-   std::sort(candMuons.begin(), candMuons.end(), ::wrTools::compareEtCandidatePointer);
+  Handle<std::vector<pat::Muon>> recoMuons;
+  iEvent.getByToken(m_recoMuonToken, recoMuons);
 
-   return false;
+  Handle<std::vector<pat::Jet>> recoJets;
+  iEvent.getByToken(m_recoJetsToken, recoJets);
 
+  // if(recoMuons->size() < 2 || recoJets->size() < 2) {
+  //   std::cout << "EVENT FAILS WR2016, NOT ENOUGH TO RECONSTRUCT " << recoMuons->size()<<" muons "<<  recoJets->size()<<" jets"<< std::endl;
+  //   return false;
+  // }
+
+  // std::vector<const pat::Jet*> myPreSelectedJets;
+  // std::vector<const pat::Jet*> mySelectedJets;
+  // std::vector<const pat::Muon*> myPreSelectedMuons;
+  // std::vector<const pat::Muon*> mySelectedMuons;
+
+  // for(std::vector<pat::Jet>::const_iterator iJet = recoJets->begin(); iJet != recoJets->end(); iJet++){
+  //   if (iJet->et()<40.0 || fabs(iJet->eta())>2.4) continue;
+  //   myPreSelectedJets.push_back(&(*iJet));
+  // }
+
+  // std::sort(myPreSelectedJets.begin(),myPreSelectedJets.end(),::wrTools::compareEtJetPointer);
+
+  // bool foundpair=false;
+  // for (std::vector<const pat::Jet*>::iterator iJet = myPreSelectedJets.begin(); iJet != myPreSelectedJets.end(); iJet++) {
+  //   if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
+  //   for (std::vector<const pat::Jet*>::iterator iJet2 = iJet+1; iJet2 != myPreSelectedJets.end(); iJet2++) {
+  //     if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
+  //     if (sqrt(deltaR2(*(*iJet),*(*iJet2)))<0.4) continue;
+  //     foundpair=true;
+  //     mySelectedJets.push_back((*iJet));
+  //     mySelectedJets.push_back((*iJet2));
+  //     break;
+  //   }
+  //   if (foundpair) break;
+  // }
+  // if (!foundpair){
+  //   std::cout << "Event fails WR2016, not Jet pair is found" << std::endl;
+  //   return false;
+  // }
+  // if (mySelectedJets.size()!=2){
+  //   std::cout << "ERROR, BUG ON WR2016 NUMBER OF JETS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
+  //   return false;
+  // }
+
+  // for (std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
+  //   if (iMuon->et()<53 || fabs(iMuon->eta())>2.4) continue;
+  //   if (sqrt(deltaR2((*iMuon),*mySelectedJets[0]))<0.4) continue;
+  //   if (sqrt(deltaR2((*iMuon),*mySelectedJets[1]))<0.4) continue;
+  //   myPreSelectedMuons.push_back(&(*iMuon));
+  // }
+  // if (myPreSelectedMuons.size()<2){
+  //   std::cout << "Event fails WR2016, was unable to get 2 muons." << std::endl;
+  //   return false;
+  // }
+
+  // std::sort(myPreSelectedMuons.begin(),myPreSelectedMuons.end(),::wrTools::compareEtJetPointer);
+
+  // foundpair=false;
+  // for (std::vector<const pat::Muon*>::iterator iMuon = myPreSelectedMuons.begin(); iMuon != myPreSelectedMuons.end(); iMuon++) {
+  //   if ((*iMuon)->et()<60) continue;
+  //   for (std::vector<const pat::Muon*>::iterator iMuon2 = iMuon+1; iMuon2 != myPreSelectedMuons.end(); iMuon2++) {
+  //     if (sqrt(deltaR2(*(*iMuon),*(*iMuon2)))<0.4) continue;
+  //     foundpair=true;
+  //     mySelectedMuons.push_back((*iMuon));
+  //     mySelectedMuons.push_back((*iMuon2));
+  //     break;
+  //   }
+  //   if (foundpair) break;
+  // }
+  // if (!foundpair){
+  //   std::cout << "Event fails WR2016, not Muon pair is found" << std::endl;
+  //   return false;
+  // }
+  // if (mySelectedMuons.size()!=2){
+  //   std::cout << "ERROR, BUG ON WR2016 NUMBER OF MUONS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
+  //   return false;
+  // }
+
+  // // myEvent.leadSubleadingJetsMuonsMassVal = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).mass();
+  // // myEvent.leadSubleadingJetsMuonsPtVal   = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).pt();
+  // // myEvent.leadSubleadingJetsMuonsEtaVal  = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).eta();
+  
+  return true;
 }
+
 bool cmsWRextension::selectHighPtISOMuon(const edm::Event& iEvent, eventBits& myEvent) {
 
    Handle<std::vector<pat::Muon>> recoMuons;

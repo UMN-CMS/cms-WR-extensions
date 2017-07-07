@@ -87,7 +87,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       bool passWR2016 (const edm::Event&, eventBits&);
       bool passExtension (const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event& iEvent, eventBits& myEvent);
-      bool selectWR2016Muons(const edm::Event& iEvent, eventBits& myEvent);
+      bool passWR2016Reco(const edm::Event& iEvent, eventBits& myEvent);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
