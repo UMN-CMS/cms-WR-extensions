@@ -3,16 +3,20 @@
 
 namespace wrTools {
   
-  bool compareEtPointer(const reco::GenParticle* particle1, const reco::GenParticle* particle2) {
+  bool compareEtGenParticlePointer(const reco::GenParticle* particle1, const reco::GenParticle* particle2) {
     if ( particle1->et() > particle2->et() ) return true;
     return false;
   }
-  bool compareEt(reco::GenParticle particle1, reco::GenParticle particle2) {
+  bool compareEtGenParticle(reco::GenParticle particle1, reco::GenParticle particle2) {
     if ( particle1.et() > particle2.et() ) return true;
     return false;
   }
   bool compareEtJetPointer(const reco::GenJet* jet1, const reco::GenJet* jet2) {
     if (jet1->et() > jet2->et() ) return true;
+    return false;
+  }
+  bool compareEtCandidatePointer(const reco::Candidate* cand1, const reco::Candidate* cand2) { 
+    if ( cand1->et() > cand2->et() ) return true;
     return false;
   }
   bool particleIsFrom(const reco::Candidate* particle, int pdgId) {
@@ -33,22 +37,12 @@ namespace wrTools {
     //loop over jet candidates
     std::vector<const reco::Candidate*> constituents = jet->getJetConstituentsQuick();
     for(std::vector<const reco::Candidate*>::const_iterator iConst = constituents.begin(); iConst != constituents.end(); iConst++) {
-      if((*iConst)->pdgId() != particle->pdgId()) continue;
+      if((*iConst)->pdgId() != particle->pdgId()) continue; //WRONG PDGID
+      if(abs((*iConst)->pt() - particle->pt()) >= 1.0) continue; //PT NOT CLOSE ENOUGH
+      
       std::cout << "Found daughter with PT: "<<(*iConst)->pt() <<" compared to: "<<particle->pt() << std::endl;
-
+      return true;
     }
-    //for (unsigned i = 0;  i < jet->numberOfDaughters (); i++) {
-    //  //loop through to get candidate pointer
-    //  reco::Candidate::const_iterator daugh = begin ();
-    //  for (; --i >= 0 && daugh != end (); daugh++) {}
-    //  if (daugh != end ()) { // in range
-    //    const reco::Candidate* constituent = &*daugh; // deref
-    //  }      
-    //  //CHECK daughter against requested candidate   
-    //  if(constituent->pdgId() != particle->pdgId()) continue;
-    //  std::cout << "Found daughter with PT: "<<constituent->pt() <<" compared to: "<<particle->pt() << std::endl;
-
-    //}
     
 
 
