@@ -26,6 +26,8 @@ public:
   int secondInDecayMuon;
 
   //EVENT VALUES
+  bool passesWR2016;
+
   double parton1EtVal;
   double parton2EtVal;
   double muon1EtVal;

@@ -1,3 +1,5 @@
+#ifndef cmsWRextension_included
+#define cmsWRextension_included 1
 // -*- C++ -*-
 //
 // Package:    ExoAnalysis/cmsWRextension
@@ -103,3 +105,4 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
 //define this as a plug-in
 DEFINE_FWK_MODULE(cmsWRextension);
+#endif

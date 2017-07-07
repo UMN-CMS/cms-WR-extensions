@@ -6,6 +6,7 @@ eventBits::eventBits() {
   run = -1;
   lumi = -1;
   event = 0;
+  passesWR2016 = false;
 
   secondInDecayMuon = -10000.0;
 
