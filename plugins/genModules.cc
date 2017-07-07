@@ -33,18 +33,7 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
      if((iParticle->isHardProcess() && iParticle->status() == 23) && (iParticle->pdgId() <= 6) && (iParticle->pdgId() >= -6) && !(::wrTools::particleIsFromABS(&(*iParticle),6))) myGenPartons.push_back(&(*iParticle));
      if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
    }
-   //LOOP OVER GEN MUONS TO FILTER OUT TOP GENERATED ONES
-   // std::vector<const reco::GenParticle*>::iterator badMuon;
-   // bool hasBadMuon = false;
-   // for(std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-   //   std::cout << "Muon mom type: "<<(*iMuon)->mother()->pdgId() << std::endl;
-   //   if(::wrTools::particleIsFromABS((*iMuon),24)) {
-   //     std::cout << "Found Muon from top decay" << std::endl;
-   //     hasBadMuon = true;
-   //     badMuon = iMuon;
-   //   }
-   // }
-   // if(hasBadMuon) myGenMuons.erase(badMuon);
+
    //CHECK THAT THE EVENT MAKES SENSE
    if (myGenPartons.size() < 2 || myGenMuons.size() < 2) {
      std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
@@ -216,6 +205,7 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
    
    return true;
 }
+
 bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent) {
  // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myAK8GenJets.size() << std::endl;
   if(myEvent.myGenMuons.size() < 2 || myEvent.myAK8GenJets.size() < 1) {
@@ -239,5 +229,79 @@ bool cmsWRextension::passExtension(const edm::Event& iEvent, eventBits& myEvent)
     myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
     myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
   }
+  return true;
+}
+
+bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
+
+ // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenJets.size() < 2) {
+    std::cout << "EVENT FAILS WR2016, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" jets"<< std::endl;
+    return false;
+  }
+
+  std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
+
+  std::vector<const reco::GenJet*> mySelectedJets;
+  std::vector<const reco::GenParticle*> myPreSelectedMuons;
+  std::vector<const reco::GenParticle*> mySelectedMuons;
+
+  bool foundpair=false;
+  for (std::vector<const reco::GenJet*>::iterator iJet = myEvent.myGenJets.begin(); iJet != myEvent.myGenJets.end(); iJet++) {
+    if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
+    for (std::vector<const reco::GenJet*>::iterator iJet2 = iJet+1; iJet2 != myEvent.myGenJets.end(); iJet2++) {
+      if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
+      if (sqrt(deltaR2(*(*iJet),*(*iJet2)))<0.4) continue;
+      foundpair=true;
+      mySelectedJets.push_back((*iJet));
+      mySelectedJets.push_back((*iJet2));
+      break;
+    }
+    if (foundpair) break;
+  }
+  if (!foundpair){
+    std::cout << "Event fails WR2016, not Jet pair is found" << std::endl;
+    return false;
+  }
+  if (mySelectedJets.size()!=2){
+    std::cout << "ERROR, BUG ON WR2016 NUMBER OF JETS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
+    return false;
+  }
+
+  for (std::vector<const reco::GenParticle*>::iterator iMuon = myEvent.myGenMuons.begin(); iMuon != myEvent.myGenMuons.end(); iMuon++) {
+    if ((*iMuon)->et()<53 || fabs((*iMuon)->eta())>2.4) continue;
+    if (sqrt(deltaR2(*(*iMuon),*mySelectedJets[0]))<0.4) continue;
+    if (sqrt(deltaR2(*(*iMuon),*mySelectedJets[1]))<0.4) continue;
+    myPreSelectedMuons.push_back((*iMuon));
+  }
+  if (myPreSelectedMuons.size()<2){
+    std::cout << "Event fails WR2016, was unable to get 2 muons." << std::endl;
+    return false;
+  }
+  foundpair=false;
+  for (std::vector<const reco::GenParticle*>::iterator iMuon = myPreSelectedMuons.begin(); iMuon != myPreSelectedMuons.end(); iMuon++) {
+    if ((*iMuon)->et()<60) continue;
+     for (std::vector<const reco::GenParticle*>::iterator iMuon2 = iMuon+1; iMuon2 != myPreSelectedMuons.end(); iMuon2++) {
+      if (sqrt(deltaR2(*(*iMuon),*(*iMuon2)))<0.4) continue;
+      foundpair=true;
+      mySelectedMuons.push_back((*iMuon));
+      mySelectedMuons.push_back((*iMuon2));
+      break;
+    }
+    if (foundpair) break;
+  }
+  if (!foundpair){
+    std::cout << "Event fails WR2016, not Muon pair is found" << std::endl;
+    return false;
+  }
+  if (mySelectedMuons.size()!=2){
+    std::cout << "ERROR, BUG ON WR2016 NUMBER OF MUONS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
+    return false;
+  }
+
+  myEvent.leadSubleadingJetsMuonsMassVal = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).mass();
+  myEvent.leadSubleadingJetsMuonsPtVal   = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).pt();
+  myEvent.leadSubleadingJetsMuonsEtaVal  = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).eta();
+  
   return true;
 }

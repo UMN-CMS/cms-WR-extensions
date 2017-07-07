@@ -118,24 +118,6 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myEvent)
   return false;
 
 }
-bool cmsWRextension::passWR2016(const edm::Event& iEvent, eventBits& myEvent) {
- // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
-  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenJets.size() < 2) {
-    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" jets"<< std::endl;
-    return false;
-  }
- // std::cout <<"SORTING JETS" <<std::endl;
-  std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
-//  std::cout <<"CALCULATING MASS" <<std::endl;
-  myEvent.leadSubleadingJetsMuonsMassVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).mass();
- // std::cout<< "CALCULATING PT" <<std::endl;
-  myEvent.leadSubleadingJetsMuonsPtVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).pt();
-//  std::cout <<"CALCULATING ETA" <<std::endl;
-  myEvent.leadSubleadingJetsMuonsEtaVal = (myEvent.myGenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenJets[1]->p4() + myEvent.myGenMuons[1]->p4()).eta();
-//  std::cout <<"DONE!" <<std::endl;
-  
-  return true;
-}
 
 void cmsWRextension::selectMuons(const edm::Event& iEvent, eventBits& myEvent)
 {
