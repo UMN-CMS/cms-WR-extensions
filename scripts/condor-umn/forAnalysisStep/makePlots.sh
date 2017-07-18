@@ -13,6 +13,7 @@ do
 	
 	## MuMuJJ
 	#make python config file for MiniAOD step
+    eval 'echo "python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ"'
     eval 'python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ'
 
 done

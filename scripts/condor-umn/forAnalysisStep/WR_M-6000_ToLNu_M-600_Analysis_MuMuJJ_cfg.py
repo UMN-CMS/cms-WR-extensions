@@ -70,6 +70,8 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
                               AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
                               recoMuons = cms.InputTag("tuneIDMuons"),
+                              recoJets = cms.InputTag("slimmedJets"),
+                              AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True)
 )

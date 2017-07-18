@@ -19,6 +19,10 @@ namespace wrTools {
     if ( cand1->et() > cand2->et() ) return true;
     return false;
   }
+  bool comparePairMassPointer(std::pair< const reco::Candidate*, const reco::Candidate* > pair1, std::pair< const reco::Candidate*, const reco::Candidate* > pair2) {
+    if ( (pair1.first->p4() + pair1.second->p4()).mass() > (pair2.first->p4() + pair2.second->p4()).mass() )  return true;
+    return false;
+  }
   bool particleIsFrom(const reco::Candidate* particle, int pdgId) {
     for(unsigned int iMom = 0; iMom < particle->numberOfMothers(); iMom++) {//loop over mothers
       if(particle->mother(iMom)->pdgId() == pdgId) return true;

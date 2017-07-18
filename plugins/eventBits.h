@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 
 class eventBits {
 public:
@@ -23,6 +25,7 @@ public:
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
+  std::vector<std::pair<const pat::Jet*, const pat::Muon*>> myMuonJetPairs;
   int secondInDecayMuon;
 
   //EVENT VALUES

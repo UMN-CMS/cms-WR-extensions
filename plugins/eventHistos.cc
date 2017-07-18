@@ -26,7 +26,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
   m_flavor = flavor;
   m_histoFolder = histoFolder;
 
-  if (m_flavor == 1) {
+//  if (m_flavor == 1) {
   //MAKE GEN PLOTS
     m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et",                         160, 0.0, 8000);
     m_parton2Et =                       m_histoFolder.make<TH1D>("parton2Et", "Parton 2 Et",                         160, 0.0, 8000);
@@ -100,22 +100,22 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                             10, 0, 10);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", "# of matched AK8Jets",                                                       10, 0, 10);
 
-
-
-  } else if (m_flavor == 2) {
-  //MAKE RECO PLOTS
-
-
-
-
-  } else if (m_flavor == 3) {
-  //MAKE GEN & RECO PLOTS
-
-
-  } else {
-  //NOTHING FOR NOW
-  }
-
+//
+//
+//  } else if (m_flavor == 2) {
+//  //MAKE RECO PLOTS
+//
+//
+//
+//
+//  } else if (m_flavor == 3) {
+//  //MAKE GEN & RECO PLOTS
+//
+//
+//  } else {
+//  //NOTHING FOR NOW
+//  }
+//
 
 }
 void eventHistos::fill(eventBits& event) {

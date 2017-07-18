@@ -19,6 +19,7 @@ namespace wrTools {
  bool particleIsFromABS(const reco::Candidate* particle, unsigned int pdgId);
  bool particleInGenJet(const reco::Candidate* particle, const reco::GenJet* jet);
  bool compareEtCandidatePointer(const reco::Candidate* cand1, const reco::Candidate* cand2);
+ bool comparePairMassPointer(std::pair< const reco::Candidate*, const reco::Candidate* > pair1, std::pair< const reco::Candidate*, const reco::Candidate* > pair2);
 
 
 

@@ -84,14 +84,17 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       void selectMuons(const edm::Event&, eventBits&);
       bool preSelectGen (const edm::Event&, eventBits&);
       bool preSelectReco (const edm::Event&, eventBits&);
-      bool passWR2016 (const edm::Event&, eventBits&);
-      bool passExtension (const edm::Event&, eventBits&);
-      bool selectHighPtISOMuon(const edm::Event& iEvent, eventBits& myEvent);
-      bool passWR2016Reco(const edm::Event& iEvent, eventBits& myEvent);
+      bool passWR2016GEN (const edm::Event&, eventBits&);
+      bool passExtensionGEN (const edm::Event&, eventBits&);
+      bool passWR2016RECO (const edm::Event&, eventBits&);
+      bool passExtensionRECO(const edm::Event&, eventBits&);
+      bool selectHighPtISOMuon(const edm::Event&, eventBits&);
+      bool passWR2016Reco(const edm::Event&, eventBits&);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
       eventHistos m_eventsPassingExtension;
+      eventHistos m_eventsPassingExtensionRECO;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
@@ -100,6 +103,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetToken m_AK8recoJetsToken;
       bool m_wantHardProcessMuons;
       bool m_doGen;
+      bool m_doReco;
       TTree* hardProcessKinematics;
 };
 
