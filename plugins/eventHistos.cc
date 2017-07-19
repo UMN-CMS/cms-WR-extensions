@@ -130,12 +130,12 @@ void eventHistos::fill(eventBits& event) {
 
 //SPECIFIC 
 void eventHistos::fillGen(eventBits& event) {
-  std::cout << "Making GEN plots" << std::endl;
-  if(!(event.passesGenCuts())) {
-    std::cout << "ERROR! THIS EVENT SHOULD HAVE FAILED" <<std::endl;
-    return;
-  }
-//  std::cout << "Filling Event plots" << std::endl;
+//  std::cout << "Making GEN plots" << std::endl;
+//  if(!(event.passesGenCuts())) {
+//    std::cout << "ERROR! THIS EVENT SHOULD HAVE FAILED" <<std::endl;
+//    return;
+//  }
+  std::cout << "Filling Event plots" << std::endl;
   m_parton1Et->Fill(event.parton1EtVal);
   m_parton2Et->Fill(event.parton2EtVal);
   m_muon1Et->Fill(event.muon1EtVal);
