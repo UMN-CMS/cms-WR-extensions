@@ -1,6 +1,3 @@
-root://cms-xrd-global.cern.ch//
-root://cms-xrd-global.cern.ch//Showing 1-1000 out of 21 results, for more results use --idx/--limit options
-root://cms-xrd-global.cern.ch//
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/100000/16FBBA48-6AD4-E611-BE22-0CC47AA9906E.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/100000/1C1F35B1-D0D4-E611-9F5E-0025907E343C.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/100000/1ED03346-D0D4-E611-9B29-001E675A6D10.root
@@ -22,9 +19,6 @@ root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-65
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/94FF7F21-CCD4-E611-8EB5-E0071B7A45D0.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/C2894049-CCD4-E611-A1E4-001E675A5244.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/50000/CE42781A-CCD4-E611-93AC-1866DAEA6CC4.root
-root://cms-xrd-global.cern.ch//
-root://cms-xrd-global.cern.ch//Showing 1-1000 out of 8 results, for more results use --idx/--limit options
-root://cms-xrd-global.cern.ch//
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/100000/0CBF8681-95D1-E611-916C-02163E019C8E.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/100000/6814DB46-9DD1-E611-9658-02163E019D93.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/100000/70B8D084-9FD1-E611-84EF-02163E019D42.root
@@ -33,9 +27,6 @@ root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-65
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/100000/CA98484E-A1D1-E611-BA0E-02163E019C43.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/100000/DAC78407-A4D1-E611-B7AE-02163E019CC0.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/100000/E815F87F-A2D1-E611-8A7B-02163E019D7F.root
-root://cms-xrd-global.cern.ch//
-root://cms-xrd-global.cern.ch//Showing 1-1000 out of 15 results, for more results use --idx/--limit options
-root://cms-xrd-global.cern.ch//
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/50000/1E84F2B0-63C8-E611-972E-F04DA27540BB.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/50000/42261DC2-8FC7-E611-B190-848F69FD4442.root
 root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext2-v1/50000/4EABD302-C2C6-E611-8632-02163E0130AE.root
