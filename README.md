@@ -12,7 +12,7 @@ As of 21-6-17 the sequence is:
 cmsrel CMSSW_8_0_25
 cd CMSSW_8_0_25/src/
 cmsenv
-git cms-merge-topic gpetruc:badMuonFilters_80X
+git cms-merge-topic gpetruc:badMuonFilters_80X_v2
 mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cms-WR-extensions.git
