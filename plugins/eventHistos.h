@@ -104,11 +104,14 @@ class eventHistos {
   TH1D* m_leadSubleadingAK8JetsMuonsEta ;
   TH1D* m_leadSubleadingPartonsMuonsEta ;
   TH1D* m_leadAK8JetMuonEta;
+
+  TH1D* m_leadAK8JetMuonPhi;
   //RECO PLOTS
 
   TH1D* m_EtPlacementMuon2;
   TH1D* m_nJets;
   TH1D* m_nAK8Jets;
+  TH1D* m_nMuonCands;
 
 };
 

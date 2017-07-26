@@ -95,12 +95,14 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       eventHistos m_eventsPassingWR2016;
       eventHistos m_eventsPassingExtension;
       eventHistos m_eventsPassingExtensionRECO;
+      eventHistos m_eventsPassingWR2016RECO;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
       edm::EDGetToken m_recoMuonToken;
       edm::EDGetToken m_recoJetsToken;
       edm::EDGetToken m_AK8recoJetsToken;
+      edm::EDGetToken m_offlineVerticesToken;
       bool m_wantHardProcessMuons;
       bool m_doGen;
       bool m_doReco;

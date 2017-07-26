@@ -70,6 +70,7 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
                               recoMuons = cms.InputTag("tuneIDMuons"),
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
+                              vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True)
 )

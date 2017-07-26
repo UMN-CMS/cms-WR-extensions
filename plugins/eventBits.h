@@ -31,6 +31,7 @@ public:
   //EVENT VALUES
   bool passesWR2016;
 
+  int    muonCands;
   double parton1EtVal;
   double parton2EtVal;
   double muon1EtVal;
@@ -97,6 +98,8 @@ public:
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
   double leadAK8JetMuonEtaVal;
+
+  double leadAK8JetMuonPhiVal;
   
 
 private:
