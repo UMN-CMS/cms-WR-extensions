@@ -80,6 +80,8 @@ eventBits::eventBits() {
   leadAK8JetMuonPtVal = -10000.0;
   leadAK8JetMuonEtaVal = -10000.0;
 
+  leadAK8JetMuonJetMuonEnergyFraction = -10000.0;
+
 }
 void eventBits::clear() {
   run = -1;

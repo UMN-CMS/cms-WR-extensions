@@ -155,7 +155,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetEt->Fill(event.secondPartonJetEtVal);
   m_firstPartonAK8JetEt->Fill(event.firstPartonAK8JetEtVal);
   m_secondPartonAK8JetEt->Fill(event.secondPartonAK8JetEtVal);
-//  std::cout << "FILLING 1"<<std::endl;
+  std::cout << "FILLING 1"<<std::endl;
 
   m_parton1Eta->Fill(event.parton1EtaVal);
   m_parton2Eta->Fill(event.parton2EtaVal);
@@ -165,7 +165,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetEta->Fill(event.secondPartonJetEtaVal);
   m_firstPartonAK8JetEta->Fill(event.firstPartonAK8JetEtaVal);
   m_secondPartonAK8JetEta->Fill(event.secondPartonAK8JetEtaVal);
-  //std::cout << "FILLING 2"<<std::endl;
+  std::cout << "FILLING 2"<<std::endl;
 
   m_parton1Phi->Fill(event.parton1PhiVal);
   m_parton2Phi->Fill(event.parton2PhiVal);
@@ -175,7 +175,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetPhi->Fill(event.secondPartonJetPhiVal);
   m_firstPartonAK8JetPhi->Fill(event.firstPartonAK8JetPhiVal);
   m_secondPartonAK8JetPhi->Fill(event.secondPartonAK8JetPhiVal);
-//  std::cout << "FILLING 3"<<std::endl;
+  std::cout << "FILLING 3"<<std::endl;
 
   m_dRparton1parton2->Fill(event.dRparton1parton2Val);
   m_dRmuon1muon2->Fill(event.dRmuon1muon2Val);
@@ -187,7 +187,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_dRparton2jet->Fill(event.dRparton2jetVal);
   m_dRparton1AK8jet->Fill(event.dRparton1AK8jetVal);
   m_dRparton2AK8jet->Fill(event.dRparton2AK8jetVal);
-  //std::cout << "FILLING 4"<<std::endl;
+  std::cout << "FILLING 4"<<std::endl;
 
 
 
@@ -197,7 +197,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonJetEtEM->Fill(event.secondPartonJetEtEMVal);
   m_firstPartonJetEtInvisible->Fill(event.firstPartonJetEtInvisibleVal);
   m_secondPartonJetEtInvisible->Fill(event.secondPartonJetEtInvisibleVal);
-  //std::cout << "FILLING 5"<<std::endl;
+  std::cout << "FILLING 5"<<std::endl;
   
 
   m_firstPartonAK8JetEtHadronic->Fill(event.firstPartonAK8JetEtHadronicVal);
@@ -206,29 +206,29 @@ void eventHistos::fillGen(eventBits& event) {
   m_secondPartonAK8JetEtEM->Fill(event.secondPartonAK8JetEtEMVal);
   m_firstPartonAK8JetEtInvisible->Fill(event.firstPartonAK8JetEtInvisibleVal);
   m_secondPartonAK8JetEtInvisible->Fill(event.secondPartonAK8JetEtInvisibleVal);
-  //std::cout << "FILLING 6"<<std::endl;
+  std::cout << "FILLING 6"<<std::endl;
 
   m_leadSubleadingPartonsMuonsMass->Fill(event.leadSubleadingPartonsMuonsMassVal);
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal);
   m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal);
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal);
- // std::cout << "FILLING 7"<<std::endl;
+  std::cout << "FILLING 7"<<std::endl;
 
   m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal);
   m_leadSubleadingPartonsMuonsPt->Fill(event.leadSubleadingPartonsMuonsPtVal);
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal);
   m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal);
- // std::cout << "FILLING 8"<<std::endl;
+  std::cout << "FILLING 8"<<std::endl;
 
-  m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal);
-  m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal);
-  m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal);
-  m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal);
+  //m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal);
+  //m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal);
+  //m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal);
+  //m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal);
 
   m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal);
 
   m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction);
- // std::cout << "FILLING 9"<<std::endl;
+  std::cout << "FILLING 9"<<std::endl;
 
   m_EtPlacementMuon2->Fill(event.secondInDecayMuon);
   m_nJets->Fill(event.myGenJets.size());

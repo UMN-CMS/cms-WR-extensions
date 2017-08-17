@@ -1,13 +1,27 @@
-LISTS OF ROOT FILES                                                 :    CROSS-SECTIONS IN PB                                                                                        
-=============================================================================================
-DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt   :         354.3+0.96-0.96  
-DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :           83.12+.11-.11
-DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :       3.047+0.009-0.009
-DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :    0.3921+0.0010-0.0010                                        
-DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  : 0.03636+0.00009-0.00009                    
-WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :       626.7+1.642-1.642                            
-WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :    21.82e+.04377-.04377                           
-WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :   2.635+.005432-.005432                                       
-WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  : .4102+.0008981-.0008981                                  
-TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v1.txt         :     56.86+.03542-.03542                        
-TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt                  :      831.76+40.25-45.63
+LISTS OF ROOT FILES                                                 :    CROSS-SECTIONS IN PB  :  LEGEND       :  COLOR
+=======================================================================================================================
+DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt   :         354.3+0.96-0.96  : DYJetsToLL    :  kBlue 
+DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :           83.12+.11-.11  : DYJetsToLL    :  kBlue
+DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :       3.047+0.009-0.009  : DYJetsToLL    :  kBlue
+DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :    0.3921+0.0010-0.0010  : DYJetsToLL    :  kBlue                                      
+DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  : 0.03636+0.00009-0.00009  : DYJetsToLL    :  kBlue                  
+WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :       626.7+1.642-1.642  : WJetsToLNu    : kGreen                          
+WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :     21.82+.04377-.04377  : WJetsToLNu    : kGreen                         
+WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :   2.635+.005432-.005432  : WJetsToLNu    : kGreen                                     
+WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  : .4102+.0008981-.0008981  : WJetsToLNu    : kGreen                                
+TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v1.txt         :     56.86+.03542-.03542  : TTJets_DiLept : kOrange                      
+TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt                  :      831.76+40.25-45.63  : TTJets_incl   : kBlack 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

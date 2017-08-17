@@ -1,9 +1,8 @@
 import ROOT
 import sys
-import datetime
-import subprocess
 import os
-
+import subprocess
+from shutil import copyfile
 """
 Style options mostly from CMS's tdrStyle.C
 """
@@ -42,7 +41,6 @@ def customROOTstyle() :
     ROOT.gStyle.SetFrameLineWidth(1);
     ROOT.gStyle.SetPalette(55);
     ROOT.gStyle.SetNumberContours(100);
-
 import numpy as np
 def customPalette(zeropoint = 0.5):
     Number = 3;
@@ -52,26 +50,6 @@ def customPalette(zeropoint = 0.5):
     Length = np.array([0.0,  zeropoint, 1.0], dtype=float)
     nb=100;
     ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb)
-
-def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols = 3, width=1500,height=1100):
-    c = ROOT.TCanvas("c", "c", width,height)
-    nhists = len(hists)
-    nrows = (nhists-1)/ncols+1
-    c.Divide(ncols,nrows)
-    
-    if len(limits) == 2:
-        limits = [limits]*nhists
-    if len(limits) == ncols and len(limits[0]) == 2:
-        limits = limits*nrows
-
-    for pad in range(len(hists)):
-        p = c.cd(pad +1)
-        if setLogY: p.SetLogy()
-        if setLogZ: p.SetLogz()
-        if limits: hists[pad].GetZaxis().SetRangeUser(limits[pad][0], limits[pad][1])
-        hists[pad].Draw("colz")
-
-    c.SaveAs(outname)
 
 def saveHists(file,directory="",prefix="",filter=""):
     customROOTstyle()
@@ -91,68 +69,65 @@ def saveHists(file,directory="",prefix="",filter=""):
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png", drawoptions = drawoptions)
+            addHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png", drawoptions = drawoptions)
 
-def drawHist(hist,name,width=500,height=500, drawoptions=""):
+
+   
+
+def addHist(hist,name,width=500,height=500, drawoptions=""):
+    global stackList
     customROOTstyle()
-    c = ROOT.TCanvas("c","c",width,height)
+    if hist.GetName() not in stackList:
+        stackList[hist.GetName()] = ROOT.THStack(hist.GetName(),hist.GetName())
+        stackList[hist.GetName()].Add(hist)
+    else:
+        stackList[hist.GetName()].Add(hist)
     #hist.SetLineWidth(2)
+
+
+stackList = {}
+backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cms-WR-extensions/samples/backgrounds/"
+backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
+backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
+backgroundsROOToutputSuffix = "background_cfg_"
+backgroundROOTdestination = "/home/aevans/public_html/plots/backgrounds/"
+#background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
+subprocess.call("mdkir -p"+backgroundROOTdestination, shell=True)
+
+with open(backgroundsList) as f:
+    lines = f.read().splitlines()
+
+backgrounds = []
+xsecs = []
+lineNum = 0
+for line in lines:
+    if lineNum < 2 : 
+        lineNum+=1
+        continue
+    backgrounds.append(line.split(':')[0].strip())
+    xsecs.append(line.split(':')[1].strip())
+#print backgrounds
+#run over backgrounds
+backgroundsRootFiles = {}
+for background in backgrounds:
+    backgroundsRootFiles[background] = [line for line in os.listdir(backgroundsROOToutputDir+backgroundsROOToutputSuffix+background[:-4]) if ".root" in line]
+
+#print backgroundsRootFiles
+
+for background,files in backgroundsRootFiles.items():
+   ahaddOut = background[:-4]+".root"
+   ahaddCommand = "ahadd.py "+ahaddOut+" "+backgroundsROOToutputDir+backgroundsROOToutputSuffix+background[:-4]+"/"+"*.root"
+   print ahaddCommand
+ #  subprocess.call(ahaddCommand, shell=True)   
+   saveHists(ROOT.TFile.Open(ahaddOut, "read"),backgroundROOTdestination,background[:-4])
+
     hist.Draw(drawoptions)
-    c.SaveAs(name)
-
-def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500, norm = False, xtitle = "", ytitle = "", rebin = 0, leg="top",logy=False):
-    customROOTstyle()
-    hist_max = 0
-    if not colors:
-        colors = [ROOT.kRed, ROOT.kBlue, ROOT.kBlack]
-        colors = colors[:len(hists)]
-    for h in hists:
-        if rebin:
-           h.Rebin(rebin)
-        if norm:
-           h.Scale(1./h.Integral())
-        if h.GetMaximum() > hist_max:
-            hist_max = h.GetMaximum()
-
-    canv = ROOT.TCanvas("c","c",width,height)
-    if logy:
-         canv.SetLogy()
-    first = True
-
-    x1 = ROOT.gStyle.GetPadLeftMargin();
-    x2 = 1 - ROOT.gStyle.GetPadRightMargin();
-    if leg == "top":
-       y2 = 1 - ROOT.gStyle.GetPadTopMargin();
-       y1 = y2*.9
-       y2 = ROOT.gStyle.SetPadTopMargin(y2);
-    if leg == "bot":
-       y1 = ROOT.gStyle.GetPadBottomMargin();
-       y2 = y1 + 0.1
-       ROOT.gStyle.SetPadBottomMargin(y1);
-
-    leg = ROOT.TLegend(x1,y1,x2,y2)
-    leg.SetFillColor(ROOT.kWhite)
-    leg.SetNColumns(len(hists))
-    for h,l,c in zip(hists,labels,colors):
-        h.SetMaximum(1.2 * hist_max)
-        h.SetTitle(l)
-        h.SetLineColor(c)
-        h.SetLineWidth(3)
-        h.GetYaxis().SetTitleOffset(1.5)
-        #h.SetOptStat(0)
-        if first:
-            if xtitle: h.GetXaxis().SetTitle(xtitle)
-            if ytitle: h.GetYaxis().SetTitle(ytitle)
-            h.Draw()
-            first = False
-        else:
-            h.Draw("same")
-
-        leg.AddEntry(h,l)
+   c.SaveAs(name)
 
 
-    leg.Draw()
-    canv.SaveAs(filename)
 
 
-saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3])
+
+
+
+
