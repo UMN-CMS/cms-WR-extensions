@@ -12,6 +12,6 @@ do
 	eval "sed 's/MASSWR/${WrMasses[$h]}/g ; s/MASSNU/${NuMasses[$h]}/g ; s/N_EVENTS/${N_EVENTS}/g'  WR_M-UNDEF_ToLNu_M-UNDEF_Analysis_MuMuJJ_cfg.py > WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_cfg.py"    
     eval "ls ${DataSetsDirectory}/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_MiniAOD_MuMuJJ/*000.root > WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_MiniAOD_MuMuJJ.txt"
 
-    eval 'condor_filelist.perl --batch 20 --nosubmit WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_cfg.py WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_MiniAOD_MuMuJJ.txt --memreq 2500'
+    eval 'condor_filelist.perl --batch 1 --nosubmit WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_cfg.py WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_MiniAOD_MuMuJJ.txt --memreq 2500'
 
 done
