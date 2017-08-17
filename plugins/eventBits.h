@@ -16,6 +16,7 @@ public:
   int run;
   int lumi;
   int event;
+  double weight;
 
   //BASIC FUNCTIONS
   bool passesGenCuts();
@@ -26,12 +27,19 @@ public:
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
   std::vector<std::pair<const pat::Jet*, const pat::Muon*>> myMuonJetPairs;
+  std::vector<const pat::Jet*>  myJetCandsHighPt;
+  std::vector<const pat::Jet*>  myJetCands;
+  std::vector<const pat::Muon*> myMuonCandsHighPt;
+  std::vector<const pat::Muon*> myMuonCands;
   int secondInDecayMuon;
 
   //EVENT VALUES
   bool passesWR2016;
+  int muons40;
+  int ak8jets40;
 
   int    muonCands;
+  int    ak8jetCands;
   double parton1EtVal;
   double parton2EtVal;
   double muon1EtVal;
@@ -100,6 +108,7 @@ public:
   double leadAK8JetMuonEtaVal;
 
   double leadAK8JetMuonPhiVal;
+  double leadAK8JetMuonJetMuonEnergyFraction;
   
 
 private:

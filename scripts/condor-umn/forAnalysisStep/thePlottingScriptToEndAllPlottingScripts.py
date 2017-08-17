@@ -10,7 +10,7 @@ Style options mostly from CMS's tdrStyle.C
 def customROOTstyle() :
     ROOT.gROOT.SetBatch(True)
     ROOT.gStyle.SetOptTitle(True)
-    ROOT.gStyle.SetOptStat(False)
+    ROOT.gStyle.SetOptStat(1111)
     ROOT.gStyle.SetPadTopMargin(0.06);
     ROOT.gStyle.SetPadBottomMargin(0.13);
     ROOT.gStyle.SetPadLeftMargin(0.12);
@@ -88,7 +88,7 @@ def saveHists(file,directory="",prefix="",filter=""):
             saveHists(dir,directory=newDir, prefix=prefix,filter=filter)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
-            drawoptions = "se"
+            drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
             drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png", drawoptions = drawoptions)

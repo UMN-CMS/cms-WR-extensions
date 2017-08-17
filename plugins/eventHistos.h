@@ -38,6 +38,8 @@ class eventHistos {
   uint32_t m_flavor;
 
   //GEN PLOTS
+  TH1D* m_eventsWeight;
+
   TH1D* m_parton1Et;
   TH1D* m_parton2Et;
   TH1D* m_muon1Et;
@@ -106,12 +108,16 @@ class eventHistos {
   TH1D* m_leadAK8JetMuonEta;
 
   TH1D* m_leadAK8JetMuonPhi;
+
+  TH1D* m_leadAK8JetMuonJetMuonEnergyFraction;
   //RECO PLOTS
 
   TH1D* m_EtPlacementMuon2;
   TH1D* m_nJets;
   TH1D* m_nAK8Jets;
   TH1D* m_nMuonCands;
+  TH1D* m_nMuons40;
+  TH1D* m_nAK8Jets40;
 
 };
 

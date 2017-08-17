@@ -10,4 +10,5 @@
 <use name="DataFormats/MuonReco"/>
 <use name="DataFormats/PatCandidates"/>
 <use name="DataFormats/Math"/>
+<use name="SimDataFormats/GeneratorProducts"/>
 <flags EDM_PLUGIN="1"/>

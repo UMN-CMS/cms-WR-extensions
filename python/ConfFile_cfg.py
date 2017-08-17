@@ -71,8 +71,10 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
+                              genInfo = cms.InputTag("generator"),
                               wantHardProcessMuons = cms.untracked.bool(True),
-                              doGen = cms.untracked.bool(True)
+                              doGen = cms.untracked.bool(True),
+                              isMC = cms.untracked.bool(True)
 )
 
 process.p = cms.Path(process.muonSelectionSeq * process.demo)
