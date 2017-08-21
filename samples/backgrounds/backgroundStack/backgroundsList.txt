@@ -11,17 +11,3 @@ WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  :   2.635+.0
 WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt  : .4102+.0008981-.0008981  : WJetsToLNu    : kGreen                                
 TTJets_DiLept_TuneCUETP8M1_13TeV-madgraphMLM-pythia8_v1.txt         :     56.86+.03542-.03542  : TTJets_DiLept : kOrange                      
 TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt                  :      831.76+40.25-45.63  : TTJets_incl   : kBlack 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

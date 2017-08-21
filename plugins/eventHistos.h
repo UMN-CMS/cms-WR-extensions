@@ -111,6 +111,12 @@ class eventHistos {
 
   TH1D* m_leadAK8JetMuonJetMuonEnergyFraction;
   //RECO PLOTS
+  TH1D* m_selectedMuonEt; 
+  TH1D* m_selectedMuonPhi;
+  TH1D* m_selectedMuonEta;
+  TH1D* m_selectedJetEt;
+  TH1D* m_selectedJetPhi;
+  TH1D* m_selectedJetEta;
 
   TH1D* m_EtPlacementMuon2;
   TH1D* m_nJets;

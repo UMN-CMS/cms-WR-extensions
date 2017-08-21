@@ -594,6 +594,12 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.leadAK8JetMuonPtVal   = (myRECOevent.myMuonJetPairs[0].first->p4() + myRECOevent.myMuonJetPairs[0].second->p4()).pt(); 
   myRECOevent.leadAK8JetMuonEtaVal  = (myRECOevent.myMuonJetPairs[0].first->p4() + myRECOevent.myMuonJetPairs[0].second->p4()).eta();  
   myRECOevent.leadAK8JetMuonPhiVal  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs[0].first->phi(), myRECOevent.myMuonJetPairs[0].second->phi())));  
+  myRECOevent.selectedMuonEt  = myRECOevent.myMuonJetPairs[0].second->et(); 
+  myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs[0].second->phi(); 
+  myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs[0].second->eta();
+  myRECOevent.selectedJetEt   = myRECOevent.myMuonJetPairs[0].first->et(); 
+  myRECOevent.selectedJetPhi  = myRECOevent.myMuonJetPairs[0].first->phi(); 
+  myRECOevent.selectedJetEta  = myRECOevent.myMuonJetPairs[0].first->eta(); 
   if(myRECOevent.myMuonJetPairs[0].first->isPFJet()) {
     myRECOevent.leadAK8JetMuonJetMuonEnergyFraction = myRECOevent.myMuonJetPairs[0].first->muonEnergyFraction();
     std::cout << "CAND PAIR WITH CALOJET" <<std::endl;

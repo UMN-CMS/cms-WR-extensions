@@ -3,6 +3,7 @@ import sys
 import os
 import subprocess
 from shutil import copyfile
+import copy
 """
 Style options mostly from CMS's tdrStyle.C
 """
@@ -51,7 +52,7 @@ def customPalette(zeropoint = 0.5):
     nb=100;
     ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb)
 
-def saveHists(file,directory="",prefix="",filter=""):
+def saveHists(weight,backgroundName,file,directory="",prefix="",filter=""):
     customROOTstyle()
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
@@ -63,28 +64,63 @@ def saveHists(file,directory="",prefix="",filter=""):
             newDir=directory+"/"+key.GetName()
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(dir,directory=newDir, prefix=prefix,filter=filter)
+            saveHists(weight,backgroundName,dir,directory=newDir, prefix=prefix,filter=filter)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            addHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png", drawoptions = drawoptions)
+       #     hist.SetFillColor(color)
+            addHist(weight,backgroundName,hist,directory+"/"+key.GetName()+".root", width=1000, height=1000, drawoptions = drawoptions)
 
+def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
+    ROOT.gROOT.SetBatch(True)
+    hists1d = ["TH1D", "TH1F", "TH1"]
+    hists2d = ["TH2D", "TH2F", "TH2"]
+    histObjectNames = hists1d + hists2d
+    print "Looking for eventsWeight histogram"
+    if inFolder:
+        print "Accessing folder"
+        for key in file.GetListOfKeys():
+            print key.GetName()
+            if key.GetClassName() in histObjectNames and filter in prefix and key.GetName() == "eventsWeight":
+                print "Found events weight" 
+                return float(file.Get(key.GetName()).GetBinContent(1))
+    else:
+        print "Not in folder yet"
+        for key in file.GetListOfKeys():
+            print "Looping through keys"
+            if key.IsFolder():
+                if key.GetName() == "allEvents":
+                    print "Found Folder"
+                    inFolder = True
+                dir = file.Get(key.GetName())
+                newDir=directory+"/"+key.GetName()
+                return getEventsWeight(dir,directory=newDir, prefix=prefix,filter=filter, inFolder = inFolder)
+    print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
+    return 1.0
 
    
 
-def addHist(hist,name,width=500,height=500, drawoptions=""):
+def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""):
     global stackList
     customROOTstyle()
-    if hist.GetName() not in stackList:
-        stackList[hist.GetName()] = ROOT.THStack(hist.GetName(),hist.GetName())
-        stackList[hist.GetName()].Add(hist)
+    ROOT.gStyle.SetPalette(55)
+    hist.SetTitle(backgroundName)
+    hist.Scale(weight)
+    print hist.GetName()
+    if name not in stackList:
+        print "New Plot!"
+        stackList[name] = []
+        ROOT.gStyle.SetPalette(55)
+        stackList[name].append(copy.deepcopy(hist))
     else:
-        stackList[hist.GetName()].Add(hist)
+        print "Stacking!"
+        ROOT.gStyle.SetPalette(55)
+        stackList[name].append(copy.deepcopy(hist))
     #hist.SetLineWidth(2)
 
-
+integratedLuminosity = 35900.0
 stackList = {}
 backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cms-WR-extensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
@@ -92,39 +128,70 @@ backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
 backgroundsROOToutputSuffix = "background_cfg_"
 backgroundROOTdestination = "/home/aevans/public_html/plots/backgrounds/"
 #background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
-subprocess.call("mdkir -p"+backgroundROOTdestination, shell=True)
+#subprocess.call("mkdir -p"+backgroundROOTdestination, shell=True)
 
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
 
-backgrounds = []
-xsecs = []
+xsecs = {}
 lineNum = 0
 for line in lines:
     if lineNum < 2 : 
         lineNum+=1
         continue
-    backgrounds.append(line.split(':')[0].strip())
-    xsecs.append(line.split(':')[1].strip())
+    xsecs[line.split(':')[0].strip()] = float(line.split(':')[1].strip().split("+")[0])
 #print backgrounds
 #run over backgrounds
 backgroundsRootFiles = {}
-for background in backgrounds:
-    backgroundsRootFiles[background] = [line for line in os.listdir(backgroundsROOToutputDir+backgroundsROOToutputSuffix+background[:-4]) if ".root" in line]
+for background,xsec in xsecs.items():
+    #if 
+    backgroundsRootFiles[background] = backgroundROOTdestination+background[:-4]+".root"
 
 #print backgroundsRootFiles
-
+pos = 1
+end = len(backgroundsRootFiles)
 for background,files in backgroundsRootFiles.items():
-   ahaddOut = background[:-4]+".root"
-   ahaddCommand = "ahadd.py "+ahaddOut+" "+backgroundsROOToutputDir+backgroundsROOToutputSuffix+background[:-4]+"/"+"*.root"
-   print ahaddCommand
+    ahaddOut = backgroundROOTdestination+background[:-4]+".root"
  #  subprocess.call(ahaddCommand, shell=True)   
-   saveHists(ROOT.TFile.Open(ahaddOut, "read"),backgroundROOTdestination,background[:-4])
+    if pos == end:
+        print "LAST ROUND!"
+    print pos
+    print background[:-4]
+    weight = 1.0
+    weight *= integratedLuminosity
+    weight *= xsecs[background]
+    print "LOOKING FOR EVENTS WEIGHT IN FILE"
+    weight /= getEventsWeight(ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundROOTdestination)
+    print "DONE CALCULATING"
+    saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundROOTdestination)
+    pos+=1
 
-    hist.Draw(drawoptions)
-   c.SaveAs(name)
+#Loop over stacks and make save stackhists
 
-
+c = ROOT.TCanvas("c","c",1000,1000)
+for plot,stack in stackList.items():
+    customROOTstyle()
+    stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
+    customROOTstyle()
+    pos = 1
+    for hist in stack:
+        print hist.__class__.__name__
+        #myHist = copy.deepcopy(hist)
+        print "Adding"
+        hist.SetFillColor(pos)
+        stackHist.Add(hist)
+        if pos == 9:
+            pos+=2
+        else:
+            pos+=1
+    ROOT.gStyle.SetPalette(55)
+    customROOTstyle()
+    stackHist.Draw()
+    customROOTstyle()
+    print "THIS MANY HISTS"
+    print stackHist.GetNhists()
+    c.BuildLegend()
+    c.SaveAs(plot)
 
 
 

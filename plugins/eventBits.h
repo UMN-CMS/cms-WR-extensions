@@ -110,6 +110,13 @@ public:
   double leadAK8JetMuonPhiVal;
   double leadAK8JetMuonJetMuonEnergyFraction;
   
+  double selectedMuonEt;
+  double selectedMuonPhi;
+  double selectedMuonEta;
+
+  double selectedJetEt;
+  double selectedJetPhi;
+  double selectedJetEta;
 
 private:
 

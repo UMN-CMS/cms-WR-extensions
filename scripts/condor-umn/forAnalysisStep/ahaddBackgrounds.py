@@ -24,8 +24,8 @@ for line in lines:
         lineNum+=1
         continue
     backgrounds.append(line.split(':')[0].strip())
-    xsecs.append(line.split(':')[1].strip())
-#print backgrounds
+    #xsecs.append(line.split(':')[1].strip())
+print backgrounds
 #run over backgrounds
 backgroundsRootFiles = {}
 for background in backgrounds:
@@ -34,6 +34,6 @@ for background in backgrounds:
 #print backgroundsRootFiles
 
 for background,files in backgroundsRootFiles.items():
-   ahaddOut = background[:-4]+".root"
+   ahaddOut = backgroundROOTdestination+background[:-4]+".root"
    ahaddCommand = "ahadd.py "+ahaddOut+" "+backgroundsROOToutputDir+backgroundsROOToutputSuffix+background[:-4]+"/"+"*.root"
    subprocess.call(ahaddCommand, shell=True)   
