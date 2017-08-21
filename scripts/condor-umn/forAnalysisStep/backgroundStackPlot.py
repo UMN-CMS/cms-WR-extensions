@@ -168,7 +168,7 @@ for background,files in backgroundsRootFiles.items():
 
 #Loop over stacks and make save stackhists
 
-c = ROOT.TCanvas("c","c",1000,1000)
+#c = ROOT.TCanvas("c","c",1000,1000)
 for plot,stack in stackList.items():
     customROOTstyle()
     stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
@@ -186,12 +186,13 @@ for plot,stack in stackList.items():
             pos+=1
     ROOT.gStyle.SetPalette(55)
     customROOTstyle()
-    stackHist.Draw()
+    #stackHist.Draw()
     customROOTstyle()
     print "THIS MANY HISTS"
     print stackHist.GetNhists()
-    c.BuildLegend()
-    c.SaveAs(plot)
+    #c.BuildLegend()
+    #c.SaveAs(plot)
+    stackHist.SaveAs(plot)
 
 
 
