@@ -3,6 +3,7 @@ import sys
 import datetime
 import subprocess
 import os
+import copy
 
 """
 Style options mostly from CMS's tdrStyle.C
@@ -70,10 +71,10 @@ def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols 
         if setLogZ: p.SetLogz()
         if limits: hists[pad].GetZaxis().SetRangeUser(limits[pad][0], limits[pad][1])
         hists[pad].Draw("colz")
-
+    
     c.SaveAs(outname)
 
-def saveHists(file,directory="",prefix="",filter=""):
+def saveHists(file,directory="",prefix="",filter="",bg="simple"):
     customROOTstyle()
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
@@ -85,20 +86,55 @@ def saveHists(file,directory="",prefix="",filter=""):
             newDir=directory+"/"+key.GetName()
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(dir,directory=newDir, prefix=prefix,filter=filter)
+            saveHists(dir,directory=newDir, prefix=prefix,filter=filter,bg=bg)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png", drawoptions = drawoptions)
+            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg)
 
-def drawHist(hist,name,width=500,height=500, drawoptions=""):
+def getStack(plotName, folder):
+    backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/"
+    file = ROOT.TFile.Open(backgroundsDir+folder+"/"+plotName+".root", "read")
+    for key in file.GetListOfKeys():
+        if (not key.IsFolder()) and (key.GetName() == plotName):
+            print "THSTACK PLOT FOUND"
+            return file.Get(key.GetName())
+    return 0
+def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple"):
+#/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
+    newHist = copy.deepcopy(hist)
     customROOTstyle()
+    ROOT.gStyle.SetPalette(61)
+    ROOT.gROOT.ForceStyle()
     c = ROOT.TCanvas("c","c",width,height)
+    customROOTstyle()
+    ROOT.gStyle.SetPalette(61)
+    ROOT.gROOT.ForceStyle()
+
     #hist.SetLineWidth(2)
-    hist.Draw(drawoptions)
-    c.SaveAs(name)
+    #print bg
+    if (bg == "backgrounds"):
+        backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-4],name.split("/")[-3]+"/"+name.split("/")[-2])
+        if (backgroundStack != 0):
+            print "GOT THE BACKGROUND"    
+            backgroundStack.Draw("HIST")
+            histMax = backgroundStack.GetMaximum()
+            print histMax
+        else:
+            print "NO BACKGROUNDS FOUND!"
+            exit(1)
+    if not (histMax == 0 or newHist.GetMaximum() == 0) : 
+        print "SCALING HISTOGRAM"
+        scaleFactor = histMax/newHist.GetMaximum()
+        print scaleFactor
+        newHist.Scale(scaleFactor)
+        newHist.SetLineColor(794)
+        newHist.Draw(drawoptions+"same")
+        c.SetLogy()
+        c.BuildLegend()
+        c.SaveAs(name)
 
 def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500, norm = False, xtitle = "", ytitle = "", rebin = 0, leg="top",logy=False):
     customROOTstyle()
@@ -155,4 +191,4 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
     canv.SaveAs(filename)
 
 
-saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3])
+saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4])
