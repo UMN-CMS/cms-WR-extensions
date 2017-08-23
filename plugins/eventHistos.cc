@@ -110,7 +110,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", "#  AK8Jets above 40",                                                       10, -.5, 9.5);
 
     m_selectedMuonEt  =                 m_histoFolder.make<TH1D>("selectedMuonEt"  ,"Selected Muon Et"  ,80,0.0,4000 ); 
-    m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Muon Et"  ,80,0.0,4000 );  
+    m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Jet Et"   ,80,0.0,4000 );  
     m_selectedMuonPhi =                 m_histoFolder.make<TH1D>("selectedMuonPhi" ,"Selected Muon Phi" ,80,-4.0,4.0 );  
     m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi"  ,80,-4.0,4.0 );   
     m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta" ,60,-3.0,3.0 );   
