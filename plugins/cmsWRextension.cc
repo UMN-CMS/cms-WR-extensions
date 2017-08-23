@@ -341,7 +341,8 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, eventBits& myEvent) 
     if (CHF == 0) continue;
     if (CHM == 0) continue;
     if (CEMF > .9) continue;
-    
+    //ANALYSIS SPECIFIC CUTS
+    if (MUF <= .05) continue;
     //JETS PASSING CUTS
     allJets.push_back(&(*iJet));
     //JETS PASSING WITH VERY HIGH PT
