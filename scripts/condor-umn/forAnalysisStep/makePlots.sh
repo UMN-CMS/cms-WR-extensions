@@ -1,7 +1,7 @@
 #!/bin/bash
 
-WrMasses=(4000 4000 4000)
-NuMasses=( 400  800 1333)
+WrMasses=(2400 2400 2400)
+NuMasses=( 240  800  480)
 #WrMasses=(800 1600 2400 3200 4000 6000 800 1600 2400 3200 4000 6000 800 1600 2400 3200 4000 6000)
 #NuMasses=( 80  160  240  320  400  600 160  320  480  640  800 1200 233  533  800 1067 1333 2000)
 DataSetsDirectory="/data/whybee0b/user/aevans/"
@@ -16,7 +16,8 @@ do
 	## MuMuJJ
 	#make python config file for MiniAOD step
     eval 'echo "python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds"'
-    eval 'python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds'
+    eval 'cp /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /data/whybee0b/user/aevans/thesis/signals/'
+    eval 'python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/thesis/signals/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds'
 
 done
 eval 'find /home/aevans/public_html/plots/ -type d -exec ln /home/aevans/public_html/plots/index.php {}/index.php \;'

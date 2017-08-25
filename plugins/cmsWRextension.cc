@@ -78,6 +78,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
    m_offlineVerticesToken (consumes<std::vector<reco::Vertex>> (iConfig.getParameter<edm::InputTag>("vertices"))),
    m_genEventInfoToken (consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"))),
+   m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),
    m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
    m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false)),
    m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
@@ -130,8 +131,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    if (m_doReco || !m_isMC) {
      if(preSelectReco(iEvent, myRECOevent)) {
        if(passExtensionRECO(iEvent, myRECOevent)) { 
-         if(!pass2016) m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
-         m_eventsPassingExtensionRECO.fill(myRECOevent);
+         METcuts(iEvent, myRECOevent);
+         if(!pass2016) {
+           if(subLeadingMuonZMass(iEvent, myRECOevent)) m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);         
+           else m_eventsPassingExtensionRECO.fill(myRECOevent);
+         }
+         m_eventsPassingExtension.fill(myRECOevent);
          //std::cout <<"rECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
          std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
        }
@@ -141,6 +146,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 }
   
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOevent) {
+  METselection(iEvent, myRECOevent);
   muonSelection(iEvent, myRECOevent);
   jetSelection(iEvent, myRECOevent); 
 
@@ -278,6 +284,47 @@ bool cmsWRextension::selectHighPtISOMuon(const edm::Event& iEvent, eventBits& my
 
    return false;
 }
+bool cmsWRextension::METselection(const edm::Event& iEvent, eventBits& myEvent) {
+  edm::Handle<std::vector<pat::MET>> mets;
+  iEvent.getByToken(m_metToken, mets);
+  if (mets->size() < 1) return false;
+  myEvent.myMET = &(mets->at(0));
+  return true; 
+
+
+
+}
+bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent) {
+  //CHECK IF WE HAVE A SUBLEADING MUON
+  if(myEvent.myMuonCands.size() < 2) return false;
+  //GRAB THE SUBLEADING MUON
+  const pat::Muon* subleadMuon = myEvent.myMuonCands[1];
+  const pat::Muon* selMuon     = myEvent.myMuonJetPairs[0].second;
+  const pat::Jet*  selJet      = myEvent.myMuonJetPairs[0].first;
+
+  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi()));
+  myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi())); 
+  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
+  myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
+  myEvent.subleadMuonEt           = subleadMuon->et();
+
+  if(myEvent.subleadMuon_selMuonMass < 120 && myEvent.subleadMuon_selMuonMass > 60) return true;
+  return false;
+}
+bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
+  const pat::MET*  met         = myEvent.myMET;
+  const pat::Muon* selMuon     = myEvent.myMuonJetPairs[0].second;
+  const pat::Jet*  selJet      = myEvent.myMuonJetPairs[0].first;
+
+  myEvent.MET             = met->et();
+  myEvent.MET_selJetdPhi  = fabs(reco::deltaPhi(met->phi(),selJet->phi()));
+  myEvent.MET_selMuondPhi = fabs(reco::deltaPhi(met->phi(),selMuon->phi()));
+  myEvent.MET_selJetMass  = (met->p4()+selJet->p4()).mass();
+  myEvent.MET_selMuonMass = (met->p4()+selMuon->p4()).mass();
+  myEvent.MET_selJetPt    = (met->p4()+selJet->p4()).pt();
+  myEvent.MET_selMuonPt   = (met->p4()+selMuon->p4()).pt();
+  return true;
+}
 bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
@@ -300,12 +347,14 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
     //if( iMuon->pt() > 200 ) highPTMuons.push_back(&(*iMuon));
 
   }
+  if (allMuons.size() < 1) return false;
+  std::sort(highPTMuons.begin(),highPTMuons.end(),::wrTools::compareEtCandidatePointer); 
+  std::sort(allMuons.begin(),allMuons.end(),::wrTools::compareEtCandidatePointer); 
 
   myEvent.myMuonCandsHighPt = highPTMuons;
   myEvent.myMuonCands = allMuons; 
   myEvent.muonCands = highPTMuons.size();
   myEvent.muons40 = allMuons.size();
-
 
   return true;
 
@@ -352,11 +401,13 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, eventBits& myEvent) 
     }
   } 
   if (allJets.size() == 0) return false;
-  myEvent.ak8jetCands = highPTJets.size();
+  std::sort(highPTJets.begin(),highPTJets.end(),::wrTools::compareEtCandidatePointer); 
+  std::sort(allJets.begin(),allJets.end(),::wrTools::compareEtCandidatePointer); 
 
   myEvent.myJetCandsHighPt = highPTJets;
   myEvent.myJetCands = allJets;
 
+  myEvent.ak8jetCands = highPTJets.size();
   myEvent.ak8jets40 = myEvent.myJetCands.size();
 
 
@@ -610,6 +661,8 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   if(myRECOevent.myMuonJetPairs[0].first->isBasicJet()) std::cout << "CAND PAIR WITH BASICJET" <<std::endl;
   
   std::cout <<"RECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
+
+
   return true;
 }
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {

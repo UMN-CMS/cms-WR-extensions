@@ -6,6 +6,7 @@
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
 
 class eventBits {
 public:
@@ -31,6 +32,7 @@ public:
   std::vector<const pat::Jet*>  myJetCands;
   std::vector<const pat::Muon*> myMuonCandsHighPt;
   std::vector<const pat::Muon*> myMuonCands;
+  const pat::MET*               myMET;
   int secondInDecayMuon;
 
   //EVENT VALUES
@@ -117,6 +119,20 @@ public:
   double selectedJetEt;
   double selectedJetPhi;
   double selectedJetEta;
+
+  double subleadMuon_selJetdPhi;
+  double subleadMuon_selMuondPhi;
+  double subleadMuon_selMuonMass;
+  double subleadMuon_selMuonPt;
+  double subleadMuonEt;
+
+  double MET;
+  double MET_selJetdPhi;
+  double MET_selMuondPhi;
+  double MET_selJetMass;
+  double MET_selMuonMass;
+  double MET_selJetPt;
+  double MET_selMuonPt;
 
 private:
 

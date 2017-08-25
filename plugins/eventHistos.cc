@@ -98,7 +98,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     //m_leadSubleadingPartonsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  80, -4.0,4.0);
     //m_leadAK8JetMuonEta  =              m_histoFolder.make<TH1D>("leadAK8JetMuonEta","2 Object Eta of the leading Jet and Muon"                           ,80, -4.0,4.0);
 
-    m_leadAK8JetMuonPhi  =              m_histoFolder.make<TH1D>("leadAK8JetMuonAbsdphi","2 Object delta Phi of the leading Jet and Muon"                     ,80, -4.0,4.0);
+    m_leadAK8JetMuonPhi  =              m_histoFolder.make<TH1D>("leadAK8JetMuonAbsdphi","2 Object delta Phi of the leading Jet and Muon"                     ,60, 2.0,3.2);
 
     m_leadAK8JetMuonJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetMuonJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet muon pair", 100, 0.0, 1.0);
 
@@ -115,6 +115,21 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi"  ,80,-4.0,4.0 );   
     m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta" ,60,-3.0,3.0 );   
     m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta"  ,60,-3.0,3.0 ); 
+
+    m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuon_selJetdPhi" ,"Sublead Muon Selected Jet dPhi"  ,80,  0.0, 4.0);
+    m_subleadMuon_selMuondPhi      =    m_histoFolder.make<TH1D>("subleadMuon_selMuondPhi","Sublead Muon Selected Muon dPhi" ,80,  0.0, 4.0);
+    m_subleadMuon_selMuonMass      =    m_histoFolder.make<TH1D>("subleadMuon_selMuonMass","Sublead Muon Selected Muon Mass" ,100, 0.0,2000);
+    m_subleadMuon_selMuonPt        =    m_histoFolder.make<TH1D>("subleadMuon_selMuonPt"  ,"Sublead Muon Selected Muon Pt"   ,100, 0.0,2000);
+    m_subleadMuonEt                =    m_histoFolder.make<TH1D>("subleadMuonEt"          ,"Sublead Muon Et"                 ,100, 0.0,2000);
+
+    m_MET                          =    m_histoFolder.make<TH1D>("MET"                 ,"MET",                       100, 0.0,2000);
+    m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("MET_selJetdPhi"      ,"MET Selected Jet dPhi",      80, 0.0 ,4.0);
+    m_MET_selMuondPhi              =    m_histoFolder.make<TH1D>("MET_selMuondPhi"     ,"MET Selected Muon dPhi",     80, 0.0 ,4.0);
+    m_MET_selJetMass               =    m_histoFolder.make<TH1D>("MET_selJetMass"      ,"MET Selected Jet Mass",     100,0.0 ,2000);
+    m_MET_selMuonMass              =    m_histoFolder.make<TH1D>("MET_selMuonMass"     ,"MET Selected Muon Mass",    100,0.0 ,2000);
+    m_MET_selJetPt                 =    m_histoFolder.make<TH1D>("MET_selJetPt"        ,"MET Selected Jet Pt",       100,0.0 ,2000);
+    m_MET_selMuonPt                =    m_histoFolder.make<TH1D>("MET_selMuonPt"       ,"MET Selected Muon Pt",      100,0.0 ,2000);
+
 //
 //
 //  } else if (m_flavor == 2) {
@@ -249,6 +264,29 @@ void eventHistos::fillGen(eventBits& event) {
   m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,event.weight);   
   m_selectedMuonEta ->Fill(event.selectedMuonEta ,event.weight);   
   m_selectedJetEta  ->Fill(event.selectedJetEta  ,event.weight); 
+
+  m_subleadMuon_selJetdPhi ->Fill(event.subleadMuon_selJetdPhi ,event.weight); 
+  m_subleadMuon_selMuondPhi->Fill(event.subleadMuon_selMuondPhi,event.weight);
+  m_subleadMuon_selMuonMass->Fill(event.subleadMuon_selMuonMass,event.weight);
+  m_subleadMuon_selMuonPt  ->Fill(event.subleadMuon_selMuonPt  ,event.weight); 
+  m_subleadMuonEt          ->Fill(event.subleadMuonEt          ,event.weight); 
+                                                               
+  m_MET                    ->Fill(event.MET                    ,event.weight); 
+  m_MET_selJetdPhi         ->Fill(event.MET_selJetdPhi         ,event.weight); 
+  m_MET_selMuondPhi        ->Fill(event.MET_selMuondPhi        ,event.weight); 
+  m_MET_selJetMass         ->Fill(event.MET_selJetMass         ,event.weight); 
+  m_MET_selMuonMass        ->Fill(event.MET_selMuonMass        ,event.weight); 
+  m_MET_selJetPt           ->Fill(event.MET_selJetPt           ,event.weight); 
+  m_MET_selMuonPt          ->Fill(event.MET_selMuonPt          ,event.weight); 
+
+
+
+
+
+
+
+
+
 }
 void eventHistos::fillReco(eventBits& event) {
 
