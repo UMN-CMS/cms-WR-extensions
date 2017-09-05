@@ -96,6 +96,8 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple"):
 
 def getStack(plotName, folder):
     backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/"
+    if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
+        return 0
     file = ROOT.TFile.Open(backgroundsDir+folder+"/"+plotName+".root", "read")
     for key in file.GetListOfKeys():
         if (not key.IsFolder()) and (key.GetName() == plotName):
