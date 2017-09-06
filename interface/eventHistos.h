@@ -32,6 +32,7 @@ class eventHistos {
   private:
   void fillGen(eventBits& event);
   void fillReco(eventBits& event);
+  void fillWeight(eventBits& event);
 
  
   TFileDirectory m_histoFolder;

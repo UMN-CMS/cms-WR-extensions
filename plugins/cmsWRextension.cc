@@ -17,9 +17,9 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 //
 //local includes
 #include "cmsWRextension.h"
-#include "eventHistos.h"
-#include "eventBits.h"
-#include "tools.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
 
 // system include files
 #include <memory>
@@ -90,9 +90,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 }
 
 
-cmsWRextension::~cmsWRextension()
-{
- 
+cmsWRextension::~cmsWRextension() {
    // do anything here that needs to be done at desctruction time
    // (e.g. close files, deallocate resources etc.)
 
@@ -133,10 +131,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
        if(passExtensionRECO(iEvent, myRECOevent)) { 
          METcuts(iEvent, myRECOevent);
          if(!pass2016) {
-           if(subLeadingMuonZMass(iEvent, myRECOevent)) m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);         
-           else m_eventsPassingExtensionRECO.fill(myRECOevent);
+           if(subLeadingMuonZMass(iEvent, myRECOevent)) {
+             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);         
+           } else { 
+             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
+             m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
+           }
          }
-         m_eventsPassingExtension.fill(myRECOevent);
+         m_eventsPassingExtensionRECO.fill(myRECOevent);
          //std::cout <<"rECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
          std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
        }
@@ -832,6 +834,7 @@ cmsWRextension::beginJob()
    if(m_doReco) {
      m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 1);
      m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 1);
+     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 1);
      m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 1);
    }
 }

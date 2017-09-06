@@ -81,6 +81,8 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple"):
     hists2d = ["TH2D", "TH2F", "TH2"]
     histObjectNames = hists1d + hists2d
     for key in file.GetListOfKeys():
+        print "LOOPING THROUGH:"
+        print key.GetName()
         if key.IsFolder():
             dir = file.Get(key.GetName())
             newDir=directory+"/"+key.GetName()
@@ -126,11 +128,14 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple"):
             print histMax
         else:
             print "NO BACKGROUNDS FOUND!"
-            exit(1)
-    if not (histMax == 0 or newHist.GetMaximum() == 0) : 
+            return
+    if not (newHist.GetMaximum() == 0) : 
         print "SCALING HISTOGRAM"
         scaleFactor = histMax/newHist.GetMaximum()
         print scaleFactor
+        if scaleFactor == 0.0 :
+            print "NOT USING SILLY SCALE FACTOR"
+            scaleFactor = 1.0
         newHist.Scale(scaleFactor)
         newHist.SetLineColor(794)
         newHist.Draw(drawoptions+"same")

@@ -11,6 +11,6 @@
 <use name="DataFormats/PatCandidates"/>
 <use name="DataFormats/Math"/>
 <use name="SimDataFormats/GeneratorProducts"/>
-<flags EDM_PLUGIN="1"/>
-<library file="cmsWRextension.cc">
-</library>
+<export>
+   <lib name="1"/>
+</export>

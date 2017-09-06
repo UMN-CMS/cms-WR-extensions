@@ -57,9 +57,9 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "TH1D.h"
 #include "TTree.h"
 //local includes
-#include "eventBits.h"
-#include "eventHistos.h"
-#include "tools.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
 
 //
 // class declaration

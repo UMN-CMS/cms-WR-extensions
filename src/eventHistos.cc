@@ -1,4 +1,4 @@
-#include "eventHistos.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "CommonTools/Utils/interface/TFileDirectory.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
@@ -8,8 +8,8 @@
 //C++ CLASSES
 #include <iostream>
 ////LOCAL CLASSES
-#include "eventBits.h"
-#include "tools.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
+#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
 
 
 
@@ -26,7 +26,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
   m_flavor = flavor;
   m_histoFolder = histoFolder;
 
-//  if (m_flavor == 1) {
+  if (m_flavor == 1) {
   //MAKE GEN PLOTS
     m_eventsWeight =                    m_histoFolder.make<TH1D>("eventsWeight","number of events weighted",           1, 0.0,    1);
     
@@ -146,7 +146,10 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 //  //NOTHING FOR NOW
 //  }
 //
+    } else if (m_flavor == 4) {
+      m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
 
+    }
 }
 void eventHistos::fill(eventBits& event) {
   if(m_flavor == 1) fillGen(event);
@@ -154,11 +157,17 @@ void eventHistos::fill(eventBits& event) {
   else if(m_flavor == 3) {
     fillGen(event);
     fillReco(event);
+  } else if (m_flavor == 4) {
+    fillWeight(event);
   }
   else return;
 }
 
 //SPECIFIC 
+void eventHistos::fillWeight(eventBits& event) {
+  std::cout << "Filling Weights" << std::endl;
+  m_eventsWeight->Fill(0.5, event.weight);
+}
 void eventHistos::fillGen(eventBits& event) {
 //  std::cout << "Making GEN plots" << std::endl;
 //  if(!(event.passesGenCuts())) {
