@@ -1,4 +1,4 @@
-#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 
 
 namespace wrTools {

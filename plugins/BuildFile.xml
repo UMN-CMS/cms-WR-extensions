@@ -13,5 +13,5 @@
 <use name="SimDataFormats/GeneratorProducts"/>
 <use name="ExoAnalysis/cms-WR-extensions"/>
 <flags EDM_PLUGIN="1"/>
-<library file="cmsWRextension.cc,TunePMuonProducer.cc,MuonRefPruner.cc, skimEvents.cc">
+<library file="cmsWRextension.cc,TunePMuonProducer.cc,MuonRefPruner.cc,skimEvents.cc">
 </library>

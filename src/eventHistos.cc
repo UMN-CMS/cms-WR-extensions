@@ -1,4 +1,4 @@
-#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
 #include "DataFormats/Math/interface/deltaR.h"
 #include "CommonTools/Utils/interface/TFileDirectory.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
@@ -8,8 +8,8 @@
 //C++ CLASSES
 #include <iostream>
 ////LOCAL CLASSES
-#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
+#include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 
 
 

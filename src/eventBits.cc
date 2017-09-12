@@ -1,4 +1,4 @@
-#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 
