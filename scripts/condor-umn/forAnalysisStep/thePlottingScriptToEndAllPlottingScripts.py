@@ -123,25 +123,38 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple"):
         backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-4],name.split("/")[-3]+"/"+name.split("/")[-2])
         if (backgroundStack != 0):
             print "GOT THE BACKGROUND"    
-            backgroundStack.Draw("HIST")
-            histMax = backgroundStack.GetMaximum()
-            print histMax
         else:
             print "NO BACKGROUNDS FOUND!"
             return
     if not (newHist.GetMaximum() == 0) : 
         print "SCALING HISTOGRAM"
-        scaleFactor = histMax/newHist.GetMaximum()
+        backgroundCombined = copy.deepcopy(newHist)
+        backgroundCombined.Scale(0.0)
+        backgroundCombined.Merge(backgroundStack.GetHists())
+        
+        scaleFactor = backgroundCombined.Integral()/newHist.Integral()
         print scaleFactor
         if scaleFactor == 0.0 :
             print "NOT USING SILLY SCALE FACTOR"
             scaleFactor = 1.0
         newHist.Scale(scaleFactor)
         newHist.SetLineColor(794)
+
+        if (newHist.GetMaximum() > backgroundCombined.GetMaximum()) :
+            newHist.SetMaximum(newHist.GetMaximum()*1.1)
+            backgroundStack.SetMaximum(newHist.GetMaximum()*1.1)
+        else :
+            newHist.SetMaximum(backgroundCombined.GetMaximum()*1.1)
+            backgroundStack.SetMaximum(backgroundCombined.GetMaximum()*1.1)
+        backgroundStack.Draw("HIST")
         newHist.Draw(drawoptions+"same")
-        c.SetLogy()
+
+        #c.SetLogy()
+    
         c.BuildLegend()
         c.SaveAs(name)
+    else:
+        print "HISTOGRAM EMPTY!"
 
 def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500, norm = False, xtitle = "", ytitle = "", rebin = 0, leg="top",logy=False):
     customROOTstyle()

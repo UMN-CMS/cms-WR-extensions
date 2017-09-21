@@ -82,7 +82,9 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
    m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
    m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false)),
    m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
-   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true))
+   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true)),
+   m_MCL (iConfig.getUntrackedParameter<double>("MCL", 400)),
+   m_MCU (iConfig.getUntrackedParameter<double>("MCU", 8000))
 
 {
    //now do what ever initialization is needed
@@ -106,6 +108,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    eventBits myEvent;
    eventBits myRECOevent;
    bool pass2016 = false;
+   bool ZMASS = false;
 
    if(m_isMC) {
      edm::Handle<GenEventInfoProduct> eventInfo;
@@ -131,12 +134,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
        if(passExtensionRECO(iEvent, myRECOevent)) { 
          METcuts(iEvent, myRECOevent);
          if(!pass2016) {
-           if(subLeadingMuonZMass(iEvent, myRECOevent)) {
-             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);         
-           } else { 
-             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
-             m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
+           ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
+           if(ZMASS) {
+             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);          
            }
+           std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
+           m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
+           if(lastCuts(iEvent, myRECOevent) && !ZMASS)
+             m_eventsPassingExtensionRECO2016VETOALLBUTMASS.fill(myRECOevent);
+             if(massCut(iEvent, myRECOevent))
+               m_eventsPassingExtensionRECO2016VETOALLCUTS.fill(myRECOevent);
          }
          m_eventsPassingExtensionRECO.fill(myRECOevent);
          //std::cout <<"rECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
@@ -160,21 +167,21 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
     std::cout<< "EVENT FAILS, NO MUONS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myMuonCandsHighPt.size()<<" MUONS FOUND." << std::endl;
     return false;
   }
-  //BUILD PAIRS OF AK8 JETS AND MUONS
+  
+  //BUILD PAIRS OF AK8 JETS WITH THE LEAD MUON
   std::vector<std::pair<const pat::Jet*, const pat::Muon*>> muonJetPairs; 
-  for(std::vector<const pat::Jet*>::const_iterator iJet = myRECOevent.myJetCandsHighPt.begin(); iJet != myRECOevent.myJetCandsHighPt.end(); iJet++)
-    for(std::vector<const pat::Muon*>::const_iterator iMuon = myRECOevent.myMuonCandsHighPt.begin(); iMuon != myRECOevent.myMuonCandsHighPt.end(); iMuon++) {
+  for(std::vector<const pat::Jet*>::const_iterator iJet = myRECOevent.myJetCandsHighPt.begin(); iJet != myRECOevent.myJetCandsHighPt.end(); iJet++) {
       //if( ((*iJet)->p4() + (*iMuon)->p4()).mass() < 400) continue;
       //if (sqrt(deltaR2(*(*iJet),*(*iMuon)))<2.0) continue;
-      if(fabs(reco::deltaPhi((*iJet)->phi(), (*iMuon)->phi())) < 2.0 ) continue;
-      muonJetPairs.push_back(std::make_pair(*iJet,*iMuon));
+      if(fabs(reco::deltaPhi((*iJet)->phi(), myRECOevent.myMuonCand->phi())) < 2.0 ) continue;
+      muonJetPairs.push_back(std::make_pair(*iJet,myRECOevent.myMuonCand));
 
-    }
+  }
   if( muonJetPairs.size() < 1 ) {
     std::cout<< "EVENT FAILS, NO CANDIDATE JET MUON PAIRS" <<std::endl;
     return false;
   }
-  std::cout<<muonJetPairs.size()<<" Pairing CANDIDATES Selected from "<< myRECOevent.myMuonCandsHighPt.size() << " muons and "<<myRECOevent.myJetCandsHighPt.size()<<" jets"<<std::endl;
+  std::cout<<muonJetPairs.size()<<" Pairing CANDIDATES Selected from "<<myRECOevent.myJetCandsHighPt.size()<<" jets"<<std::endl;
   myRECOevent.myMuonJetPairs = muonJetPairs;
   return true;
 }
@@ -349,7 +356,7 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
     //if( iMuon->pt() > 200 ) highPTMuons.push_back(&(*iMuon));
 
   }
-  if (allMuons.size() < 1) return false;
+  if (highPTMuons.size() < 1) return false;
   std::sort(highPTMuons.begin(),highPTMuons.end(),::wrTools::compareEtCandidatePointer); 
   std::sort(allMuons.begin(),allMuons.end(),::wrTools::compareEtCandidatePointer); 
 
@@ -357,6 +364,9 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   myEvent.myMuonCands = allMuons; 
   myEvent.muonCands = highPTMuons.size();
   myEvent.muons40 = allMuons.size();
+
+  //We select the lead muon in the event
+  myEvent.myMuonCand = highPTMuons[0];
 
   return true;
 
@@ -667,6 +677,16 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
 
   return true;
 }
+bool cmsWRextension::lastCuts(const edm::Event& iEvent, eventBits& myEvent) {
+  if( (myEvent.subleadMuon_selMuondPhi != -10000) && myEvent.subleadMuon_selMuondPhi < 2) return false;
+  if( myEvent.MET_selMuondPhi < 2 ) return false;
+  return true;
+
+}
+bool cmsWRextension::massCut(const edm::Event& iEvent, eventBits& myEvent) {
+    if (myEvent.myEventMass > m_MCL && myEvent.myEventMass < m_MCU) return true;
+    return false;
+}
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
 
  // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
@@ -835,6 +855,8 @@ cmsWRextension::beginJob()
      m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 1);
      m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 1);
      m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 1);
+     m_eventsPassingExtensionRECO2016VETOALLBUTMASS.book(fs->mkdir("eventsPassingExtensionRECO2016VETOALLBUTMASS"), 1);
+     m_eventsPassingExtensionRECO2016VETOALLCUTS.book(fs->mkdir("eventsPassingExtensionRECO2016VETOALLCUTS"), 1);
      m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 1);
    }
 }

@@ -33,6 +33,8 @@ public:
   std::vector<const pat::Muon*> myMuonCandsHighPt;
   std::vector<const pat::Muon*> myMuonCands;
   const pat::MET*               myMET;
+
+  const pat::Muon*              myMuonCand;
   int secondInDecayMuon;
 
   //EVENT VALUES
@@ -133,6 +135,8 @@ public:
   double MET_selMuonMass;
   double MET_selJetPt;
   double MET_selMuonPt;
+
+  double myEventMass;
 
 private:
 

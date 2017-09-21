@@ -82,6 +82,29 @@ eventBits::eventBits() {
 
   leadAK8JetMuonJetMuonEnergyFraction = -10000.0;
 
+  selectedMuonEt = -10000.0;
+  selectedMuonPhi = -10000.0;
+  selectedMuonEta = -10000.0;
+
+  selectedJetEt = -10000.0;
+  selectedJetPhi = -10000.0;
+  selectedJetEta = -10000.0;
+
+  subleadMuon_selJetdPhi = -10000.0;
+  subleadMuon_selMuondPhi = -10000.0;
+  subleadMuon_selMuonMass = -10000.0;
+  subleadMuon_selMuonPt = -10000.0;
+  subleadMuonEt = -10000.0;
+
+  MET = -10000.0;
+  MET_selJetdPhi = -10000.0;
+  MET_selMuondPhi = -10000.0;
+  MET_selJetMass = -10000.0;
+  MET_selMuonMass = -10000.0;
+  MET_selJetPt = -10000.0;
+  MET_selMuonPt = -10000.0;
+
+  myEventMass = -10000.0;
 }
 void eventBits::clear() {
   run = -1;

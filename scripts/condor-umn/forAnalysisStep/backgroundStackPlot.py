@@ -127,6 +127,7 @@ backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
 backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
 backgroundsROOToutputSuffix = "background_cfg_"
 backgroundROOTdestination = "/data/whybee0b/user/aevans/thesis/backgrounds/"
+eventsWeightsDir = "/hdfs/cms/user/aevans/thesis/background_skim/"
 #background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
 #subprocess.call("mkdir -p"+backgroundROOTdestination, shell=True)
 
@@ -152,6 +153,8 @@ pos = 1
 end = len(backgroundsRootFiles)
 for background,files in backgroundsRootFiles.items():
     ahaddOut = backgroundROOTdestination+background[:-4]+".root"
+    backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
+    print backgroundEventsWeight
  #  subprocess.call(ahaddCommand, shell=True)   
     if pos == end:
         print "LAST ROUND!"
@@ -161,7 +164,7 @@ for background,files in backgroundsRootFiles.items():
     weight *= integratedLuminosity
     weight *= xsecs[background]
     print "LOOKING FOR EVENTS WEIGHT IN FILE"
-    weight /= getEventsWeight(ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundROOTdestination)
+    weight /= getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
     print "DONE CALCULATING"
     saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundROOTdestination)
     pos+=1

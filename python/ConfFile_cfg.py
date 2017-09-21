@@ -75,7 +75,9 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
                               met = cms.InputTag("slimmedMETsPuppi"),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True),
-                              isMC = cms.untracked.bool(True)
+                              isMC = cms.untracked.bool(True),
+                              MCL = cms.untracked.double(100),
+                              MCU = cms.untracked.double(8000)
 )
 
 process.p = cms.Path(process.muonSelectionSeq * process.demo)

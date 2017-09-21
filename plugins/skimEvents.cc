@@ -1,3 +1,5 @@
+#ifndef skimEvents_included
+#define skimEvents_included 1
 // -*- C++ -*-
 //
 // Package:    ExoAnalysis/skimEvents
@@ -97,7 +99,7 @@ skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
 {
   //now do what ever initialization is needed
   edm::Service<TFileService> fs;
-  m_allEvents.book((fs->mkdir("allEvents")), 1);
+  m_allEvents.book((fs->mkdir("allEvents")), 4);
 
 }
 
@@ -124,16 +126,31 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<GenEventInfoProduct> eventInfo;
   iEvent.getByToken(m_genEventInfoToken, eventInfo);
   myRECOevent.weight = eventInfo->weight();
+  m_allEvents.fill(myRECOevent);
   std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<eventInfo->weight() <<std::endl;
   
+  int muonPass = 0;
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
+  for(std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
+    if (iMuon->pt() < 150 || fabs(iMuon->eta()) > 2.0) continue;
+    muonPass++;
+  }
 
+  int jetPass = 0;
   edm::Handle<std::vector<pat::Jet>> ak8recoJets;
   iEvent.getByToken(m_AK8recoJetsToken, ak8recoJets);
+  for(std::vector<pat::Jet>::const_iterator iJet = ak8recoJets->begin(); iJet != ak8recoJets->end(); iJet++) {
+    if (iJet->pt() < 150 || fabs(iJet->eta()) > 2.8) continue;
+    jetPass++;
+  }
 
-
-  return true;
+  if (jetPass > 0 && muonPass > 0) {
+    std::cout <<"PASSES"<<std::endl;
+    return true; 
+  }
+  std::cout << "FAILS"<<std::endl;
+  return false;
 }
 
 // ------------ method called once each stream before processing any runs, lumis or events  ------------
@@ -190,3 +207,4 @@ skimEvents::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
 }
 //define this as a plug-in
 DEFINE_FWK_MODULE(skimEvents);
+#endif

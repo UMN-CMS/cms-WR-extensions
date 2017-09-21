@@ -7,7 +7,7 @@ options.maxEvents = -1
 options.parseArguments()
 muonID =' userInt("highPtID") == 1'
 
-process = cms.Process("Demo")
+process = cms.Process("Analyze")
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -65,7 +65,7 @@ process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cl
 
 
 
-process.demo = cms.EDAnalyzer('cmsWRextension',
+process.analyze = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
                               AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
@@ -80,5 +80,5 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
                               isMC = cms.untracked.bool(True)
 )
 
-process.p = cms.Path(process.muonSelectionSeq * process.demo)
+process.p = cms.Path(process.muonSelectionSeq * process.analyze)
 
