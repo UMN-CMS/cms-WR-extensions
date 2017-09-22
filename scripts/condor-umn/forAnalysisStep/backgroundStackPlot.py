@@ -120,9 +120,12 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
         stackList[name].append(copy.deepcopy(hist))
     #hist.SetLineWidth(2)
 
+#####################################################################################################################################
+WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
+NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
 integratedLuminosity = 35900.0
 stackList = {}
-backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cms-WR-extensions/samples/backgrounds/"
+backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
 backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
 backgroundsROOToutputSuffix = "background_cfg_"
@@ -143,60 +146,64 @@ for line in lines:
     xsecs[line.split(':')[0].strip()] = float(line.split(':')[1].strip().split("+")[0])
 #print backgrounds
 #run over backgrounds
-backgroundsRootFiles = {}
-for background,xsec in xsecs.items():
-    #if 
-    backgroundsRootFiles[background] = backgroundROOTdestination+background[:-4]+".root"
 
 #print backgroundsRootFiles
-pos = 1
-end = len(backgroundsRootFiles)
-for background,files in backgroundsRootFiles.items():
-    ahaddOut = backgroundROOTdestination+background[:-4]+".root"
-    backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
-    print backgroundEventsWeight
- #  subprocess.call(ahaddCommand, shell=True)   
-    if pos == end:
-        print "LAST ROUND!"
-    print pos
-    print background[:-4]
-    weight = 1.0
-    weight *= integratedLuminosity
-    weight *= xsecs[background]
-    print "LOOKING FOR EVENTS WEIGHT IN FILE"
-    weight /= getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
-    print "DONE CALCULATING"
-    saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundROOTdestination)
-    pos+=1
+for massPoint in range(0, (len(WrMasses)-1)) :
 
-#Loop over stacks and make save stackhists
-
-#c = ROOT.TCanvas("c","c",1000,1000)
-for plot,stack in stackList.items():
-    customROOTstyle()
-    stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
-    customROOTstyle()
+    stackList.clear()
+    massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
+    massName = "WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
+    massDir = backgroundROOTdestination+massName+"/"
     pos = 1
-    for hist in stack:
-        print hist.__class__.__name__
-        #myHist = copy.deepcopy(hist)
-        print "Adding"
-        hist.SetFillColor(pos)
-        hist.Draw("HIST")
-        stackHist.Add(hist)
-        if pos == 9:
-            pos+=2
-        else:
-            pos+=1
-    ROOT.gStyle.SetPalette(55)
-    customROOTstyle()
-    #stackHist.Draw()
-    customROOTstyle()
-    print "THIS MANY HISTS"
-    print stackHist.GetNhists()
-    #c.BuildLegend()
-    #c.SaveAs(plot)
-    stackHist.SaveAs(plot)
+    end = len(xsecs)
+    if(not (os.path.isdir(massDir))):
+        subprocess.call(["mkdir", massDir])
+    for background,xsec in xsecs.items():
+        ahaddOut = backgroundROOTdestination+background[:-4]+massSuffix+".root"
+        backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
+        print backgroundEventsWeight
+     #  subprocess.call(ahaddCommand, shell=True)   
+        if pos == end:
+            print "LAST ROUND!"
+        print pos
+        print background[:-4]+massSuffix
+        weight = 1.0
+        weight *= integratedLuminosity
+        weight *= xsecs[background]
+        print "LOOKING FOR EVENTS WEIGHT IN FILE"
+        weight /= getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
+        print "DONE CALCULATING"
+        saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=massDir)
+        pos+=1
+    
+    #Loop over stacks and make save stackhists
+    
+    #c = ROOT.TCanvas("c","c",1000,1000)
+    for plot,stack in stackList.items():
+        customROOTstyle()
+        stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
+        customROOTstyle()
+        pos = 1
+        for hist in stack:
+            print hist.__class__.__name__
+            #myHist = copy.deepcopy(hist)
+            print "Adding"
+            hist.SetFillColor(pos)
+            hist.Draw("HIST")
+            stackHist.Add(hist)
+            if pos == 9:
+                pos+=2
+            else:
+                pos+=1
+        ROOT.gStyle.SetPalette(55)
+        customROOTstyle()
+        #stackHist.Draw()
+        customROOTstyle()
+        print "THIS MANY HISTS"
+        print stackHist.GetNhists()
+        #c.BuildLegend()
+        #c.SaveAs(plot)
+        stackHist.SaveAs(plot)
 
 
 

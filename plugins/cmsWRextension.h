@@ -57,9 +57,9 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "TH1D.h"
 #include "TTree.h"
 //local includes
-#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
+#include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 
 //
 // class declaration
@@ -106,8 +106,8 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       eventHistos m_eventsPassingExtension;
       eventHistos m_eventsPassingExtensionRECO;
       eventHistos m_eventsPassingExtensionRECO2016VETO;
-      eventHistos m_eventsPassingExtensionRECO2016VETOALLBUTMASS;
-      eventHistos m_eventsPassingExtensionRECO2016VETOALLCUTS;
+      eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
+      eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
       eventHistos m_eventsPassingWR2016RECO;
       edm::EDGetToken m_genParticleToken;

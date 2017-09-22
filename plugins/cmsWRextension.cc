@@ -17,9 +17,9 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 //
 //local includes
 #include "cmsWRextension.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
+#include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 
 // system include files
 #include <memory>
@@ -140,10 +140,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
            }
            std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
            m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
-           if(lastCuts(iEvent, myRECOevent) && !ZMASS)
-             m_eventsPassingExtensionRECO2016VETOALLBUTMASS.fill(myRECOevent);
-             if(massCut(iEvent, myRECOevent))
-               m_eventsPassingExtensionRECO2016VETOALLCUTS.fill(myRECOevent);
+           if(massCut(iEvent, myRECOevent)) {
+             m_eventsPassingExtensionRECO2016VETOMASSCUT.fill(myRECOevent);
+             if(lastCuts(iEvent, myRECOevent) && !ZMASS)
+               m_eventsPassingExtensionRECO2016VETOMASSMETCUT.fill(myRECOevent);
+           }
          }
          m_eventsPassingExtensionRECO.fill(myRECOevent);
          //std::cout <<"rECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
@@ -678,8 +679,8 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   return true;
 }
 bool cmsWRextension::lastCuts(const edm::Event& iEvent, eventBits& myEvent) {
-  if( (myEvent.subleadMuon_selMuondPhi != -10000) && myEvent.subleadMuon_selMuondPhi < 2) return false;
-  if( myEvent.MET_selMuondPhi < 2 ) return false;
+  //if( (myEvent.subleadMuon_selMuondPhi >= 0) && myEvent.subleadMuon_selMuondPhi < 2) return false;
+  if( (myEvent.MET_selMuondPhi >= 0 ) && (myEvent.MET_selMuondPhi < 2) ) return false;
   return true;
 
 }
@@ -855,8 +856,8 @@ cmsWRextension::beginJob()
      m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 1);
      m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 1);
      m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 1);
-     m_eventsPassingExtensionRECO2016VETOALLBUTMASS.book(fs->mkdir("eventsPassingExtensionRECO2016VETOALLBUTMASS"), 1);
-     m_eventsPassingExtensionRECO2016VETOALLCUTS.book(fs->mkdir("eventsPassingExtensionRECO2016VETOALLCUTS"), 1);
+     m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOALLMASSMETCUT"), 1);
+     m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 1);
      m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 1);
    }
 }

@@ -1,0 +1,12 @@
+Executable = /home/aevans/bin/batch_cmsRun
+Universe = vanilla
+Output = /data/whybee0b/user/aevans/logs/output
+Error = /data/whybee0b/user/aevans/logs/error
+request_memory = 2500
+Requirements = (Arch=="X86_64") && (Machine != "zebra01.spa.umn.edu" && Machine != "zebra02.spa.umn.edu" && Machine != "zebra03.spa.umn.edu" && Machine != "zebra04.spa.umn.edu" && Machine != "caffeine.spa.umn.edu") && (Machine != "gc1-ce.spa.umn.edu" && Machine != "gc1-hn.spa.umn.edu" && Machine != "gc1-se.spa.umn.edu" && Machine != "red.spa.umn.edu" && Machine != "hadoop-test.spa.umn.edu")
++CondorGroup="cmsfarm"
+should_transfer_files = YES
+transfer_input_files = /tmp/x509up_u6583
+X509UserProxy = /tmp/x509up_u6583
+Arguments = slc6_amd64_gcc530 /home/aevans/CMS/thesis/CMSSW_8_0_25 /data/whybee0b/user/aevans/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320 /data/whybee0b/user/aevans/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320/cfg/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320_000_cfg.py /data/whybee0b/user/aevans/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320/log/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320_000.log /data/whybee0b/user/aevans/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320/log/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320_000.err /data/whybee0b/user/aevans/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320/background_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-3200_LNu_M-320_000.root 2 /hdfs/cms/user/aevans/thesis/background_skim/DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/background_skim_cfg_DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_002-pool.root 
+Queue

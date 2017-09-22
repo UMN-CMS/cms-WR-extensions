@@ -47,9 +47,9 @@
 
 //
 //local includes
-#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
+#include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 
 //
 // class declaration
