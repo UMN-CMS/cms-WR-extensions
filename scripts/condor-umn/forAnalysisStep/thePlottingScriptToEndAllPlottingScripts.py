@@ -74,7 +74,7 @@ def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols 
     
     c.SaveAs(outname)
 
-def saveHists(file,directory="",prefix="",filter="",bg="simple"):
+def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,100]):
     customROOTstyle()
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
@@ -88,16 +88,16 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple"):
             newDir=directory+"/"+key.GetName()
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(dir,directory=newDir, prefix=prefix,filter=filter,bg=bg)
+            saveHists(dir,directory=newDir, prefix=prefix,filter=filter,bg=bg,massPoint=massPoint)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg)
+            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint)
 
-def getStack(plotName, folder):
-    backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/"
+def getStack(plotName, folder, massPoint):
+    backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
         return 0
     file = ROOT.TFile.Open(backgroundsDir+folder+"/"+plotName+".root", "read")
@@ -106,7 +106,7 @@ def getStack(plotName, folder):
             print "THSTACK PLOT FOUND"
             return file.Get(key.GetName())
     return 0
-def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple"):
+def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPoint=[1000,100]):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     newHist = copy.deepcopy(hist)
     customROOTstyle()
@@ -120,7 +120,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple"):
     #hist.SetLineWidth(2)
     #print bg
     if (bg == "backgrounds"):
-        backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-4],name.split("/")[-3]+"/"+name.split("/")[-2])
+        backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-4],name.split("/")[-3]+"/"+name.split("/")[-2], massPoint)
         if (backgroundStack != 0):
             print "GOT THE BACKGROUND"    
         else:
@@ -209,6 +209,9 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
 
     leg.Draw()
     canv.SaveAs(filename)
-
-
-saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4])
+#############################################################################################
+#WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
+signalName = sys.argv[1].split("_")
+wrMass = float(signalName[1][2:])
+nuMass = float(signalName[3][2:])
+saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass])
