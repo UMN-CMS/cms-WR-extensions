@@ -133,7 +133,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
   for(std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
-    if (iMuon->pt() < 150 || fabs(iMuon->eta()) > 2.0) continue;
+    if (iMuon->pt() < 150 || fabs(iMuon->eta()) > 2.8) continue;
     muonPass++;
   }
 

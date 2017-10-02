@@ -97,7 +97,8 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,
             drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint)
 
 def getStack(plotName, folder, massPoint):
-    backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])
+    backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])+"/"
+    print backgroundsDir+folder+"/"+plotName+".root"
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
         return 0
     file = ROOT.TFile.Open(backgroundsDir+folder+"/"+plotName+".root", "read")
@@ -212,6 +213,6 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
 #############################################################################################
 #WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
 signalName = sys.argv[1].split("_")
-wrMass = float(signalName[1][2:])
-nuMass = float(signalName[3][2:])
+wrMass = int(signalName[1][2:])
+nuMass = int(signalName[3][2:])
 saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass])
