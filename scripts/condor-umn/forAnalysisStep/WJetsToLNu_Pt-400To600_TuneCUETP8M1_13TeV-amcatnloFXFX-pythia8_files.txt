@@ -1,0 +1,3 @@
+/hdfs/cms/user/aevans/thesis/background_skim/WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/background_skim_cfg_WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_000-pool.root
+/hdfs/cms/user/aevans/thesis/background_skim/WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/background_skim_cfg_WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_001-pool.root
+/hdfs/cms/user/aevans/thesis/background_skim/WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/background_skim_cfg_WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_002-pool.root

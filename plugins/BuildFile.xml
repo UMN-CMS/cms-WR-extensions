@@ -11,7 +11,5 @@
 <use name="DataFormats/PatCandidates"/>
 <use name="DataFormats/Math"/>
 <use name="SimDataFormats/GeneratorProducts"/>
-<use name="ExoAnalysis/cms-WR-extensions"/>
+<use name="ExoAnalysis/cmsWRextensions"/>
 <flags EDM_PLUGIN="1"/>
-<library file="cmsWRextension.cc,TunePMuonProducer.cc,MuonRefPruner.cc,skimEvents.cc">
-</library>

@@ -116,19 +116,19 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta" ,60,-3.0,3.0 );   
     m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta"  ,60,-3.0,3.0 ); 
 
-    m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuon_selJetdPhi" ,"Sublead Muon Selected Jet dPhi"  ,80,  0.0, 4.0);
-    m_subleadMuon_selMuondPhi      =    m_histoFolder.make<TH1D>("subleadMuon_selMuondPhi","Sublead Muon Selected Muon dPhi" ,80,  0.0, 4.0);
-    m_subleadMuon_selMuonMass      =    m_histoFolder.make<TH1D>("subleadMuon_selMuonMass","Sublead Muon Selected Muon Mass" ,100, 0.0,2000);
-    m_subleadMuon_selMuonPt        =    m_histoFolder.make<TH1D>("subleadMuon_selMuonPt"  ,"Sublead Muon Selected Muon Pt"   ,100, 0.0,2000);
+    m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,"Sublead Muon Selected Jet dPhi"  ,80,  0.0, 4.0);
+    m_subleadMuon_selMuondPhi      =    m_histoFolder.make<TH1D>("subleadMuonSelMuondPhi","Sublead Muon Selected Muon dPhi" ,80,  0.0, 4.0);
+    m_subleadMuon_selMuonMass      =    m_histoFolder.make<TH1D>("subleadMuonSelMuonMass","Sublead Muon Selected Muon Mass" ,100, 0.0,2000);
+    m_subleadMuon_selMuonPt        =    m_histoFolder.make<TH1D>("subleadMuonSelMuonPt"  ,"Sublead Muon Selected Muon Pt"   ,100, 0.0,2000);
     m_subleadMuonEt                =    m_histoFolder.make<TH1D>("subleadMuonEt"          ,"Sublead Muon Et"                 ,100, 0.0,2000);
 
     m_MET                          =    m_histoFolder.make<TH1D>("MET"                 ,"MET",                       100, 0.0,2000);
-    m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("MET_selJetdPhi"      ,"MET Selected Jet dPhi",      80, 0.0 ,4.0);
-    m_MET_selMuondPhi              =    m_histoFolder.make<TH1D>("MET_selMuondPhi"     ,"MET Selected Muon dPhi",     80, 0.0 ,4.0);
-    m_MET_selJetMass               =    m_histoFolder.make<TH1D>("MET_selJetMass"      ,"MET Selected Jet Mass",     100,0.0 ,2000);
-    m_MET_selMuonMass              =    m_histoFolder.make<TH1D>("MET_selMuonMass"     ,"MET Selected Muon Mass",    100,0.0 ,2000);
-    m_MET_selJetPt                 =    m_histoFolder.make<TH1D>("MET_selJetPt"        ,"MET Selected Jet Pt",       100,0.0 ,2000);
-    m_MET_selMuonPt                =    m_histoFolder.make<TH1D>("MET_selMuonPt"       ,"MET Selected Muon Pt",      100,0.0 ,2000);
+    m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("METselJetdPhi"      ,"MET Selected Jet dPhi",      80, 0.0 ,4.0);
+    m_MET_selMuondPhi              =    m_histoFolder.make<TH1D>("METselMuondPhi"     ,"MET Selected Muon dPhi",     80, 0.0 ,4.0);
+    m_MET_selJetMass               =    m_histoFolder.make<TH1D>("METselJetMass"      ,"MET Selected Jet Mass",     100,0.0 ,2000);
+    m_MET_selMuonMass              =    m_histoFolder.make<TH1D>("METselMuonMass"     ,"MET Selected Muon Mass",    100,0.0 ,2000);
+    m_MET_selJetPt                 =    m_histoFolder.make<TH1D>("METselJetPt"        ,"MET Selected Jet Pt",       100,0.0 ,2000);
+    m_MET_selMuonPt                =    m_histoFolder.make<TH1D>("METselMuonPt"       ,"MET Selected Muon Pt",      100,0.0 ,2000);
 
 //
 //

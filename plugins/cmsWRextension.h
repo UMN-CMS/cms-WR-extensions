@@ -57,9 +57,9 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "TH1D.h"
 #include "TTree.h"
 //local includes
-#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
+#include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 
 //
 // class declaration
@@ -98,12 +98,16 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
+      bool lastCuts(const edm::Event& iEvent, eventBits& myEvent);
+      bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
       eventHistos m_eventsPassingExtension;
       eventHistos m_eventsPassingExtensionRECO;
       eventHistos m_eventsPassingExtensionRECO2016VETO;
+      eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
+      eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
       eventHistos m_eventsPassingWR2016RECO;
       edm::EDGetToken m_genParticleToken;
@@ -119,6 +123,8 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       bool m_doGen;
       bool m_doReco;
       bool m_isMC;
+      double m_MCL;    //MASS UPPER AND LOWER CUTS
+      double m_MCU;
       TTree* hardProcessKinematics;
 };
 

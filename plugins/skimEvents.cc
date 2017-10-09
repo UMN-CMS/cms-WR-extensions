@@ -1,3 +1,5 @@
+#ifndef skimEvents_included
+#define skimEvents_included 1
 // -*- C++ -*-
 //
 // Package:    ExoAnalysis/skimEvents
@@ -45,9 +47,9 @@
 
 //
 //local includes
-#include "ExoAnalysis/cms-WR-extensions/interface/eventBits.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/eventHistos.h"
-#include "ExoAnalysis/cms-WR-extensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
+#include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 
 //
 // class declaration
@@ -71,11 +73,13 @@ class skimEvents : public edm::stream::EDFilter<> {
     //virtual void endLuminosityBlock(edm::LuminosityBlock const&, edm::EventSetup const&) override;
 
      // ----------member data ---------------------------
+
     eventHistos m_allEvents;
     edm::EDGetToken m_genEventInfoToken;
     edm::EDGetToken m_recoMuonToken;
     edm::EDGetToken m_AK8recoJetsToken;
     edm::EDGetToken m_metToken;
+    bool m_isMC;
 };
 
 //
@@ -90,14 +94,15 @@ class skimEvents : public edm::stream::EDFilter<> {
 // constructors and destructor
 //
 skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
-  m_genEventInfoToken (consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"))),
   m_recoMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("recoMuons"))),
   m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
-  m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met")))  
+  m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),  
+  m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true))
 {
   //now do what ever initialization is needed
   edm::Service<TFileService> fs;
-  m_allEvents.book((fs->mkdir("allEvents")), 1);
+  m_allEvents.book((fs->mkdir("allEvents")), 4);
+  if(m_isMC) m_genEventInfoToken = consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
 
 }
 
@@ -120,20 +125,39 @@ bool
 skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   eventBits myRECOevent;
-
-  edm::Handle<GenEventInfoProduct> eventInfo;
-  iEvent.getByToken(m_genEventInfoToken, eventInfo);
-  myRECOevent.weight = eventInfo->weight();
-  std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<eventInfo->weight() <<std::endl;
+  if(m_isMC) {
+    edm::Handle<GenEventInfoProduct> eventInfo;
+    iEvent.getByToken(m_genEventInfoToken, eventInfo);
+    myRECOevent.weight = eventInfo->weight();
+  } else {
+  myRECOevent.weight = 1;
+  }
   
+  m_allEvents.fill(myRECOevent);
+  std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myRECOevent.weight <<std::endl;
+
+  int muonPass = 0;
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
+  for(std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
+    if (iMuon->pt() < 150 || fabs(iMuon->eta()) > 2.8) continue;
+    muonPass++;
+  }
 
+  int jetPass = 0;
   edm::Handle<std::vector<pat::Jet>> ak8recoJets;
   iEvent.getByToken(m_AK8recoJetsToken, ak8recoJets);
+  for(std::vector<pat::Jet>::const_iterator iJet = ak8recoJets->begin(); iJet != ak8recoJets->end(); iJet++) {
+    if (iJet->pt() < 150 || fabs(iJet->eta()) > 2.8) continue;
+    jetPass++;
+  }
 
-
-  return true;
+  if (jetPass > 0 && muonPass > 0) {
+    std::cout <<"PASSES"<<std::endl;
+    return true; 
+  }
+  std::cout << "FAILS"<<std::endl;
+  return false;
 }
 
 // ------------ method called once each stream before processing any runs, lumis or events  ------------
@@ -190,3 +214,4 @@ skimEvents::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
 }
 //define this as a plug-in
 DEFINE_FWK_MODULE(skimEvents);
+#endif
