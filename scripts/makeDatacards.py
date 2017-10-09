@@ -5,11 +5,11 @@ import argparse
 
 parser = argparse.ArgumentParser(description='Make datacards')
 parser.add_argument('-d', '--dir', dest='basedir',
-                    default="./",
+                    default="./ROOTfiles",
                     help='base dir for analysis tree files')
-parser.add_argument('-t', '--tag', dest='tag',
-                    default="",
-                    help='tag name for analysis tree files')
+#parser.add_argument('-t', '--tag', dest='tag',
+#                    default="",
+#                    help='tag name for analysis tree files')
 parser.add_argument('-o', '--outdir', dest='outdir',
                     default="datacards/",
                     help='where to store the datacards')
@@ -22,18 +22,18 @@ parser.add_argument('--draw-plots', dest='drawplots', action='store_true',
 
 args = parser.parse_args()
 
-#minitrees = combineTools.AnalysisResultsInterface(
-# base=args.basedir,
+minitrees = combineTools.AnalysisResultsInterface(
+ base=args.basedir #,
 # tag =args.tag,
 # makeplots=args.drawplots
-#)
+)
 
 nuisance_params = []
 nuisance_params.append(("lumi",        "lnN"))
 nuisance_params.append(("signal_unc",  "gmN"))
 nuisance_params.append(("TT_unc",      "gmN"))
-nuisance_params.append(("DY_unc",       "gmN"))
-nuisance_params.append(("Wjets_unc",   "gmN"))
+nuisance_params.append(("DY_unc",      "gmN"))
+nuisance_params.append(("WJets_unc",   "gmN"))
 
 sig_name = "WR_mumujj"
 MWR = []
@@ -41,23 +41,27 @@ signal = []
 bg = []
 systematics_list = []
 
-for mass in (2000,4000):
-	print mass
-	datacard = "WRmumujj_MASS%04d" % (mass)
+masses=[[2400,240],[2400,480],[2400,800]]
+#for mass in ((2400,240),(2400,480),(2400,800)):
+for i in range(len(masses)):
+	print masses[i]
+	datacard = "WRmumujj_MWR%04d_MNR%04d" % (masses[i][0],masses[i][1])
+	print datacard
 	datacard_file = args.outdir + "/" + datacard + ".txt"
 	try:
-	       	systematics = combineTools.Systematics(["signal", "TT", "DY", "Wjets"], nuisance_params)
+	       	systematics = combineTools.Systematics(["signal", "TT", "DY", "WJets"], nuisance_params)
+		signalNevents = minitrees.GetNEvents(masses[i][0], masses[i][1], "signal", systematics, scale = 1.0)
+		TTNevents = minitrees.GetNEvents(masses[i][0], masses[i][1], "TT", systematics, scale = 1.0)
+		DYNevents = minitrees.GetNEvents(masses[i][0], masses[i][1], "DY", systematics, scale = 1.0)
+		WJetsNevents = minitrees.GetNEvents(masses[i][0], masses[i][1], "WJets", systematics, scale = 1.0)
 		systematics.add("signal", "lumi", 1.025)
-		systematics.add("signal", "signal_unc", (10,1))
-		systematics.add("TT", "TT_unc", (100,1))
-		systematics.add("DY", "DY_unc", (200,1))
-		systematics.add("Wjets", "Wjets_unc", (0,1))
+		systematics.add("DY", "lumi", 1.025)
 	except (IOError,KeyError,TypeError) as e:
-	       	print mass, "not found"
+	       	print masses[i], "not found"
 	       	print e
-	signal_tuple = (sig_name, 10)
-	bg_names = ["TTBar", "DY", "Wjets"]
-	bg =[100,200,0]
+	signal_tuple = (sig_name, signalNevents)
+	bg_names = ["TTBar", "DY", "WJets"]
+	bg =[TTNevents,DYNevents,WJetsNevents]
 	bg_tuples = zip(bg_names, bg)
 	nBG=sum(bg)
 	sig, bgs = combineTools.makeDataCardSingleBin(datacard_file, "1", nBG,
