@@ -33,7 +33,7 @@ for background in backgrounds:
     if not os.path.isdir(storeFolder) :
         subprocess.call("mkdir "+storeFolder, shell=True)
     print "copying "+background[:-4]
-    subprocess.call("cp -i "+outputFolder+outputNameSuffix+background[:-4]+"*-pool.root "+storeFolder+"/", shell=True)
+    subprocess.call("cp "+outputFolder+outputNameSuffix+background[:-4]+"*-pool.root "+storeFolder+"/", shell=True)
     print "finished.  combining plots..."
     rootFiles = ""
     for line in os.listdir(outputFolder):
