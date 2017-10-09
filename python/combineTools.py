@@ -63,285 +63,182 @@ def makeDataCardSingleBin(outfile, bin_name, nObs, signal_tuple, background_tupl
 			out.write(str(systematics))
 	return signal_rate, tuple(bg_rates.split())
 
-#class AnalysisResultsInterface:
-#	chnlName = {"ee":"EE", "mumu":"MuMu", "emu":"EMu"}
-#	def __init__(self,
-#			base="./",
-#			tag = "",
-#			SFfilename = configfolder + "/MCScaleFactors.txt",
-#			makeplots = False,
-#			):
+class AnalysisResultsInterface:
+	def __init__(self,
+			base="./ROOTfiles",
+			):
 
-#		self.makeplots = makeplots
-#		if tag: tag = "_" + tag
-#		self.filefmt_dict = {"base":base, "tag":tag}
-#		self.filefmt = "{base}/selected_tree_{mode}_{minitreename}{chnlName}{tag}.root"
-#
-#		self.SF = defaultdict(lambda : defaultdict(dict))
-#		with open(SFfilename) as f:
-#			for line in f:
-#				if line[0] == "#": continue
-#				mode, ch, sf, stat, syst  = line.split()
-#				ch = ch.lower()
-#				self.SF[mode][ch]["SF"] = float(sf)
-#				self.SF[mode][ch]["unc"] = math.sqrt(float(stat)**2 + float(syst)**2)
+		self.filefmt_dict = {"base":base}
+		self.filefmt = "{base}/WR_M-{MWR}_ToLNu_M-{MNR}_Analysis_MuMuJJ_000.root" ###CHANGE
 
+		self.results = {}
 
-#		self.masses = []
-#		self.results = {}
-#		self.header = False
-
-#	def getUncertainty(self, mode, channel):
-#		return 1 + self.SF[mode][channel]["unc"]/self.SF[mode][channel]["SF"]
-
-#	def printResultsheader(self):
-#		if self.header: return
-#		self.header = True
-#		print "[RESULTS]","key","mass",
-#		ex = self.results[self.results.keys()[0]]
-#		for key in ex:
-#			if type(ex[key]) == type({}):
-#				for nkey in ex[key]:
-#					print key+"_"+nkey,
-#			else:
-#				print key,
-#		print
-
-#	def printResults(self,key,i):
-#		self.printResultsheader()
-#		print "[RESULTS]",key,self.masses[i],
-#		for ikey in self.results[key]:
-#			if type(self.results[key][ikey]) == type({}):
-#				for jkey in self.results[key][ikey]:
-#					print self.results[key][ikey][jkey][i],
-#			else:
-#				print self.results[key][ikey][i],
-#		print
-
-#	def getNEvents(self, MWR, channel, process, systematics, scale = 1.0):
-#		""" returns mean, syst, stat """
-#               print channel
-#		key = channel + "_" + process
-#		if "signal" == process:
-#			key += "_" + str(MWR)
-                        
-#		MWR = int(MWR)
-#		if key not in self.results:
-#			f = self.OpenFile(channel, process, MWR)
-#			if not self.masses: self.GetMasses(f)
-#			self.ProcessFile(key, f)
-#			if "signal" in key:
-#				zerokey = "_".join(key.split("_")[:2] + ["0"])
-#				if zerokey not in self.results:
-#					self.ProcessFile(zerokey, f)
+	def GetNEvents(self, MWR, MNR, process, systematics, scale = 1.0):
+		key = process+"_" + str(MWR) + "_" + str(MNR)
+		r=[[str(MWR),str(MNR)]]
+		stat = 0
+		alle = 0
+		central = 0
+		xs = 0
+		statSB = 0
+		centralSB = 0
+		SF_relstat = 0
+		if "DY" == process:
+			r=[["50","100"],["100","250"],["250","400"],["400","650"],["650","Inf"]]
+		elif "WJets" == process:
+			r=[["100","250"],["250","400"],["400","600"],["600","Inf"]]
+		for i in range(len(r)):
+			if "DY" in process or "WJets" in process:
+				key = process+"_" + str(MWR) + "_" + str(MNR)+"_" + str(r[i][0]) + "_" + str(r[i][1])
+                        if key not in self.results:
+				self.GetResult(key, process, r[i][0], r[i][1], MWR, MNR)
+			if "DY" in process and key+"_ZSB" not in self.results:
+				self.GetResult(key+"_ZSB", process, r[i][0], r[i][1], MWR, MNR)
+			stat    += self.results[key]["stat"]
+			central += self.results[key]["central"]
+			alle    += self.results[key]["all"]
+			xs      += self.results[key]["xs"]
+			if "DY" in process:
+				statSB    += self.results[key+"_ZSB"]["stat"]
+				centralSB += self.results[key+"_ZSB"]["central"]
+		if "DY" in process or "WJets" in process:
+			key = process+"_" + str(MWR) + "_" + str(MNR)
+			if key not in self.results:
+				self.results[key] = {
+					"stat": stat,
+					"central": central,
+					"all": alle,
+					"xs": xs#{
+				     }
+				if "DY" in process:
+					self.results[key+"_ZSB"] = {
+						"stat": statSB,
+						"central": centralSB,
+						"all": alle,
+						"xs": xs#{
+						}
+					self.GetResult("data_ZSB", "data_ZSB", MWR, MNR, MWR, MNR)
+					#SF = self.results["data_ZSB"]["central"]/self.results[key+"_ZSB"]["central"] 
+					#SF_relstat = pow(pow(self.results["data_ZSB"]["stat"]/self.results["data_ZSB"]["central"],2)+pow(self.results[key+"_ZSB"]["stat"]/self.results[key+"_ZSB"]["central"],2),0.5)					
+					SF=self.results[key+"_ZSB"]["central"]/self.results[key+"_ZSB"]["central"] #TOCHANGE
+					scale = scale*SF  #TOCHANGE
+					SF_relstat = pow(pow(self.results[key+"_ZSB"]["stat"]/self.results[key+"_ZSB"]["central"],2)+pow(self.results[key+"_ZSB"]["stat"]/self.results[key+"_ZSB"]["central"],2),0.5) #TOCHANGE
+					print "DY SF is " + str(SF) + " with relative statistical uncertainty of " + str(SF_relstat)
 
 
-#		mass_i = self.masses.index(MWR)
+		rate=self.results[key]["central"]*scale	
+		stat=self.results[key]["stat"]*scale
+		stat=rate*pow(pow(stat/rate,2)+pow(SF_relstat,2),0.5)
+		# changing the number of events we need to put in the datacards to get the correct statistical uncertainty and rate.
+		Nevents=pow(rate/stat,2)
+		alpha=rate/Nevents
+		systematics.add(process, process+"_unc", (Nevents,alpha))
+		return rate
 
-#		syst_mean = self.results[key]["syst"]["mean"][mass_i]*scale
-#		tmp_syst  = self.results[key]["syst"]["std"] [mass_i]*scale
-#		tmp_stat  = self.results[key]["stat"]        [mass_i]*scale
-#		central_value      = self.results[key]["central"]["weighted"][mass_i]*scale
-#		central_unweighted = self.results[key]["central"]["unweighted"][mass_i]
+	def GetResult(self, key, process, m0, m1, MWR, MNR):
+       		xs=1.0
+		allevents=10000.0
+		if "signal" not in key and "data" not in key:
+			xs=self.GetBGCrossSection(process, m0, m1)
+			allevents=self.GetAllEvents(process, m0, m1)
+		f = self.OpenFile(process, m0, m1, MWR, MNR)
+		self.ProcessFile(key, f, xs, allevents)			
 
-		#averages of unweighted events over all toys
-#		syst_unweighted = self.results[key]["syst"]["unweighted_mean"][mass_i]
-		#average of stat error for all toys
-#		stat_err = self.results[key]["syst"]["stat_err"][mass_i]*scale
+	def GetBGCrossSection(self, process, m0, m1):
+		backgroundsList = "samples/backgrounds/backgroundStack/backgroundsList.txt"
+		xsec="0"
+		with open(backgroundsList) as f:
+			lines = f.read().splitlines()
+		for line in lines:
+			if ("TT" in process and "TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt" in line) or (process in line and m0 in line and m1 in line):
+				xsec=line.split(':')[1].strip()
+				xsec=xsec.split('+')[0].strip()
+				break
+		return float(xsec)
 
-#		if "signal" in key:
-#			zerokey = "_".join(key.split("_")[:2] + ["0"])
-#		else:
-#			zerokey = key
+	def GetAllEvents(self, process, m0, m1):
+		f = self.OpenSkimmingFile(process, m0, m1)
+		h_all= f.Get("skim/allEvents/eventsWeight")
+		allevents= h_all.GetBinContent(1)
+		return allevents
 
-#		global_ratio = self.results[zerokey]["syst"]["mean"][0]*scale/( self.results[zerokey]["syst"]["unweighted_mean"][0] + 1)
-#		if syst_unweighted < 3:
-#			syst_mean = global_ratio*syst_unweighted
+ 	def OpenSkimmingFile(self, process, m0, m1):
+		base=self.filefmt_dict["base"]
 
-#		var = tmp_syst**2 + stat_err**2
+ 		if "TT" in process:
+			filename=base+"/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
+ 		elif "DY" in process:
+			filename=base+"/DYJetsToLL_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
+ 		elif "WJets" in process:
+ 			filename=base+"/WJetsToLNu_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
+ 		else:
+ 			return None
 
-                
-                
-#		if syst_mean > 0:
-#			mean = syst_mean
-#			alpha = var/mean
-#			N = mean**2/var - 1
-#			rate = N*alpha
-#			if N < 0:
-#				mean = math.sqrt(var)
-#				alpha = mean
-#				rate = 0.0001
-#				N = 0
-#		elif syst_mean < 0:
-#			mean = math.sqrt(var)
-#			alpha = mean
-#			rate = 0.0001
-#			N = 0
-#		else:
-#			N=0
-#			alpha = global_ratio
-#			mean = alpha
-#			rate = .0001
-
-#               print 'Values=',central_unweighted,syst_mean,central_value,stat_err,var,rate
-                        
-#		systematics.add(process, "lumi", 1.025)
-#		systematics.add(process, process + "_unc", (N,alpha))
-		
-#		if process in ["DYAMCPT", "TT"]:
-#			systematics.add(process,process + "_SF", self.getUncertainty(process, channel))
-#		        if process is "DYAMCPT":
-#			        systematics.add(process,"DYAMCPT_RF", 1.1)
-#			        systematics.add(process,"DYAMCPT_PDF", 1.04)
-
-#		self.results[key]["mean"][mass_i] = mean
-#		self.printResults(key, mass_i)
-
-#		return rate
-
-#	def getMeanStd(self, tree, draw_str=None):
-#		r.gROOT.SetBatch(True)
-#		means = np.zeros(len(self.masses))
-#		stds = np.zeros(len(self.masses))
-#		if not draw_str:
-#			draw_str = "NEventsInRange[%d]"
-			#draw_str = "FitIntegralInRange[%d]*Normalization"
-
-#		if self.makeplots: c = r.TCanvas("c", "c", 600, 600)
-#		for mass_i in range(len(self.masses)):
-#			ms = str(self.masses[mass_i])
-#			if "signal" in self.currentkey:
-#				if (self.currentkey.split("_")[2] != ms) :
-#					continue
+ 		print "Opening File ", filename
+ 		f = r.TFile.Open(filename)
+ 		if not f:
+			raise IOError(filename)
+ 		return f
 
 
-#			tree.Draw(draw_str % mass_i, "", "goff")
-#			h = r.gDirectory.Get("htemp")
-#			means[mass_i] = h.GetMean()
-#			stds[mass_i] = h.GetStdDev()
+	def ProcessFile(self, key, f, xs, allevents):
+		if key in self.results: return
 
-#			if self.makeplots:
-#				r.gStyle.SetOptStat(1001110)
-#				c.SetLogy()
-##				h.SetTitle(self.currentkey + tree.GetName() + " Mass " + ms)
-#				h.Draw()
-#				c.SaveAs("plots/" + self.currentkey  + tree.GetName() + "_" + draw_str % int(ms) + ".png")
+		self.currentkey = key
+		directory="demo/eventsPassingExtensionRECO2016VETO/"
+		if "signal" not in key:
+			directory="analyze/eventsPassingExtensionRECO2016VETO/"
+		if "_ZSB" in key:
+			directory="analyze/eventsPassingExtensionRECO2016VETOZMASS/"
+		h = f.Get(directory+"eventsWeight")
+		central_value=h.GetBinContent(1)
+		central_error=h.GetBinError(1)
 
-#		return means, stds
-
-#	def ProcessFile(self, key, f):
-#		if key in self.results: return
-
-#		self.currentkey = key
-#		tree = f.Get("syst_tree")
-#		if not tree or tree.GetEntries() == 0:
-#			tree = f.Get("central_value_tree")
-#		syst_means, syst_stds = self.getMeanStd(tree) 
-#		syst_unweighted_means, __ = self.getMeanStd(tree, "UnweightedNEventsInRange[%d]")
-#		stat_err, __              = self.getMeanStd(tree, "ErrorEventsInRange[%d]")
-
-#		central_tree = f.Get("central_value_tree")
-#		central_tree.GetEntry(0)
-#		try:
-#			central_value = np.array(central_tree.NEventsInRange)
-#		except AttributeError:
-#			central_value = np.zeros(len(self.masses))
-#		try:
-#			central_error = np.array(central_tree.ErrorEventsInRange)
-#		except AttributeError:
-#			central_error = np.zeros(len(self.masses))
-#		try:
-#			central_unweighted = np.array(central_tree.UnweightedNEventsInRange)
-#		except AttributeError:
-#			central_unweighted = np.zeros(len(self.masses))
-
-		# if "TT" in key:# or "DYAMCPT" in key:
-		# 	if "TT" in key: mode = "TT"
-		# 	elif "DYAMCPT" in key: mode = "DYAMCPT"
-		# 	if "ee" in key: channel = "ee"
-		# 	elif "mumu" in key: channel = "mumu"
-		# 	scale = self.SF[mode][channel]["SF"]
-		# 	syst_means *= scale
-		# 	syst_stds *= scale
-		# 	central_value *= scale
-		# 	central_error *= scale
-		# 	stat_err *= scale
-
-# 		self.results[key] = {
+		if "data" in key:
+			xs=1.0
+			allevents=35.9
+		if "signal" in key:
+			h_all= f.Get("demo/allEvents/eventsWeight")
+			allevents= h_all.GetBinContent(1)
+ 		self.results[key] = {
 # 				"syst": {
 # 					"mean":syst_means.tolist(),
 # 					"std":syst_stds.tolist(),
 # 					"unweighted_mean": syst_unweighted_means.tolist(),
 # 					"stat_err": stat_err.tolist(),
 # 					},
-# 				"stat": central_error.tolist(),
-# 				"central": {
+ 				"stat": central_error * xs / allevents,
+ 				"central": central_value * xs / allevents,
+				"all": allevents,
+				"xs": xs#{
 # 					"weighted": central_value.tolist(),
 # 					"unweighted": central_unweighted.tolist(),
 # 					},
 # 				"mean":[0]*len(self.masses)
-# 				}
+				}
 
+ 	def OpenFile(self, process, m0, m1, MWR, MNR):
+		base=self.filefmt_dict["base"]
+       		if process == "signal":
+			self.filefmt_dict["MWR"] = str(m0)
+			self.filefmt_dict["MNR"] = str(m1)
+ 			filename=self.filefmt.format(**self.filefmt_dict)
+ 		elif "TT" in process:
+			filename=base+"/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-"+str(MWR)+"_LNu_M-"+str(MNR)+".root"
+ 		elif "DY" in process:
+			filename=base+"/DYJetsToLL_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-"+str(MWR)+"_LNu_M-"+str(MNR)+".root"
+ 		elif "WJets" in process:
+ 			filename=base+"/WJetsToLNu_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-"+str(MWR)+"_LNu_M-"+str(MNR)+".root"
+		elif "data_ZSB" in process:
+			filename=base+"/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-"+str(MWR)+"_LNu_M-"+str(MNR)+".root" #TOCHANGE
+ 		else:
+ 			return None
 
-# 	def OpenFile(self, channel, process, MWR):
-# 		oldtag = self.filefmt_dict["tag"]
-# 		if process == "signal":
-# 			mode = "WRto" + self.chnlName[channel] + "JJ_" + str(MWR) + "_" + str(MWR/2)
-# 			minitreename = "signal_" + channel
-# 		elif "TT" in process:
-# 			self.filefmt_dict["tag"] = self.chnlName[channel]
-# 			channel = "emu"
-# 			mode = "data"
-# 			minitreename = "flavoursideband"
-# 		elif "DY" in process:
-# 			mode = process
-# 			minitreename = "signal_" + channel
-# 		elif "Other" in process:
-# 			mode = process
-# 			minitreename = "signal_" + channel
-# 		else:
-# 			return None
-
-# 		self.filefmt_dict["minitreename"] = minitreename
-# 		self.filefmt_dict["chnlName"] = self.chnlName[channel]
-# 		self.filefmt_dict["mode"] = mode
-                
-# 		filename = self.filefmt.format(**self.filefmt_dict)
-# 		self.filefmt_dict["tag"] = oldtag
-# 		print "Opening File ", filename
-# 		f = r.TFile.Open(filename)
-# 		if not f:
-# 			if MWR == 1800: 
-# 				f = r.TFile.Open(filename.replace("900","1400"))
-# 				if not f: raise IOError(filename)
-# 		return f
-
-# 	def GetMasses(self, f):
-# 		if self.masses: return
-# 		masses = r.std.vector(int)()
-# 		f.GetObject("signal_mass", masses)
-# 		self.masses = [m for m in masses]
-	
-# 	def setTag(self, tag):
-# 		self.filefmt_dict["tag"] = tag
-
-# 	def getMassHisto(self, MWR, channel, process):
-# 		r.gROOT.SetBatch(True)
-# 		key = channel + "_" + process
-# 		if "signal" == process:
-# 			key += "_" + str(MWR)
-
-# 		MWR = int(MWR)
-# 		f = self.OpenFile(channel, process, MWR)
-# 		if not self.masses: self.GetMasses(f)
-
-# 		tree = f.Get("Tree_Iter0")
-
-# 		mass_histo = r.TH1D("mass","mass",590,600, 6500)
-# 		tree.Draw("WR_mass>>mass","","")
-
-# 		mass_histo.SetDirectory(0)
-# 		return mass_histo
+ 		print "Opening File ", filename
+ 		f = r.TFile.Open(filename)
+ 		if not f:
+			raise IOError(filename)
+ 		return f
 
 		
 class Systematics:
