@@ -8,18 +8,19 @@ tag, toys = sys.argv[1:]
 
 thisdir = os.getcwd()
 #proddir = "/local/cms/user/phansen/limits/"
-proddir = "/afs/cern.ch/user/r/ruckstuh/CMSSW_8_1_0/src/ExoAnalysis/cmsWRextensions/limits/"
+proddir = "/data/whybee0b/user/aevans/thesis/limits/"
 
-datacardfolder = "/afs/cern.ch/user/r/ruckstuh/CMSSW_8_1_0/src/ExoAnalysis/cmsWRextensions/datacards/"
+datacardfolder = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/datacards/"
 datacards = os.listdir(datacardfolder)
-pattern = re.compile("WR(.*)jj_MASS(.*).txt")
+#WRmumujj_MWR2400_MNR0800.txt
+pattern = re.compile("WR(.*)jj_MWR(.*)_MNR(.*).txt")
 
 mode = "BayesianToyMC"
 job = condorTools.Job(thisdir + "/scripts/batch_run", "_WRv05", prodSpace=proddir)
 for datacard in datacards:
 	m = pattern.match(datacard)
 	if not m: continue
-	channel, MWR = m.groups()
+	channel, MWR, MNR = m.groups()
 	if channel not in ["ee","mumu"]: continue
 	if not MWR.isdigit(): continue
 
@@ -44,4 +45,4 @@ for datacard in datacards:
 		prefix  = thisdir + "/python/combineTools.py " + jobid
 #		job.addJob( prefix + " " + command, jobid)
 
-job.submit(mode = "1nd")
+job.submit(mode = "condor")

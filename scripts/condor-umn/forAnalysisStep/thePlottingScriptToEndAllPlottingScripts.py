@@ -8,41 +8,41 @@ import copy
 """
 Style options mostly from CMS's tdrStyle.C
 """
-def customROOTstyle() :
-    ROOT.gROOT.SetBatch(True)
-    ROOT.gStyle.SetOptTitle(True)
-    ROOT.gStyle.SetOptStat(1111)
-    ROOT.gStyle.SetPadTopMargin(0.06);
-    ROOT.gStyle.SetPadBottomMargin(0.13);
-    ROOT.gStyle.SetPadLeftMargin(0.12);
-    ROOT.gStyle.SetPadRightMargin(.15)
-    ROOT.gStyle.SetLabelColor(1, "XYZ");
-    ROOT.gStyle.SetLabelFont(42, "XYZ");
-    ROOT.gStyle.SetLabelOffset(0.007, "XYZ");
-    ROOT.gStyle.SetLabelSize(0.05, "XYZ");
-    ROOT.gStyle.SetTitleSize(0.05, "XYZ");
-    ROOT.gStyle.SetTitleOffset(1.0, "X");
-    ROOT.gStyle.SetTitleOffset(1.1, "Y");
-    ROOT.gStyle.SetTitleOffset(1.0, "Z");
-    ROOT.gStyle.SetAxisColor(1, "XYZ");
-    ROOT.gStyle.SetStripDecimals(True);
-    ROOT.gStyle.SetTickLength(0.03, "XYZ");
-    ROOT.gStyle.SetNdivisions(510, "XYZ");
-    ROOT.gStyle.SetPadTickX(0);
-    ROOT.gStyle.SetPadTickY(0);
-    ROOT.gStyle.SetMarkerStyle(20);
-    ROOT.gStyle.SetHistLineColor(1);
-    ROOT.gStyle.SetHistLineStyle(1);
-    ROOT.gStyle.SetHistLineWidth(3);
-    ROOT.gStyle.SetFrameBorderMode(0);
-    ROOT.gStyle.SetFrameBorderSize(1);
-    ROOT.gStyle.SetFrameFillColor(0);
-    ROOT.gStyle.SetFrameFillStyle(0);
-    ROOT.gStyle.SetFrameLineColor(1);
-    ROOT.gStyle.SetFrameLineStyle(1);
-    ROOT.gStyle.SetFrameLineWidth(1);
-    ROOT.gStyle.SetPalette(55);
-    ROOT.gStyle.SetNumberContours(100);
+#def customROOTstyle() :
+#    ROOT.gROOT.SetBatch(True)
+#    ROOT.gStyle.SetOptTitle(True)
+#    ROOT.gStyle.SetOptStat(1111)
+#    ROOT.gStyle.SetPadTopMargin(0.06);
+#    ROOT.gStyle.SetPadBottomMargin(0.13);
+#    ROOT.gStyle.SetPadLeftMargin(0.12);
+#    ROOT.gStyle.SetPadRightMargin(.15)
+#    ROOT.gStyle.SetLabelColor(1, "XYZ");
+#    ROOT.gStyle.SetLabelFont(42, "XYZ");
+#    ROOT.gStyle.SetLabelOffset(0.007, "XYZ");
+#    ROOT.gStyle.SetLabelSize(0.05, "XYZ");
+#    ROOT.gStyle.SetTitleSize(0.05, "XYZ");
+#    ROOT.gStyle.SetTitleOffset(1.0, "X");
+#    ROOT.gStyle.SetTitleOffset(1.1, "Y");
+#    ROOT.gStyle.SetTitleOffset(1.0, "Z");
+#    ROOT.gStyle.SetAxisColor(1, "XYZ");
+#    ROOT.gStyle.SetStripDecimals(True);
+#    ROOT.gStyle.SetTickLength(0.03, "XYZ");
+#    ROOT.gStyle.SetNdivisions(510, "XYZ");
+#    ROOT.gStyle.SetPadTickX(0);
+#    ROOT.gStyle.SetPadTickY(0);
+#    ROOT.gStyle.SetMarkerStyle(20);
+#    ROOT.gStyle.SetHistLineColor(1);
+#    ROOT.gStyle.SetHistLineStyle(1);
+#    ROOT.gStyle.SetHistLineWidth(3);
+#    ROOT.gStyle.SetFrameBorderMode(0);
+#    ROOT.gStyle.SetFrameBorderSize(1);
+#    ROOT.gStyle.SetFrameFillColor(0);
+#    ROOT.gStyle.SetFrameFillStyle(0);
+#    ROOT.gStyle.SetFrameLineColor(1);
+#    ROOT.gStyle.SetFrameLineStyle(1);
+#    ROOT.gStyle.SetFrameLineWidth(1);
+#    ROOT.gStyle.SetPalette(55);
+#    ROOT.gStyle.SetNumberContours(100);
 
 import numpy as np
 def customPalette(zeropoint = 0.5):
@@ -75,7 +75,6 @@ def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols 
     c.SaveAs(outname)
 
 def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,100]):
-    customROOTstyle()
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
@@ -110,11 +109,9 @@ def getStack(plotName, folder, massPoint):
 def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPoint=[1000,100]):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     newHist = copy.deepcopy(hist)
-    customROOTstyle()
     ROOT.gStyle.SetPalette(61)
     ROOT.gROOT.ForceStyle()
     c = ROOT.TCanvas("c","c",width,height)
-    customROOTstyle()
     ROOT.gStyle.SetPalette(61)
     ROOT.gROOT.ForceStyle()
 
@@ -158,7 +155,6 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         print "HISTOGRAM EMPTY!"
 
 def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500, norm = False, xtitle = "", ytitle = "", rebin = 0, leg="top",logy=False):
-    customROOTstyle()
     hist_max = 0
     if not colors:
         colors = [ROOT.kRed, ROOT.kBlue, ROOT.kBlack]

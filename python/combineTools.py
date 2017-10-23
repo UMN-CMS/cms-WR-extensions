@@ -166,11 +166,11 @@ class AnalysisResultsInterface:
 		base=self.filefmt_dict["base"]
 
  		if "TT" in process:
-			filename=base+"/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
+			filename=base+"../background_skim/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
  		elif "DY" in process:
-			filename=base+"/DYJetsToLL_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
+			filename=base+"../background_skim/DYJetsToLL_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
  		elif "WJets" in process:
- 			filename=base+"/WJetsToLNu_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
+ 			filename=base+"../background_skim/WJetsToLNu_Pt-"+m0+"To"+m1+"_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_eventsWeight.root"
  		else:
  			return None
 
@@ -185,7 +185,7 @@ class AnalysisResultsInterface:
 		if key in self.results: return
 
 		self.currentkey = key
-		directory="demo/eventsPassingExtensionRECO2016VETO/"
+		directory="analyze/eventsPassingExtensionRECO2016VETO/"
 		if "signal" not in key:
 			directory="analyze/eventsPassingExtensionRECO2016VETO/"
 		if "_ZSB" in key:
@@ -198,7 +198,7 @@ class AnalysisResultsInterface:
 			xs=1.0
 			allevents=35.9
 		if "signal" in key:
-			h_all= f.Get("demo/allEvents/eventsWeight")
+			h_all= f.Get("analyze/allEvents/eventsWeight")
 			allevents= h_all.GetBinContent(1)
  		self.results[key] = {
 # 				"syst": {

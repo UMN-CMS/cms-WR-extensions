@@ -94,6 +94,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
       bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
@@ -109,11 +110,13 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
       eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
+      eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
       eventHistos m_eventsPassingWR2016RECO;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
-      edm::EDGetToken m_recoMuonToken;
+      edm::EDGetToken m_highMuonToken;
+      edm::EDGetToken m_regMuonToken;
       edm::EDGetToken m_recoJetsToken;
       edm::EDGetToken m_AK8recoJetsToken;
       edm::EDGetToken m_offlineVerticesToken;

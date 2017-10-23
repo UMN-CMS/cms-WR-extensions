@@ -91,71 +91,72 @@ class CondorFile:
 
 
 class Job:
-	def __init__(self, executable, jobName, prodSpace="/local/cms/user/" + environ["USER"], niceUser = True):
-		# Check for critical environment variables, exit with an error if we don't
-		# find them
-		try:
-			self.localRT = environ["LOCALRT"]
-		except KeyError:
-			exit("$LOCALRT not set. Remember to run 'cmsenv' in the right release area.")
-		try:
-			scramArch = environ["SCRAM_ARCH"]
-		except KeyError:
-			exit("$SCRAM_ARCH not set. Remember to run 'cmsenv' in the right release area.")
+    def __init__(self, executable, jobName, prodSpace="/local/cms/user/" + environ["USER"], niceUser = True):
+        # Check for critical environment variables, exit with an error if we don't
+        # find them
+        try:
+            self.localRT = environ["LOCALRT"]
+        except KeyError:
+            exit("$LOCALRT not set. Remember to run 'cmsenv' in the right release area.")
+        try:
+            scramArch = environ["SCRAM_ARCH"]
+        except KeyError:
+            exit("$SCRAM_ARCH not set. Remember to run 'cmsenv' in the right release area.")
 
-		self.executable = executable
-		self.jobName = jobName
-		self.prodSpace = prodSpace
-		self.commands = []
-		# Set up directories
-		jobDir = prodSpace + '/' + jobName + '/'
-		self.jobDir = jobDir
-		logDir = jobDir + "log/"  # For logs from each job
-		condorDir = jobDir + "condor/"
-		condorFile = condorDir + jobName + ".condor"
-		# Make directories if they do not already exist
-		for d in [jobDir, logDir, condorDir]:
-			if not isdir(d):
-				makedirs(d)
+        self.executable = executable
+        self.jobName = jobName
+        self.prodSpace = prodSpace
+        self.commands = []
+        # Set up directories
+        jobDir = prodSpace + '/' + jobName + '/'
+        self.jobDir = jobDir
+        logDir = jobDir + "log/"  # For logs from each job
+        condorDir = jobDir + "condor/"
+        condorFile = condorDir + jobName + ".condor"
+        # Make directories if they do not already exist
+        for d in [jobDir, logDir, condorDir]:
+            if not isdir(d):
+                makedirs(d)
 
-		# Open files
-		self.cf = CondorFile(condorFile, executable, logDir, niceUser)
-		self.written = False
-	
+        # Open files
+        self.cf = CondorFile(condorFile, executable, logDir, niceUser)
+        self.written = False
+    
 
-	def addJob(self, arguments, id_str):
-		# Add job to condor file
-		self.cf.addJob(self.localRT, self.jobDir, self.jobName + id_str , arguments)
+    def addJob(self, arguments, id_str):
+        # Add job to condor file
+        self.cf.addJob(self.localRT, self.jobDir, self.jobName + id_str , arguments)
 
-		self.commands += ["%(exec)s %(localRT)s %(jobDir)s %(jobName)s %(arguments)s" % {
-			"exec": self.executable,
-			"localRT": self.localRT,
-			"jobDir": self.jobDir,
-			"jobName": self.jobName + id_str,
-			"arguments": arguments,
-			}]
+        self.commands += ["%(exec)s %(localRT)s %(jobDir)s %(jobName)s %(arguments)s" % {
+            "exec": self.executable,
+            "localRT": self.localRT,
+            "jobDir": self.jobDir,
+            "jobName": self.jobName + id_str,
+            "arguments": arguments,
+            }]
 
-	# Write Condor file
-	def write(self):
-		self.cf.write()
-		self.written = True
+    # Write Condor file
+    def write(self):
+        self.cf.write()
+        self.written = True
 
-	def submit(self, mode = "condor"):
-		if mode == "interactive":
-			for command in self.commands:
-				call( command.split())
-		elif mode == "lsf":
-			bsub_prefix = "bsub -q cmscaf1nd "
-			for command in self.commands:
-				call( (bsub_prefix + command).split())
-		elif mode == "1nd":
-			bsub_prefix = "bsub -q 1nd "
-			for command in self.commands:
-				call( (bsub_prefix + command).split())
-		elif mode == "condor":
-			if not self.written: self.cf.write()
-			retcode = call(["condor_submit", self.cf.condorFile])
-			if retcode != 0:
-				print "Error returned from condor_submit!"
-				exit(retcode)
-		else: return
+    def submit(self, mode = "condor"):
+        if mode == "interactive":
+            for command in self.commands:
+                call( command.split())
+        elif mode == "lsf":
+            bsub_prefix = "bsub -q cmscaf1nd "
+            for command in self.commands:
+                call( (bsub_prefix + command).split())
+        elif mode == "1nd":
+            bsub_prefix = "bsub -q 1nd "
+            for command in self.commands:
+                print (bsub_prefix + command).split()
+                call( (bsub_prefix + command).split())
+        elif mode == "condor":
+            if not self.written: self.cf.write()
+            retcode = call(["condor_submit", self.cf.condorFile])
+            if retcode != 0:
+                print "Error returned from condor_submit!"
+                exit(retcode)
+        else: return
