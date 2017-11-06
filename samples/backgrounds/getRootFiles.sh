@@ -1,5 +1,5 @@
 #!/bin/bash
-filename='WJetstToLNu_datasets.txt'
+filename='tSingle_datasets.txt'
 rootFiles=`cat $filename`
 for rootFile in $rootFiles
 do

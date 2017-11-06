@@ -874,26 +874,38 @@ void
 cmsWRextension::beginJob()
 {
   edm::Service<TFileService> fs; 
-  if(m_doGen) {
-    m_allEvents.book((fs->mkdir("allEvents")), 1);           //(1) GEN ONLY PLOTS FOR NOW
+  //THESE CASES ARE EXCLUSIVE OF EACH OTHER
+  if (m_doGen && m_doReco) {
+  //flavor 3
+    m_allEvents.book((fs->mkdir("allEvents")), 3);          
+    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3); 
+    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 3);
+    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3);
+    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 3);
+    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 3);
+    m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3);
+    m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3);
+    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3);
+    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3);
+  }
+  if (m_doGen && !m_doReco) {
+  //flavor 1
+    m_allEvents.book((fs->mkdir("allEvents")), 1);          
     m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1); 
     m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1);
-  
-  } else {
-    m_allEvents.book((fs->mkdir("allEvents")), 3);           //(1) GEN AND RECO PLOTS
-    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3); 
-    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3);
+
   }
-  if(m_doReco) {
-    if (m_isMC) {
-      m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 1);
-      m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 1);
-      m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 1);
-      m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 1);
-    }
-    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 1);
-    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 1);
-    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 1);
+  if (!m_doGen && m_doReco) {
+  //flavor 2
+    m_allEvents.book((fs->mkdir("allEvents")), 2);          
+    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 2);
+    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 2);
+    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 2);
+    m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2);
+    m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2);
+    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2);
+    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2);
+
   }
 }
 

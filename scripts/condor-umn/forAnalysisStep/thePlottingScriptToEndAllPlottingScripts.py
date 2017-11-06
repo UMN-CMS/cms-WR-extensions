@@ -4,6 +4,8 @@ import datetime
 import subprocess
 import os
 import copy
+import sets
+import collections
 
 """
 Style options mostly from CMS's tdrStyle.C
@@ -144,12 +146,21 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         else :
             newHist.SetMaximum(backgroundCombined.GetMaximum()*1.1)
             backgroundStack.SetMaximum(backgroundCombined.GetMaximum()*1.1)
+        backgroundStack.SetTitle("")
+        newHist.SetTitle("")
         backgroundStack.Draw("HIST")
         newHist.Draw(drawoptions+"same")
 
         #c.SetLogy()
-    
-        c.BuildLegend()
+        global colors
+        global backgroundPlotNames
+        legend = c.BuildLegend()
+        legend.Clear()  #clear the legend to build it back again
+        legend.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
+        for bg in backgrounds:
+            legend.AddEntry(backgroundPlotNames[bg], bg)
+        
+        #Now build the legend
         c.SaveAs(name)
     else:
         print "HISTOGRAM EMPTY!"
@@ -208,6 +219,29 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
     canv.SaveAs(filename)
 #############################################################################################
 #WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
+backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
+backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
+with open(backgroundsList) as f:
+    lines = f.read().splitlines()
+
+backgrounds = sets.Set()
+backgroundPlotNames = collections.OrderedDict()
+colors = collections.OrderedDict()
+lineNum = 0
+for line in lines:
+    if lineNum < 2 : 
+        lineNum+=1
+        continue
+    backgrounds.add(line.split(':')[2].strip())
+    colors[line.split(':')[0].strip()[:-4]] = int(line.split(':')[3].strip())
+    backgroundPlotNames[line.split(':')[2].strip()] = line.split(':')[0].strip()[:-4]
+
+print "Background Plot Names"
+print backgroundPlotNames
+print "Plot Colors"
+print colors
+print "Backgrounds"
+print backgrounds
 signalName = sys.argv[1].split("_")
 wrMass = int(signalName[1][2:])
 nuMass = int(signalName[3][2:])

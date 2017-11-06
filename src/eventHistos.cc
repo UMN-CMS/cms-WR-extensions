@@ -122,7 +122,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_subleadMuon_selMuonPt        =    m_histoFolder.make<TH1D>("subleadMuonSelMuonPt"  ,"Sublead Muon Selected Muon Pt"   ,100, 0.0,2000);
     m_subleadMuonEt                =    m_histoFolder.make<TH1D>("subleadMuonEt"          ,"Sublead Muon Et"                 ,100, 0.0,2000);
 
-    m_MET                          =    m_histoFolder.make<TH1D>("MET"                 ,"MET",                       100, 0.0,2000);
+    m_MET                          =    m_histoFolder.make<TH1D>("MET"                 ,"MET;MET (GeV);# events",                       100, 0.0,2000); //THIS LINE WORKS
     m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("METselJetdPhi"      ,"MET Selected Jet dPhi",      80, 0.0 ,4.0);
     m_MET_selMuondPhi              =    m_histoFolder.make<TH1D>("METselMuondPhi"     ,"MET Selected Muon dPhi",     80, 0.0 ,4.0);
     m_MET_selJetMass               =    m_histoFolder.make<TH1D>("METselJetMass"      ,"MET Selected Jet Mass",     100,0.0 ,2000);
@@ -239,15 +239,9 @@ void eventHistos::fillGen(eventBits& event) {
   std::cout << "FILLING 6"<<std::endl;
 
   m_leadSubleadingPartonsMuonsMass->Fill(event.leadSubleadingPartonsMuonsMassVal, event.weight);
-  m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, event.weight);
-  m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, event.weight);
-  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, event.weight);
   std::cout << "FILLING 7"<<std::endl;
 
-  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, event.weight);
   m_leadSubleadingPartonsMuonsPt->Fill(event.leadSubleadingPartonsMuonsPtVal, event.weight);
-  m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, event.weight);
-  m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, event.weight);
   std::cout << "FILLING 8"<<std::endl;
 
   //m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal, event.weight);
@@ -255,25 +249,26 @@ void eventHistos::fillGen(eventBits& event) {
   //m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal, event.weight);
   //m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal, event.weight);
 
-  m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, event.weight);
-
-  m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction, event.weight);
   std::cout << "FILLING 9"<<std::endl;
 
-  m_EtPlacementMuon2->Fill(event.secondInDecayMuon, event.weight);
-  //m_nJets->Fill(event.myGenJets.size(), event.weight);
-  m_nAK8Jets->Fill(event.ak8jetCands, event.weight);
-  m_nMuonCands->Fill(event.muonCands, event.weight);
-  m_nMuons40->Fill(event.muons40, event.weight);
-  m_nAK8Jets40->Fill(event.ak8jets40, event.weight);
 
-  m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,event.weight); 
-  m_selectedJetEt   ->Fill(event.selectedJetEt   ,event.weight);  
-  m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,event.weight);  
-  m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,event.weight);   
-  m_selectedMuonEta ->Fill(event.selectedMuonEta ,event.weight);   
-  m_selectedJetEta  ->Fill(event.selectedJetEta  ,event.weight); 
 
+
+
+
+
+
+
+
+
+}
+void eventHistos::fillReco(eventBits& event) {
+  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, event.weight);
+  m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, event.weight);
+  m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, event.weight);
+  m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, event.weight);
+  m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, event.weight);
+  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, event.weight);
   m_subleadMuon_selJetdPhi ->Fill(event.subleadMuon_selJetdPhi ,event.weight); 
   m_subleadMuon_selMuondPhi->Fill(event.subleadMuon_selMuondPhi,event.weight);
   m_subleadMuon_selMuonMass->Fill(event.subleadMuon_selMuonMass,event.weight);
@@ -288,16 +283,23 @@ void eventHistos::fillGen(eventBits& event) {
   m_MET_selJetPt           ->Fill(event.MET_selJetPt           ,event.weight); 
   m_MET_selMuonPt          ->Fill(event.MET_selMuonPt          ,event.weight); 
 
+  m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,event.weight); 
+  m_selectedJetEt   ->Fill(event.selectedJetEt   ,event.weight);  
+  m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,event.weight);  
+  m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,event.weight);   
+  m_selectedMuonEta ->Fill(event.selectedMuonEta ,event.weight);   
+  m_selectedJetEta  ->Fill(event.selectedJetEta  ,event.weight); 
+
+  m_EtPlacementMuon2->Fill(event.secondInDecayMuon, event.weight);
+  //m_nJets->Fill(event.myGenJets.size(), event.weight);
+  m_nAK8Jets->Fill(event.ak8jetCands, event.weight);
+  m_nMuonCands->Fill(event.muonCands, event.weight);
+  m_nMuons40->Fill(event.muons40, event.weight);
+  m_nAK8Jets40->Fill(event.ak8jets40, event.weight);
+  m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, event.weight);
 
 
-
-
-
-
-
-
-}
-void eventHistos::fillReco(eventBits& event) {
+  m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction, event.weight);
 
 
 }

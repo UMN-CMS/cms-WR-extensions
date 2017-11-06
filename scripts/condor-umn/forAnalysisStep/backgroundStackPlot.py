@@ -4,44 +4,10 @@ import os
 import subprocess
 from shutil import copyfile
 import copy
+import collections
 """
 Style options mostly from CMS's tdrStyle.C
 """
-def customROOTstyle() :
-    ROOT.gROOT.SetBatch(True)
-    ROOT.gStyle.SetOptTitle(True)
-    ROOT.gStyle.SetOptStat(1111)
-    ROOT.gStyle.SetPadTopMargin(0.06);
-    ROOT.gStyle.SetPadBottomMargin(0.13);
-    ROOT.gStyle.SetPadLeftMargin(0.12);
-    ROOT.gStyle.SetPadRightMargin(.15)
-    ROOT.gStyle.SetLabelColor(1, "XYZ");
-    ROOT.gStyle.SetLabelFont(42, "XYZ");
-    ROOT.gStyle.SetLabelOffset(0.007, "XYZ");
-    ROOT.gStyle.SetLabelSize(0.05, "XYZ");
-    ROOT.gStyle.SetTitleSize(0.05, "XYZ");
-    ROOT.gStyle.SetTitleOffset(1.0, "X");
-    ROOT.gStyle.SetTitleOffset(1.1, "Y");
-    ROOT.gStyle.SetTitleOffset(1.0, "Z");
-    ROOT.gStyle.SetAxisColor(1, "XYZ");
-    ROOT.gStyle.SetStripDecimals(True);
-    ROOT.gStyle.SetTickLength(0.03, "XYZ");
-    ROOT.gStyle.SetNdivisions(510, "XYZ");
-    ROOT.gStyle.SetPadTickX(0);
-    ROOT.gStyle.SetPadTickY(0);
-    ROOT.gStyle.SetMarkerStyle(20);
-    ROOT.gStyle.SetHistLineColor(1);
-    ROOT.gStyle.SetHistLineStyle(1);
-    ROOT.gStyle.SetHistLineWidth(3);
-    ROOT.gStyle.SetFrameBorderMode(0);
-    ROOT.gStyle.SetFrameBorderSize(1);
-    ROOT.gStyle.SetFrameFillColor(0);
-    ROOT.gStyle.SetFrameFillStyle(0);
-    ROOT.gStyle.SetFrameLineColor(1);
-    ROOT.gStyle.SetFrameLineStyle(1);
-    ROOT.gStyle.SetFrameLineWidth(1);
-    ROOT.gStyle.SetPalette(55);
-    ROOT.gStyle.SetNumberContours(100);
 import numpy as np
 def customPalette(zeropoint = 0.5):
     Number = 3;
@@ -53,7 +19,6 @@ def customPalette(zeropoint = 0.5):
     ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb)
 
 def saveHists(weight,backgroundName,file,directory="",prefix="",filter=""):
-    customROOTstyle()
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
@@ -78,44 +43,49 @@ def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
     histObjectNames = hists1d + hists2d
-    print "Looking for eventsWeight histogram"
+   # print "Looking for eventsWeight histogram"
     if inFolder:
-        print "Accessing folder"
+   #     print "Accessing folder"
         for key in file.GetListOfKeys():
-            print key.GetName()
+   #         print key.GetName()
             if key.GetClassName() in histObjectNames and filter in prefix and key.GetName() == "eventsWeight":
-                print "Found events weight" 
+   #             print "Found events weight" 
                 return float(file.Get(key.GetName()).GetBinContent(1))
     else:
-        print "Not in folder yet"
+  #      print "Not in folder yet"
         for key in file.GetListOfKeys():
-            print "Looping through keys"
+   #         print "Looping through keys"
             if key.IsFolder():
                 if key.GetName() == "allEvents":
-                    print "Found Folder"
+   #                 print "Found Folder"
                     inFolder = True
                 dir = file.Get(key.GetName())
                 newDir=directory+"/"+key.GetName()
                 return getEventsWeight(dir,directory=newDir, prefix=prefix,filter=filter, inFolder = inFolder)
-    print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
+ #   print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
     return 1.0
 
    
 
 def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""):
     global stackList
-    customROOTstyle()
+    global colors
     ROOT.gStyle.SetPalette(55)
     hist.SetTitle(backgroundName)
     hist.Scale(weight)
+    hist.SetFillColor(colors[backgroundName])
+    hist.SetLineColor(colors[backgroundName])
+    print "ADDING HIST"
+    print backgroundName
     print hist.GetName()
+    hist.SetName(backgroundName)
     if name not in stackList:
-        print "New Plot!"
+   #     print "New Plot!"
         stackList[name] = []
         ROOT.gStyle.SetPalette(55)
         stackList[name].append(copy.deepcopy(hist))
     else:
-        print "Stacking!"
+  #      print "Stacking!"
         ROOT.gStyle.SetPalette(55)
         stackList[name].append(copy.deepcopy(hist))
     #hist.SetLineWidth(2)
@@ -124,7 +94,7 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
 WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
 NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
 integratedLuminosity = 35900.0
-stackList = {}
+stackList = collections.OrderedDict()
 backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
 backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
@@ -137,19 +107,24 @@ eventsWeightsDir = "/hdfs/cms/user/aevans/thesis/background_skim/"
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
 
-xsecs = {}
+xsecs = collections.OrderedDict()
+colors = collections.OrderedDict()
 lineNum = 0
 for line in lines:
     if lineNum < 2 : 
         lineNum+=1
         continue
     xsecs[line.split(':')[0].strip()] = float(line.split(':')[1].strip().split("+")[0])
+    colors[line.split(':')[0].strip()[:-4]] = int(line.split(':')[3].strip())
+    #print line.split(':')[2].strip()
+
+print "NEW COLOR"
+print colors
 #print backgrounds
 #run over backgrounds
 
 #print backgroundsRootFiles
-for massPoint in range(0, (len(WrMasses)-1)) :
-
+for massPoint in range(0, (len(WrMasses)-1)):
     stackList.clear()
     massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
     massName = "WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
@@ -163,16 +138,16 @@ for massPoint in range(0, (len(WrMasses)-1)) :
         backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
         print backgroundEventsWeight
      #  subprocess.call(ahaddCommand, shell=True)   
-        if pos == end:
-            print "LAST ROUND!"
-        print pos
-        print background[:-4]+massSuffix
+     #   if pos == end:
+     #       print "LAST ROUND!"
+      #  print pos
+       # print background[:-4]+massSuffix
         weight = 1.0
         weight *= integratedLuminosity
         weight *= xsecs[background]
-        print "LOOKING FOR EVENTS WEIGHT IN FILE"
+      #  print "LOOKING FOR EVENTS WEIGHT IN FILE"
         weight /= getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
-        print "DONE CALCULATING"
+      #  print "DONE CALCULATING"
         saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=massDir)
         pos+=1
     
@@ -180,15 +155,16 @@ for massPoint in range(0, (len(WrMasses)-1)) :
     
     #c = ROOT.TCanvas("c","c",1000,1000)
     for plot,stack in stackList.items():
-        customROOTstyle()
         stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
-        customROOTstyle()
         pos = 1
+#        print stack.GetName()
         for hist in stack:
-            print hist.__class__.__name__
+ #           print hist.__class__.__name__
             #myHist = copy.deepcopy(hist)
-            print "Adding"
-            hist.SetFillColor(pos)
+        #    print "Adding"
+            print "STACK TIME"
+            print hist.GetName()
+            #hist.SetFillColor(pos)
             hist.Draw("HIST")
             stackHist.Add(hist)
             if pos == 9:
@@ -196,11 +172,9 @@ for massPoint in range(0, (len(WrMasses)-1)) :
             else:
                 pos+=1
         ROOT.gStyle.SetPalette(55)
-        customROOTstyle()
         #stackHist.Draw()
-        customROOTstyle()
-        print "THIS MANY HISTS"
-        print stackHist.GetNhists()
+ #       print "THIS MANY HISTS"
+ #       print stackHist.GetNhists()
         #c.BuildLegend()
         #c.SaveAs(plot)
         stackHist.SaveAs(plot)
