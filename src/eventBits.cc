@@ -178,6 +178,14 @@ void eventBits::clear() {
   leadAK8JetMuonPtVal = 0.0;
   leadAK8JetMuonEtaVal = 0.0;
 
+  mynLeptons         = 0;
+  mynMuons           = 0;
+  mynTaus            = 0;
+  mynElectrons       = 0;
+  mynLightPartons    = 0;
+  mynTops            = 0;
+  mynBs              = 0;
+  mynPartons         = 0;
 
 
 }

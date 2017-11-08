@@ -76,7 +76,7 @@ def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols 
     
     c.SaveAs(outname)
 
-def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,100]):
+def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,100], eventsWeight=1.0):
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
@@ -84,32 +84,68 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,
     for key in file.GetListOfKeys():
         print "LOOPING THROUGH:"
         print key.GetName()
+        sys.stdout.flush()
         if key.IsFolder():
             dir = file.Get(key.GetName())
             newDir=directory+"/"+key.GetName()
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(dir,directory=newDir, prefix=prefix,filter=filter,bg=bg,massPoint=massPoint)
+            saveHists(dir,directory=newDir, prefix=prefix,filter=filter,bg=bg,massPoint=massPoint, eventsWeight=eventsWeight)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint)
+            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint, eventsWeight=eventsWeight)
 
 def getStack(plotName, folder, massPoint):
     backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])+"/"
     print backgroundsDir+folder+"/"+plotName+".root"
+    sys.stdout.flush()
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
         return 0
     file = ROOT.TFile.Open(backgroundsDir+folder+"/"+plotName+".root", "read")
     for key in file.GetListOfKeys():
         if (not key.IsFolder()) and (key.GetName() == plotName):
             print "THSTACK PLOT FOUND"
+            sys.stdout.flush()
             return file.Get(key.GetName())
     return 0
-def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPoint=[1000,100]):
+def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
+    ROOT.gROOT.SetBatch(True)
+    hists1d = ["TH1D", "TH1F", "TH1"]
+    hists2d = ["TH2D", "TH2F", "TH2"]
+    histObjectNames = hists1d + hists2d
+    print "Looking for eventsWeight histogram"
+    sys.stdout.flush()
+    if inFolder:
+   #     print "Accessing folder"
+        for key in file.GetListOfKeys():
+   #         print key.GetName()
+            if key.GetClassName() in histObjectNames and filter in prefix and key.GetName() == "eventsWeight":
+   #             print "Found events weight" 
+                return float(file.Get(key.GetName()).GetBinContent(1))
+    else:
+  #      print "Not in folder yet"
+        for key in file.GetListOfKeys():
+   #         print "Looping through keys"
+            if key.IsFolder():
+                if key.GetName() == "allEvents":
+   #                 print "Found Folder"
+                    inFolder = True
+                dir = file.Get(key.GetName())
+                newDir=directory+"/"+key.GetName()
+                return getEventsWeight(dir,directory=newDir, prefix=prefix,filter=filter, inFolder = inFolder)
+ #   print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
+    return 1.0
+
+def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPoint=[1000,100], eventsWeight=1.0):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
+    weight = 1.0
+    weight *= 35900.0
+    weight *= 8.0 #pb just for plotting purposes
+    weight /= eventsWeight
+                               
     newHist = copy.deepcopy(hist)
     ROOT.gStyle.SetPalette(61)
     ROOT.gROOT.ForceStyle()
@@ -123,19 +159,24 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-4],name.split("/")[-3]+"/"+name.split("/")[-2], massPoint)
         if (backgroundStack != 0):
             print "GOT THE BACKGROUND"    
+            sys.stdout.flush()
         else:
             print "NO BACKGROUNDS FOUND!"
+            sys.stdout.flush()
             return
     if not (newHist.GetMaximum() == 0) : 
         print "SCALING HISTOGRAM"
+        sys.stdout.flush()
         backgroundCombined = copy.deepcopy(newHist)
         backgroundCombined.Scale(0.0)
         backgroundCombined.Merge(backgroundStack.GetHists())
         
-        scaleFactor = backgroundCombined.Integral()/newHist.Integral()
+        scaleFactor = weight
         print scaleFactor
+        sys.stdout.flush()
         if scaleFactor == 0.0 :
             print "NOT USING SILLY SCALE FACTOR"
+            sys.stdout.flush()
             scaleFactor = 1.0
         newHist.Scale(scaleFactor)
         newHist.SetLineColor(794)
@@ -164,6 +205,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         c.SaveAs(name)
     else:
         print "HISTOGRAM EMPTY!"
+        sys.stdout.flush()
 
 def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500, norm = False, xtitle = "", ytitle = "", rebin = 0, leg="top",logy=False):
     hist_max = 0
@@ -219,8 +261,11 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
     canv.SaveAs(filename)
 #############################################################################################
 #WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
+print "STARTING"
+sys.stdout.flush()
 backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
+signalsDir = "/data/whybee0b/user/aevans/thesis/signals/"
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
 
@@ -242,7 +287,16 @@ print "Plot Colors"
 print colors
 print "Backgrounds"
 print backgrounds
+sys.stdout.flush()
 signalName = sys.argv[1].split("_")
 wrMass = int(signalName[1][2:])
 nuMass = int(signalName[3][2:])
-saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass])
+eventsWeight = getEventsWeight(ROOT.TFile.Open(sys.argv[1], "read"),directory=signalsDir)
+print "GOT EVENTSWEIGHT"
+print eventsWeight
+sys.stdout.flush()
+saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight)
+
+
+print "DONE"
+sys.stdout.flush()

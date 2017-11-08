@@ -29,6 +29,35 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
   if (m_flavor == 1) {
   //MAKE GEN PLOTS
     m_eventsWeight =                    m_histoFolder.make<TH1D>("eventsWeight","number of events weighted",           1, 0.0,    1);
+
+
+
+    m_nLeptons       = m_histoFolder.make<TH1D>("m_nLeptons"     , "# Leptons"     ,                                                       10, -.5, 9.5);;
+    m_nMuons         = m_histoFolder.make<TH1D>("m_nMuons"       , "# Muons"       ,                                                       10, -.5, 9.5);;
+    m_nTaus          = m_histoFolder.make<TH1D>("m_nTaus"        , "# Taus"        ,                                                       10, -.5, 9.5);;
+    m_nElectrons     = m_histoFolder.make<TH1D>("m_nElectrons"   , "# Electrons"   ,                                                       10, -.5, 9.5);;
+    m_nLightPartons  = m_histoFolder.make<TH1D>("m_nLightPartons", "# LightPartons",                                                       10, -.5, 9.5);;
+    m_nTops          = m_histoFolder.make<TH1D>("m_nTops"        , "# Tops"        ,                                                       10, -.5, 9.5);;
+    m_nBs            = m_histoFolder.make<TH1D>("m_nBs"          , "# Bs"          ,                                                       10, -.5, 9.5);;
+    m_nPartons       = m_histoFolder.make<TH1D>("m_nPartons"     , "# Partons"     ,                                                       10, -.5, 9.5);;
+                                                                                     
+    m_flavor         = m_histoFolder.make<TH1D>("m_flavor"       , "Event Flavor"       ,                                                       10, -.5, 9.5);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
     m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et;Et (GeV); ",                         80, 0.0, 4000);
     m_parton2Et =                       m_histoFolder.make<TH1D>("parton2Et", "Parton 2 Et;Et (GeV); ",                         80, 0.0, 4000);

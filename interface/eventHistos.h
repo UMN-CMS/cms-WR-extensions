@@ -41,6 +41,18 @@ class eventHistos {
   //GEN PLOTS
   TH1D* m_eventsWeight;
 
+  TH1D* m_nLeptons     ;
+  TH1D* m_nMuons       ;
+  TH1D* m_nTaus        ;
+  TH1D* m_nElectrons   ;
+  TH1D* m_nLightPartons;
+  TH1D* m_nTops        ;
+  TH1D* m_nBs          ;
+  TH1D* m_nPartons     ;
+
+  TH1D* m_flavor       ;
+
+
   TH1D* m_parton1Et;
   TH1D* m_parton2Et;
   TH1D* m_muon1Et;

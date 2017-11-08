@@ -44,6 +44,15 @@ public:
 
   int    muonCands;
   int    ak8jetCands;
+  int    mynLeptons     ;
+  int    mynMuons       ;
+  int    mynTaus        ;
+  int    mynElectrons   ;
+  int    mynLightPartons;
+  int    mynTops        ;
+  int    mynBs          ;
+  int    mynPartons     ;
+
   double parton1EtVal;
   double parton2EtVal;
   double muon1EtVal;

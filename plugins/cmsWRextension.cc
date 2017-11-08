@@ -26,6 +26,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include <vector>
 #include <iostream>
 #include <algorithm>
+#include <math.h>
 
 // user include files
 #include "FWCore/Framework/interface/Frameworkfwd.h"
@@ -336,7 +337,7 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
   myEvent.subleadMuonEt           = subleadMuon->et();
 
-  if(myEvent.subleadMuon_selMuonMass < 120 && myEvent.subleadMuon_selMuonMass > 60) return true;
+  if(myEvent.subleadMuon_selMuonMass < 200) return true;
   return false;
 }
 bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
@@ -351,6 +352,8 @@ bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
   myEvent.MET_selMuonMass = (met->p4()+selMuon->p4()).mass();
   myEvent.MET_selJetPt    = (met->p4()+selJet->p4()).pt();
   myEvent.MET_selMuonPt   = (met->p4()+selMuon->p4()).pt();
+
+  myEvent.selectedJetTransMET = met->et() * sin(fabs(reco::deltaPhi(selJet->phi(),met->phi()));
   return true;
 }
 //CHECK ADDITIONAL MUONS
@@ -456,6 +459,56 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, eventBits& myEvent) 
 
   return true;
 }
+bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
+{
+
+  //GENERIC EVENT CHARACTERIZER
+  int nLeptons         = 0;
+  int nMuons           = 0;
+  int nTaus            = 0;
+  int nElectrons       = 0; 
+  int nLightPartons    = 0;
+  int nTops            = 0;
+  int nBs              = 0;
+  int nPartons         = 0;
+
+  int flavor           = 0;
+
+  for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
+    if(!iParticle->isHardProcess()) continue;
+    if(!iParticle->status() == 21)  continue;
+    if(abs(iParticle->pdgId()) == 13) nMuons++;
+    if(abs(iParticle->pdgId()) == 11) nElectrons++;
+    if(abs(iParticle->pdgId()) == 15) nTaus;
+    if(abs(iParticle->pdgId()) == 13) nMuons++;
+    if(abs(iParticle->pdgId())  <= 4) nLightPartons++;
+    if(abs(iParticle->pdgId())  == 5) nBs++;
+    if(abs(iParticle->pdgId())  == 6) nTops++;
+  }
+  int nLeptons = nMuons + nTaus + nElectrons;
+  int nPartons = nTops + nBs + nLightPartons;
+
+  myEvent.mynLeptons         = mynLeptons     ;
+  myEvent.mynMuons           = mynMuons       ;
+  myEvent.mynTaus            = mynTaus        ;
+  myEvent.mynElectrons       = mynElectrons   ; 
+  myEvent.mynLightPartons    = mynLightPartons;
+  myEvent.mynTops            = mynTops        ;
+  myEvent.mynBs              = mynBs          ;
+  myEvent.mynPartons         = mynPartons     ;
+
+//HERE IS THE CHARACTERIZATION DECODER TABLE
+
+  if (mynMuons == 2 && mynPartons == 2)   flavor = 1;     
+  if (mynTaus >= 1 && mynTops >= 1)       flavor = 2;       
+  else if (mynTaus >= 1 && mynTops == 0)       flavor = 3;
+  //else if (mynMuons == 1 && mynElectrons >= 1) flavor = 4;
+  else flavor = 9;
+  
+  myEvent.myEventFlavor = flavor;
+
+
+}
 bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 {
   
@@ -475,6 +528,12 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
+
+
+
+
+
+
 
   //LOOP OVER GEN PARTICLES
   for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
@@ -695,6 +754,9 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.selectedJetEt   = myRECOevent.myMuonJetPairs[0].first->et(); 
   myRECOevent.selectedJetPhi  = myRECOevent.myMuonJetPairs[0].first->phi(); 
   myRECOevent.selectedJetEta  = myRECOevent.myMuonJetPairs[0].first->eta(); 
+  
+//  countOffAxisJets(iEvent, myRECOevent);
+
   if(myRECOevent.myMuonJetPairs[0].first->isPFJet()) {
     myRECOevent.leadAK8JetMuonJetMuonEnergyFraction = myRECOevent.myMuonJetPairs[0].first->muonEnergyFraction();
     std::cout << "CAND PAIR WITH CALOJET" <<std::endl;
