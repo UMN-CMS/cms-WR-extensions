@@ -86,6 +86,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 
 {
    //now do what ever initialization is needed
+   std::cout << "CONSTRUCTION" << std::endl;
    usesResource("TFileService");
    if (m_isMC && m_doGen){
      m_genParticleToken = consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"));
@@ -120,7 +121,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
     myEvent.weight = eventInfo->weight(); 
     myRECOevent.weight = eventInfo->weight();
-    std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<eventInfo->weight() <<std::endl;
+    std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myEvent.weight <<std::endl;
   }
   m_allEvents.fill(myEvent);
   
@@ -353,7 +354,7 @@ bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
   myEvent.MET_selJetPt    = (met->p4()+selJet->p4()).pt();
   myEvent.MET_selMuonPt   = (met->p4()+selMuon->p4()).pt();
 
-  myEvent.selectedJetTransMET = met->et() * sin(fabs(reco::deltaPhi(selJet->phi(),met->phi()));
+  myEvent.selectedJetTransMET = met->et() * sin(fabs(reco::deltaPhi(selJet->phi(),met->phi())));
   return true;
 }
 //CHECK ADDITIONAL MUONS
@@ -461,6 +462,8 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, eventBits& myEvent) 
 }
 bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 {
+  edm::Handle<std::vector<reco::GenParticle>> genParticles;
+  iEvent.getByToken(m_genParticleToken, genParticles);
 
   //GENERIC EVENT CHARACTERIZER
   int nLeptons         = 0;
@@ -475,38 +478,39 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   int flavor           = 0;
 
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
-    if(!iParticle->isHardProcess()) continue;
-    if(!iParticle->status() == 21)  continue;
+    if(!iParticle->isHardProcess())   continue;
+    if(!(iParticle->status() == 21))  continue;
     if(abs(iParticle->pdgId()) == 13) nMuons++;
     if(abs(iParticle->pdgId()) == 11) nElectrons++;
-    if(abs(iParticle->pdgId()) == 15) nTaus;
+    if(abs(iParticle->pdgId()) == 15) nTaus++;
     if(abs(iParticle->pdgId()) == 13) nMuons++;
     if(abs(iParticle->pdgId())  <= 4) nLightPartons++;
     if(abs(iParticle->pdgId())  == 5) nBs++;
     if(abs(iParticle->pdgId())  == 6) nTops++;
   }
-  int nLeptons = nMuons + nTaus + nElectrons;
-  int nPartons = nTops + nBs + nLightPartons;
+  nLeptons = nMuons + nTaus + nElectrons;
+  nPartons = nTops + nBs + nLightPartons;
 
-  myEvent.mynLeptons         = mynLeptons     ;
-  myEvent.mynMuons           = mynMuons       ;
-  myEvent.mynTaus            = mynTaus        ;
-  myEvent.mynElectrons       = mynElectrons   ; 
-  myEvent.mynLightPartons    = mynLightPartons;
-  myEvent.mynTops            = mynTops        ;
-  myEvent.mynBs              = mynBs          ;
-  myEvent.mynPartons         = mynPartons     ;
+  myEvent.mynLeptons         = nLeptons     ;
+  myEvent.mynMuons           = nMuons       ;
+  myEvent.mynTaus            = nTaus        ;
+  myEvent.mynElectrons       = nElectrons   ; 
+  myEvent.mynLightPartons    = nLightPartons;
+  myEvent.mynTops            = nTops        ;
+  myEvent.mynBs              = nBs          ;
+  myEvent.mynPartons         = nPartons     ;
 
 //HERE IS THE CHARACTERIZATION DECODER TABLE
 
-  if (mynMuons == 2 && mynPartons == 2)   flavor = 1;     
-  if (mynTaus >= 1 && mynTops >= 1)       flavor = 2;       
-  else if (mynTaus >= 1 && mynTops == 0)       flavor = 3;
+  if (nMuons == 2 && nPartons == 2)   flavor = 1;     
+  if (nTaus >= 1 && nTops >= 1)       flavor = 2;       
+  else if (nTaus >= 1 && nTops == 0)       flavor = 3;
   //else if (mynMuons == 1 && mynElectrons >= 1) flavor = 4;
   else flavor = 9;
   
   myEvent.myEventFlavor = flavor;
 
+  return true;
 
 }
 bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
@@ -935,10 +939,13 @@ bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent)
 void 
 cmsWRextension::beginJob()
 {
+  std::cout << "BOOKING PLOTS" << std::endl;
   edm::Service<TFileService> fs; 
   //THESE CASES ARE EXCLUSIVE OF EACH OTHER
   if (m_doGen && m_doReco) {
+    std::cout << "BOOKING PLOTS FLAVOR 3" << std::endl;
   //flavor 3
+
     m_allEvents.book((fs->mkdir("allEvents")), 3);          
     m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3); 
     m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 3);
@@ -951,6 +958,7 @@ cmsWRextension::beginJob()
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3);
   }
   if (m_doGen && !m_doReco) {
+    std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
   //flavor 1
     m_allEvents.book((fs->mkdir("allEvents")), 1);          
     m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1); 
@@ -958,6 +966,7 @@ cmsWRextension::beginJob()
 
   }
   if (!m_doGen && m_doReco) {
+    std::cout << "BOOKING PLOTS FLAVOR 2" << std::endl;
   //flavor 2
     m_allEvents.book((fs->mkdir("allEvents")), 2);          
     m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 2);

@@ -26,36 +26,23 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
   m_flavor = flavor;
   m_histoFolder = histoFolder;
 
-  if (m_flavor == 1) {
+  if (m_flavor != 4) {
   //MAKE GEN PLOTS
-    m_eventsWeight =                    m_histoFolder.make<TH1D>("eventsWeight","number of events weighted",           1, 0.0,    1);
+    std::cout << "HERE WE CONSTRUCT THE PLOTS" << std::endl;
+    m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
 
 
 
-    m_nLeptons       = m_histoFolder.make<TH1D>("m_nLeptons"     , "# Leptons"     ,                                                       10, -.5, 9.5);;
-    m_nMuons         = m_histoFolder.make<TH1D>("m_nMuons"       , "# Muons"       ,                                                       10, -.5, 9.5);;
-    m_nTaus          = m_histoFolder.make<TH1D>("m_nTaus"        , "# Taus"        ,                                                       10, -.5, 9.5);;
-    m_nElectrons     = m_histoFolder.make<TH1D>("m_nElectrons"   , "# Electrons"   ,                                                       10, -.5, 9.5);;
-    m_nLightPartons  = m_histoFolder.make<TH1D>("m_nLightPartons", "# LightPartons",                                                       10, -.5, 9.5);;
-    m_nTops          = m_histoFolder.make<TH1D>("m_nTops"        , "# Tops"        ,                                                       10, -.5, 9.5);;
-    m_nBs            = m_histoFolder.make<TH1D>("m_nBs"          , "# Bs"          ,                                                       10, -.5, 9.5);;
-    m_nPartons       = m_histoFolder.make<TH1D>("m_nPartons"     , "# Partons"     ,                                                       10, -.5, 9.5);;
+    m_nLeptons       = m_histoFolder.make<TH1D>("nLeptons"     , "# Leptons"     ,                                                       10, -.5, 9.5);;
+    m_nMuons         = m_histoFolder.make<TH1D>("nMuons"       , "# Muons"       ,                                                       10, -.5, 9.5);;
+    m_nTaus          = m_histoFolder.make<TH1D>("nTaus"        , "# Taus"        ,                                                       10, -.5, 9.5);;
+    m_nElectrons     = m_histoFolder.make<TH1D>("nElectrons"   , "# Electrons"   ,                                                       10, -.5, 9.5);;
+    m_nLightPartons  = m_histoFolder.make<TH1D>("nLightPartons", "# LightPartons",                                                       10, -.5, 9.5);;
+    m_nTops          = m_histoFolder.make<TH1D>("nTops"        , "# Tops"        ,                                                       10, -.5, 9.5);;
+    m_nBs            = m_histoFolder.make<TH1D>("nBs"          , "# Bs"          ,                                                       10, -.5, 9.5);;
+    m_nPartons       = m_histoFolder.make<TH1D>("nPartons"     , "# Partons"     ,                                                       10, -.5, 9.5);;
                                                                                      
-    m_flavor         = m_histoFolder.make<TH1D>("m_flavor"       , "Event Flavor"       ,                                                       10, -.5, 9.5);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    m_eventFlavor    = m_histoFolder.make<TH1D>("eventFlavor"       , "Event Flavor"       ,                                                       10, -.5, 9.5);
 
 
     
@@ -175,10 +162,10 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 //  //NOTHING FOR NOW
 //  }
 //
-    } else if (m_flavor == 4) {
-      m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
+  } else if (m_flavor == 4) {
+    m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
 
-    }
+  }
 }
 void eventHistos::fill(eventBits& event) {
   if(m_flavor == 1) fillGen(event);
@@ -206,15 +193,23 @@ void eventHistos::fillGen(eventBits& event) {
 
   std::cout << "Filling Event plots" << std::endl;
   m_eventsWeight->Fill(0.5, event.weight);
+  std::cout << "FILLING 1.1"<<std::endl;
   m_parton1Et->Fill(event.parton1EtVal, event.weight);
+  std::cout << "FILLING 1.2"<<std::endl;
   m_parton2Et->Fill(event.parton2EtVal, event.weight);
+  std::cout << "FILLING 1.3"<<std::endl;
   m_muon1Et->Fill(event.muon1EtVal, event.weight);
+  std::cout << "FILLING 1.4"<<std::endl;
   m_muon2Et->Fill(event.muon2EtVal, event.weight);
+  std::cout << "FILLING 1.5"<<std::endl;
   m_firstPartonJetEt->Fill(event.firstPartonJetEtVal, event.weight);
+  std::cout << "FILLING 1.6"<<std::endl;
   m_secondPartonJetEt->Fill(event.secondPartonJetEtVal, event.weight);
+  std::cout << "FILLING 1.7"<<std::endl;
   m_firstPartonAK8JetEt->Fill(event.firstPartonAK8JetEtVal, event.weight);
+  std::cout << "FILLING 1.8"<<std::endl;
   m_secondPartonAK8JetEt->Fill(event.secondPartonAK8JetEtVal, event.weight);
-  std::cout << "FILLING 1"<<std::endl;
+  std::cout << "FILLING 1.9"<<std::endl;
 
   m_parton1Eta->Fill(event.parton1EtaVal, event.weight);
   m_parton2Eta->Fill(event.parton2EtaVal, event.weight);

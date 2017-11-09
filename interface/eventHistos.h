@@ -50,7 +50,7 @@ class eventHistos {
   TH1D* m_nBs          ;
   TH1D* m_nPartons     ;
 
-  TH1D* m_flavor       ;
+  TH1D* m_eventFlavor       ;
 
 
   TH1D* m_parton1Et;

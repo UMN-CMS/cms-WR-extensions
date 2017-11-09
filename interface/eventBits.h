@@ -53,6 +53,8 @@ public:
   int    mynBs          ;
   int    mynPartons     ;
 
+  int    myEventFlavor  ;
+
   double parton1EtVal;
   double parton2EtVal;
   double muon1EtVal;
@@ -144,6 +146,8 @@ public:
   double MET_selMuonMass;
   double MET_selJetPt;
   double MET_selMuonPt;
+
+  double selectedJetTransMET;
 
   double myEventMass;
 

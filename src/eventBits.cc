@@ -96,6 +96,17 @@ eventBits::eventBits() {
   subleadMuon_selMuonPt = -10000.0;
   subleadMuonEt = -10000.0;
 
+  mynLeptons         = -1;
+  mynMuons           = -1;
+  mynTaus            = -1;
+  mynElectrons       = -1;
+  mynLightPartons    = -1;
+  mynTops            = -1;
+  mynBs              = -1;
+  mynPartons         = -1;
+
+  myEventFlavor      = -1;
+
   MET = -10000.0;
   MET_selJetdPhi = -10000.0;
   MET_selMuondPhi = -10000.0;
@@ -103,6 +114,8 @@ eventBits::eventBits() {
   MET_selMuonMass = -10000.0;
   MET_selJetPt = -10000.0;
   MET_selMuonPt = -10000.0;
+
+  selectedJetTransMET = -10000.0;
 
   myEventMass = -10000.0;
 }
@@ -187,6 +200,19 @@ void eventBits::clear() {
   mynBs              = 0;
   mynPartons         = 0;
 
+  myEventFlavor      = 0;
+
+  MET = 0.0;
+  MET_selJetdPhi = 0.0;
+  MET_selMuondPhi = 0.0;
+  MET_selJetMass = 0.0;
+  MET_selMuonMass = 0.0;
+  MET_selJetPt = 0.0;
+  MET_selMuonPt = 0.0;
+
+  selectedJetTransMET = 0.0;
+
+  myEventMass = 0.0;
 
 }
 bool eventBits::passesGenCuts() {

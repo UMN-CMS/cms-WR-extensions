@@ -101,6 +101,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
       bool lastCuts(const edm::Event& iEvent, eventBits& myEvent);
       bool massCut(const edm::Event& iEvent, eventBits& myEvent);
+      bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
