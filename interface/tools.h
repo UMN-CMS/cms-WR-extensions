@@ -20,7 +20,7 @@ namespace wrTools {
  bool particleInGenJet(const reco::Candidate* particle, const reco::GenJet* jet);
  bool compareEtCandidatePointer(const reco::Candidate* cand1, const reco::Candidate* cand2);
  bool comparePairMassPointer(std::pair< const reco::Candidate*, const reco::Candidate* > pair1, std::pair< const reco::Candidate*, const reco::Candidate* > pair2);
-
+ int characterizeEvent(std::vector<const reco::GenParticle*> myGenParticles);
 
 
 

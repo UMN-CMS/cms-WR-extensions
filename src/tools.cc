@@ -53,4 +53,9 @@ namespace wrTools {
 
     return false;
   }
+  int characterizeEvent(std::vector<const reco::GenParticle*> myGenParticles) {
+    
+
+    return 0;
+  }
 }
