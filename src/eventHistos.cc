@@ -192,6 +192,15 @@ void eventHistos::fillGen(eventBits& event) {
 //  }
 
   std::cout << "Filling Event plots" << std::endl;
+  m_nLeptons       ->Fill(event.mynLeptons     , event.weight) ;
+  m_nMuons         ->Fill(event.mynMuons       , event.weight) ;
+  m_nTaus          ->Fill(event.mynTaus        , event.weight) ;
+  m_nElectrons     ->Fill(event.mynElectrons   , event.weight) ;
+  m_nLightPartons  ->Fill(event.mynLightPartons, event.weight) ;
+  m_nTops          ->Fill(event.mynTops        , event.weight) ;
+  m_nBs            ->Fill(event.mynBs          , event.weight) ;
+  m_nPartons       ->Fill(event.mynPartons     , event.weight) ;
+
   m_eventsWeight->Fill(0.5, event.weight);
   std::cout << "FILLING 1.1"<<std::endl;
   m_parton1Et->Fill(event.parton1EtVal, event.weight);

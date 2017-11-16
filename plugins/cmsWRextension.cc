@@ -122,6 +122,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myEvent.weight = eventInfo->weight(); 
     myRECOevent.weight = eventInfo->weight();
     std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myEvent.weight <<std::endl;
+    genCounter(iEvent, myEvent);
+    genCounter(iEvent, myRECOevent);
   }
   m_allEvents.fill(myEvent);
   
@@ -479,11 +481,10 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
     if(!iParticle->isHardProcess())   continue;
-    if(!(iParticle->status() == 21))  continue;
+    if(iParticle->status() == 21)     continue;
     if(abs(iParticle->pdgId()) == 13) nMuons++;
     if(abs(iParticle->pdgId()) == 11) nElectrons++;
     if(abs(iParticle->pdgId()) == 15) nTaus++;
-    if(abs(iParticle->pdgId()) == 13) nMuons++;
     if(abs(iParticle->pdgId())  <= 4) nLightPartons++;
     if(abs(iParticle->pdgId())  == 5) nBs++;
     if(abs(iParticle->pdgId())  == 6) nTops++;

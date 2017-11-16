@@ -7,7 +7,7 @@ options.maxEvents = -1
 options.parseArguments()
 muonID =' userInt("highPtID") == 1'
 
-process = cms.Process("analysis")
+process = cms.Process("Analyze")
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -69,8 +69,8 @@ process.analyze = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
                               AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
-                              highMuons = cms.InputTag("tuneIDMuons"),
                               regMuons = cms.InputTag("removeBadAndCloneGlobalMuons"),
+                              highMuons = cms.InputTag("tuneIDMuons"),
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),

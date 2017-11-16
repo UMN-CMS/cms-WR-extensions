@@ -8,7 +8,7 @@ NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 
 backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
 baseCfgDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/"
-baseCfg = "background_cfg.py"
+baseCfg = "WR_M-UNDEF_ToLNu_M-UNDEF_Analysis_MuMuJJ_cfg.py"
 backgroundSkimStore = "/hdfs/cms/user/aevans/thesis/background_skim/"
 nEvents = -1
 
@@ -33,7 +33,7 @@ for background in backgrounds:
         MWRUCUT = WrMasses[massPoint]*1.3
         MWRLCUT = WrMasses[massPoint]*0.7
 
-        newCfgName = baseCfg[:-3]+"_"+background[:-4]+"_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])+"_cfg.py"
+        newCfgName = "background"+"_"+background[:-4]+"_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])+"_cfg.py"
         newCfg = baseCfgDir+newCfgName
         backgroundFileList = background[:-4]+"_files.txt"
         print "accessing background skim files"

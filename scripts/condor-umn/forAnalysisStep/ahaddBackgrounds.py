@@ -9,7 +9,7 @@ NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 
 backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
 backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
-backgroundsROOToutputSuffix = "background_cfg_"
+backgroundsROOToutputSuffix = "background_"
 backgroundROOTdestination = "/data/whybee0b/user/aevans/thesis/backgrounds/"
 #background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
 #subprocess.call("mdkir -p"+backgroundROOTdestination, shell=True)
