@@ -98,7 +98,7 @@ stackList = collections.OrderedDict()
 backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
 backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
-backgroundsROOToutputSuffix = "background_cfg_"
+backgroundsROOToutputSuffix = "background_"
 backgroundROOTdestination = "/data/whybee0b/user/aevans/thesis/backgrounds/"
 eventsWeightsDir = "/hdfs/cms/user/aevans/thesis/background_skim/"
 #background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
