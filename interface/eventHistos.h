@@ -152,6 +152,8 @@ class eventHistos {
   TH1D* m_MET_selJetPt;
   TH1D* m_MET_selMuonPt;
 
+  TH1D* m_selectedJetTransMET;
+
 
 
 };

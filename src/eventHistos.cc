@@ -146,6 +146,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_MET_selJetPt                 =    m_histoFolder.make<TH1D>("METselJetPt"        ,"MET Selected Jet Pt",       100,0.0 ,2000);
     m_MET_selMuonPt                =    m_histoFolder.make<TH1D>("METselMuonPt"       ,"MET Selected Muon Pt",      100,0.0 ,2000);
 
+    m_selectedJetTransMET          =    m_histoFolder.make<TH1D>("selectedJetTransMET","MET Transverse to Select Jet", 100, 0.0, 500);
 //
 //
 //  } else if (m_flavor == 2) {
@@ -315,6 +316,8 @@ void eventHistos::fillReco(eventBits& event) {
   m_MET_selMuonMass        ->Fill(event.MET_selMuonMass        ,event.weight); 
   m_MET_selJetPt           ->Fill(event.MET_selJetPt           ,event.weight); 
   m_MET_selMuonPt          ->Fill(event.MET_selMuonPt          ,event.weight); 
+
+  m_selectedJetTransMET    ->Fill(event.selectedJetTransMET    ,event.weight);
 
   m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,event.weight); 
   m_selectedJetEt   ->Fill(event.selectedJetEt   ,event.weight);  

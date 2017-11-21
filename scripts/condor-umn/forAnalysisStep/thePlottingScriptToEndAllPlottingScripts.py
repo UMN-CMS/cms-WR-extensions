@@ -143,7 +143,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     weight = 1.0
     weight *= 35900.0
-    weight *= 8.0 #pb just for plotting purposes
+    weight *= 4.0 #pb just for plotting purposes
     weight /= eventsWeight
                                
     newHist = copy.deepcopy(hist)

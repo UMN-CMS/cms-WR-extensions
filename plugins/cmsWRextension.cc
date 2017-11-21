@@ -149,7 +149,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           }
           if(ZMASS) {
             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);          
-          } else if (m_isMC){
+          } else if (m_isMC && addMuons){
             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
             m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
             if(massCut(iEvent, myRECOevent)) {
