@@ -170,7 +170,10 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 }
 void eventHistos::fill(eventBits& event) {
   if(m_flavor == 1) fillGen(event);
-  else if(m_flavor == 2) fillReco(event);
+  else if(m_flavor == 2) {
+    fillReco(event);
+    fillWeight(event);
+  }
   else if(m_flavor == 3) {
     fillGen(event);
     fillReco(event);

@@ -125,6 +125,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     genCounter(iEvent, myEvent);
     genCounter(iEvent, myRECOevent);
   }
+  if(!m_isMC) {
+    myEvent.weight = 1.0;
+    myRECOevent.weight = 1.0;
+  }
   m_allEvents.fill(myEvent);
   
   if (m_doGen && m_isMC) {

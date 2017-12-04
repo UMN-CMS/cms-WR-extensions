@@ -6,19 +6,19 @@ NuMasses=( 240  800  480)
 #NuMasses=( 80  160  240  320  400  600 160  320  480  640  800 1200 233  533  800 1067 1333 2000)
 DataSetsDirectory="/data/whybee0b/user/aevans/"
 echo 'CLEANING UP'
-eval '/home/aevans/public_html/plots/archiver.sh'
+eval '/home/aevans/public_html/plots/signal/archiver.sh'
 date=$(date +%d_%b_%Y_%H-%M-%S-%Z)
 echo 'MAKING NEW FOLDER'
-eval 'mkdir /home/aevans/public_html/plots/${date}'
+eval 'mkdir /home/aevans/public_html/plots/signal/${date}'
 for h in ${!WrMasses[*]}
 do
 	
 	## MuMuJJ
 	#make python config file for MiniAOD step
-    eval 'echo "python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds"'
+    eval 'echo "python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/signal/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds MC"'
     eval 'cp /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /data/whybee0b/user/aevans/thesis/signals/'
-    eval 'python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/thesis/signals/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds'
+    eval 'python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/thesis/signals/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/signal/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds MC'
 
 done
-eval 'find /home/aevans/public_html/plots/ -type d -exec ln /home/aevans/public_html/plots/index.php {}/index.php \;'
-eval 'chmod -R g-w /home/aevans/public_html/plots'
+eval 'find /home/aevans/public_html/plots/signal/ -type d -exec ln /home/aevans/public_html/plots/signal/index.php {}/index.php \;'
+eval 'chmod -R g-w /home/aevans/public_html/plots/signal'

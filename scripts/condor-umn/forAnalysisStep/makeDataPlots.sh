@@ -9,15 +9,15 @@ echo 'CLEANING UP'
 eval '/home/aevans/public_html/plots/data/archiver.sh'
 date=$(date +%d_%b_%Y_%H-%M-%S-%Z)
 echo 'MAKING NEW FOLDER'
-eval 'mkdir /home/aevans/public_html/plots/date/${date}'
+eval 'mkdir /home/aevans/public_html/plots/data/${date}'
 for h in ${!WrMasses[*]}
 do
 	## MuMuJJ
 	#make python config file for MiniAOD step
-    eval 'echo "python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/data_cfg_SingleMuon_WR_M-${WrMasses[$h]}_LNu_M-${NuMasses[$h]}/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds"'
-    eval 'cp /data/whybee0b/user/aevans/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /data/whybee0b/user/aevans/thesis/signals/'
-    eval 'python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/thesis/signals/WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root /home/aevans/public_html/plots/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds'
+    #/data/whybee0b/user/aevans/thesis/data/SingleMuon_WR_M-4000_LNu_M-1333.root
+    eval 'echo "python thePlottingScriptToEndAllPlottingScripts.py /data/whybee1b/user/aevans/thesis/data/SingleMuon_WR_M-${WrMasses[$h]}_LNu_M-${NuMasses[$h]}.root /home/aevans/public_html/plots/data/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds data"'
+    eval 'python thePlottingScriptToEndAllPlottingScripts.py /data/whybee0b/user/aevans/thesis/data/SingleMuon_WR_M-${WrMasses[$h]}_LNu_M-${NuMasses[$h]}.root /home/aevans/public_html/plots/data/${date}/ WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ backgrounds data'
 
 done
-eval 'find /home/aevans/public_html/plots/ -type d -exec ln /home/aevans/public_html/plots/index.php {}/index.php \;'
-eval 'chmod -R g-w /home/aevans/public_html/plots'
+eval 'find /home/aevans/public_html/plots/data/ -type d -exec ln /home/aevans/public_html/plots/data/index.php {}/index.php \;'
+eval 'chmod -R g-w /home/aevans/public_html/plots/data'
