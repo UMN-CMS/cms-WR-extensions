@@ -45,6 +45,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_eventFlavor    = m_histoFolder.make<TH1D>("eventFlavor"       , "Event Flavor"       ,                                                       10, -.5, 9.5);
 
 
+    m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "# Cuts Passed"     ,                                                       10, -.5, 9.5);;
     
     m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et;Et (GeV); ",                         80, 0.0, 4000);
     m_parton2Et =                       m_histoFolder.make<TH1D>("parton2Et", "Parton 2 Et;Et (GeV); ",                         80, 0.0, 4000);
@@ -172,11 +173,14 @@ void eventHistos::fill(eventBits& event) {
   if(m_flavor == 1) fillGen(event);
   else if(m_flavor == 2) {
     fillReco(event);
+    fillCutProgress(event);
     fillWeight(event);
   }
   else if(m_flavor == 3) {
     fillGen(event);
     fillReco(event);
+    fillCutProgress(event);
+    fillWeight(event);
   } else if (m_flavor == 4) {
     fillWeight(event);
   }
@@ -184,6 +188,10 @@ void eventHistos::fill(eventBits& event) {
 }
 
 //SPECIFIC 
+void eventHistos::fillCutProgress(eventBits& event) {
+  std::cout << "Filling Cut Progress" << std::endl;
+  m_cutProgress->Fill(event.cutProgress , event.weight);
+}
 void eventHistos::fillWeight(eventBits& event) {
   std::cout << "Filling Weights" << std::endl;
   m_eventsWeight->Fill(0.5, event.weight);
@@ -205,8 +213,6 @@ void eventHistos::fillGen(eventBits& event) {
   m_nBs            ->Fill(event.mynBs          , event.weight) ;
   m_nPartons       ->Fill(event.mynPartons     , event.weight) ;
 
-  m_eventsWeight->Fill(0.5, event.weight);
-  std::cout << "FILLING 1.1"<<std::endl;
   m_parton1Et->Fill(event.parton1EtVal, event.weight);
   std::cout << "FILLING 1.2"<<std::endl;
   m_parton2Et->Fill(event.parton2EtVal, event.weight);

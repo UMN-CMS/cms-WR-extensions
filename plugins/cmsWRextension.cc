@@ -116,6 +116,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool ZMASS = false;
   bool addMuons = false;
 
+  myRECOevent.cutProgress = 0;
   if(m_isMC) {
     edm::Handle<GenEventInfoProduct> eventInfo;
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
@@ -129,8 +130,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myEvent.weight = 1.0;
     myRECOevent.weight = 1.0;
   }
-  m_allEvents.fill(myEvent);
-  
+   
   if (m_doGen && m_isMC) {
     if(preSelectGen(iEvent, myEvent)) {
       std::cout << "plotting all events" << std::endl;
@@ -143,9 +143,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   if (m_doReco || !m_isMC) {
     if(preSelectReco(iEvent, myRECOevent)) {
+      myRECOevent.cutProgress++;
       if(passExtensionRECO(iEvent, myRECOevent)) { 
+        myRECOevent.cutProgress++;
         METcuts(iEvent, myRECOevent);
         if(!pass2016) {
+          myRECOevent.cutProgress++;
           ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
           addMuons = additionalMuons(iEvent, myRECOevent);
           if(!addMuons) {
@@ -154,10 +157,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           if(ZMASS) {
             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);          
           } else if (m_isMC && addMuons){
+            myRECOevent.cutProgress++;
             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
             m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
             if(massCut(iEvent, myRECOevent)) {
               m_eventsPassingExtensionRECO2016VETOMASSCUT.fill(myRECOevent);
+              myRECOevent.cutProgress++;
               if(lastCuts(iEvent, myRECOevent))
                 m_eventsPassingExtensionRECO2016VETOMASSMETCUT.fill(myRECOevent);
             }
@@ -170,6 +175,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
     if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
   }
+  m_allEvents.fill(myRECOevent);
 }
   
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOevent) {

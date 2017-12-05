@@ -38,6 +38,9 @@ public:
   int secondInDecayMuon;
 
   //EVENT VALUES
+
+  int cutProgress;
+
   bool passesWR2016;
   int muons40;
   int ak8jets40;
