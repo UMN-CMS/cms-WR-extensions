@@ -145,8 +145,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
     if (dataType == "MC") :
         weight *= 35900.0
         weight *= 4.0 #pb just for plotting purposes
-    else :
-        weight /= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS 5.339658e8 / 804010088
+        weight *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS 5.339658e8 / 804010088
     weight /= eventsWeight
                                
     newHist = copy.deepcopy(hist)
