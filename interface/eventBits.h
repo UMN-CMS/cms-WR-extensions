@@ -42,7 +42,7 @@ public:
   int cutProgress;
 
   bool passesWR2016;
-  int muons40;
+  int muons10;
   int ak8jets40;
 
   int    muonCands;

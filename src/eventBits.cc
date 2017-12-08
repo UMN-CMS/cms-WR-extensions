@@ -98,6 +98,8 @@ eventBits::eventBits() {
   subleadMuon_selMuonPt = -10000.0;
   subleadMuonEt = -10000.0;
 
+  muons10            = -1;
+
   mynLeptons         = -1;
   mynMuons           = -1;
   mynTaus            = -1;

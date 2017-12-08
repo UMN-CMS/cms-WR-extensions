@@ -123,8 +123,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
     m_nMuonCands =                      m_histoFolder.make<TH1D>("nMuonCands", ";#  Muons;",                                                       10, -.5, 9.5);
-    m_nMuons40 =                        m_histoFolder.make<TH1D>("nMuons40", ";#  Muons above 40;",                                                       10, -.5, 9.5);
-    m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40;",                                                       10, -.5, 9.5);
+    m_nMuons10 =                        m_histoFolder.make<TH1D>("nMuons10", ";#  Muons above 10 GeV;",                                                       10, -.5, 9.5);
+    m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
 
     m_selectedMuonEt  =                 m_histoFolder.make<TH1D>("selectedMuonEt"  ,"Selected Muon Et; Et (GeV);"  ,80,0.0,4000 ); 
     m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Jet Et; Et (GeV);"   ,80,0.0,4000 );  
@@ -339,7 +339,7 @@ void eventHistos::fillReco(eventBits& event) {
   //m_nJets->Fill(event.myGenJets.size(), event.weight);
   m_nAK8Jets->Fill(event.ak8jetCands, event.weight);
   m_nMuonCands->Fill(event.muonCands, event.weight);
-  m_nMuons40->Fill(event.muons40, event.weight);
+  m_nMuons10->Fill(event.muons10, event.weight);
   m_nAK8Jets40->Fill(event.ak8jets40, event.weight);
   m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, event.weight);
 

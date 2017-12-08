@@ -187,11 +187,12 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
     std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myJetCands.size()<<" JETS FOUND." << std::endl;
     return false;
   }
+  myRECOevent.cutProgress++;
   if( myRECOevent.myMuonCandsHighPt.size() < 1) {
     std::cout<< "EVENT FAILS, NO MUONS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myMuonCandsHighPt.size()<<" MUONS FOUND." << std::endl;
     return false;
   }
-  
+  myRECOevent.cutProgress++;
   //BUILD PAIRS OF AK8 JETS WITH THE LEAD MUON
   std::vector<std::pair<const pat::Jet*, const pat::Muon*>> muonJetPairs; 
   for(std::vector<const pat::Jet*>::const_iterator iJet = myRECOevent.myJetCandsHighPt.begin(); iJet != myRECOevent.myJetCandsHighPt.end(); iJet++) {
@@ -205,6 +206,7 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
     std::cout<< "EVENT FAILS, NO CANDIDATE JET MUON PAIRS" <<std::endl;
     return false;
   }
+  myRECOevent.cutProgress++;
   std::cout<<muonJetPairs.size()<<" Pairing CANDIDATES Selected from "<<myRECOevent.myJetCandsHighPt.size()<<" jets"<<std::endl;
   myRECOevent.myMuonJetPairs = muonJetPairs;
   return true;
@@ -371,7 +373,7 @@ bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
 }
 //CHECK ADDITIONAL MUONS
 bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEvent) {
-  if(myEvent.muons40 <= 1) return false;
+  if(myEvent.muons10 <= 1) return false;
   return true;
 }
 bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent) {
@@ -403,18 +405,18 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
     //if( iMuon->pt() > 200 ) highPTMuons.push_back(&(*iMuon));
 
   }
-  if (highPTMuons.size() < 1) return false;
   std::sort(highPTMuons.begin(),highPTMuons.end(),::wrTools::compareEtCandidatePointer); 
   std::sort(allMuons.begin(),allMuons.end(),::wrTools::compareEtCandidatePointer); 
 
   myEvent.myMuonCandsHighPt = highPTMuons;
   myEvent.myMuonCands = allMuons; 
   myEvent.muonCands = highPTMuons.size();
-  myEvent.muons40 = allMuons.size();
+  myEvent.muons10 = allMuons.size();
 
   //We select the lead muon in the event
   myEvent.myMuonCand = highPTMuons[0];
 
+  if (highPTMuons.size() < 1) return false;
   return true;
 
 
