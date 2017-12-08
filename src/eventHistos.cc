@@ -136,6 +136,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,"Sublead Muon Selected Jet dPhi; Phi (rad);"  ,80,  0.0, 4.0);
     m_subleadMuon_selMuondPhi      =    m_histoFolder.make<TH1D>("subleadMuonSelMuondPhi","Sublead Muon Selected Muon dPhi; Phi (rad);" ,80,  0.0, 4.0);
     m_subleadMuon_selMuonMass      =    m_histoFolder.make<TH1D>("subleadMuonSelMuonMass","Sublead Muon Selected Muon Mass; Mass (GeV);" ,100, 0.0,2000);
+    m_subleadMuon_selMuonZMass     =    m_histoFolder.make<TH1D>("subleadMuonSelMuonZMass","Sublead Muon Selected Muon Mass; Mass (GeV);" ,100, 0.0,200);
     m_subleadMuon_selMuonPt        =    m_histoFolder.make<TH1D>("subleadMuonSelMuonPt"  ,"Sublead Muon Selected Muon Pt; Pt (GeV);"   ,100, 0.0,2000);
     m_subleadMuonEt                =    m_histoFolder.make<TH1D>("subleadMuonEt"          ,"Sublead Muon Et; Et (GeV);"                 ,100, 0.0,2000);
 
@@ -315,6 +316,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_subleadMuon_selJetdPhi ->Fill(event.subleadMuon_selJetdPhi ,event.weight); 
   m_subleadMuon_selMuondPhi->Fill(event.subleadMuon_selMuondPhi,event.weight);
   m_subleadMuon_selMuonMass->Fill(event.subleadMuon_selMuonMass,event.weight);
+  m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selMuonMass,event.weight);
   m_subleadMuon_selMuonPt  ->Fill(event.subleadMuon_selMuonPt  ,event.weight); 
   m_subleadMuonEt          ->Fill(event.subleadMuonEt          ,event.weight); 
                                                                
