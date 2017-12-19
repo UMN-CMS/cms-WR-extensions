@@ -19,8 +19,16 @@ namespace wrTools {
     if ( cand1->et() > cand2->et() ) return true;
     return false;
   }
+  bool compareEtLorentzVectorPointer(const math::XYZTLorentzVector* lv1, const math::XYZTLorentzVector* lv2) {
+    if ( lv1->Et() > lv2->Et() ) return true;
+    return false;
+  }
   bool comparePairMassPointer(std::pair< const reco::Candidate*, const reco::Candidate* > pair1, std::pair< const reco::Candidate*, const reco::Candidate* > pair2) {
     if ( (pair1.first->p4() + pair1.second->p4()).mass() > (pair2.first->p4() + pair2.second->p4()).mass() )  return true;
+    return false;
+  }
+  bool compareLvPairMassPointer(std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair1, std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair2) {
+    if ( (pair1.first->p4() + *pair1.second).mass() > (pair2.first->p4() + *pair2.second).mass() )  return true;
     return false;
   }
   bool particleIsFrom(const reco::Candidate* particle, int pdgId) {
