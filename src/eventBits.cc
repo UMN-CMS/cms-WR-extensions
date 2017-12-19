@@ -78,25 +78,27 @@ eventBits::eventBits() {
   leadSubleadingAK8JetsMuonsPtVal = -10000.0;
   leadSubleadingAK8JetsMuonsEtaVal = -10000.0;
 
-  leadAK8JetMuonMassVal = -10000.0;
-  leadAK8JetMuonPtVal = -10000.0;
-  leadAK8JetMuonEtaVal = -10000.0;
+  leadAK8JetLeptonMassVal = -10000.0;
+  leadAK8JetLeptonPtVal = -10000.0;
+  leadAK8JetLeptonEtaVal = -10000.0;
 
-  leadAK8JetMuonJetMuonEnergyFraction = -10000.0;
+  leadAK8JetLeptonJetMuonEnergyFraction = -10000.0;
 
-  selectedMuonEt = -10000.0;
-  selectedMuonPhi = -10000.0;
-  selectedMuonEta = -10000.0;
+  selectedLeptonEt = -10000.0;
+  selectedLeptonPhi = -10000.0;
+  selectedLeptonEta = -10000.0;
 
   selectedJetEt = -10000.0;
   selectedJetPhi = -10000.0;
   selectedJetEta = -10000.0;
 
   subleadMuon_selJetdPhi = -10000.0;
-  subleadMuon_selMuondPhi = -10000.0;
-  subleadMuon_selMuonMass = -10000.0;
-  subleadMuon_selMuonPt = -10000.0;
+  subleadMuon_selLeptondPhi = -10000.0;
+  subleadMuon_selLeptonMass = -10000.0;
+  subleadMuon_selLeptonPt = -10000.0;
   subleadMuonEt = -10000.0;
+
+  muons10            = -1;
 
   mynLeptons         = -1;
   mynMuons           = -1;
@@ -111,11 +113,11 @@ eventBits::eventBits() {
 
   MET = -10000.0;
   MET_selJetdPhi = -10000.0;
-  MET_selMuondPhi = -10000.0;
+  MET_selLeptondPhi = -10000.0;
   MET_selJetMass = -10000.0;
-  MET_selMuonMass = -10000.0;
+  MET_selLeptonMass = -10000.0;
   MET_selJetPt = -10000.0;
-  MET_selMuonPt = -10000.0;
+  MET_selLeptonPt = -10000.0;
 
   selectedJetTransMET = -10000.0;
 
@@ -191,9 +193,9 @@ void eventBits::clear() {
   leadSubleadingAK8JetsMuonsPtVal = 0.0;
   leadSubleadingAK8JetsMuonsEtaVal = 0.0;
 
-  leadAK8JetMuonMassVal = 0.0;
-  leadAK8JetMuonPtVal = 0.0;
-  leadAK8JetMuonEtaVal = 0.0;
+  leadAK8JetLeptonMassVal = 0.0;
+  leadAK8JetLeptonPtVal = 0.0;
+  leadAK8JetLeptonEtaVal = 0.0;
 
   mynLeptons         = 0;
   mynMuons           = 0;
@@ -208,11 +210,11 @@ void eventBits::clear() {
 
   MET = 0.0;
   MET_selJetdPhi = 0.0;
-  MET_selMuondPhi = 0.0;
+  MET_selLeptondPhi = 0.0;
   MET_selJetMass = 0.0;
-  MET_selMuonMass = 0.0;
+  MET_selLeptonMass = 0.0;
   MET_selJetPt = 0.0;
-  MET_selMuonPt = 0.0;
+  MET_selLeptonPt = 0.0;
 
  
 

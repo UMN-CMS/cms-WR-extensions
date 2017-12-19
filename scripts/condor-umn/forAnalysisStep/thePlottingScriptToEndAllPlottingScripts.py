@@ -145,8 +145,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
     if (dataType == "MC") :
         weight *= 35900.0
         weight *= 4.0 #pb just for plotting purposes
-    else :
-        weight /= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS 5.339658e8 / 804010088
+        weight *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS 5.339658e8 / 804010088
     weight /= eventsWeight
                                
     newHist = copy.deepcopy(hist)
@@ -194,14 +193,20 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         backgroundStack.SetTitle("")
         newHist.SetTitle("")
         backgroundStack.Draw("HIST")
-        newHist.Draw(drawoptions+"same")
+        if(dataType == "MC"):
+            newHist.Draw(drawoptions+"same")
+        else:
+            newHist.Draw("esame")
 
         #c.SetLogy()
         global colors
         global backgroundPlotNames
         legend = c.BuildLegend()
         legend.Clear()  #clear the legend to build it back again
-        legend.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
+        if(dataType == "MC"):
+            legend.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
+        else:
+            legend.AddEntry(newHist, "2016 Data")
         for bg in backgrounds:
             legend.AddEntry(backgroundPlotNames[bg], bg)
         

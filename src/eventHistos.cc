@@ -33,119 +33,120 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 
 
 
-    m_nLeptons       = m_histoFolder.make<TH1D>("nLeptons"     , "# Leptons"     ,                                                       10, -.5, 9.5);;
-    m_nMuons         = m_histoFolder.make<TH1D>("nMuons"       , "# Muons"       ,                                                       10, -.5, 9.5);;
-    m_nTaus          = m_histoFolder.make<TH1D>("nTaus"        , "# Taus"        ,                                                       10, -.5, 9.5);;
-    m_nElectrons     = m_histoFolder.make<TH1D>("nElectrons"   , "# Electrons"   ,                                                       10, -.5, 9.5);;
-    m_nLightPartons  = m_histoFolder.make<TH1D>("nLightPartons", "# LightPartons",                                                       10, -.5, 9.5);;
-    m_nTops          = m_histoFolder.make<TH1D>("nTops"        , "# Tops"        ,                                                       10, -.5, 9.5);;
-    m_nBs            = m_histoFolder.make<TH1D>("nBs"          , "# Bs"          ,                                                       10, -.5, 9.5);;
-    m_nPartons       = m_histoFolder.make<TH1D>("nPartons"     , "# Partons"     ,                                                       10, -.5, 9.5);;
+    m_nLeptons       = m_histoFolder.make<TH1D>("nLeptons"     , "; # Leptons; Events per #"     ,                                                       10, -.5, 9.5);;
+    m_nMuons         = m_histoFolder.make<TH1D>("nMuons"       , "; # Muons; Events per #"       ,                                                       10, -.5, 9.5);;
+    m_nTaus          = m_histoFolder.make<TH1D>("nTaus"        , "; # Taus; Events per #"        ,                                                       10, -.5, 9.5);;
+    m_nElectrons     = m_histoFolder.make<TH1D>("nElectrons"   , "; # Electrons; Events per #"   ,                                                       10, -.5, 9.5);;
+    m_nLightPartons  = m_histoFolder.make<TH1D>("nLightPartons", "; # LightPartons; Events per #",                                                       10, -.5, 9.5);;
+    m_nTops          = m_histoFolder.make<TH1D>("nTops"        , "; # Tops; Events per #"        ,                                                       10, -.5, 9.5);;
+    m_nBs            = m_histoFolder.make<TH1D>("nBs"          , "; # Bs; Events per #"          ,                                                       10, -.5, 9.5);;
+    m_nPartons       = m_histoFolder.make<TH1D>("nPartons"     , "; # Partons; Events per #"     ,                                                       10, -.5, 9.5);;
                                                                                      
-    m_eventFlavor    = m_histoFolder.make<TH1D>("eventFlavor"       , "Event Flavor"       ,                                                       10, -.5, 9.5);
+    m_eventFlavor    = m_histoFolder.make<TH1D>("eventFlavor"       , "; Event Flavor; # Events with flavor"       ,                                                       10, -.5, 9.5);
 
 
-    m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "# Cuts Passed"     ,                                                       10, -.5, 9.5);;
+    m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       10, -.5, 9.5);;
     
     m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et;Et (GeV); ",                         80, 0.0, 4000);
     m_parton2Et =                       m_histoFolder.make<TH1D>("parton2Et", "Parton 2 Et;Et (GeV); ",                         80, 0.0, 4000);
     m_muon1Et =                         m_histoFolder.make<TH1D>("muon1Et", "Muon 1 Et;Et (GeV); ",                             80, 0.0, 4000);
     m_muon2Et =                         m_histoFolder.make<TH1D>("muon2Et", "Muon 2 Et;Et (GeV); ",                             80, 0.0, 4000);
 
-    m_parton1Eta =                      m_histoFolder.make<TH1D>("parton1Eta", "Parton 1 Eta;Eta",                        80, -4.0, 4.0);
-    m_parton2Eta =                      m_histoFolder.make<TH1D>("parton2Eta", "Parton 2 Eta;Eta",                        80, -4.0, 4.0);
-    m_muon1Eta =                        m_histoFolder.make<TH1D>("muon1Eta", "Muon 1 eta;Eta",                            80, -4.0, 4.0);
-    m_muon2Eta =                        m_histoFolder.make<TH1D>("muon2Eta", "Muon 2 eta;Eta",                            80, -4.0, 4.0);
-    m_firstPartonJetEta     =           m_histoFolder.make<TH1D>("firstPartonJetEta", "Jet 1 Eta;Eta",                    80, -4.0, 4.0);
-    m_secondPartonJetEta    =           m_histoFolder.make<TH1D>("secondPartonJetEta", "Jet 2 Eta;Eta",                   80, -4.0, 4.0);
-    m_firstPartonAK8JetEta  =           m_histoFolder.make<TH1D>("firstPartonAK8JetEta", "AK8Jet 1 Eta;Eta",              80, -4.0, 4.0); 
-    m_secondPartonAK8JetEta =           m_histoFolder.make<TH1D>("secondPartonAK8JetEta", "AK8Jet 2 Eta;Eta",             80, -4.0, 4.0);
+    m_parton1Eta =                      m_histoFolder.make<TH1D>("parton1Eta", "Parton 1 Eta;Eta;",                        80, -4.0, 4.0);
+    m_parton2Eta =                      m_histoFolder.make<TH1D>("parton2Eta", "Parton 2 Eta;Eta;",                        80, -4.0, 4.0);
+    m_muon1Eta =                        m_histoFolder.make<TH1D>("muon1Eta", "Muon 1 eta;Eta;",                            80, -4.0, 4.0);
+    m_muon2Eta =                        m_histoFolder.make<TH1D>("muon2Eta", "Muon 2 eta;Eta;",                            80, -4.0, 4.0);
+    m_firstPartonJetEta     =           m_histoFolder.make<TH1D>("firstPartonJetEta", "Jet 1 Eta;Eta;",                    80, -4.0, 4.0);
+    m_secondPartonJetEta    =           m_histoFolder.make<TH1D>("secondPartonJetEta", "Jet 2 Eta;Eta;",                   80, -4.0, 4.0);
+    m_firstPartonAK8JetEta  =           m_histoFolder.make<TH1D>("firstPartonAK8JetEta", "AK8Jet 1 Eta;Eta;",              80, -4.0, 4.0); 
+    m_secondPartonAK8JetEta =           m_histoFolder.make<TH1D>("secondPartonAK8JetEta", "AK8Jet 2 Eta;Eta;",             80, -4.0, 4.0);
 
-    m_parton1Phi             =          m_histoFolder.make<TH1D>("parton1Phi", "Parton 1 Phi;Phi (rad)",                        80, -4.0, 4.0);        
-    m_parton2Phi             =          m_histoFolder.make<TH1D>("parton2Phi", "Parton 2 Phi;Phi (rad)",                        80, -4.0, 4.0);       
-    m_muon1Phi               =          m_histoFolder.make<TH1D>("muon1Phi", "Muon 1 Phi;Phi (rad)",                            80, -4.0, 4.0);        
-    m_muon2Phi               =          m_histoFolder.make<TH1D>("muon2Phi", "Muon 2 Phi;Phi (rad)",                            80, -4.0, 4.0);        
-    m_firstPartonJetPhi      =          m_histoFolder.make<TH1D>("firstPartonJetPhi", "Jet 1 Phi;Phi (rad)",                    80, -4.0, 4.0);     
-    m_secondPartonJetPhi     =          m_histoFolder.make<TH1D>("secondPartonJetPhi", "Jet 2 Phi;Phi (rad)",                   80, -4.0, 4.0);       
-    m_firstPartonAK8JetPhi   =          m_histoFolder.make<TH1D>("firstPartonAK8JetPhi", "AK8Jet 1 Phi;Phi (rad)",              80, -4.0, 4.0);        
-    m_secondPartonAK8JetPhi  =          m_histoFolder.make<TH1D>("secondPartonAK8JetPhi", "AK8Jet 1 Phi;Phi (rad)",             80, -4.0, 4.0);           
+    m_parton1Phi             =          m_histoFolder.make<TH1D>("parton1Phi", "Parton 1 Phi;Phi (rad);",                        80, -4.0, 4.0);        
+    m_parton2Phi             =          m_histoFolder.make<TH1D>("parton2Phi", "Parton 2 Phi;Phi (rad);",                        80, -4.0, 4.0);       
+    m_muon1Phi               =          m_histoFolder.make<TH1D>("muon1Phi", "Muon 1 Phi;Phi (rad);",                            80, -4.0, 4.0);        
+    m_muon2Phi               =          m_histoFolder.make<TH1D>("muon2Phi", "Muon 2 Phi;Phi (rad);",                            80, -4.0, 4.0);        
+    m_firstPartonJetPhi      =          m_histoFolder.make<TH1D>("firstPartonJetPhi", "Jet 1 Phi;Phi (rad);",                    80, -4.0, 4.0);     
+    m_secondPartonJetPhi     =          m_histoFolder.make<TH1D>("secondPartonJetPhi", "Jet 2 Phi;Phi (rad);",                   80, -4.0, 4.0);       
+    m_firstPartonAK8JetPhi   =          m_histoFolder.make<TH1D>("firstPartonAK8JetPhi", "AK8Jet 1 Phi;Phi (rad);",              80, -4.0, 4.0);        
+    m_secondPartonAK8JetPhi  =          m_histoFolder.make<TH1D>("secondPartonAK8JetPhi", "AK8Jet 1 Phi;Phi (rad);",             80, -4.0, 4.0);           
 
-    m_dRparton1parton2 =                m_histoFolder.make<TH1D>("dRparton1parton2", "deltaR between partons;delta R",                       120, 0.0, 12.0);
-    m_dRmuon1muon2 =                    m_histoFolder.make<TH1D>("dRmuon1muon2", "deltaR between muons;delta R",                             120, 0.0, 12.0);
-    m_dRparton1muon2 =                  m_histoFolder.make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2;delta R",               120, 0.0, 12.0);
-    m_dRparton1muon1 =                  m_histoFolder.make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1;delta R",               120, 0.0, 12.0);
-    m_dRparton2muon2 =                  m_histoFolder.make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2;delta R",               120, 0.0, 12.0);
-    m_dRparton2muon1 =                  m_histoFolder.make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1;delta R",               120, 0.0, 12.0);
-    m_dRparton1jet =                    m_histoFolder.make<TH1D>("dRparton1jet", "deltaR between parton1 and closest jet;delta R",            40, 0.0,  0.4);
-    m_dRparton2jet =                    m_histoFolder.make<TH1D>("dRparton2jet", "deltaR between parton2 and closest jet;delta R",            40, 0.0,  0.4);
-    m_dRparton1AK8jet =                 m_histoFolder.make<TH1D>("dRparton1AK8jet", "deltaR between parton1 and closest AK8 jet;delta R",     40, 0.0,  0.8);
-    m_dRparton2AK8jet =                 m_histoFolder.make<TH1D>("dRparton2AK8jet", "deltaR between parton2 and closest AK8 jet;delta R",     40, 0.0,  0.8);
+    m_dRparton1parton2 =                m_histoFolder.make<TH1D>("dRparton1parton2", "deltaR between partons;delta R;",                       120, 0.0, 12.0);
+    m_dRmuon1muon2 =                    m_histoFolder.make<TH1D>("dRmuon1muon2", "deltaR between muons;delta R;",                             120, 0.0, 12.0);
+    m_dRparton1muon2 =                  m_histoFolder.make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2;delta R;",               120, 0.0, 12.0);
+    m_dRparton1muon1 =                  m_histoFolder.make<TH1D>("dRparton1muon1", "deltaR between parton1 and muon1;delta R;",               120, 0.0, 12.0);
+    m_dRparton2muon2 =                  m_histoFolder.make<TH1D>("dRparton2muon2", "deltaR between parton2 and muon2;delta R;",               120, 0.0, 12.0);
+    m_dRparton2muon1 =                  m_histoFolder.make<TH1D>("dRparton2muon1", "deltaR between parton2 and muon1;delta R;",               120, 0.0, 12.0);
+    m_dRparton1jet =                    m_histoFolder.make<TH1D>("dRparton1jet", "deltaR between parton1 and closest jet;delta R;",            40, 0.0,  0.4);
+    m_dRparton2jet =                    m_histoFolder.make<TH1D>("dRparton2jet", "deltaR between parton2 and closest jet;delta R;",            40, 0.0,  0.4);
+    m_dRparton1AK8jet =                 m_histoFolder.make<TH1D>("dRparton1AK8jet", "deltaR between parton1 and closest AK8 jet;delta R;",     40, 0.0,  0.8);
+    m_dRparton2AK8jet =                 m_histoFolder.make<TH1D>("dRparton2AK8jet", "deltaR between parton2 and closest AK8 jet;delta R;",     40, 0.0,  0.8);
 
-    m_firstPartonJetEt =                m_histoFolder.make<TH1D>("firstPartonJetEt", " Jet Et for Leading Parton;Et (GeV)",                      80,0.0,4000);
-    m_secondPartonJetEt =               m_histoFolder.make<TH1D>("secondPartonJetEt"," Jet Et for Subleading Parton;Et (GeV)",                   80,0.0,4000);
-    m_firstPartonJetEtHadronic =        m_histoFolder.make<TH1D>("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton;Et (GeV)",      80,0.0,4000);
-    m_secondPartonJetEtHadronic =       m_histoFolder.make<TH1D>("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton;Et (GeV)",   80,0.0,4000);
-    m_firstPartonJetEtEM =              m_histoFolder.make<TH1D>("firstPartonJetEtEM", "EM Jet Et for Leading Parton;Et (GeV)",                  80,0.0,4000);
-    m_secondPartonJetEtEM =             m_histoFolder.make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton;Et (GeV)",               80,0.0,4000);
-    m_firstPartonJetEtInvisible =       m_histoFolder.make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton;Et (GeV)",    80,0.0,4000);
-    m_secondPartonJetEtInvisible =      m_histoFolder.make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton;Et (GeV)", 80,0.0,4000);
+    m_firstPartonJetEt =                m_histoFolder.make<TH1D>("firstPartonJetEt", " Jet Et for Leading Parton;Et (GeV);",                      80,0.0,4000);
+    m_secondPartonJetEt =               m_histoFolder.make<TH1D>("secondPartonJetEt"," Jet Et for Subleading Parton;Et (GeV);",                   80,0.0,4000);
+    m_firstPartonJetEtHadronic =        m_histoFolder.make<TH1D>("firstPartonJetEtHadronic", "Hadronic Jet Et for Leading Parton;Et (GeV);",      80,0.0,4000);
+    m_secondPartonJetEtHadronic =       m_histoFolder.make<TH1D>("secondPartonJetEtHadronic","Hadronic Jet Et for Subleading Parton;Et (GeV);",   80,0.0,4000);
+    m_firstPartonJetEtEM =              m_histoFolder.make<TH1D>("firstPartonJetEtEM", "EM Jet Et for Leading Parton;Et (GeV);",                  80,0.0,4000);
+    m_secondPartonJetEtEM =             m_histoFolder.make<TH1D>("secondPartonJetEtEM","EM Jet Et for Subleading Parton;Et (GeV);",               80,0.0,4000);
+    m_firstPartonJetEtInvisible =       m_histoFolder.make<TH1D>("firstPartonJetEtInvisible", "Invisible Jet Et for Leading Parton;Et (GeV);",    80,0.0,4000);
+    m_secondPartonJetEtInvisible =      m_histoFolder.make<TH1D>("secondPartonJetEtInvisible","Invisible Jet Et for Subleading Parton;Et (GeV);", 80,0.0,4000);
 
-    m_firstPartonAK8JetEt =             m_histoFolder.make<TH1D>("firstPartonAK8JetEt", " AK8Jet Et for Leading Parton;Et (GeV)",                      80,0.0,4000);
-    m_secondPartonAK8JetEt =            m_histoFolder.make<TH1D>("secondPartonAK8JetEt"," AK8Jet Et for Subleading Parton;Et (GeV)",                   80,0.0,4000);
-    m_firstPartonAK8JetEtHadronic =     m_histoFolder.make<TH1D>("firstPartonAK8JetEtHadronic", "Hadronic AK8Jet Et for Leading Parton;Et (GeV)",      80,0.0,4000);
-    m_secondPartonAK8JetEtHadronic =    m_histoFolder.make<TH1D>("secondPartonAK8JetEtHadronic","Hadronic AK8Jet Et for Subleading Parton;Et (GeV)",   80,0.0,4000);
-    m_firstPartonAK8JetEtEM =           m_histoFolder.make<TH1D>("firstPartonAK8JetEtEM", "EM AK8Jet Et for Leading Parton;Et (GeV)",                  80,0.0,4000);
-    m_secondPartonAK8JetEtEM =          m_histoFolder.make<TH1D>("secondPartonAK8JetEtEM","EM AK8Jet Et for Subleading Parton;Et (GeV)",               80,0.0,4000);
-    m_firstPartonAK8JetEtInvisible =    m_histoFolder.make<TH1D>("firstPartonAK8JetEtInvisible", "Invisible AK8Jet Et for Leading Parton;Et (GeV)",    80,0.0,4000);
-    m_secondPartonAK8JetEtInvisible =   m_histoFolder.make<TH1D>("secondPartonAK8JetEtInvisible","Invisible AK8Jet Et for Subleading Parton;Et (GeV)", 80,0.0,4000);
+    m_firstPartonAK8JetEt =             m_histoFolder.make<TH1D>("firstPartonAK8JetEt", " AK8Jet Et for Leading Parton;Et (GeV);",                      80,0.0,4000);
+    m_secondPartonAK8JetEt =            m_histoFolder.make<TH1D>("secondPartonAK8JetEt"," AK8Jet Et for Subleading Parton;Et (GeV);",                   80,0.0,4000);
+    m_firstPartonAK8JetEtHadronic =     m_histoFolder.make<TH1D>("firstPartonAK8JetEtHadronic", "Hadronic AK8Jet Et for Leading Parton;Et (GeV);",      80,0.0,4000);
+    m_secondPartonAK8JetEtHadronic =    m_histoFolder.make<TH1D>("secondPartonAK8JetEtHadronic","Hadronic AK8Jet Et for Subleading Parton;Et (GeV);",   80,0.0,4000);
+    m_firstPartonAK8JetEtEM =           m_histoFolder.make<TH1D>("firstPartonAK8JetEtEM", "EM AK8Jet Et for Leading Parton;Et (GeV);",                  80,0.0,4000);
+    m_secondPartonAK8JetEtEM =          m_histoFolder.make<TH1D>("secondPartonAK8JetEtEM","EM AK8Jet Et for Subleading Parton;Et (GeV);",               80,0.0,4000);
+    m_firstPartonAK8JetEtInvisible =    m_histoFolder.make<TH1D>("firstPartonAK8JetEtInvisible", "Invisible AK8Jet Et for Leading Parton;Et (GeV);",    80,0.0,4000);
+    m_secondPartonAK8JetEtInvisible =   m_histoFolder.make<TH1D>("secondPartonAK8JetEtInvisible","Invisible AK8Jet Et for Subleading Parton;Et (GeV);", 80,0.0,4000);
 
 
-    m_leadSubleadingJetsMuonsMass  =    m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons;Mass (GeV)",      80, 0.0,4000);
-    m_leadSubleadingAK8JetsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsMass","Four Object Mass of the 2 leading AK8Jets and Muons;Mass (GeV)",80, 0.0,4000);
-    m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons;Mass (GeV)",80, 0.0,4000);
-    m_leadAK8JetMuonMass  =             m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV)"                         ,80, 0.0,4000);
+    m_leadSubleadingJetsMuonsMass  =    m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons;Mass (GeV);",      80, 0.0,4000);
+    m_leadSubleadingAK8JetsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsMass","Four Object Mass of the 2 leading AK8Jets and Muons;Mass (GeV);",80, 0.0,4000);
+    m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons;Mass (GeV);",80, 0.0,4000);
+    m_leadAK8JetLeptonMass  =           m_histoFolder.make<TH1D>("leadAK8JetLeptonMass","2 Object Mass of the leading Jet and Lepton;Mass (GeV);"                         ,80, 0.0,4000);
 
-    m_leadSubleadingJetsMuonsPt  =      m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons",          80, 0.0,4000);
-    m_leadSubleadingAK8JetsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsPt","Four Object Pt of the 2 leading AK8Jets and Muons",    80, 0.0,4000);
-    m_leadSubleadingPartonsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons",    80, 0.0,4000);
-    m_leadAK8JetMuonPt  =               m_histoFolder.make<TH1D>("leadAK8JetMuonPt","2 Object Pt of the leading Jet and Muon"                             ,80, 0.0,4000);
+    m_leadSubleadingJetsMuonsPt  =      m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons; Pt (GeV);",          80, 0.0,4000);
+    m_leadSubleadingAK8JetsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsPt","Four Object Pt of the 2 leading AK8Jets and Muons; Pt (GeV);",    80, 0.0,4000);
+    m_leadSubleadingPartonsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons; Pt (GeV);",    80, 0.0,4000);
+    m_leadAK8JetLeptonPt  =             m_histoFolder.make<TH1D>("leadAK8JetLeptonPt","2 Object Pt of the leading Jet and Lepton; Pt (GeV);"                             ,80, 0.0,4000);
 
     //m_leadSubleadingJetsMuonsEta  =     m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsEta","Four Object Eta of the 2 leading Jets and Muons",        80, -4.0,4.0);
     //m_leadSubleadingAK8JetsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsEta","Four Object Eta of the 2 leading AK8Jets and Muons",  80, -4.0,4.0);
     //m_leadSubleadingPartonsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  80, -4.0,4.0);
     //m_leadAK8JetMuonEta  =              m_histoFolder.make<TH1D>("leadAK8JetMuonEta","2 Object Eta of the leading Jet and Muon"                           ,80, -4.0,4.0);
 
-    m_leadAK8JetMuonPhi  =              m_histoFolder.make<TH1D>("leadAK8JetMuonAbsdphi","2 Object delta Phi of the leading Jet and Muon"                     ,60, 2.0,3.2);
+    m_leadAK8JetLeptonPhi  =              m_histoFolder.make<TH1D>("leadAK8JetLeptonAbsdphi","2 Object delta Phi of the leading Jet and Lepton; Phi (rad);"                     ,60, 2.0,3.2);
 
-    m_leadAK8JetMuonJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetMuonJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet muon pair", 100, 0.0, 1.0);
+    m_leadAK8JetLeptonJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetLeptonJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet lepton pair; percent muon energy;", 100, 0.0, 1.0);
 
-    m_EtPlacementMuon2 =                m_histoFolder.make<TH1D>("EtPlacementMuon2", "Et ranking idx of muon 2",                                 5, -.5, 4.5);
+    m_EtPlacementMuon2 =                m_histoFolder.make<TH1D>("EtPlacementMuon2", "Et ranking idx of muon 2; index;",                                 5, -.5, 4.5);
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
-    m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", "#  AK8Jets",                                                       10, -.5, 9.5);
-    m_nMuonCands =                      m_histoFolder.make<TH1D>("nMuonCands", "#  Muons",                                                       10, -.5, 9.5);
-    m_nMuons40 =                        m_histoFolder.make<TH1D>("nMuons40", "#  Muons above 40",                                                       10, -.5, 9.5);
-    m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", "#  AK8Jets above 40",                                                       10, -.5, 9.5);
+    m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
+    m_nLeptonCands =                    m_histoFolder.make<TH1D>("nLeptonCands", ";#  Leptons;",                                                       10, -.5, 9.5);
+    m_nMuons10 =                        m_histoFolder.make<TH1D>("nMuons10", ";#  Muons above 10 GeV;",                                                       10, -.5, 9.5);
+    m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
 
-    m_selectedMuonEt  =                 m_histoFolder.make<TH1D>("selectedMuonEt"  ,"Selected Muon Et"  ,80,0.0,4000 ); 
-    m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Jet Et"   ,80,0.0,4000 );  
-    m_selectedMuonPhi =                 m_histoFolder.make<TH1D>("selectedMuonPhi" ,"Selected Muon Phi" ,80,-4.0,4.0 );  
-    m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi"  ,80,-4.0,4.0 );   
-    m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta" ,60,-3.0,3.0 );   
-    m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta"  ,60,-3.0,3.0 ); 
+    m_selectedLeptonEt  =                 m_histoFolder.make<TH1D>("selectedLeptonEt"  ,"Selected Lepton Et; Et (GeV);"  ,80,0.0,4000 ); 
+    m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Jet Et; Et (GeV);"   ,80,0.0,4000 );  
+    m_selectedLeptonPhi =                 m_histoFolder.make<TH1D>("selectedLeptonPhi" ,"Selected Lepton Phi; Phi (rad);" ,80,-4.0,4.0 );  
+    m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi; Phi (rad);"  ,80,-4.0,4.0 );   
+    m_selectedLeptonEta =                 m_histoFolder.make<TH1D>("selectedLeptonEta" ,"Selected Lepton Eta; Phi (rad);" ,60,-3.0,3.0 );   
+    m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Phi (rad);"  ,60,-3.0,3.0 ); 
 
-    m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,"Sublead Muon Selected Jet dPhi"  ,80,  0.0, 4.0);
-    m_subleadMuon_selMuondPhi      =    m_histoFolder.make<TH1D>("subleadMuonSelMuondPhi","Sublead Muon Selected Muon dPhi" ,80,  0.0, 4.0);
-    m_subleadMuon_selMuonMass      =    m_histoFolder.make<TH1D>("subleadMuonSelMuonMass","Sublead Muon Selected Muon Mass" ,100, 0.0,2000);
-    m_subleadMuon_selMuonPt        =    m_histoFolder.make<TH1D>("subleadMuonSelMuonPt"  ,"Sublead Muon Selected Muon Pt"   ,100, 0.0,2000);
-    m_subleadMuonEt                =    m_histoFolder.make<TH1D>("subleadMuonEt"          ,"Sublead Muon Et"                 ,100, 0.0,2000);
+    m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,   "Sublead Muon Selected Jet dPhi; Phi (rad);"  ,80,  0.0, 4.0);
+    m_subleadMuon_selLeptondPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelLeptondPhi", "Sublead Muon Selected Lepton dPhi; Phi (rad);" ,80,  0.0, 4.0);
+    m_subleadMuon_selLeptonMass  =    m_histoFolder.make<TH1D>("subleadMuonSelLeptonMass", "Sublead Muon Selected Lepton Mass; Mass (GeV);" ,100, 0.0,2000);
+    m_subleadMuon_selLeptonZMass =    m_histoFolder.make<TH1D>("subleadMuonSelLeptonZMass","Sublead Muon Selected Lepton Mass; Mass (GeV);" ,100, 0.0,200);
+    m_subleadMuon_selLeptonPt    =    m_histoFolder.make<TH1D>("subleadMuonSelLeptonPt"  , "Sublead Muon Selected Lepton Pt; Pt (GeV);"   ,100, 0.0,2000);
+    m_subleadMuonEt                =    m_histoFolder.make<TH1D>("subleadMuonEt"          ,  "Sublead Muon Et; Et (GeV);"                 ,100, 0.0,2000);
 
     m_MET                          =    m_histoFolder.make<TH1D>("MET"                 ,"MET;MET (GeV);# events",                       100, 0.0,2000); //THIS LINE WORKS
-    m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("METselJetdPhi"      ,"MET Selected Jet dPhi",      80, 0.0 ,4.0);
-    m_MET_selMuondPhi              =    m_histoFolder.make<TH1D>("METselMuondPhi"     ,"MET Selected Muon dPhi",     80, 0.0 ,4.0);
-    m_MET_selJetMass               =    m_histoFolder.make<TH1D>("METselJetMass"      ,"MET Selected Jet Mass",     100,0.0 ,2000);
-    m_MET_selMuonMass              =    m_histoFolder.make<TH1D>("METselMuonMass"     ,"MET Selected Muon Mass",    100,0.0 ,2000);
-    m_MET_selJetPt                 =    m_histoFolder.make<TH1D>("METselJetPt"        ,"MET Selected Jet Pt",       100,0.0 ,2000);
-    m_MET_selMuonPt                =    m_histoFolder.make<TH1D>("METselMuonPt"       ,"MET Selected Muon Pt",      100,0.0 ,2000);
+    m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("METselJetdPhi"      ,"MET Selected Jet dPhi; Phi (rad);",      80, 0.0 ,4.0);
+    m_MET_selLeptondPhi              =    m_histoFolder.make<TH1D>("METselLeptondPhi"     ,"MET Selected Lepton dPhi; Phi (rad);",     80, 0.0 ,4.0);
+    m_MET_selJetMass               =    m_histoFolder.make<TH1D>("METselJetMass"      ,"MET Selected Jet Mass; Mass (GeV);",     100,0.0 ,2000);
+    m_MET_selLeptonMass              =    m_histoFolder.make<TH1D>("METselLeptonMass"     ,"MET Selected Lepton Mass; Mass (GeV);",    100,0.0 ,2000);
+    m_MET_selJetPt                 =    m_histoFolder.make<TH1D>("METselJetPt"        ,"MET Selected Jet Pt; Pt (GeV);",       100,0.0 ,2000);
+    m_MET_selLeptonPt                =    m_histoFolder.make<TH1D>("METselLeptonPt"       ,"MET Selected Lepton Pt; Pt (GeV);",      100,0.0 ,2000);
 
     m_selectedJetTransMET          =    m_histoFolder.make<TH1D>("selectedJetTransMET","MET Transverse to Select Jet", 100, 0.0, 500);
 //
@@ -312,43 +313,44 @@ void eventHistos::fillGen(eventBits& event) {
 void eventHistos::fillReco(eventBits& event) {
   m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, event.weight);
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, event.weight);
-  m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, event.weight);
+  m_leadAK8JetLeptonPt->Fill(event.leadAK8JetLeptonPtVal, event.weight);
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, event.weight);
   m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, event.weight);
-  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, event.weight);
-  m_subleadMuon_selJetdPhi ->Fill(event.subleadMuon_selJetdPhi ,event.weight); 
-  m_subleadMuon_selMuondPhi->Fill(event.subleadMuon_selMuondPhi,event.weight);
-  m_subleadMuon_selMuonMass->Fill(event.subleadMuon_selMuonMass,event.weight);
-  m_subleadMuon_selMuonPt  ->Fill(event.subleadMuon_selMuonPt  ,event.weight); 
-  m_subleadMuonEt          ->Fill(event.subleadMuonEt          ,event.weight); 
+  m_leadAK8JetLeptonMass->Fill(event.leadAK8JetLeptonMassVal, event.weight);
+  m_subleadMuon_selJetdPhi ->   Fill(event.subleadMuon_selJetdPhi ,event.weight); 
+  m_subleadMuon_selLeptondPhi-> Fill(event.subleadMuon_selLeptondPhi,event.weight);
+  m_subleadMuon_selLeptonMass-> Fill(event.subleadMuon_selLeptonMass,event.weight);
+  m_subleadMuon_selLeptonZMass->Fill(event.subleadMuon_selLeptonMass,event.weight);
+  m_subleadMuon_selLeptonPt  -> Fill(event.subleadMuon_selLeptonPt  ,event.weight); 
+  m_subleadMuonEt          ->   Fill(event.subleadMuonEt          ,event.weight); 
                                                                
   m_MET                    ->Fill(event.MET                    ,event.weight); 
   m_MET_selJetdPhi         ->Fill(event.MET_selJetdPhi         ,event.weight); 
-  m_MET_selMuondPhi        ->Fill(event.MET_selMuondPhi        ,event.weight); 
+  m_MET_selLeptondPhi        ->Fill(event.MET_selLeptondPhi        ,event.weight); 
   m_MET_selJetMass         ->Fill(event.MET_selJetMass         ,event.weight); 
-  m_MET_selMuonMass        ->Fill(event.MET_selMuonMass        ,event.weight); 
+  m_MET_selLeptonMass        ->Fill(event.MET_selLeptonMass        ,event.weight); 
   m_MET_selJetPt           ->Fill(event.MET_selJetPt           ,event.weight); 
-  m_MET_selMuonPt          ->Fill(event.MET_selMuonPt          ,event.weight); 
+  m_MET_selLeptonPt          ->Fill(event.MET_selLeptonPt          ,event.weight); 
 
   m_selectedJetTransMET    ->Fill(event.selectedJetTransMET    ,event.weight);
 
-  m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,event.weight); 
+  m_selectedLeptonEt  ->Fill(event.selectedLeptonEt  ,event.weight); 
   m_selectedJetEt   ->Fill(event.selectedJetEt   ,event.weight);  
-  m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,event.weight);  
+  m_selectedLeptonPhi ->Fill(event.selectedLeptonPhi ,event.weight);  
   m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,event.weight);   
-  m_selectedMuonEta ->Fill(event.selectedMuonEta ,event.weight);   
+  m_selectedLeptonEta ->Fill(event.selectedLeptonEta ,event.weight);   
   m_selectedJetEta  ->Fill(event.selectedJetEta  ,event.weight); 
 
   m_EtPlacementMuon2->Fill(event.secondInDecayMuon, event.weight);
   //m_nJets->Fill(event.myGenJets.size(), event.weight);
   m_nAK8Jets->Fill(event.ak8jetCands, event.weight);
-  m_nMuonCands->Fill(event.muonCands, event.weight);
-  m_nMuons40->Fill(event.muons40, event.weight);
+  m_nLeptonCands->Fill(event.leptonCands, event.weight);
+  m_nMuons10->Fill(event.muons10, event.weight);
   m_nAK8Jets40->Fill(event.ak8jets40, event.weight);
-  m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, event.weight);
+  m_leadAK8JetLeptonPhi->Fill(event.leadAK8JetLeptonPhiVal, event.weight);
 
 
-  m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction, event.weight);
+  m_leadAK8JetLeptonJetMuonEnergyFraction->Fill(event.leadAK8JetLeptonJetMuonEnergyFraction, event.weight);
 
 
 }

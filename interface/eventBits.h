@@ -5,8 +5,13 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Particle.h"
+#include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/Math/interface/LorentzVector.h"
+
+#include "TLorentzVector.h"
 
 class eventBits {
 public:
@@ -27,25 +32,26 @@ public:
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
-  std::vector<std::pair<const pat::Jet*, const pat::Muon*>> myMuonJetPairs;
+  std::vector<std::pair<const pat::Jet*, const math::XYZTLorentzVector*>> myLeptonJetPairs;
   std::vector<const pat::Jet*>  myJetCandsHighPt;
   std::vector<const pat::Jet*>  myJetCands;
-  std::vector<const pat::Muon*> myMuonCandsHighPt;
+  std::vector<const math::XYZTLorentzVector*> myLeptonCandsHighPt;
   std::vector<const pat::Muon*> myMuonCands;
   const pat::MET*               myMET;
 
-  const pat::Muon*              myMuonCand;
+  const math::XYZTLorentzVector*             myLeptonCand;
   int secondInDecayMuon;
 
   //EVENT VALUES
+  bool flavorSideband;
 
   int cutProgress;
 
   bool passesWR2016;
-  int muons40;
+  int muons10;
   int ak8jets40;
 
-  int    muonCands;
+  int    leptonCands;
   int    ak8jetCands;
   int    mynLeptons     ;
   int    mynMuons       ;
@@ -113,42 +119,42 @@ public:
   double leadSubleadingAK8JetsMuonsMassVal;
   double leadSubleadingJetsMuonsMassVal;
   double leadSubleadingPartonsMuonsMassVal;
-  double leadAK8JetMuonMassVal;
+  double leadAK8JetLeptonMassVal;
 
   double leadSubleadingAK8JetsMuonsPtVal;
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
-  double leadAK8JetMuonPtVal;
+  double leadAK8JetLeptonPtVal;
 
   double leadSubleadingAK8JetsMuonsEtaVal;
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
-  double leadAK8JetMuonEtaVal;
+  double leadAK8JetLeptonEtaVal;
 
-  double leadAK8JetMuonPhiVal;
-  double leadAK8JetMuonJetMuonEnergyFraction;
+  double leadAK8JetLeptonPhiVal;
+  double leadAK8JetLeptonJetMuonEnergyFraction;
   
-  double selectedMuonEt;
-  double selectedMuonPhi;
-  double selectedMuonEta;
+  double selectedLeptonEt;
+  double selectedLeptonPhi;
+  double selectedLeptonEta;
 
   double selectedJetEt;
   double selectedJetPhi;
   double selectedJetEta;
 
   double subleadMuon_selJetdPhi;
-  double subleadMuon_selMuondPhi;
-  double subleadMuon_selMuonMass;
-  double subleadMuon_selMuonPt;
+  double subleadMuon_selLeptondPhi;
+  double subleadMuon_selLeptonMass;
+  double subleadMuon_selLeptonPt;
   double subleadMuonEt;
 
   double MET;
   double MET_selJetdPhi;
-  double MET_selMuondPhi;
+  double MET_selLeptondPhi;
   double MET_selJetMass;
-  double MET_selMuonMass;
+  double MET_selLeptonMass;
   double MET_selJetPt;
-  double MET_selMuonPt;
+  double MET_selLeptonPt;
 
   double selectedJetTransMET;
 

@@ -110,25 +110,25 @@ class eventHistos {
   TH1D* m_leadSubleadingJetsMuonsMass ;
   TH1D* m_leadSubleadingAK8JetsMuonsMass ;
   TH1D* m_leadSubleadingPartonsMuonsMass ;
-  TH1D* m_leadAK8JetMuonMass;
+  TH1D* m_leadAK8JetLeptonMass;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;
   TH1D* m_leadSubleadingPartonsMuonsPt ;
-  TH1D* m_leadAK8JetMuonPt;
+  TH1D* m_leadAK8JetLeptonPt;
 
   TH1D* m_leadSubleadingJetsMuonsEta ;
   TH1D* m_leadSubleadingAK8JetsMuonsEta ;
   TH1D* m_leadSubleadingPartonsMuonsEta ;
-  TH1D* m_leadAK8JetMuonEta;
+  TH1D* m_leadAK8JetLeptonEta;
 
-  TH1D* m_leadAK8JetMuonPhi;
+  TH1D* m_leadAK8JetLeptonPhi;
 
-  TH1D* m_leadAK8JetMuonJetMuonEnergyFraction;
+  TH1D* m_leadAK8JetLeptonJetMuonEnergyFraction;
   //RECO PLOTS
-  TH1D* m_selectedMuonEt; 
-  TH1D* m_selectedMuonPhi;
-  TH1D* m_selectedMuonEta;
+  TH1D* m_selectedLeptonEt; 
+  TH1D* m_selectedLeptonPhi;
+  TH1D* m_selectedLeptonEta;
   TH1D* m_selectedJetEt;
   TH1D* m_selectedJetPhi;
   TH1D* m_selectedJetEta;
@@ -136,23 +136,24 @@ class eventHistos {
   TH1D* m_EtPlacementMuon2;
   TH1D* m_nJets;
   TH1D* m_nAK8Jets;
-  TH1D* m_nMuonCands;
-  TH1D* m_nMuons40;
+  TH1D* m_nLeptonCands;
+  TH1D* m_nMuons10;
   TH1D* m_nAK8Jets40;
 
   TH1D* m_subleadMuon_selJetdPhi;
-  TH1D* m_subleadMuon_selMuondPhi;
-  TH1D* m_subleadMuon_selMuonMass;
-  TH1D* m_subleadMuon_selMuonPt;
+  TH1D* m_subleadMuon_selLeptondPhi;
+  TH1D* m_subleadMuon_selLeptonMass;
+  TH1D* m_subleadMuon_selLeptonZMass;
+  TH1D* m_subleadMuon_selLeptonPt;
   TH1D* m_subleadMuonEt;
 
   TH1D* m_MET;
   TH1D* m_MET_selJetdPhi;
-  TH1D* m_MET_selMuondPhi;
+  TH1D* m_MET_selLeptondPhi;
   TH1D* m_MET_selJetMass;
-  TH1D* m_MET_selMuonMass;
+  TH1D* m_MET_selLeptonMass;
   TH1D* m_MET_selJetPt;
-  TH1D* m_MET_selMuonPt;
+  TH1D* m_MET_selLeptonPt;
 
   TH1D* m_selectedJetTransMET;
 
