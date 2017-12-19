@@ -130,7 +130,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
     myRECOevent.weight = eventInfo->weight();
   } else {
-  myRECOevent.weight = 1;
+    myRECOevent.weight = 1;
   }
   
   m_allEvents.fill(myRECOevent);
@@ -140,7 +140,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
   for(std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
-    if (iMuon->pt() < 150 || fabs(iMuon->eta()) > 2.8) continue;
+    if (iMuon->pt() < 50 || fabs(iMuon->eta()) > 2.8) continue;
     muonPass++;
   }
 
@@ -148,7 +148,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Jet>> ak8recoJets;
   iEvent.getByToken(m_AK8recoJetsToken, ak8recoJets);
   for(std::vector<pat::Jet>::const_iterator iJet = ak8recoJets->begin(); iJet != ak8recoJets->end(); iJet++) {
-    if (iJet->pt() < 150 || fabs(iJet->eta()) > 2.8) continue;
+    if (iJet->pt() < 50 || fabs(iJet->eta()) > 2.8) continue;
     jetPass++;
   }
 

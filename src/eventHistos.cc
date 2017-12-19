@@ -190,7 +190,11 @@ void eventHistos::fill(eventBits& event) {
 //SPECIFIC 
 void eventHistos::fillCutProgress(eventBits& event) {
   std::cout << "Filling Cut Progress" << std::endl;
-  m_cutProgress->Fill(event.cutProgress , event.weight);
+  int toFill = event.cutProgress;
+  while (toFill > 0) {
+    m_cutProgress->Fill(toFill , event.weight);
+    toFill--;
+  }
 }
 void eventHistos::fillWeight(eventBits& event) {
   std::cout << "Filling Weights" << std::endl;
