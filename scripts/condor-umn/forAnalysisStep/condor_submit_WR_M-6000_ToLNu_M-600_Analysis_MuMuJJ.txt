@@ -1,6 +1,7 @@
 Executable = /home/aevans/bin/batch_cmsRun
 Universe = vanilla
 Output = /data/whybee0b/user/aevans/logs/output
+Log = /data/whybee0b/user/aevans/logs/log
 Error = /data/whybee0b/user/aevans/logs/error
 request_memory = 2500
 Requirements = (Arch=="X86_64") && (Machine != "zebra01.spa.umn.edu" && Machine != "zebra02.spa.umn.edu" && Machine != "zebra03.spa.umn.edu" && Machine != "zebra04.spa.umn.edu" && Machine != "caffeine.spa.umn.edu") && (Machine != "gc1-ce.spa.umn.edu" && Machine != "gc1-hn.spa.umn.edu" && Machine != "gc1-se.spa.umn.edu" && Machine != "red.spa.umn.edu" && Machine != "hadoop-test.spa.umn.edu")

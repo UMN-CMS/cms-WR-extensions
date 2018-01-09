@@ -1,3 +1,4 @@
 LISTS OF ROOT FILES                                                 :    CROSS-SECTIONS IN PB  :  LEGEND                  :  COLOR
 =======================================================================================================================================
-SingleMuon.txt                                                      :         NA               : SingleMuon 2016 B-H      :  kBlue 
+SingleMuon.txt                                                      :         NA               : SingleMuon 2016 B-H      :  1
+SingleElectron.txt                                                  :         NA               : SingleElectron 2016 C-H  :  1 
