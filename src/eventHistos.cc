@@ -119,7 +119,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
 
     m_leadAK8JetLeptonJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetLeptonJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet lepton pair; percent muon energy;", 100, 0.0, 1.0);
 
-    m_EtPlacementMuon2 =                m_histoFolder.make<TH1D>("EtPlacementMuon2", "Et ranking idx of muon 2; index;",                                 5, -.5, 4.5);
+    m_EtPlacementMuon2 =                m_histoFolder.make<TH1D>("EtPlacementMuon2", "Et ranking idx of muon 2;index;",                                 5, -.5, 4.5);
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
     m_nLeptonCands =                    m_histoFolder.make<TH1D>("nLeptonCands", ";#  Leptons;",                                                       10, -.5, 9.5);

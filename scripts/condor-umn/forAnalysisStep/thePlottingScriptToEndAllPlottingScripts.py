@@ -199,6 +199,12 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
             newHist.Draw("esame")
 
         #c.SetLogy()
+        print "Accessing X Axis Titles"
+        print backgroundStack.GetXaxis().GetTitle()
+        print newHist.GetXaxis().GetTitle()
+        newHistTitle = newHist.GetXaxis().GetTitle()
+        backgroundStack.GetXaxis().SetTitle(newHistTitle)
+        sys.stdout.flush()
         global colors
         global backgroundPlotNames
         legend = c.BuildLegend()
