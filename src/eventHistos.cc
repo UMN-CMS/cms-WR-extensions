@@ -148,7 +148,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
     m_MET_selJetPt                 =    m_histoFolder.make<TH1D>("METselJetPt"        ,"MET Selected Jet Pt; Pt (GeV);",       100,0.0 ,2000);
     m_MET_selLeptonPt                =    m_histoFolder.make<TH1D>("METselLeptonPt"       ,"MET Selected Lepton Pt; Pt (GeV);",      100,0.0 ,2000);
 
-    m_selectedJetTransMET          =    m_histoFolder.make<TH1D>("selectedJetTransMET","MET Transverse to Select Jet", 100, 0.0, 500);
+    m_selectedJetTransMET          =    m_histoFolder.make<TH1D>("selectedJetTransMET",";MET Transverse to Select Jet (GeV);", 100, 0.0, 500);
 //
 //
 //  } else if (m_flavor == 2) {

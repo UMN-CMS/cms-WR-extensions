@@ -3,6 +3,11 @@
 
 namespace wrTools {
   
+  double smear(double mean, double sigma, int seed) {
+    TRandom3* randNumGen = new TRandom3(seed);
+    double scale = randNumGen->Gaus(mean, sigma);
+    return scale;
+  }
   bool compareEtGenParticlePointer(const reco::GenParticle* particle1, const reco::GenParticle* particle2) {
     if ( particle1->et() > particle2->et() ) return true;
     return false;
@@ -65,5 +70,35 @@ namespace wrTools {
     
 
     return 0;
+  }
+
+  std::vector<const pat::TriggerObjectStandAlone*> getMatchedObjs(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const float maxDeltaR)
+  {
+    std::vector<const pat::TriggerObjectStandAlone*> matchedObjs;
+    const float maxDR2 = maxDeltaR*maxDeltaR;
+    for(auto& trigObj : trigObjs){
+      const float dR2 = reco::deltaR2(eta,phi,trigObj.eta(),trigObj.phi());
+      if(dR2<maxDR2) matchedObjs.push_back(&trigObj);
+    }
+    return matchedObjs;
+  }
+
+  bool checkFilters(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const std::vector<std::string>& filterNames,const float maxDeltaR)
+  {
+    bool passAnyFilter=false;
+    const auto matchedObjs = getMatchedObjs(eta,phi,trigObjs,maxDeltaR);
+    for(auto& filterName : filterNames){
+      for(const auto trigObj : matchedObjs){
+    //normally would auto this but to make it clearer for the example
+    const std::vector<std::string>& objFilters = trigObj->filterLabels();
+    //I dont think filterLabels are sorted so use std::find to see if filterName is in 
+    //the list of passed filters for this object
+    if(std::find(objFilters.begin(),objFilters.end(),filterName)!=objFilters.end()){
+      std::cout <<" object "<<eta<<" "<<phi<<" passes "<<filterName<<std::endl;
+      passAnyFilter=true;
+    }
+      }//end loop over matched trigger objects
+    }//end loop over filter lables
+    return passAnyFilter;
   }
 }

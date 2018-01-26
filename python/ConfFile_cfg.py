@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+import HLTrigger.HLTfilters.hltHighLevel_cfi
 from FWCore.ParameterSet.VarParsing import VarParsing
 
 options = VarParsing ('analysis')
@@ -7,7 +8,7 @@ options.maxEvents = -1
 options.parseArguments()
 muonID =' userInt("highPtID") == 1'
 
-process = cms.Process("Demo")
+process = cms.Process("Analysis")
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -29,7 +30,20 @@ process.options = cms.untracked.PSet(
 
 process.TFileService = cms.Service("TFileService", 
                         fileName = cms.string(options.outputFile)
-)   #for MC
+)  
+
+process.TriggerFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone(
+    TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
+    #HLTPaths = ['HLT_Mu9', 'HLT_Mu15_v*'],
+    #HLTPaths = ['HLT_IsoMu17_v*'],
+    HLTPaths = ['HLT_Mu50_v*', 'HLT_TkMu50_v*'], #  # provide list of HLT paths (or patterns) you want
+    #HLTPaths = ['@'],
+    andOr = cms.bool(True),   # how to deal with multiple triggers: True (OR) accept if ANY is true, False (AND) accept if ALL are true
+    throw = False, ## throw exception on unknown path names
+)
+
+
+
 
 process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
     muons = cms.InputTag("slimmedMuons"),
@@ -61,9 +75,9 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
                                cut = cms.string(muonID),
 )
                                    
-process.muonSelectionSeq = cms.Sequence(process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
+process.muonSelectionSeq = cms.Sequence(process.TriggerFilter * process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
-process.demo = cms.EDAnalyzer('cmsWRextension',
+process.analysis = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
                               AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
@@ -74,6 +88,11 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
                               genInfo = cms.InputTag("generator"),
                               met = cms.InputTag("slimmedMETsPuppi"),
+                              trigResults = cms.InputTag("TriggerResults","","HLT"),
+                              trigObjs = cms.InputTag("selectedPatTrigger"),
+                              pathsToPass = cms.vstring("HLT_Mu50_v*", "HLT_TkMu50_v*"),
+                              filtersToPass = cms.vstring(""),
+                              doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True),
                               isMC = cms.untracked.bool(True),
@@ -83,4 +102,4 @@ process.demo = cms.EDAnalyzer('cmsWRextension',
 
 )
 
-process.p = cms.Path(process.muonSelectionSeq * process.demo)
+process.p = cms.Path(process.muonSelectionSeq * process.analysis)

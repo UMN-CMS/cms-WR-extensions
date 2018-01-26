@@ -8,11 +8,16 @@
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
-
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/Math/interface/deltaR.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+#include "TRandom3.h"
 #include <vector>
 
 namespace wrTools {
 
+ double smear(double mean, double sigma, int seed);
  bool compareEtGenParticlePointer(const reco::GenParticle* particle1, const reco::GenParticle* particle2); 
  bool compareEtGenParticle(reco::GenParticle particle1, reco::GenParticle particle2); 
  bool compareEtJetPointer(const reco::GenJet* jet1, const reco::GenJet* jet2); 
@@ -24,6 +29,8 @@ namespace wrTools {
  bool comparePairMassPointer(std::pair< const reco::Candidate*, const reco::Candidate* > pair1, std::pair< const reco::Candidate*, const reco::Candidate* > pair2);
  bool compareLvPairMassPointer(std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair1, std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair2);
  int characterizeEvent(std::vector<const reco::GenParticle*> myGenParticles);
+ std::vector<const pat::TriggerObjectStandAlone*> getMatchedObjs(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const float maxDeltaR=0.1);
+ bool checkFilters(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const std::vector<std::string>& filterNames,const float maxDeltaR=0.1);
 
 
 
