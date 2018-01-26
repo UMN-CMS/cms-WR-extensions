@@ -1,5 +1,5 @@
 #!/bin/bash
-filename='data_datasets_SingleElectron.txt'
+filename='data_datasets_SingleElectronB.txt'
 rootFiles=`cat $filename`
 for rootFile in $rootFiles
 do
