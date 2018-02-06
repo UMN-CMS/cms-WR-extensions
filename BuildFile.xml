@@ -5,6 +5,7 @@
 <use name="FWCore/ServiceRegistry"/>
 <use name="CommonTools/UtilAlgos"/>
 <use name="CommonTools/Utils"/>
+<use name="CommonTools/TriggerUtils"/>
 <use name="DataFormats/HepMCCandidate"/>
 <use name="DataFormats/JetReco"/>
 <use name="DataFormats/MuonReco"/>

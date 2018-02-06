@@ -58,6 +58,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "DataFormats/Math/interface/deltaR.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "CommonTools/TriggerUtils/interface/GenericTriggerEventFlag.h"
 
 
 
@@ -89,6 +90,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
    private:
       virtual void beginJob() override;
+      virtual void beginRun(const  edm::Run& run, const edm::EventSetup& setup ) ;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       // ----------member functions---------------------
@@ -145,6 +147,8 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       std::vector<std::string> m_filtersToPass;
       bool m_flavorSideband;
       TTree* hardProcessKinematics;
+      GenericTriggerEventFlag* m_genericTriggerEventFlag;
+
 };
 
 //define this as a plug-in

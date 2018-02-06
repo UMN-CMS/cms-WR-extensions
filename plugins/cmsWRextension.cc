@@ -53,6 +53,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 
 
 //ROOT includes
@@ -94,6 +95,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
     m_trigObjsToken    = consumes<std::vector<pat::TriggerObjectStandAlone> > (iConfig.getParameter<edm::InputTag>("trigObjs"));
     m_pathsToPass   = iConfig.getParameter<std::vector<std::string> >("pathsToPass");
     m_filtersToPass = iConfig.getParameter<std::vector<std::string> >("filtersToPass");
+    m_genericTriggerEventFlag = new GenericTriggerEventFlag( iConfig, consumesCollector(), *this );
   }
   if (m_isMC && m_doGen){
     m_genParticleToken = consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"));
@@ -112,6 +114,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 cmsWRextension::~cmsWRextension() {
    // do anything here that needs to be done at desctruction time
    // (e.g. close files, deallocate resources etc.)
+   delete m_genericTriggerEventFlag;
 
 }
 
@@ -196,10 +199,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 bool cmsWRextension::passTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
   std::cout <<"checking trigger paths "<<std::endl;
   edm::Handle<edm::TriggerResults> triggerResults;
+  iEvent.getByToken(m_trigResultsToken, triggerResults);
   std::cout <<"grabbing trigger names"<<std::endl;
   const edm::TriggerNames& trigNames = iEvent.triggerNames(*triggerResults); //SEGFAULT
   std::cout <<"grabbing trigger results "<<std::endl;
-  iEvent.getByToken(m_trigResultsToken, triggerResults);
   std::cout <<"looping over paths to pass"<<std::endl;
   for(auto& pathName : m_pathsToPass){
     //we need to figure out which path index the pathName corresponds too
@@ -437,6 +440,9 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
   std::cout<<"PRESELECTING LEPTON CANDS RECO"<<std::endl;
   double highPTcut = 200;
   std::vector<const math::XYZTLorentzVector*> highPTLeptons;
+
+  edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
+  iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
   
   if(m_flavorSideband) {
     std::cout << "Looking for a few good electrons" << std::endl;
@@ -445,6 +451,7 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
 
     for(std::vector<pat::Electron>::const_iterator iLep = highLeptons->begin(); iLep != highLeptons->end(); iLep++) {
       if( iLep->pt() < 40 || fabs(iLep->eta()) > 2.4 ) continue;
+      if (! ::wrTools::checkFilters(iLep->superCluster()->eta(),iLep->superCluster()->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
       if ( iLep->pt() > highPTcut ) {
         highPTLeptons.push_back(&(iLep->p4()));
         std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iLep->pt()<<","<<iLep->eta()<<","<<iLep->phi()<<std::endl;
@@ -463,6 +470,7 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
     
     for(std::vector<pat::Muon>::const_iterator iLep = highLeptons->begin(); iLep != highLeptons->end(); iLep++) {
       if( iLep->pt() < 40 || fabs(iLep->eta()) > 2.4 ) continue;
+      if (! ::wrTools::checkFilters(iLep->eta(),iLep->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
       if(( iLep->isHighPtMuon(vertices->at(0)) && iLep->tunePMuonBestTrack()->pt() > highPTcut) && (iLep->isolationR03().sumPt/iLep->pt() <= .05)) {
         highPTLeptons.push_back(&(iLep->p4()));
         std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iLep->pt()<<","<<iLep->eta()<<","<<iLep->phi()<<std::endl;
@@ -1033,7 +1041,14 @@ bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent)
   
   return true;
 }
+// ------------ method called at the beginning of each run -----------------------------
+void cmsWRextension::beginRun(const edm::Run& run, const edm::EventSetup& setup )
+{
+  std::cout << "INITIALIZING RUN SPECIFIC STUFF" << std::endl;
+  if ( m_genericTriggerEventFlag->on() ) m_genericTriggerEventFlag->initRun( run, setup );
 
+
+}
 
 // ------------ method called once each job just before starting event loop  ------------
 void 
