@@ -80,7 +80,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 // constructor "usesResource("TFileService");"
 // This will improve performance in multithreaded jobs.
 
-class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class cmsWRextension : public edm::EDAnalyzer {
    public:
       explicit cmsWRextension(const edm::ParameterSet&);
       ~cmsWRextension();
@@ -90,7 +90,7 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
    private:
       virtual void beginJob() override;
-      virtual void beginRun(const  edm::Run& run, const edm::EventSetup& setup ) ;
+      virtual void beginRun(const  edm::Run& run, const edm::EventSetup& setup ) override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       // ----------member functions---------------------

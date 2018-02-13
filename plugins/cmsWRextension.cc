@@ -89,7 +89,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 {
    //now do what ever initialization is needed
   std::cout << "CONSTRUCTION" << std::endl;
-  usesResource("TFileService");
+  //usesResource("TFileService");
   if (m_doTrig) {
     m_trigResultsToken = consumes<edm::TriggerResults> (iConfig.getParameter<edm::InputTag>("trigResults"));
     m_trigObjsToken    = consumes<std::vector<pat::TriggerObjectStandAlone> > (iConfig.getParameter<edm::InputTag>("trigObjs"));
