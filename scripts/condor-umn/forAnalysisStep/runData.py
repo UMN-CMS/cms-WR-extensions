@@ -6,10 +6,10 @@ from shutil import copyfile
 WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
 NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
 dataListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/data/"
-datasList = dataListDir+"dataList.txt"
+datasList = dataListDir+"dataList_electron.txt"
 baseCfgDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/"
 baseCfg = "data_cfg.py"
-dataSkimStore = "/hdfs/cms/user/aevans/thesis/data_skim/"
+dataSkimStore = "/hdfs/cms/user/aevans/thesis/data_skim_cfg_elec/"
 nEvents = -1
 
 #opening datas
