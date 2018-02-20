@@ -53,6 +53,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 
 
 //ROOT includes
@@ -71,40 +72,49 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 // constructors and destructor
 //
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
-   m_regMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("regMuons"))),
-   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
-   m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
-   m_offlineVerticesToken (consumes<std::vector<reco::Vertex>> (iConfig.getParameter<edm::InputTag>("vertices"))),
-   m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),
-   m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
-   m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false)),
-   m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
-   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true)),
-   m_MCL (iConfig.getUntrackedParameter<double>("MCL", 400)),
-   m_MCU (iConfig.getUntrackedParameter<double>("MCU", 8000)),
-   m_flavorSideband (iConfig.getUntrackedParameter<bool>("flavorSideband", false))
+  m_regMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("regMuons"))),
+  m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
+  m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
+  m_offlineVerticesToken (consumes<std::vector<reco::Vertex>> (iConfig.getParameter<edm::InputTag>("vertices"))),
+  m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),
+  m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
+  m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false)),
+  m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
+  m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true)),
+  m_doTrig (iConfig.getUntrackedParameter<bool>("doTrig",false)),
+  m_MCL (iConfig.getUntrackedParameter<double>("MCL", 400)),
+  m_MCU (iConfig.getUntrackedParameter<double>("MCU", 8000)),
+  m_flavorSideband (iConfig.getUntrackedParameter<bool>("flavorSideband", false))
 
 {
    //now do what ever initialization is needed
-   std::cout << "CONSTRUCTION" << std::endl;
-   usesResource("TFileService");
-   if (m_isMC && m_doGen){
-     m_genParticleToken = consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"));
-     m_genJetsToken      =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"));
-     m_AK8genJetsToken   =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"));
-     m_genEventInfoToken =consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
-   }
-   if (!m_flavorSideband) {
-     m_highLeptonToken =consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("highLeptons"));
-   } else {
-     m_highLeptonToken =consumes<std::vector<pat::Electron>> (iConfig.getParameter<edm::InputTag>("highLeptons"));
-   }  
+  std::cout << "CONSTRUCTION" << std::endl;
+  //usesResource("TFileService");
+  if (m_doTrig) {
+    m_trigResultsToken = consumes<edm::TriggerResults> (iConfig.getParameter<edm::InputTag>("trigResults"));
+    m_trigObjsToken    = consumes<std::vector<pat::TriggerObjectStandAlone> > (iConfig.getParameter<edm::InputTag>("trigObjs"));
+    m_pathsToPass   = iConfig.getParameter<std::vector<std::string> >("pathsToPass");
+    m_filtersToPass = iConfig.getParameter<std::vector<std::string> >("filtersToPass");
+    m_genericTriggerEventFlag = new GenericTriggerEventFlag( iConfig, consumesCollector(), *this );
+  }
+  if (m_isMC && m_doGen){
+    m_genParticleToken = consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"));
+    m_genJetsToken      =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"));
+    m_AK8genJetsToken   =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"));
+    m_genEventInfoToken =consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
+  }
+  if (!m_flavorSideband) {
+    m_highLeptonToken =consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("highLeptons"));
+  } else {
+    m_highLeptonToken =consumes<std::vector<pat::Electron>> (iConfig.getParameter<edm::InputTag>("highLeptons"));
+  }  
 }
 
 
 cmsWRextension::~cmsWRextension() {
    // do anything here that needs to be done at desctruction time
    // (e.g. close files, deallocate resources etc.)
+   delete m_genericTriggerEventFlag;
 
 }
 
@@ -125,6 +135,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool addMuons = false;
 
   myRECOevent.cutProgress = 0;
+  if(m_doTrig) passTrig(iEvent, myRECOevent);
   if(m_isMC) {
     edm::Handle<GenEventInfoProduct> eventInfo;
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
@@ -185,7 +196,43 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   m_allEvents.fill(myRECOevent);
 }
-  
+bool cmsWRextension::passTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
+  std::cout <<"checking trigger paths "<<std::endl;
+  edm::Handle<edm::TriggerResults> triggerResults;
+  iEvent.getByToken(m_trigResultsToken, triggerResults);
+  std::cout <<"grabbing trigger names"<<std::endl;
+  const edm::TriggerNames& trigNames = iEvent.triggerNames(*triggerResults); //SEGFAULT
+  std::cout <<"grabbing trigger results "<<std::endl;
+  std::cout <<"looping over paths to pass"<<std::endl;
+  for(auto& pathName : m_pathsToPass){
+    //we need to figure out which path index the pathName corresponds too
+    size_t pathIndx = trigNames.triggerIndex(pathName);
+    if(pathIndx>=trigNames.size()) std::cout <<" path "<<pathName<<" not found in menu"<<std::endl;
+    else{
+      if(triggerResults->accept(pathIndx)) {
+        std::cout <<" path "<<pathName<<" passed"<<std::endl;
+      } else {
+        std::cout <<" path "<<pathName<<" failed"<<std::endl;
+        return false;   //ALL PATHS MUST PASS
+      }
+    }
+  }
+
+//  std::cout <<"checking eles "<<std::endl;
+//  edm::Handle<std::vector<pat::Electron>> highLeptons;
+//  iEvent.getByToken(m_highLeptonToken, highLeptons);
+//
+//  edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
+//  iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
+//
+//  for(std::vector<pat::Electron>::const_iterator iLep = highLeptons->begin(); iLep != highLeptons->end(); iLep++) {
+//    ::wrTools::checkFilters(iLep->superCluster()->eta(),iLep->superCluster()->phi(),*trigObjsHandle,m_filtersToPass);
+//  }
+//
+  return true;
+
+
+}
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOevent) {
   METselection(iEvent, myRECOevent);
   leptonSelection(iEvent, myRECOevent);
@@ -394,6 +441,9 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
   std::cout<<"PRESELECTING LEPTON CANDS RECO"<<std::endl;
   double highPTcut = 200;
   std::vector<const math::XYZTLorentzVector*> highPTLeptons;
+
+  edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
+  iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
   
   if(m_flavorSideband) {
     std::cout << "Looking for a few good electrons" << std::endl;
@@ -402,6 +452,7 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
 
     for(std::vector<pat::Electron>::const_iterator iLep = highLeptons->begin(); iLep != highLeptons->end(); iLep++) {
       if( iLep->pt() < 40 || fabs(iLep->eta()) > 2.4 ) continue;
+      if (! ::wrTools::checkFilters(iLep->superCluster()->eta(),iLep->superCluster()->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
       if ( iLep->pt() > highPTcut ) {
         highPTLeptons.push_back(&(iLep->p4()));
         std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iLep->pt()<<","<<iLep->eta()<<","<<iLep->phi()<<std::endl;
@@ -420,6 +471,7 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
     
     for(std::vector<pat::Muon>::const_iterator iLep = highLeptons->begin(); iLep != highLeptons->end(); iLep++) {
       if( iLep->pt() < 40 || fabs(iLep->eta()) > 2.4 ) continue;
+      if (! ::wrTools::checkFilters(iLep->eta(),iLep->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
       if(( iLep->isHighPtMuon(vertices->at(0)) && iLep->tunePMuonBestTrack()->pt() > highPTcut) && (iLep->isolationR03().sumPt/iLep->pt() <= .05)) {
         highPTLeptons.push_back(&(iLep->p4()));
         std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iLep->pt()<<","<<iLep->eta()<<","<<iLep->phi()<<std::endl;
@@ -530,7 +582,6 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   int nTops            = 0;
   int nBs              = 0;
   int nPartons         = 0;
-
   int flavor           = 0;
 
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
@@ -991,7 +1042,14 @@ bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent)
   
   return true;
 }
+// ------------ method called at the beginning of each run -----------------------------
+void cmsWRextension::beginRun(const edm::Run& run, const edm::EventSetup& setup )
+{
+  std::cout << "INITIALIZING RUN SPECIFIC STUFF" << std::endl;
+  if ( m_genericTriggerEventFlag->on() ) m_genericTriggerEventFlag->initRun( run, setup );
 
+
+}
 
 // ------------ method called once each job just before starting event loop  ------------
 void 

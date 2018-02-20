@@ -48,12 +48,17 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
+#include "FWCore/Common/interface/TriggerNames.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
+#include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
+
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
 
 #include "DataFormats/Math/interface/deltaR.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "CommonTools/TriggerUtils/interface/GenericTriggerEventFlag.h"
 
 
 
@@ -75,7 +80,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 // constructor "usesResource("TFileService");"
 // This will improve performance in multithreaded jobs.
 
-class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class cmsWRextension : public edm::EDAnalyzer {
    public:
       explicit cmsWRextension(const edm::ParameterSet&);
       ~cmsWRextension();
@@ -85,12 +90,14 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 
    private:
       virtual void beginJob() override;
+      virtual void beginRun(const  edm::Run& run, const edm::EventSetup& setup ) override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       // ----------member functions---------------------
       void selectMuons(const edm::Event&, eventBits&);
       bool preSelectGen (const edm::Event&, eventBits&);
       bool preSelectReco (const edm::Event&, eventBits&);
+      bool passTrig (const edm::Event&, eventBits&);
       bool passWR2016GEN (const edm::Event&, eventBits&);
       bool passExtensionGEN (const edm::Event&, eventBits&);
       bool passWR2016RECO (const edm::Event&, eventBits&);
@@ -127,14 +134,21 @@ class cmsWRextension : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::EDGetToken m_offlineVerticesToken;
       edm::EDGetToken m_genEventInfoToken;
       edm::EDGetToken m_metToken;
+      edm::EDGetToken m_trigResultsToken;
+      edm::EDGetToken m_trigObjsToken;
       bool m_wantHardProcessMuons;
       bool m_doGen;
       bool m_doReco;
       bool m_isMC;
+      bool m_doTrig;
       double m_MCL;    //MASS UPPER AND LOWER CUTS
       double m_MCU;
+      std::vector<std::string> m_pathsToPass;
+      std::vector<std::string> m_filtersToPass;
       bool m_flavorSideband;
       TTree* hardProcessKinematics;
+      GenericTriggerEventFlag* m_genericTriggerEventFlag;
+
 };
 
 //define this as a plug-in
