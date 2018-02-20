@@ -181,7 +181,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
       }
     }
-    if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
+    //if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
   }
   m_allEvents.fill(myRECOevent);
 }
@@ -227,7 +227,8 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
 //all leptons and jets with |η| < 2.4
 //dilepton mass mll > 200 GeV: to suppress DY+jets contribution ∆R > 0.4 between all objects in the final state (leptons and jets) Mlljj > 600 GeV
 bool cmsWRextension::passWR2016Reco(const edm::Event& iEvent, eventBits& myEvent) {
-
+  
+  std::cout << "Checking if event passes WR2016" << std::endl;
   edm::Handle<std::vector<pat::Muon>> highMuons;
   iEvent.getByToken(m_highLeptonToken, highMuons);
 

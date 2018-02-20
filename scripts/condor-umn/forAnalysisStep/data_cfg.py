@@ -70,7 +70,8 @@ process.analyze = cms.EDAnalyzer('cmsWRextension',
                               AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
                               regMuons = cms.InputTag("removeBadAndCloneGlobalMuons"),
-                              highLeptons = cms.InputTag("tuneIDMuons"),
+                              #highLeptons = cms.InputTag("tuneIDMuons"),
+                              highLeptons = cms.InputTag("slimmedElectrons"),
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
@@ -81,7 +82,7 @@ process.analyze = cms.EDAnalyzer('cmsWRextension',
                               isMC = cms.untracked.bool(False),
                               MCL = cms.untracked.double(MWRLCUT),
                               MCU = cms.untracked.double(MWRUCUT),
-                              flavorSideband = cms.untracked.bool(False)
+                              flavorSideband = cms.untracked.bool(True)
 )
 
 process.p = cms.Path(process.muonSelectionSeq * process.analyze)
