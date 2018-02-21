@@ -126,6 +126,7 @@ cmsWRextension::~cmsWRextension() {
 // ------------ method called for each event  ------------
 void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+  std::cout << "Beginning event analysis:" << std::endl;
   eventBits myEvent;
   eventBits myRECOevent;
   myEvent.flavorSideband = m_flavorSideband;
@@ -1051,7 +1052,9 @@ bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent)
 void cmsWRextension::beginRun(const edm::Run& run, const edm::EventSetup& setup )
 {
   std::cout << "INITIALIZING RUN SPECIFIC STUFF" << std::endl;
-  if ( m_genericTriggerEventFlag->on() ) m_genericTriggerEventFlag->initRun( run, setup );
+  if(m_doTrig) {
+    if ( m_genericTriggerEventFlag->on() ) m_genericTriggerEventFlag->initRun( run, setup );
+  }
 
 
 }
