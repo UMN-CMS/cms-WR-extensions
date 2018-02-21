@@ -1,5 +1,5 @@
 #!/bin/bash
-filename='tSingle_datasets.txt'
+filename='TTbar_powheg_datasets.txt'
 rootFiles=`cat $filename`
 for rootFile in $rootFiles
 do
