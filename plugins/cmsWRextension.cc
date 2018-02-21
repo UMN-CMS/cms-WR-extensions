@@ -114,7 +114,8 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 cmsWRextension::~cmsWRextension() {
    // do anything here that needs to be done at desctruction time
    // (e.g. close files, deallocate resources etc.)
-   delete m_genericTriggerEventFlag;
+   if(m_doTrig)
+     delete m_genericTriggerEventFlag;
 
 }
 
@@ -443,7 +444,9 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
   std::vector<const math::XYZTLorentzVector*> highPTLeptons;
 
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
-  iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
+  if(m_doTrig) {
+    iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
+  }
   
   if(m_flavorSideband) {
     std::cout << "Looking for a few good electrons" << std::endl;
@@ -452,7 +455,8 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
 
     for(std::vector<pat::Electron>::const_iterator iLep = highLeptons->begin(); iLep != highLeptons->end(); iLep++) {
       if( iLep->pt() < 40 || fabs(iLep->eta()) > 2.4 ) continue;
-      if (! ::wrTools::checkFilters(iLep->superCluster()->eta(),iLep->superCluster()->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
+      if(m_doTrig)
+        if (! ::wrTools::checkFilters(iLep->superCluster()->eta(),iLep->superCluster()->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
       if ( iLep->pt() > highPTcut ) {
         highPTLeptons.push_back(&(iLep->p4()));
         std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iLep->pt()<<","<<iLep->eta()<<","<<iLep->phi()<<std::endl;
@@ -471,7 +475,8 @@ bool cmsWRextension::leptonSelection(const edm::Event& iEvent, eventBits& myEven
     
     for(std::vector<pat::Muon>::const_iterator iLep = highLeptons->begin(); iLep != highLeptons->end(); iLep++) {
       if( iLep->pt() < 40 || fabs(iLep->eta()) > 2.4 ) continue;
-      if (! ::wrTools::checkFilters(iLep->eta(),iLep->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
+      if(m_doTrig)
+        if (! ::wrTools::checkFilters(iLep->eta(),iLep->phi(),*trigObjsHandle,m_filtersToPass) ) continue;
       if(( iLep->isHighPtMuon(vertices->at(0)) && iLep->tunePMuonBestTrack()->pt() > highPTcut) && (iLep->isolationR03().sumPt/iLep->pt() <= .05)) {
         highPTLeptons.push_back(&(iLep->p4()));
         std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iLep->pt()<<","<<iLep->eta()<<","<<iLep->phi()<<std::endl;
