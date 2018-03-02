@@ -113,6 +113,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool lastCuts(const edm::Event& iEvent, eventBits& myEvent);
       bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
+      void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
@@ -138,6 +139,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_trigObjsToken;
       bool m_wantHardProcessMuons;
       bool m_doGen;
+      bool m_amcatnlo;
       bool m_doReco;
       bool m_isMC;
       bool m_doTrig;

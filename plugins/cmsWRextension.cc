@@ -97,11 +97,14 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
     m_filtersToPass = iConfig.getParameter<std::vector<std::string> >("filtersToPass");
     m_genericTriggerEventFlag = new GenericTriggerEventFlag( iConfig, consumesCollector(), *this );
   }
+  if (m_isMC){
+    m_genEventInfoToken =consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
+    m_amcatnlo = iConfig.getUntrackedParameter<bool>("amcatnlo",false);
+  }
   if (m_isMC && m_doGen){
     m_genParticleToken = consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"));
     m_genJetsToken      =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"));
     m_AK8genJetsToken   =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"));
-    m_genEventInfoToken =consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
   }
   if (!m_flavorSideband) {
     m_highLeptonToken =consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("highLeptons"));
@@ -136,20 +139,15 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool ZMASS = false;
   bool addMuons = false;
 
+  setEventWeight(iEvent, myEvent);
+  setEventWeight(iEvent, myRECOevent);
+
   myRECOevent.cutProgress = 0;
   if(m_doTrig) passTrig(iEvent, myRECOevent);
+
   if(m_isMC) {
-    edm::Handle<GenEventInfoProduct> eventInfo;
-    iEvent.getByToken(m_genEventInfoToken, eventInfo);
-    myEvent.weight = eventInfo->weight(); 
-    myRECOevent.weight = eventInfo->weight();
-    std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myEvent.weight <<std::endl;
     genCounter(iEvent, myEvent);
     genCounter(iEvent, myRECOevent);
-  }
-  if(!m_isMC) {
-    myEvent.weight = 1.0;
-    myRECOevent.weight = 1.0;
   }
    
   if (m_doGen && m_isMC && !m_flavorSideband) {
@@ -197,6 +195,20 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     //if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
   }
   m_allEvents.fill(myRECOevent);
+}
+void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent) {
+  if(m_isMC) {
+      edm::Handle<GenEventInfoProduct> eventInfo;
+      iEvent.getByToken(m_genEventInfoToken, eventInfo);
+      if(!m_amcatnlo)
+        myEvent.weight = eventInfo->weight();
+      else
+        myEvent.weight = eventInfo->weight()/fabs(eventInfo->weight());
+  } else {
+      myEvent.weight = 1;
+  }
+
+
 }
 bool cmsWRextension::passTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
   std::cout <<"checking trigger paths "<<std::endl;

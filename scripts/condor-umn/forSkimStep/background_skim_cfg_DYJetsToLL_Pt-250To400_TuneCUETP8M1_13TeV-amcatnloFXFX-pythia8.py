@@ -27,6 +27,7 @@ process.TFileService = cms.Service("TFileService",
 
 process.skim = cms.EDFilter('skimEvents',
                               recoMuons = cms.InputTag("slimmedMuons"),
+                              recoElectrons = cms.InputTag("slimmedElectrons"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               genInfo = cms.InputTag("generator"),
                               met = cms.InputTag("slimmedMETs"),

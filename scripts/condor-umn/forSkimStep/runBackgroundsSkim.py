@@ -35,8 +35,8 @@ for background in backgrounds:
               print line.replace("amcatnlo = cms.untracked.bool(False)", "amcatnlo = cms.untracked.bool(True)"),
 
 
-    condorCommand = "condor_filelist.perl --batch 10 --nosubmit "+newCfg+" "+backgroundListDir+background+" --xrootd --memreq 2500"
+    condorCommand = "condor_filelist.perl --batch 10 --nosubmit "+newCfg+" "+backgroundListDir+background+" --xrootd --memreq 2500 --jobflavour workday"
     print condorCommand
-#    subprocess.call(condorCommand, shell=True)
-#    submitCommand = "condor_submit condor_submit_"+newCfgName[:-3]+".txt"
-#    subprocess.call(submitCommand, shell=True)
+    subprocess.call(condorCommand, shell=True)
+    submitCommand = "condor_submit condor_submit_"+newCfgName[:-3]+".txt"
+    subprocess.call(submitCommand, shell=True)

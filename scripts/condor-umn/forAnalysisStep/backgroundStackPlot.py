@@ -95,12 +95,13 @@ WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 
 NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
 integratedLuminosity = 35900.0
 stackList = collections.OrderedDict()
-backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
+backgroundListDir = "../../../samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
-backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
-backgroundsROOToutputSuffix = "background_"
-backgroundROOTdestination = "/data/whybee0b/user/aevans/thesis/backgrounds/"
-eventsWeightsDir = "/hdfs/cms/user/aevans/thesis/background_skim/"
+backgroundsROOToutputDir = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
+#backgroundsROOToutputSuffix = "background_"
+backgroundsROOToutputSuffix = ""
+backgroundROOTdestination = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
+eventsWeightsDir = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
 #background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
 #subprocess.call("mkdir -p"+backgroundROOTdestination, shell=True)
 
@@ -126,8 +127,9 @@ print colors
 #print backgroundsRootFiles
 for massPoint in range(0, (len(WrMasses)-1)):
     stackList.clear()
-    massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
-    massName = "WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
+    #massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
+    massSuffix = ""
+    massName = ""
     massDir = backgroundROOTdestination+massName+"/"
     pos = 1
     end = len(xsecs)
@@ -135,7 +137,8 @@ for massPoint in range(0, (len(WrMasses)-1)):
         subprocess.call(["mkdir", massDir])
     for background,xsec in xsecs.items():
         ahaddOut = backgroundROOTdestination+background[:-4]+massSuffix+".root"
-        backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
+        backgroundEventsWeight = eventsWeightsDir+background[:-4]+".root"
+        #backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
         print backgroundEventsWeight
      #  subprocess.call(ahaddCommand, shell=True)   
      #   if pos == end:
