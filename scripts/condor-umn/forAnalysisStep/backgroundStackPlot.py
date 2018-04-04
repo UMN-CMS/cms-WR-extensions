@@ -49,7 +49,8 @@ def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
         for key in file.GetListOfKeys():
    #         print key.GetName()
             if key.GetClassName() in histObjectNames and filter in prefix and key.GetName() == "eventsWeight":
-   #             print "Found events weight" 
+                print "Found events weight:" 
+                print float(file.Get(key.GetName()).GetBinContent(1))
                 return float(file.Get(key.GetName()).GetBinContent(1))
     else:
   #      print "Not in folder yet"
