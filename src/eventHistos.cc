@@ -199,7 +199,7 @@ void eventHistos::fillCutProgress(eventBits& event) {
 }
 void eventHistos::fillWeight(eventBits& event) {
   std::cout << "Filling Weights" << std::endl;
-  m_eventsWeight->Fill(0.5, event.weight);
+  m_eventsWeight->Fill(0.5, event.count);
 }
 void eventHistos::fillGen(eventBits& event) {
 //  std::cout << "Making GEN plots" << std::endl;

@@ -1,11 +1,12 @@
 import sys
 import os
 import subprocess
+import fileinput
 from shutil import copyfile
 
-backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
+backgroundListDir = "../../../samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
-baseCfgDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forSkimStep/"
+baseCfgDir = "./"
 baseCfg = "background_skim_cfg.py"
 
 with open(backgroundsList) as f:
@@ -23,10 +24,18 @@ for line in lines:
 
 #run over backgrounds
 for background in backgrounds:
+    print background[:-4]
     newCfgName = baseCfg[:-3]+"_"+background[:-4]+".py"
     newCfg = baseCfgDir+newCfgName
     copyfile(baseCfgDir+baseCfg,newCfg)
-    condorCommand = "condor_filelist.perl --batch 10 --nosubmit "+newCfg+" "+backgroundListDir+background+" --xrootd --memreq 2500"
+    if("amcatnlo" in background):
+        print "IS AN AMC@NLO BG"
+        # redirects STDOUT to the file in question, changes passed in parameter to true for amcatnlo
+        for line in fileinput.input(newCfg, inplace = 1): 
+              print line.replace("amcatnlo = cms.untracked.bool(False)", "amcatnlo = cms.untracked.bool(True)"),
+
+
+    condorCommand = "condor_filelist.perl --batch 10 --nosubmit "+newCfg+" "+backgroundListDir+background+" --xrootd --memreq 2500 --jobflavour workday"
     print condorCommand
     subprocess.call(condorCommand, shell=True)
     submitCommand = "condor_submit condor_submit_"+newCfgName[:-3]+".txt"

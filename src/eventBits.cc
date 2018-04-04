@@ -9,6 +9,8 @@ eventBits::eventBits() {
   weight = 1.0;
   passesWR2016 = false;
 
+  count = 0;
+
   cutProgress = -1;
 
   secondInDecayMuon = -10000.0;
@@ -127,6 +129,8 @@ void eventBits::clear() {
   run = -1;
   lumi = -1;
   event = 0;
+
+  count = 0;
   
   cutProgress = 0;
 

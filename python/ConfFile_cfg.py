@@ -12,6 +12,7 @@ process = cms.Process("Analysis")
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
+process.MessageLogger.cerr.FwkReport.reportEvery = 1
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
@@ -32,15 +33,15 @@ process.TFileService = cms.Service("TFileService",
                         fileName = cms.string(options.outputFile)
 )  
 
-process.TriggerFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone(
-    TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
-    #HLTPaths = ['HLT_Mu9', 'HLT_Mu15_v*'],
-    #HLTPaths = ['HLT_IsoMu17_v*'],
-    HLTPaths = ['HLT_Mu50_v*', 'HLT_TkMu50_v*'], #  # provide list of HLT paths (or patterns) you want
-    #HLTPaths = ['@'],
-    andOr = cms.bool(True),   # how to deal with multiple triggers: True (OR) accept if ANY is true, False (AND) accept if ALL are true
-    throw = False, ## throw exception on unknown path names
-)
+#process.TriggerFilter = HLTrigger.HLTfilters.hltHighLevel_cfi.hltHighLevel.clone(
+#    TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
+#    #HLTPaths = ['HLT_Mu9', 'HLT_Mu15_v*'],
+#    #HLTPaths = ['HLT_IsoMu17_v*'],
+#    HLTPaths = ['HLT_Mu50_v*', 'HLT_TkMu50_v*'], #  # provide list of HLT paths (or patterns) you want
+#    #HLTPaths = ['@'],
+#    andOr = cms.bool(True),   # how to deal with multiple triggers: True (OR) accept if ANY is true, False (AND) accept if ALL are true
+#    throw = False, ## throw exception on unknown path names
+#)
 
 
 
@@ -75,7 +76,8 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
                                cut = cms.string(muonID),
 )
                                    
-process.muonSelectionSeq = cms.Sequence(process.TriggerFilter * process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
+#process.muonSelectionSeq = cms.Sequence(process.TriggerFilter * process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
+process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
 process.analysis = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
@@ -88,7 +90,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
                               genInfo = cms.InputTag("generator"),
                               met = cms.InputTag("slimmedMETsPuppi"),
-                              trigResults = cms.InputTag("TriggerResults","","HLT"),
+                              #trigResults = cms.InputTag("TriggerResults","","HLT"),
                               trigObjs = cms.InputTag("selectedPatTrigger"),
                               pathsToPass = cms.vstring("HLT_Mu50_v*", "HLT_TkMu50_v*"),
                               filtersToPass = cms.vstring(""),

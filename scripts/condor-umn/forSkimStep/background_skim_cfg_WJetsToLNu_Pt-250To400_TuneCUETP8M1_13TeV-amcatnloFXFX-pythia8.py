@@ -1,4 +1,5 @@
 import FWCore.ParameterSet.Config as cms
+import FWCore.PythonUtilities.LumiList as LumiList
 
 process = cms.Process("Demo")
 
@@ -26,9 +27,12 @@ process.TFileService = cms.Service("TFileService",
 
 process.skim = cms.EDFilter('skimEvents',
                               recoMuons = cms.InputTag("slimmedMuons"),
+                              recoElectrons = cms.InputTag("slimmedElectrons"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               genInfo = cms.InputTag("generator"),
-                              met = cms.InputTag("slimmedMETs")
+                              met = cms.InputTag("slimmedMETs"),
+                              isMC = cms.untracked.bool(True),
+                              amcatnlo = cms.untracked.bool(True)
 )
 process.skimOutput = cms.OutputModule("PoolOutputModule",
         dataset = cms.untracked.PSet(

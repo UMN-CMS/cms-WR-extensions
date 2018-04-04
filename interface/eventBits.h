@@ -23,6 +23,8 @@ public:
   int lumi;
   int event;
   double weight;
+  //DOES THIS EVENT COUNT AS AN EVENT OR A NEGATIVE EVENT?
+  int count;
 
   //BASIC FUNCTIONS
   bool passesGenCuts();

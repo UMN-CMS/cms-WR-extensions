@@ -43,27 +43,31 @@ def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
     histObjectNames = hists1d + hists2d
-   # print "Looking for eventsWeight histogram"
+    print "Looking for eventsWeight histogram"
     if inFolder:
-   #     print "Accessing folder"
+        print "Accessing folder"
+        print file.GetName()
         for key in file.GetListOfKeys():
-   #         print key.GetName()
+            print key.GetName()
             if key.GetClassName() in histObjectNames and filter in prefix and key.GetName() == "eventsWeight":
-                print "Found events weight:" 
+                print "Found events weight" 
                 print float(file.Get(key.GetName()).GetBinContent(1))
+                print float(file.Get(key.GetName()).GetBinContent(0))
+                print float(file.Get(key.GetName()).GetBinContent(2))
                 return float(file.Get(key.GetName()).GetBinContent(1))
     else:
-  #      print "Not in folder yet"
+        print "Not in folder yet"
         for key in file.GetListOfKeys():
-   #         print "Looping through keys"
+            print "Looping through keys"
             if key.IsFolder():
+                print key.GetName()
                 if key.GetName() == "allEvents":
-   #                 print "Found Folder"
+                    print "Found Folder"
                     inFolder = True
                 dir = file.Get(key.GetName())
                 newDir=directory+"/"+key.GetName()
                 return getEventsWeight(dir,directory=newDir, prefix=prefix,filter=filter, inFolder = inFolder)
- #   print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
+    print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
     return 1.0
 
    
@@ -92,16 +96,19 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
     #hist.SetLineWidth(2)
 
 #####################################################################################################################################
-WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
-NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
+#WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
+#NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
+WrMasses=[2400]
+NuMasses=[240]
 integratedLuminosity = 35900.0
 stackList = collections.OrderedDict()
-backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
+backgroundListDir = "../../../samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
-backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
-backgroundsROOToutputSuffix = "background_"
-backgroundROOTdestination = "/data/whybee0b/user/aevans/thesis/backgrounds/"
-eventsWeightsDir = "/hdfs/cms/user/aevans/thesis/background_skim/"
+backgroundsROOToutputDir = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
+#backgroundsROOToutputSuffix = "background_"
+backgroundsROOToutputSuffix = ""
+backgroundROOTdestination = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
+eventsWeightsDir = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
 #background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
 #subprocess.call("mkdir -p"+backgroundROOTdestination, shell=True)
 
@@ -123,12 +130,20 @@ print "NEW COLOR"
 print colors
 #print backgrounds
 #run over backgrounds
+nmasses = 0
+if (len(WrMasses) - 1 == 0 ):
+    nmasses = 1
+elif (len(WrMasses) - 1 > 0 ):
+    nmasses = len(WrMasses) - 1
+else:
+    nmasses = 0  #this shouldn't end up happening
 
 #print backgroundsRootFiles
-for massPoint in range(0, (len(WrMasses)-1)):
+for massPoint in range(0, nmasses):
     stackList.clear()
-    massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
-    massName = "WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
+    #massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
+    massSuffix = ""
+    massName = ""
     massDir = backgroundROOTdestination+massName+"/"
     pos = 1
     end = len(xsecs)
@@ -136,7 +151,8 @@ for massPoint in range(0, (len(WrMasses)-1)):
         subprocess.call(["mkdir", massDir])
     for background,xsec in xsecs.items():
         ahaddOut = backgroundROOTdestination+background[:-4]+massSuffix+".root"
-        backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
+        backgroundEventsWeight = eventsWeightsDir+background[:-4]+".root"
+        #backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
         print backgroundEventsWeight
      #  subprocess.call(ahaddCommand, shell=True)   
      #   if pos == end:
@@ -147,7 +163,12 @@ for massPoint in range(0, (len(WrMasses)-1)):
         weight *= integratedLuminosity
         weight *= xsecs[background]
       #  print "LOOKING FOR EVENTS WEIGHT IN FILE"
-        weight /= getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
+        eventsWeight = 0
+        eventsWeight = getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
+        if (eventsWeight == 0):
+            print "BACKGROUND HAS ZERO EVENTS WEIGHT"
+            continue
+        weight /= eventsWeight
       #  print "DONE CALCULATING"
         saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=massDir)
         pos+=1

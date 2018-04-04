@@ -36,6 +36,7 @@
 
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
@@ -77,9 +78,11 @@ class skimEvents : public edm::stream::EDFilter<> {
     eventHistos m_allEvents;
     edm::EDGetToken m_genEventInfoToken;
     edm::EDGetToken m_recoMuonToken;
+    edm::EDGetToken m_recoElecToken;
     edm::EDGetToken m_AK8recoJetsToken;
     edm::EDGetToken m_metToken;
     bool m_isMC;
+    bool m_amcatnlo;
 };
 
 //
@@ -95,6 +98,7 @@ class skimEvents : public edm::stream::EDFilter<> {
 //
 skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
   m_recoMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("recoMuons"))),
+  m_recoElecToken (consumes<std::vector<pat::Electron>> (iConfig.getParameter<edm::InputTag>("recoElectrons"))),
   m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
   m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),  
   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true))
@@ -102,7 +106,10 @@ skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
   //now do what ever initialization is needed
   edm::Service<TFileService> fs;
   m_allEvents.book((fs->mkdir("allEvents")), 4);
-  if(m_isMC) m_genEventInfoToken = consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
+  if(m_isMC) {
+    m_genEventInfoToken = consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
+    m_amcatnlo = iConfig.getUntrackedParameter<bool> ("amcatnlo", false);   //DO AMC@NLO STYLE EVENT WEIGHTING
+  }
 
 }
 
@@ -128,7 +135,10 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   if(m_isMC) {
     edm::Handle<GenEventInfoProduct> eventInfo;
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
-    myRECOevent.weight = eventInfo->weight();
+    if(!m_amcatnlo)
+      myRECOevent.weight = eventInfo->weight();
+    else
+      myRECOevent.weight = eventInfo->weight()/fabs(eventInfo->weight());
   } else {
     myRECOevent.weight = 1;
   }
@@ -144,6 +154,14 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     muonPass++;
   }
 
+  int elecPass = 0;
+  edm::Handle<std::vector<pat::Electron>> recoElectrons;
+  iEvent.getByToken(m_recoElecToken, recoElectrons);
+  for(std::vector<pat::Electron>::const_iterator iElectron = recoElectrons->begin(); iElectron != recoElectrons->end(); iElectron++) {
+    if (iElectron->pt() < 50 || fabs(iElectron->eta()) > 2.8) continue;
+    elecPass++;
+  }
+
   int jetPass = 0;
   edm::Handle<std::vector<pat::Jet>> ak8recoJets;
   iEvent.getByToken(m_AK8recoJetsToken, ak8recoJets);
@@ -152,7 +170,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     jetPass++;
   }
 
-  if (jetPass > 0 && muonPass > 0) {
+  if (jetPass > 0 && (muonPass > 0 || elecPass > 0)) {
     std::cout <<"PASSES"<<std::endl;
     return true; 
   }
