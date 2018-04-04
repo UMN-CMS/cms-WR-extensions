@@ -10,7 +10,7 @@ config.JobType.psetName = 'PYTHONCFG'
 
 config.Data.inputDataset = 'DATASET'
 config.Data.splitting = 'Automatic'
-config.Data.totalUnits = 100000
+config.Data.totalUnits = 10000000
 config.Data.publication = True
 # This string is used to construct the output dataset name
 config.Data.outputDatasetTag = 'CRAB3_BoostedWRAnalysis'

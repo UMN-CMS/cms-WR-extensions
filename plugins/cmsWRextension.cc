@@ -175,7 +175,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           }
           if(ZMASS) {
             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);          
-          } else if (m_isMC && addMuons){
+          } else if ((m_isMC || m_flavorSideband) && addMuons){
             myRECOevent.cutProgress++;
             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
             m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
@@ -187,7 +187,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             }
           }
         }
-        if (m_isMC) m_eventsPassingExtensionRECO.fill(myRECOevent);
+        if (m_isMC || m_flavorSideband) m_eventsPassingExtensionRECO.fill(myRECOevent);
         //std::cout <<"rECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
         std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
       }
@@ -200,12 +200,17 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
-      if(!m_amcatnlo)
+      if(!m_amcatnlo) {
         myEvent.weight = eventInfo->weight();
-      else
+        myEvent.count = 1;
+      }
+      else {
         myEvent.weight = eventInfo->weight()/fabs(eventInfo->weight());
+        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      }
   } else {
       myEvent.weight = 1;
+      myEvent.count = 1;
   }
 
 

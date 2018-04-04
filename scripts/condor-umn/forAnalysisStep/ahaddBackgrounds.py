@@ -3,8 +3,10 @@ import os
 import subprocess
 from shutil import copyfile
 
-WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
-NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
+#WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
+#NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
+WrMasses=[2400]
+NuMasses=[ 480]
 
 backgroundListDir = "../../../samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
@@ -34,9 +36,13 @@ print backgrounds
 #run over backgrounds
 
 #print backgroundsRootFiles
+if len(WrMasses) > 1 :
+    massPoints = len(WrMasses) - 1
+elif len(WrMasses) == 1:
+    massPoints = 1 
 
 for background in backgrounds:
-    for massPoint in range(0, (len(WrMasses)-1)) :
+    for massPoint in range(0, massPoints) :
         #massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
         massSuffix = ""
         ahaddOut = backgroundROOTdestination+background[:-4]+massSuffix+".root"

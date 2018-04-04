@@ -53,7 +53,7 @@ process.tunePMuons = cms.EDProducer("TunePMuonProducer",
         #src = cms.InputTag("slimmedMuons")
 )
 
-### muon ID and isolation
+## muon ID and isolation
 # make a collection of TuneP muons which pass isHighPt ID
 process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
                                src = cms.InputTag("tunePMuons"),
@@ -70,7 +70,8 @@ process.analyze = cms.EDAnalyzer('cmsWRextension',
                               AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
                               regMuons = cms.InputTag("removeBadAndCloneGlobalMuons"),
-                              highLeptons = cms.InputTag("tuneIDMuons"),
+                              highLeptons = cms.InputTag("slimmedElectrons"),
+          #                    highLeptons = cms.InputTag("tuneIDMuons"),
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
@@ -81,9 +82,11 @@ process.analyze = cms.EDAnalyzer('cmsWRextension',
                               isMC = cms.untracked.bool(True),
                               MCL = cms.untracked.double(MWRLCUT),
                               MCU = cms.untracked.double(MWRUCUT),
-                              flavorSideband = cms.untracked.bool(False),
+          #                    flavorSideband = cms.untracked.bool(False),
+                              flavorSideband = cms.untracked.bool(True),
                               amcatnlo = cms.untracked.bool(AMCATNLO)
 )
 
 process.p = cms.Path(process.muonSelectionSeq * process.analyze)
+#process.p = cms.Path(process.analyze)
 

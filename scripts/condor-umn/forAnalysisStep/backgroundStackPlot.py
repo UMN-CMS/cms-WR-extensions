@@ -43,26 +43,31 @@ def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
     histObjectNames = hists1d + hists2d
-   # print "Looking for eventsWeight histogram"
+    print "Looking for eventsWeight histogram"
     if inFolder:
-   #     print "Accessing folder"
+        print "Accessing folder"
+        print file.GetName()
         for key in file.GetListOfKeys():
-   #         print key.GetName()
+            print key.GetName()
             if key.GetClassName() in histObjectNames and filter in prefix and key.GetName() == "eventsWeight":
-   #             print "Found events weight" 
+                print "Found events weight" 
+                print float(file.Get(key.GetName()).GetBinContent(1))
+                print float(file.Get(key.GetName()).GetBinContent(0))
+                print float(file.Get(key.GetName()).GetBinContent(2))
                 return float(file.Get(key.GetName()).GetBinContent(1))
     else:
-  #      print "Not in folder yet"
+        print "Not in folder yet"
         for key in file.GetListOfKeys():
-   #         print "Looping through keys"
+            print "Looping through keys"
             if key.IsFolder():
+                print key.GetName()
                 if key.GetName() == "allEvents":
-   #                 print "Found Folder"
+                    print "Found Folder"
                     inFolder = True
                 dir = file.Get(key.GetName())
                 newDir=directory+"/"+key.GetName()
                 return getEventsWeight(dir,directory=newDir, prefix=prefix,filter=filter, inFolder = inFolder)
- #   print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
+    print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
     return 1.0
 
    
@@ -91,8 +96,10 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
     #hist.SetLineWidth(2)
 
 #####################################################################################################################################
-WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
-NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
+#WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
+#NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
+WrMasses=[2400]
+NuMasses=[240]
 integratedLuminosity = 35900.0
 stackList = collections.OrderedDict()
 backgroundListDir = "../../../samples/backgrounds/"
@@ -123,9 +130,16 @@ print "NEW COLOR"
 print colors
 #print backgrounds
 #run over backgrounds
+nmasses = 0
+if (len(WrMasses) - 1 == 0 ):
+    nmasses = 1
+elif (len(WrMasses) - 1 > 0 ):
+    nmasses = len(WrMasses) - 1
+else:
+    nmasses = 0  #this shouldn't end up happening
 
 #print backgroundsRootFiles
-for massPoint in range(0, (len(WrMasses)-1)):
+for massPoint in range(0, nmasses):
     stackList.clear()
     #massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
     massSuffix = ""
@@ -149,7 +163,12 @@ for massPoint in range(0, (len(WrMasses)-1)):
         weight *= integratedLuminosity
         weight *= xsecs[background]
       #  print "LOOKING FOR EVENTS WEIGHT IN FILE"
-        weight /= getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
+        eventsWeight = 0
+        eventsWeight = getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
+        if (eventsWeight == 0):
+            print "BACKGROUND HAS ZERO EVENTS WEIGHT"
+            continue
+        weight /= eventsWeight
       #  print "DONE CALCULATING"
         saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=massDir)
         pos+=1
