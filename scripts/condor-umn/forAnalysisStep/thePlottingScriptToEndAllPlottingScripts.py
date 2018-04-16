@@ -144,9 +144,12 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     weight = 1.0
     if (dataType == "MC") :
+        print "PLOTTING MC: SCALING TO 2016 DATA"
         weight *= 35900.0
         weight *= 1.0 #pb just for plotting purposes
-        weight *= 0.9820342339793464  #FUDGE FACTOR BASED ON ROOT FILES NEEDING RESKIMMED (127 OUT OF 7069)
+       # weight *= 0.9820342339793464  #FUDGE FACTOR BASED ON ROOT FILES NEEDING RESKIMMED FOR ELECTRON FLAVOR SIDEBAND (127 OUT OF 7069)
+       # weight *= 0.65                #FUDGE FACTOR FOR MUON DATA BASED ON Z PEAK SIDEBAND DISAGREEMENT
+        weight *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
     weight /= eventsWeight
                                
     newHist = copy.deepcopy(hist)
