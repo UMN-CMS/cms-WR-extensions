@@ -5,6 +5,7 @@
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
 #include "DataFormats/PatCandidates/interface/Muon.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
 #include "DataFormats/PatCandidates/interface/Particle.h"
 #include "DataFormats/Candidate/interface/Candidate.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
@@ -34,26 +35,30 @@ public:
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
-  std::vector<std::pair<const pat::Jet*, const math::XYZTLorentzVector*>> myLeptonJetPairs;
-  std::vector<const pat::Jet*>  myJetCandsHighPt;
-  std::vector<const pat::Jet*>  myJetCands;
-  std::vector<const math::XYZTLorentzVector*> myLeptonCandsHighPt;
-  std::vector<const pat::Muon*> myMuonCands;
-  const pat::MET*               myMET;
+  std::vector<std::pair<const pat::Jet*, const pat::Electron*>> myElectronJetPairs;
+  std::vector<std::pair<const pat::Jet*, const pat::Muon*>>     myMuonJetPairs;
+  std::vector<const pat::Jet*>      myJetCandsHighPt;
+  std::vector<const pat::Jet*>      myJetCands;
+  std::vector<const pat::Electron*> myElectronCandsHighPt;
+  std::vector<const pat::Muon*>     myMuonCandsHighPt;
+  std::vector<const pat::Muon*>     myMuonCands;
+  const pat::MET*                   myMET;
 
-  const math::XYZTLorentzVector*             myLeptonCand;
+  const pat::Electron*              myElectronCand;
+  const pat::Muon*                  myMuonCand;
+  const pat::Muon*                  mySubleadMuon;
+
   int secondInDecayMuon;
 
   //EVENT VALUES
   bool flavorSideband;
-
   int cutProgress;
-
   bool passesWR2016;
   int muons10;
   int ak8jets40;
 
-  int    leptonCands;
+  int    muonCands;
+  int    electronCands;
   int    ak8jetCands;
   int    mynLeptons     ;
   int    mynMuons       ;
@@ -121,46 +126,68 @@ public:
   double leadSubleadingAK8JetsMuonsMassVal;
   double leadSubleadingJetsMuonsMassVal;
   double leadSubleadingPartonsMuonsMassVal;
-  double leadAK8JetLeptonMassVal;
+  double leadAK8JetMuonMassVal;
+  double leadAK8JetElectronMassVal;
 
   double leadSubleadingAK8JetsMuonsPtVal;
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
-  double leadAK8JetLeptonPtVal;
+  double leadAK8JetMuonPtVal;
+  double leadAK8JetElectronPtVal;
 
   double leadSubleadingAK8JetsMuonsEtaVal;
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
-  double leadAK8JetLeptonEtaVal;
+  double leadAK8JetMuonEtaVal;
+  double leadAK8JetElectronEtaVal;
 
-  double leadAK8JetLeptonPhiVal;
-  double leadAK8JetLeptonJetMuonEnergyFraction;
+  double leadAK8JetMuonPhiVal;
+  double leadAK8JetElectronPhiVal;
+  double leadAK8JetMuonJetMuonEnergyFraction;
+  double leadAK8JetElectronJetMuonEnergyFraction;
   
-  double selectedLeptonEt;
-  double selectedLeptonPhi;
-  double selectedLeptonEta;
+  double selectedElectronEt;
+  double selectedElectronPhi;
+  double selectedElectronEta;
+
+  double selectedMuonEt;
+  double selectedMuonPhi;
+  double selectedMuonEta;
 
   double selectedJetEt;
   double selectedJetPhi;
   double selectedJetEta;
 
-  double subleadMuon_selJetdPhi;
-  double subleadMuon_selLeptondPhi;
-  double subleadMuon_selLeptonMass;
-  double subleadMuon_selLeptonPt;
   double subleadMuonEt;
+  double subleadMuonEta;
+  double subleadMuonPhi;
+
+  double subleadMuon_selJetdPhi;
+  double subleadMuon_selMuondPhi;
+  double subleadMuon_selMuonMass;
+  double subleadMuon_selMuonPt;
+  double subleadMuon_selElectrondPhi;
+  double subleadMuon_selElectronMass;
+  double subleadMuon_selElectronPt;
 
   double MET;
+
   double MET_selJetdPhi;
-  double MET_selLeptondPhi;
+  double MET_selMuondPhi;
+  double MET_selElectrondPhi;
+
   double MET_selJetMass;
-  double MET_selLeptonMass;
+  double MET_selMuonMass;
+  double MET_selElectronMass;
+
   double MET_selJetPt;
-  double MET_selLeptonPt;
+  double MET_selMuonPt;
+  double MET_selElectronPt;
 
   double selectedJetTransMET;
 
   double myEventMass;
+  double myEventSidebandMass;
 
 private:
 

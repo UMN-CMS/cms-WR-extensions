@@ -101,6 +101,9 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
 WrMasses=[2400]
 NuMasses=[240]
 integratedLuminosity = 35900.0
+lumiAdjust = 1.0 #in case you want to compare with only a fraction of the 2016 data *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
+lumiAdjust *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
+integratedLuminosity *= lumiAdjust
 stackList = collections.OrderedDict()
 backgroundListDir = "../../../samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
@@ -162,14 +165,17 @@ for massPoint in range(0, nmasses):
         weight = 1.0
         weight *= integratedLuminosity
         weight *= xsecs[background]
-      #  print "LOOKING FOR EVENTS WEIGHT IN FILE"
+        print "Lumi*xsec="+str(weight)
+        print "LOOKING FOR EVENTS WEIGHT IN FILE"
         eventsWeight = 0
         eventsWeight = getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
         if (eventsWeight == 0):
             print "BACKGROUND HAS ZERO EVENTS WEIGHT"
             continue
+        print "Found # events:"+str(eventsWeight)
         weight /= eventsWeight
-      #  print "DONE CALCULATING"
+        print "DONE CALCULATING"
+        print "Scale: "+str(weight)
         saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=massDir)
         pos+=1
     

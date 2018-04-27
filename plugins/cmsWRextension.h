@@ -106,7 +106,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent);
-      bool leptonSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
@@ -128,7 +129,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
-      edm::EDGetToken m_highLeptonToken;
+      edm::EDGetToken m_highMuonToken;
+      edm::EDGetToken m_highElectronToken;
       edm::EDGetToken m_regMuonToken;
       edm::EDGetToken m_recoJetsToken;
       edm::EDGetToken m_AK8recoJetsToken;
@@ -145,8 +147,16 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_doTrig;
       double m_MCL;    //MASS UPPER AND LOWER CUTS
       double m_MCU;
-      std::vector<std::string> m_pathsToPass;
-      std::vector<std::string> m_filtersToPass;
+      
+      double m_highPTleptonCut = 200;
+      double m_subleadPTleptonCut = 10;
+      double m_leptonEtaCut = 2.4;
+      double m_muonIsoCut = .05;
+
+      std::vector<std::string> m_muonPathsToPass;
+      std::vector<std::string> m_muonFiltersToPass;
+      std::vector<std::string> m_electronPathsToPass;
+      std::vector<std::string> m_electronFiltersToPass;
       bool m_flavorSideband;
       TTree* hardProcessKinematics;
       GenericTriggerEventFlag* m_genericTriggerEventFlag;
