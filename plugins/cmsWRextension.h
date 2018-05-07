@@ -52,6 +52,12 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 
+#include "DataFormats/Common/interface/ValueMap.h"
+#include "DataFormats/PatCandidates/interface/VIDCutFlowResult.h"
+
+#include "HEEP/VID/interface/CutNrs.h"
+#include "HEEP/VID/interface/VIDCutCodes.h"
+
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
 
@@ -111,7 +117,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
-      bool lastCuts(const edm::Event& iEvent, eventBits& myEvent);
+      bool metCuts(const edm::Event& iEvent, eventBits& myEvent);
       bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);

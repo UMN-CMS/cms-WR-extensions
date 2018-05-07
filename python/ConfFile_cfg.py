@@ -17,7 +17,14 @@ process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
+
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+#setup global tag
+from Configuration.AlCa.GlobalTag import GlobalTag
+from Configuration.AlCa.autoCond import autoCond
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '') #
+
+
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
@@ -75,6 +82,27 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
                                src = cms.InputTag("tunePMuons"),
                                cut = cms.string(muonID),
 )
+#HERE WE RUN A MODULE FROM SAM HARPER WHICH INSERTS HEEP CUT INFO INTO THE PAT ELECTRON USER DATA
+#we setup the HEEP ID V7.0 and enable VID via the following function
+#and then add it to a new collection of pat::Electrons
+#there is the option to call the new collection "slimmedElectrons" (useStdName=True)
+#otherwise it calls them "heepElectrons"
+#it creates a sequence "process.heepSequence" which we add to our path
+
+from HEEP.VID.tools import addHEEPV70ElesMiniAOD
+addHEEPV70ElesMiniAOD(process,useStdName=True)
+
+##this is our example analysis module reading the results, you will have your own module
+#process.heepIdExample = cms.EDAnalyzer("HEEPV70PATExample",
+#                                       eles=cms.InputTag("slimmedElectrons"),
+#                                       )
+
+#process.p = cms.Path(
+#    process.heepSequence*
+#    process.heepIdExample) #our analysing example module, replace with your module
+#
+
+
                                    
 #process.muonSelectionSeq = cms.Sequence(process.TriggerFilter * process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
@@ -105,4 +133,4 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
 
 )
 
-process.p = cms.Path(process.muonSelectionSeq * process.analysis)
+process.p = cms.Path(process.muonSelectionSeq * process.heepSequence * process.analysis)

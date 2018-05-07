@@ -181,7 +181,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             if(massCut(iEvent, myRECOevent)) {
               m_eventsPassingExtensionRECO2016VETOMASSCUT.fill(myRECOevent);
               myRECOevent.cutProgress++;
-              if(lastCuts(iEvent, myRECOevent))
+              if(metCuts(iEvent, myRECOevent))
                 m_eventsPassingExtensionRECO2016VETOMASSMETCUT.fill(myRECOevent);
             }
           }
@@ -479,15 +479,29 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
   if(m_doTrig) {
     iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
   }
+
+
   std::cout << "Looking for a few good electrons" << std::endl;
   edm::Handle<std::vector<pat::Electron>> highElectrons;
   iEvent.getByToken(m_highElectronToken, highElectrons);
 
   for(std::vector<pat::Electron>::const_iterator iElec = highElectrons->begin(); iElec != highElectrons->end(); iElec++) {
+    //PHASE SPACE CUTS
     if( iElec->pt() < m_highPTleptonCut || fabs(iElec->eta()) > m_leptonEtaCut ) continue;
+    //TRIGGER CUTS
     if(m_doTrig)
       if (! ::wrTools::checkFilters(iElec->superCluster()->eta(),iElec->superCluster()->phi(),*trigObjsHandle,m_electronFiltersToPass) ) continue;
+    //HEEP CUTS
+    //this will be null if its not present
+    const vid::CutFlowResult* vidResult =  iElec->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+    if(vidResult == NULL) {
+      std::cout << "ERROR CANNOT FIND ELECTRON VID RESULTS" << std::endl;
+      return false;
+    }
+    //how to check if everything passed:
+    const bool heepIDVID = vidResult->cutFlowPassed();
 
+    //IT PASSED EVERYTHING
     highPTelectrons.push_back(&(*iElec));
     std::cout<<"ELECTRON CAND WITH PT,ETA,PHI: "<<iElec->pt()<<","<<iElec->eta()<<","<<iElec->phi()<<std::endl;
   }
@@ -925,7 +939,7 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
 
   return true;
 }
-bool cmsWRextension::lastCuts(const edm::Event& iEvent, eventBits& myEvent) {
+bool cmsWRextension::metCuts(const edm::Event& iEvent, eventBits& myEvent) {
   //if( (myEvent.subleadMuon_selMuondPhi >= 0) && myEvent.subleadMuon_selMuondPhi < 2) return false;
   if( (myEvent.MET_selMuondPhi >= 0 ) && (myEvent.MET_selMuondPhi < 2) ) return false;
   return true;
