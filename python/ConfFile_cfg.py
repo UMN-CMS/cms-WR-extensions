@@ -22,7 +22,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 #setup global tag
 from Configuration.AlCa.GlobalTag import GlobalTag
 from Configuration.AlCa.autoCond import autoCond
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '') #
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '') #WORKS FOR TESTING BUT NOT TRUSTWORTHY
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v4', '') #
 
 
 
