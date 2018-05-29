@@ -19,3 +19,12 @@ git clone git@github.com:UMN-CMS/cms-WR-extensions.git
 cd ..
 scram b -j 4
 ```
+
+Example incantations to drive the crab3 interface python:
+```
+MC
+python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i Inputs_RunIISpring15DR74_MC/InputList_DYJetsToLL_MG.txt -c Leptoquarks/RootTupleMakerV2/test/rootTupleMaker_MiniAOD_MC_74X_cfg.py
+
+DATA
+python createAndSubmitJobsWithCrab3.py -i Inputs_RunII_Data/InputList_Run2015_SingleElectron.txt -d testRunIISingleElectron -c Leptoquarks/RootTupleMakerV2/test/rootTupleMaker_MiniAOD_Data_74X_cfg.py -j  /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON.txt
+```

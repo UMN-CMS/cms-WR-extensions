@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#THIS CODE HAS BEEN COPIED WITH PERMISSION FROM THE LEPTOQUARK GROUP AND MODIFIED TO FIT YOUR SCREEN
+#THIS CODE HAS BEEN USED WITH PERMISSION FROM THE LEPTOQUARK GROUP AND FORMATTED TO FIT YOUR SCREEN
 
 import subprocess
 import os
@@ -126,7 +126,6 @@ def makeDirAndCheck(dir):
 # RUN
 ##############################################################
 #---Option Parser
-#--- TODO: WHY PARSER DOES NOT WORK IN CMSSW ENVIRONMENT? ---#
 usage = "Usage: %prog [options] "
 #XXX TODO FIX/UPDATE THIS MESSAGE
 usage+="\nSee https://twiki.cern.ch/twiki/bin/view/CMS/ExoticaLeptoquarkShiftMakeRootTuplesV22012 for more details "
@@ -182,8 +181,8 @@ dateString = date.strftime("%Y%b%d_%H%M%S")
 
 # find tag name if not given
 if options.tagName==None:
-  print 'no tagname given; will ask git for the Leptoquarks/RootTupleMakerV2 tag...',
-  rootTupleMakerDir = os.getenv('CMSSW_BASE')+'/src/Leptoquarks/RootTupleMakerV2'
+  print 'no tagname given; will ask git for the ExoAnalysis/cmsWRextensions tag...',
+  rootTupleMakerDir = os.getenv('CMSSW_BASE')+'/src/ExoAnalysis/cmsWRextensions'
   proc = subprocess.Popen('revparse=`git rev-parse HEAD` && git name-rev --tags --name-only $revparse',stderr=subprocess.PIPE,stdout=subprocess.PIPE,shell=True,cwd=rootTupleMakerDir,env=dict())
   out,err = proc.communicate()
   if len(err) > 0:
@@ -251,9 +250,9 @@ config.Data.unitsPerJob = 1 # overridden per dataset
 config.Data.totalUnits = -1 # overridden per dataset
 # no publishing
 config.Data.publication = False
-config.Data.outputDatasetTag = 'LQ' #overridden for data
-config.Data.outLFNDirBase = '/store/group/phys_exotica/leptonsPlusJets/RootNtuple/RunII/%s/' % (getUsernameFromSiteDB()) + options.tagName + '/'
-#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) + topDirName + '/'
+config.Data.outputDatasetTag = 'WR' #overridden for data
+#config.Data.outLFNDirBase = '/store/group/phys_exotica/leptonsPlusJets/RootNtuple/RunII/%s/' % (getUsernameFromSiteDB()) + options.tagName + '/'
+config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) + topDirName + '/'
 if options.eosDir is not None:
   # split of /eos/cms if it is there
   if options.eosDir.startswith('/eos/cms'):
@@ -315,7 +314,8 @@ with open(localInputListFile, 'r') as f:
     if 'ext' in dataset:
       extN = dataset[dataset.find('_ext')+4]
       datasetName=datasetName+'_ext'+extN
-      config.Data.outputDatasetTag='LQ_ext'+extN
+      config.Data.outputDatasetTag='WR_ext'+extN
+    #NOT CURRENTLY USED IN WR ANALYSIS
     if 'backup' in dataset:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
