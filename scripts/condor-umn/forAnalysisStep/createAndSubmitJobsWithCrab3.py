@@ -207,6 +207,7 @@ for dir in localDirs:
 print
 
 localInputListFile = productionDir+'/inputList.txt'
+print localInputListFile
 shutil.copy2(options.inputList,localInputListFile)
 
 # check if we have a proxy
@@ -402,7 +403,6 @@ with open(localInputListFile, 'r') as f:
     # substitute the global tag name at the end if needed, and feed it into rootTupleEvent
     if globalTag != '':
       config_txt += '\nprocess.GlobalTag.globaltag = "'+globalTag+'"\n'
-      config_txt += '\nprocess.rootTupleEvent.globalTag = "'+globalTag+'"\n'
     with open(newCmsswConfig,'w') as cfgNew_file:
       cfgNew_file.write(config_txt)
 

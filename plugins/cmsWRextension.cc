@@ -160,6 +160,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   if (m_doReco || !m_isMC) {
+    std::cout<<"running preselection reco"<<std::endl;
     if(preSelectReco(iEvent, myRECOevent)) {
       myRECOevent.cutProgress++;
       if(passExtensionRECO(iEvent, myRECOevent)) { 
@@ -472,7 +473,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 }
 
 bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEvent) {  //Flavor sideband
-  std::cout<<"PRESELECTING ELECTRON CANDS RECO"<<std::endl;
+  std::cout<<"STARTING ELECTRON SELECTION"<<std::endl;
   std::vector<const pat::Electron*> highPTelectrons;
 
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
@@ -521,7 +522,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
   return true;
 }
 bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent) {
-  std::cout<<"PRESELECTING MUON CANDS RECO"<<std::endl;
+  std::cout<<"STARTING MUON SELECTION"<<std::endl;
   std::vector<const pat::Muon*> highPTMuons;
 
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
@@ -572,12 +573,14 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
 
 }
 bool cmsWRextension::jetSelection(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout<<"STARTING JET SELECTION"<<std::endl;
   edm::Handle<std::vector<pat::Jet>> recoJetsAK8;
   iEvent.getByToken(m_AK8recoJetsToken, recoJetsAK8);
   std::vector<const pat::Jet*> highPTJets;
   std::vector<const pat::Jet*> allJets;
   //COLLECT JetS INTO HIGHPT AND ALLPT WITHIN ACCEPTANCE
   for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK8->begin(); iJet != recoJetsAK8->end(); iJet++) {
+    std::cout<<"looping over jets"<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
     //GETS ALL THE RELEVANT JET ID QUANTITIES
     double NHF  =                iJet->neutralHadronEnergyFraction();
     double NEMF =                iJet->neutralEmEnergyFraction();
