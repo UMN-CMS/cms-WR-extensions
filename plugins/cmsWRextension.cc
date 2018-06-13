@@ -93,6 +93,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   std::cout << "CONSTRUCTION" << std::endl;
   //usesResource("TFileService");
   if (m_doTrig) {
+    std::cout << "CREATING TRIGGER TOKENS" << std::endl;
     m_trigResultsToken = consumes<edm::TriggerResults> (iConfig.getParameter<edm::InputTag>("trigResults"));
     m_trigObjsToken    = consumes<std::vector<pat::TriggerObjectStandAlone> > (iConfig.getParameter<edm::InputTag>("trigObjs"));
     m_muonPathsToPass   = iConfig.getParameter<std::vector<std::string> >("muonPathsToPass");
@@ -102,10 +103,12 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
     m_genericTriggerEventFlag = new GenericTriggerEventFlag( iConfig, consumesCollector(), *this );
   }
   if (m_isMC){
+    std::cout << "CREATING GEN EVENT INFO TOKENS" << std::endl;
     m_genEventInfoToken =consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
     m_amcatnlo = iConfig.getUntrackedParameter<bool>("amcatnlo",false);
   }
   if (m_isMC && m_doGen){
+    std::cout << "CREATING GEN PARTICLE TOKENS" << std::endl;
     m_genParticleToken = consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"));
     m_genJetsToken      =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"));
     m_AK8genJetsToken   =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"));
@@ -144,7 +147,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   myRECOevent.cutProgress = 0;
   if(m_doTrig) passTrig(iEvent, myRECOevent);
 
-  if(m_isMC) {
+  if(m_isMC && m_doGen) {
     genCounter(iEvent, myEvent);
     genCounter(iEvent, myRECOevent);
   }
