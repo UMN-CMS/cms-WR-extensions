@@ -40,3 +40,9 @@ python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i Inputs_RunIISpring1
 DATA
 python createAndSubmitJobsWithCrab3.py -i Inputs_RunII_Data/InputList_Run2015_SingleElectron.txt -d testRunIISingleElectron -c Leptoquarks/RootTupleMakerV2/test/rootTupleMaker_MiniAOD_Data_74X_cfg.py -j  /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON.txt
 ```
+Example incantations to run the analysis by hand:
+```
+cmsRun python/ConfFile_cfg.py inputFiles_load=samples/backgrounds/WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt outputFile=out.root >& out.txt &
+
+cmsRun python/ConfFile_cfg.py inputFiles=root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AC65E566-52D0-E611-ACAA-1866DAEA812C.root outputFile=out.root >& out.txt &
+```
