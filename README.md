@@ -17,6 +17,7 @@ cd CMSSW_8_0_25/src/
 cmsenv
 git cms-merge-topic gpetruc:badMuonFilters_80X_v2               #bad global muon tagger
 git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
+git cms-merge-topic Sam-Harper:NewEGModifiers_8010
 mkdir -p ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/ 
   #we need this for the mva weights which runs in VID regardless if you need it or not
 git clone git@github.com:cms-data/RecoEgamma-ElectronIdentification ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/data 
