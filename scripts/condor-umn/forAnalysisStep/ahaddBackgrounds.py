@@ -3,52 +3,50 @@ import os
 import subprocess
 from shutil import copyfile
 
-#WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
-#NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
-WrMasses=[2400]
-NuMasses=[ 480]
+if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
+    print "=========="
+    print "This program takes collections of histograms, ROOT file by ROOT file and \ncombines each set together into one ROOT file"
+    print "In order, please specify:"
+    print "Text file contain list of datasets:"
+    print "Directory where the datasets are stored:"
+    print "Destination directory to put combined files in:"
+    print "=========="
+    print "EXAMPLE:"
+    print ""
+    print "python ahaddBackgrounds.py ../../../samples/backgrounds/multiCrabTest.txt /eos/cms/store/user/aevans/undefined_2018Jun15_111107 /afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
+    print ""
+    exit(0)
+if len(sys.argv) != 4:
+    print "inputs not understood, try --help/-h"
+    exit(1)
+#proceed with input parsing
 
-backgroundListDir = "../../../samples/backgrounds/"
-backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
-backgroundsROOToutputDir = "/eos/cms/store/user/aevans/"
-#backgroundsROOToutputDir = "/data/whybee0b/user/aevans/"
-backgroundsROOToutputSuffix = ""
-#backgroundsROOToutputSuffix = "background_"
-backgroundROOTdestination = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
-#backgroundROOTdestination = "/data/whybee0b/user/aevans/thesis/backgrounds/"
-rootFolder = "CRAB3_BoostedWRAnalysis/"
-#background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
-#subprocess.call("mdkir -p"+backgroundROOTdestination, shell=True)
+backgroundsList = sys.argv[1]
+backgroundsROOToutputDir = sys.argv[2]
+backgroundsROOTdestination = sys.argv[3]
 
+
+#open and parse list file
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
 
 backgrounds = []
-xsecs = []
 lineNum = 0
 for line in lines:
     if lineNum < 2 : 
         lineNum+=1
         continue
-    backgrounds.append(line.split(':')[0].strip())
-    #xsecs.append(line.split(':')[1].strip())
+    background_fullpath = line.split()[0].strip()  #first entry in row is background's full path
+    backgrounds.append(background_fullpath.split("/")[1])  #we grab just the name
+
 print backgrounds
 #run over backgrounds
 
-#print backgroundsRootFiles
-if len(WrMasses) > 1 :
-    massPoints = len(WrMasses) - 1
-elif len(WrMasses) == 1:
-    massPoints = 1 
-
 for background in backgrounds:
-    for massPoint in range(0, massPoints) :
-        #massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
-        massSuffix = ""
-        ahaddOut = backgroundROOTdestination+background[:-4]+massSuffix+".root"
-        removePrevious = "rm "+ahaddOut
-        print removePrevious
-        subprocess.call(removePrevious, shell=True)
-        ahaddCommand = "ahadd.py "+ahaddOut+" "+backgroundsROOToutputDir+backgroundsROOToutputSuffix+background[:-4]+massSuffix+"/"+rootFolder+"*/*/*.root"
-        print ahaddCommand
-        subprocess.call(ahaddCommand, shell=True)   
+    ahaddOut = backgroundsROOTdestination+"/"+background+".root"
+    removePrevious = "rm "+ahaddOut
+    print removePrevious
+    subprocess.call(removePrevious, shell=True)
+    ahaddCommand = "ahadd.py "+ahaddOut+" "+backgroundsROOToutputDir+"/"+background+"/"+"*/*/*/*.root"
+    print ahaddCommand
+    subprocess.call(ahaddCommand, shell=True)   

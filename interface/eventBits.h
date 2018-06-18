@@ -24,6 +24,9 @@ public:
   int lumi;
   int event;
   double weight;
+
+  std::string outputTag;  //LABELLING THE DATA
+
   //DOES THIS EVENT COUNT AS AN EVENT OR A NEGATIVE EVENT?
   int count;
 

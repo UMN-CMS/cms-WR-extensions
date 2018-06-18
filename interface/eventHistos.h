@@ -14,6 +14,7 @@
 //ROOT CLASSES
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TObjString.h"
 //C++ CLASSES
 #include <iostream>
 //LOCAL CLASSES
@@ -24,7 +25,7 @@
 class eventHistos {
   public:
   eventHistos();
-  void book(TFileDirectory histoFolder, uint16_t flavor);
+  void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag);
   void fill(eventBits& event);
 
 
@@ -38,6 +39,9 @@ class eventHistos {
  
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
+
+  //METADATA
+  TObjString* m_outputTag;
 
   //GEN PLOTS
   TH1D* m_eventsWeight;

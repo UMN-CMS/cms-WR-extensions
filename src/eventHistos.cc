@@ -20,11 +20,17 @@ eventHistos::eventHistos () {}
 
 
 
-void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
+void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string tag="blah") {
 
   //CREATED FOLDER IN HISTO
   m_flavor = flavor;
   m_histoFolder = histoFolder;
+
+  std::cout<<"TAGGING EVENTS WITH: "  <<tag<<std::endl;
+  m_outputTag = m_histoFolder.make<TObjString>("tag");
+  m_outputTag->SetString("blahblah");
+
+  std::cout<<"TAG SET TO: "<<m_outputTag->GetString()<<std::endl;
 
   if (m_flavor != 4) {
   //MAKE GEN PLOTS
@@ -189,6 +195,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor) {
   }
 }
 void eventHistos::fill(eventBits& event) {
+  m_outputTag->SetString("blahblah");
   if(m_flavor == 1) fillGen(event);
   else if(m_flavor == 2) {
     fillReco(event);

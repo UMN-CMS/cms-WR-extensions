@@ -5,8 +5,13 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 options = VarParsing ('analysis')
 
 options.maxEvents = -1
+options.tag="blah"
+
 options.parseArguments()
 muonID =' userInt("highPtID") == 1'
+
+
+
 
 process = cms.Process("Analysis")
 
@@ -130,7 +135,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               isMC = cms.untracked.bool(True),
                               MCL = cms.untracked.double(100),
                               MCU = cms.untracked.double(8000),
-                              flavorSideband = cms.untracked.bool(False)
+                              outputTag = cms.untracked.string(options.tag)
 
 )
 

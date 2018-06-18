@@ -153,6 +153,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_doTrig;
       double m_MCL;    //MASS UPPER AND LOWER CUTS
       double m_MCU;
+
       
       double m_highPTleptonCut = 200;
       double m_subleadPTleptonCut = 10;
@@ -166,6 +167,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_flavorSideband;
       TTree* hardProcessKinematics;
       GenericTriggerEventFlag* m_genericTriggerEventFlag;
+
+      std::string m_outputTag;
 
 };
 
