@@ -103,7 +103,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       void selectMuons(const edm::Event&, eventBits&);
       bool preSelectGen (const edm::Event&, eventBits&);
       bool preSelectReco (const edm::Event&, eventBits&);
-      bool passTrig (const edm::Event&, eventBits&);
+      bool passMuonTrig (const edm::Event&, eventBits&);
+      bool passElectronTrig (const edm::Event&, eventBits&);
       bool passWR2016GEN (const edm::Event&, eventBits&);
       bool passExtensionGEN (const edm::Event&, eventBits&);
       bool passWR2016RECO (const edm::Event&, eventBits&);

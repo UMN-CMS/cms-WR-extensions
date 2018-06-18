@@ -149,7 +149,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   setEventWeight(iEvent, myRECOevent);
 
   myRECOevent.cutProgress = 0;
-  if(m_doTrig) passTrig(iEvent, myRECOevent);
 
   if(m_isMC && m_doGen) {
     genCounter(iEvent, myEvent);
@@ -223,15 +222,56 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
 
 
 }
-bool cmsWRextension::passTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
-  std::cout <<"checking trigger paths "<<std::endl;
+bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
+  bool passTriggers = false;
+
+  std::cout <<"checking electron trigger paths "<<std::endl;
   edm::Handle<edm::TriggerResults> triggerResults;
   iEvent.getByToken(m_trigResultsToken, triggerResults);
   std::cout <<"grabbing trigger names"<<std::endl;
   const edm::TriggerNames& trigNames = iEvent.triggerNames(*triggerResults); //SEGFAULT
   std::cout <<"grabbing trigger results "<<std::endl;
   std::cout <<"looping over paths to pass"<<std::endl;
-  for(auto& pathName : m_muonPathsToPass){
+  for(size_t i = 0; i < trigNames.size(); ++i) {
+    const std::string &name = trigNames.triggerName(i);
+    for(auto& pathName : m_electronPathsToPass){
+      if((name.find(pathName) != std::string::npos )){
+        if(triggerResults->accept(i)){
+          std::cout <<" path "<<pathName<<" passed"<<std::endl;
+          passTriggers = true;
+        }else {
+          std::cout <<" path "<<pathName<<" failed"<<std::endl;
+        }
+      }
+    }
+  }
+  return passTriggers;
+}
+
+bool cmsWRextension::passMuonTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
+  bool passTriggers = false;
+
+  std::cout <<"checking muon trigger paths "<<std::endl;
+  edm::Handle<edm::TriggerResults> triggerResults;
+  iEvent.getByToken(m_trigResultsToken, triggerResults);
+  std::cout <<"grabbing trigger names"<<std::endl;
+  const edm::TriggerNames& trigNames = iEvent.triggerNames(*triggerResults); //SEGFAULT
+  std::cout <<"grabbing trigger results "<<std::endl;
+  std::cout <<"looping over paths to pass"<<std::endl;
+  for(size_t i = 0; i < trigNames.size(); ++i) {
+    const std::string &name = trigNames.triggerName(i);
+    for(auto& pathName : m_muonPathsToPass){
+      if((name.find(pathName) != std::string::npos )){
+	if(triggerResults->accept(i)){
+	  std::cout <<" path "<<pathName<<" passed"<<std::endl;
+	  passTriggers = true;
+	}else {
+	  std::cout <<" path "<<pathName<<" failed"<<std::endl;
+	}
+      }
+    }
+  }
+/*  for(auto& pathName : m_muonPathsToPass){
     //we need to figure out which path index the pathName corresponds too
     size_t pathIndx = trigNames.triggerIndex(pathName);
     if(pathIndx>=trigNames.size()) std::cout <<" path "<<pathName<<" not found in menu"<<std::endl;
@@ -243,7 +283,7 @@ bool cmsWRextension::passTrig(const edm::Event& iEvent, eventBits& myRECOevent) 
         return false;   //ALL PATHS MUST PASS
       }
     }
-  }
+  }*/
 
 //  std::cout <<"checking eles "<<std::endl;
 //  edm::Handle<std::vector<pat::Electron>> highLeptons;
@@ -256,9 +296,7 @@ bool cmsWRextension::passTrig(const edm::Event& iEvent, eventBits& myRECOevent) 
 //    ::wrTools::checkFilters(iLep->superCluster()->eta(),iLep->superCluster()->phi(),*trigObjsHandle,m_filtersToPass);
 //  }
 //
-  return true;
-
-
+  return passTriggers;
 }
 bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myRECOevent) {
 
@@ -289,6 +327,13 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   if( electronJetPairs.size() < 1 ) {
     std::cout<< "EVENT FAILS, NO CANDIDATE JET ELECTRON PAIRS" <<std::endl;
     return false;
+  }
+
+  if (m_doTrig){
+    if (!passElectronTrig(iEvent, myRECOevent)){
+      std::cout<< "EVENTS FAILS ELECTRON TRIGGERS" << std::endl;
+      return false;
+    }
   }
   return true;
 }
@@ -325,6 +370,14 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
   myRECOevent.cutProgress++;
   std::cout<<muonJetPairs.size()<<" Pairing CANDIDATES Selected from "<<myRECOevent.myJetCandsHighPt.size()<<" jets"<<std::endl;
   myRECOevent.myMuonJetPairs = muonJetPairs;
+
+  if (m_doTrig){
+    if (!passMuonTrig(iEvent, myRECOevent)){
+      std::cout<< "EVENTS FAILS MUON TRIGGERS" << std::endl;
+      return false;
+    }
+  }
+
   return true;
 }
 //////////////FOR MUONS TUNEP HIGHPT MUONS ARE USED//////////
@@ -534,8 +587,8 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
     //PHASE SPACE CUTS
     if( iElec->pt() < m_highPTleptonCut || fabs(iElec->eta()) > m_leptonEtaCut ) continue;
     //TRIGGER CUTS
-    if(m_doTrig)
-      if (! ::wrTools::checkFilters(iElec->superCluster()->eta(),iElec->superCluster()->phi(),*trigObjsHandle,m_electronFiltersToPass) ) continue;
+//    if(m_doTrig)
+//      if (! ::wrTools::checkFilters(iElec->superCluster()->eta(),iElec->superCluster()->phi(),*trigObjsHandle,m_electronFiltersToPass) ) continue;
     //HEEP CUTS
     //this will be null if its not present
     const vid::CutFlowResult* vidResult =  iElec->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
@@ -586,11 +639,10 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
     std::cout << "Looping through muons" << std::endl;
     if( iMuon->pt() < 40 || fabs(iMuon->eta()) > 2.4 ) continue; //preliminary pt cut to speed the loop, and the eta cut
-    if(m_doTrig) {
-      std::cout << "Checking Filter" << std::endl;
-      if (! ::wrTools::checkFilters(iMuon->eta(),iMuon->phi(),*trigObjsHandle,m_muonFiltersToPass) ) continue;
-      
-    }
+//    if(m_doTrig) {
+//      std::cout << "Checking Filter" << std::endl;
+//      if (! ::wrTools::checkFilters(iMuon->eta(),iMuon->phi(),*trigObjsHandle,m_muonFiltersToPass) ) continue;      
+//    }
     if(( iMuon->isHighPtMuon(vertices->at(0)) && iMuon->tunePMuonBestTrack()->pt() > m_highPTleptonCut) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
       std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
