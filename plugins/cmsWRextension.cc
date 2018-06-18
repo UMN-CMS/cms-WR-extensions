@@ -176,7 +176,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         if(!pass2016) {
           myRECOevent.cutProgress++;
           ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
-          addMuons = additionalMuons(iEvent, myRECOevent);
+          addMuons = additionalMuons(iEvent, myRECOevent, false);
           if(!addMuons) {
             m_eventsPassingExtensionRECO2016VETOSINGLEMUON.fill(myRECOevent);
           }
@@ -199,6 +199,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
       }
     }
+    if(passFlavorSideband(iEvent, myRECOevent)) m_eventsPassingFlavorSidebandRECO.fill(myRECOevent);
     //if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
   }
   m_allEvents.fill(myRECOevent);
@@ -259,6 +260,39 @@ bool cmsWRextension::passTrig(const edm::Event& iEvent, eventBits& myRECOevent) 
 
 
 }
+bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myRECOevent) {
+
+  std::cout<< "BEGINNING SELECTION ON FLAVOR SIDEBAND" << std::endl;
+
+  if( myRECOevent.myJetCandsHighPt.size() < 1) {
+    std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myJetCands.size()<<" JETS FOUND." << std::endl;
+    return false;
+  }
+
+  if( myRECOevent.myElectronCandsHighPt.size() < 1 ){
+    std::cout<< "EVENTS FAILS, NO ELECTRONS OVER 200 GEV WITHIN ACCEPTANCE. " << myRECOevent.myElectronCandsHighPt.size()<< " ELECTRONS FOUND." << std::endl;
+    return false;
+  }
+
+  additionalMuons(iEvent, myRECOevent, true);
+
+  if( myRECOevent.myMuonCands.size() < 1){
+    std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
+    return false;
+  }
+  //BUILD PAIRS OF AK8 JETS WITH THE LEAD ELECTRON
+  std::vector<std::pair<const pat::Jet*, const pat::Electron*>> electronJetPairs;
+  for(std::vector<const pat::Jet*>::const_iterator iJet = myRECOevent.myJetCandsHighPt.begin(); iJet != myRECOevent.myJetCandsHighPt.end(); iJet++) {
+     if(fabs(reco::deltaPhi((*iJet)->phi(), myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+     electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+  }
+  if( electronJetPairs.size() < 1 ) {
+    std::cout<< "EVENT FAILS, NO CANDIDATE JET ELECTRON PAIRS" <<std::endl;
+    return false;
+  }
+  return true;
+}
+
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOevent) {
   METselection(iEvent, myRECOevent);
   muonSelection(iEvent, myRECOevent);
@@ -447,7 +481,7 @@ bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
 }
 //CHECK ADDITIONAL MUONS
 
-bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEvent) {
+bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband) {
   std::cout << "Round-up of the rag-tag muons" << std::endl;
   edm::Handle<std::vector<pat::Muon>> regMuons;
   iEvent.getByToken(m_regMuonToken, regMuons);
@@ -466,13 +500,16 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
   }
   if(myEvent.muons10 < 2) return false;  //The leading muon should also pass these cuts, so an additional muon would mean 2 or more
 
+  if(flavorSideband==true) {
+    myEvent.mySubleadMuon = allMuons.at(0);
+  }else{
   //IF WE HAVE ADDITION MUONS, WE SHOULD SEE WHICH IS THE LEADING MUON WHICH ISN'T THE MAIN CANDIDATE
-  for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
-    if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
-      myEvent.mySubleadMuon = *iMuon;
-      break;
+    for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
+      if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
+        myEvent.mySubleadMuon = *iMuon;
+        break;
+      }
     }
-
   }
   if(myEvent.mySubleadMuon == 0) return false;  //THIS SHOULD BE IMPOSSIBLE
 
@@ -1138,6 +1175,7 @@ cmsWRextension::beginJob()
     m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3, m_outputTag);
+    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 3, m_outputTag);
   }
   if (m_doGen && !m_doReco) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
@@ -1158,6 +1196,7 @@ cmsWRextension::beginJob()
     m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag);
+    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 2, m_outputTag);
 
   }
 }

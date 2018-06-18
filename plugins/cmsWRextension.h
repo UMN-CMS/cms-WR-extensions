@@ -108,10 +108,11 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passExtensionGEN (const edm::Event&, eventBits&);
       bool passWR2016RECO (const edm::Event&, eventBits&);
       bool passExtensionRECO(const edm::Event&, eventBits&);
+      bool passFlavorSideband(const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
       bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, eventBits& myEvent);
-      bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent);
+      bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool);
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
@@ -132,6 +133,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
       eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
       eventHistos m_eventsPassingWR2016RECO;
+      eventHistos m_eventsPassingFlavorSidebandRECO;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
