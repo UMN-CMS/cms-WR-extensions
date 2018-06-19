@@ -27,10 +27,10 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
   m_histoFolder = histoFolder;
 
   std::cout<<"TAGGING EVENTS WITH: "  <<tag<<std::endl;
-  m_outputTag = m_histoFolder.make<TObjString>("tag");
-  m_outputTag->SetString("blahblah");
+  m_metaData = m_histoFolder.make<TH1D>("metadata", "events metadata", 10, 0.0, 10);
+  m_metaData->GetXaxis()->SetBinLabel(1, tag.c_str());
 
-  std::cout<<"TAG SET TO: "<<m_outputTag->GetString()<<std::endl;
+  std::cout<<"TAG SET TO: "<<m_metaData->GetXaxis()->GetBinLabel(1)<<std::endl;
 
   if (m_flavor != 4) {
   //MAKE GEN PLOTS
@@ -195,7 +195,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
   }
 }
 void eventHistos::fill(eventBits& event) {
-  m_outputTag->SetString("blahblah");
+ // m_outputTag->SetString("blahblah");
   if(m_flavor == 1) fillGen(event);
   else if(m_flavor == 2) {
     fillReco(event);

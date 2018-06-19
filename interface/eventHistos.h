@@ -41,7 +41,7 @@ class eventHistos {
   uint32_t m_flavor;
 
   //METADATA
-  TObjString* m_outputTag;
+  TH1D* m_metaData;
 
   //GEN PLOTS
   TH1D* m_eventsWeight;

@@ -2,12 +2,23 @@ import FWCore.ParameterSet.Config as cms
 import HLTrigger.HLTfilters.hltHighLevel_cfi
 from FWCore.ParameterSet.VarParsing import VarParsing
 
+#INPUT PARSING SECTION
 options = VarParsing ('analysis')
 
-options.maxEvents = -1
-options.tag="blah"
+options.register ('gitTag',
+				  'applePie',
+				  VarParsing.multiplicity.singleton,
+				  VarParsing.varType.string,
+				  "Git Tag")
+
+
 
 options.parseArguments()
+#APPLY DEFAULTS
+
+
+
+#LOCAL VARIABLE DEFINITIONS
 muonID =' userInt("highPtID") == 1'
 
 
@@ -135,7 +146,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               isMC = cms.untracked.bool(True),
                               MCL = cms.untracked.double(100),
                               MCU = cms.untracked.double(8000),
-                              outputTag = cms.untracked.string(options.tag)
+                              outputTag = cms.untracked.string(options.gitTag)
 
 )
 
