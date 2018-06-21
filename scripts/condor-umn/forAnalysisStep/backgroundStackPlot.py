@@ -95,26 +95,39 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
         stackList[name].append(copy.deepcopy(hist))
     #hist.SetLineWidth(2)
 
-#####################################################################################################################################
-#WrMasses=[800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000, 800, 1600, 2400, 3200, 4000, 6000]
-#NuMasses=[ 80,  160,  240,  320,  400,  600, 160,  320,  480,  640,  800, 1200, 233,  533,  800, 1067, 1333, 2000]
-WrMasses=[2400]
-NuMasses=[240]
-integratedLuminosity = 35900.0
-lumiAdjust = 1.0 #in case you want to compare with only a fraction of the 2016 data *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
-lumiAdjust *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
-integratedLuminosity *= lumiAdjust
-stackList = collections.OrderedDict()
-backgroundListDir = "../../../samples/backgrounds/"
-backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
-backgroundsROOToutputDir = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
-#backgroundsROOToutputSuffix = "background_"
-backgroundsROOToutputSuffix = ""
-backgroundROOTdestination = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
-eventsWeightsDir = "/afs/cern.ch/work/a/aevans/public/thesis/backgrounds/"
-#background_cfg_DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/
-#subprocess.call("mkdir -p"+backgroundROOTdestination, shell=True)
 
+#####################################################################################################################################################################
+#INPUT FILTERING
+if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
+    print "=========="
+    print "This program takes a directory containing backgrounds and builds stack plots of them together."
+    print "It is driven by a text file specifying which backgrounds to look at as well as their cross-sections"
+    print "In order, please specify:"
+    print "Text file contain list of backgrounds:"
+    print "Directory where the background ROOTs are stored:"
+    print "Destination directory to put combined files in:"
+    print "OPTIONAL: Lumi adjustment factor (35.9 fb-1 default)"
+    print "=========="
+    print "EXAMPLE:"
+    print ""
+    print "python backgroundStackPlot.py ../../../samples/backgrounds/multiCrabTest.txt /afs/cern.ch/work/a/aevans/public/thesis/backgrounds/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ 1.0"
+    print ""
+    exit(0)
+if len(sys.argv) != 5:
+    print "inputs not understood, try --help/-h"
+    exit(1)
+#proceed with input parsing
+
+backgroundsList = sys.argv[1]
+backgroundsROOToutputDir = sys.argv[2]
+backgroundsROOTdestination = sys.argv[3]
+lumiAdjust = sys.argv[4]
+#in case you want to compare with only a fraction of the 2016 data *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
+#lumiAdjust *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
+integratedLuminosity = 35900.0
+integratedLuminosity *= float(lumiAdjust)
+
+stackList = collections.OrderedDict()
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
 
@@ -133,82 +146,53 @@ print "NEW COLOR"
 print colors
 #print backgrounds
 #run over backgrounds
-nmasses = 0
-if (len(WrMasses) - 1 == 0 ):
-    nmasses = 1
-elif (len(WrMasses) - 1 > 0 ):
-    nmasses = len(WrMasses) - 1
-else:
-    nmasses = 0  #this shouldn't end up happening
+stackList.clear()
 
-#print backgroundsRootFiles
-for massPoint in range(0, nmasses):
-    stackList.clear()
-    #massSuffix = "_WR_M-"+str(WrMasses[massPoint])+"_LNu_M-"+str(NuMasses[massPoint])
-    massSuffix = ""
-    massName = ""
-    massDir = backgroundROOTdestination+massName+"/"
+for background,xsec in xsecs.items():
+    ahaddOut = backgroundROOTdestination+background+".root"
+    backgroundEventsWeight = eventsWeightsDir+background+".root"
+    print backgroundEventsWeight
+    weight = 1.0
+    weight *= integratedLuminosity
+    weight *= xsecs[background]
+    print "Lumi*xsec="+str(weight)
+    print "LOOKING FOR EVENTS WEIGHT IN FILE"
+    eventsWeight = 0
+    eventsWeight = getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=backgroundsROOToutputDir)
+    if (eventsWeight == 0):
+        print "BACKGROUND HAS ZERO EVENTS WEIGHT"
+        continue
+    print "Found # events:"+str(eventsWeight)
+    weight /= eventsWeight
+    print "DONE CALCULATING"
+    print "Scale: "+str(weight)
+    saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOTdestination)
+    pos+=1
+
+#Loop over stacks and make save stackhists
+
+#c = ROOT.TCanvas("c","c",1000,1000)
+for plot,stack in stackList.items():
+    stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     pos = 1
-    end = len(xsecs)
-    if(not (os.path.isdir(massDir))):
-        subprocess.call(["mkdir", massDir])
-    for background,xsec in xsecs.items():
-        ahaddOut = backgroundROOTdestination+background[:-4]+massSuffix+".root"
-        backgroundEventsWeight = eventsWeightsDir+background[:-4]+".root"
-        #backgroundEventsWeight = eventsWeightsDir+background[:-4]+"_eventsWeight.root"
-        print backgroundEventsWeight
-     #  subprocess.call(ahaddCommand, shell=True)   
-     #   if pos == end:
-     #       print "LAST ROUND!"
-      #  print pos
-       # print background[:-4]+massSuffix
-        weight = 1.0
-        weight *= integratedLuminosity
-        weight *= xsecs[background]
-        print "Lumi*xsec="+str(weight)
-        print "LOOKING FOR EVENTS WEIGHT IN FILE"
-        eventsWeight = 0
-        eventsWeight = getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=eventsWeightsDir)
-        if (eventsWeight == 0):
-            print "BACKGROUND HAS ZERO EVENTS WEIGHT"
-            continue
-        print "Found # events:"+str(eventsWeight)
-        weight /= eventsWeight
-        print "DONE CALCULATING"
-        print "Scale: "+str(weight)
-        saveHists(weight,background[:-4],ROOT.TFile.Open(ahaddOut, "read"),directory=massDir)
-        pos+=1
-    
-    #Loop over stacks and make save stackhists
-    
-    #c = ROOT.TCanvas("c","c",1000,1000)
-    for plot,stack in stackList.items():
-        stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
-        pos = 1
-#        print stack.GetName()
-        for hist in stack:
- #           print hist.__class__.__name__
-            #myHist = copy.deepcopy(hist)
-        #    print "Adding"
-            print "STACK TIME"
-            print hist.GetName()
-            #hist.SetFillColor(pos)
-            hist.Draw("HIST")
-            stackHist.Add(hist)
-            if pos == 9:
-                pos+=2
-            else:
-                pos+=1
-        ROOT.gStyle.SetPalette(55)
-        #stackHist.Draw()
- #       print "THIS MANY HISTS"
- #       print stackHist.GetNhists()
-        #c.BuildLegend()
-        #c.SaveAs(plot)
-        stackHist.SaveAs(plot)
-
-
-
-
-
-
+    print stack.GetName()
+    for hist in stack:
+        print hist.__class__.__name__
+        #myHist = copy.deepcopy(hist)
+    #    print "Adding"
+        print "STACK TIME"
+        print hist.GetName()
+        #hist.SetFillColor(pos)
+        hist.Draw("HIST")
+        stackHist.Add(hist)
+        if pos == 9:
+            pos+=2
+        else:
+            pos+=1
+ROOT.gStyle.SetPalette(55)
+#stackHist.Draw()
+print "THIS MANY HISTS"
+print stackHist.GetNhists()
+#c.BuildLegend()
+#c.SaveAs(plot)
+stackHist.SaveAs(plot)

@@ -1,3 +1,3 @@
-                              DATASET                                                                                                    ||MAX EVENTS||JOBS PER LUMI||XSEC IN PB||LEGEND||COLOR CODE||
-=======================================================================================================================================================================================================
-/TTJets_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISpring16MiniAODv2-PUSpring16RAWAODSIM_reHLT_80X_mcRun2_asymptotic_v14-v1/MINIAODSIM     -1              40
+                              DATASET                                                                                                          ||MAX EVENTS||JOBS PER LUMI||XSEC IN PB||LEGEND||COLOR CODE||
+============================================================================================================================================================================================================
+/TT_TuneCUETP8M1_13TeV-powheg-pythia8/RunIISpring16MiniAODv2-PUSpring16_80X_mcRun2_asymptotic_2016_miniAODv2_v0_ext4-v1/MINIAODSIM                            -1 40        831.76+40.25-45.63 TTJets_inc   4
