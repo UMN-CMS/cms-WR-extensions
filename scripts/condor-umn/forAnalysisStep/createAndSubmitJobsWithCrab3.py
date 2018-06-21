@@ -281,7 +281,11 @@ config.Site.storageSite = 'T2_CH_CERN'
 # Example:
 #   das_client.py --query="dataset=/LQToUE_M-*_BetaOne_TuneCUETP8M1_13TeV-pythia8/*/MINIAODSIM"
 with open(localInputListFile, 'r') as f:
+  lineNum = 0
   for line in f:
+    if lineNum < 2 :
+      lineNum+=1
+      continue
     split = line.split()
     if len(split) <= 0:
       continue
