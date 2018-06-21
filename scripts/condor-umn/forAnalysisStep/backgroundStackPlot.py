@@ -85,12 +85,12 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
     print hist.GetName()
     hist.SetName(backgroundName)
     if name not in stackList:
-   #     print "New Plot!"
+        print "New Plot!"
         stackList[name] = []
         ROOT.gStyle.SetPalette(55)
         stackList[name].append(copy.deepcopy(hist))
     else:
-  #      print "Stacking!"
+        print "Stacking!"
         ROOT.gStyle.SetPalette(55)
         stackList[name].append(copy.deepcopy(hist))
     #hist.SetLineWidth(2)
@@ -121,6 +121,7 @@ if len(sys.argv) != 5:
 backgroundsList = sys.argv[1]
 backgroundsROOToutputDir = sys.argv[2]
 backgroundsROOTdestination = sys.argv[3]
+eventsWeightsDir = backgroundsROOToutputDir
 lumiAdjust = sys.argv[4]
 #in case you want to compare with only a fraction of the 2016 data *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
 #lumiAdjust *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
@@ -138,18 +139,21 @@ for line in lines:
     if lineNum < 2 : 
         lineNum+=1
         continue
-    xsecs[line.split(':')[0].strip()] = float(line.split(':')[1].strip().split("+")[0])
-    colors[line.split(':')[0].strip()[:-4]] = int(line.split(':')[3].strip())
+    xsecs[line.split()[0].strip().split("/")[1]] = float(line.split()[3].strip().split("+")[0])
+    colors[line.split()[0].strip().split("/")[1]] = int(line.split()[5].strip())
     #print line.split(':')[2].strip()
 
 print "NEW COLOR"
 print colors
 #print backgrounds
 #run over backgrounds
+stackList = collections.OrderedDict()
 stackList.clear()
 
+
+
 for background,xsec in xsecs.items():
-    ahaddOut = backgroundROOTdestination+background+".root"
+    ahaddOut = backgroundsROOToutputDir+background+".root"
     backgroundEventsWeight = eventsWeightsDir+background+".root"
     print backgroundEventsWeight
     weight = 1.0
@@ -166,8 +170,7 @@ for background,xsec in xsecs.items():
     weight /= eventsWeight
     print "DONE CALCULATING"
     print "Scale: "+str(weight)
-    saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOTdestination)
-    pos+=1
+    saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOToutputDir)
 
 #Loop over stacks and make save stackhists
 
@@ -175,7 +178,8 @@ for background,xsec in xsecs.items():
 for plot,stack in stackList.items():
     stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     pos = 1
-    print stack.GetName()
+    print stack
+    #print stack.GetName()
     for hist in stack:
         print hist.__class__.__name__
         #myHist = copy.deepcopy(hist)
