@@ -9,6 +9,10 @@ eventBits::eventBits() {
   weight = 1.0;
   passesWR2016 = false;
 
+  mySubleadMuon = NULL;
+  myElectronCand = NULL;
+  myMuonCand = NULL;
+
   count = 0;
 
   cutProgress = -1;

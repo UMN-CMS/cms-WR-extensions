@@ -174,8 +174,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         METcuts(iEvent, myRECOevent);
         if(!pass2016) {
           myRECOevent.cutProgress++;
-          ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
           addMuons = additionalMuons(iEvent, myRECOevent, false);
+          ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
           if(!addMuons) {
             m_eventsPassingExtensionRECO2016VETOSINGLEMUON.fill(myRECOevent);
           }
