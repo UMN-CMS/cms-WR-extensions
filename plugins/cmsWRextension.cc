@@ -344,6 +344,14 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     return false;
   }
   myRECOevent.cutProgress++;
+  std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointer);
+
+  myRECOevent.selectedElectronEt  = electronJetPairs[0].second->et();
+  myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
+  myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
+  myRECOevent.selectedJetEt   = electronJetPairs[0].first->et();
+  myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi();
+  myRECOevent.selectedJetEta  = electronJetPairs[0].first->eta();
 
   std::cout << "EVENT PASSES FLAVOR SIDEBAND" << std::endl;
   return true;
@@ -354,6 +362,13 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
   muonSelection(iEvent, myRECOevent);
   electronSelection(iEvent, myRECOevent);
   jetSelection(iEvent, myRECOevent); 
+
+  if (m_doTrig){
+    if (!passMuonTrig(iEvent, myRECOevent)){
+      std::cout<< "EVENTS FAILS MUON TRIGGERS" << std::endl;
+      return false;
+    }
+  }
 
   if( myRECOevent.myJetCandsHighPt.size() < 1) {
     std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myJetCands.size()<<" JETS FOUND." << std::endl;
@@ -381,13 +396,6 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
   myRECOevent.cutProgress++;
   std::cout<<muonJetPairs.size()<<" Pairing CANDIDATES Selected from "<<myRECOevent.myJetCandsHighPt.size()<<" jets"<<std::endl;
   myRECOevent.myMuonJetPairs = muonJetPairs;
-
-  if (m_doTrig){
-    if (!passMuonTrig(iEvent, myRECOevent)){
-      std::cout<< "EVENTS FAILS MUON TRIGGERS" << std::endl;
-      return false;
-    }
-  }
 
   return true;
 }
