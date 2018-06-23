@@ -198,6 +198,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
       }
     }
+    std::cout << "CHECKING THE FLAVOR SIDEBAND" << std::endl;
+    myRECOevent.cutProgress = 0;
     if(passFlavorSideband(iEvent, myRECOevent)) m_eventsPassingFlavorSidebandRECO.fill(myRECOevent);
     //if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
   }
@@ -301,23 +303,30 @@ bool cmsWRextension::passMuonTrig(const edm::Event& iEvent, eventBits& myRECOeve
 bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myRECOevent) {
 
   std::cout<< "BEGINNING SELECTION ON FLAVOR SIDEBAND" << std::endl;
-
+  if (m_doTrig){
+    if (!passElectronTrig(iEvent, myRECOevent)){
+      std::cout<< "EVENTS FAILS ELECTRON TRIGGERS" << std::endl;
+      return false;
+    }
+  }
+  myRECOevent.cutProgress++;
   if( myRECOevent.myJetCandsHighPt.size() < 1) {
     std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myJetCands.size()<<" JETS FOUND." << std::endl;
     return false;
   }
-
+  myRECOevent.cutProgress++;
   if( myRECOevent.myElectronCandsHighPt.size() < 1 ){
     std::cout<< "EVENTS FAILS, NO ELECTRONS OVER 200 GEV WITHIN ACCEPTANCE. " << myRECOevent.myElectronCandsHighPt.size()<< " ELECTRONS FOUND." << std::endl;
     return false;
   }
-
+  myRECOevent.cutProgress++;
   additionalMuons(iEvent, myRECOevent, true);
 
   if( myRECOevent.myMuonCands.size() < 1){
     std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
     return false;
   }
+  myRECOevent.cutProgress++;
   //BUILD PAIRS OF AK8 JETS WITH THE LEAD ELECTRON
   std::vector<std::pair<const pat::Jet*, const pat::Electron*>> electronJetPairs;
   for(std::vector<const pat::Jet*>::const_iterator iJet = myRECOevent.myJetCandsHighPt.begin(); iJet != myRECOevent.myJetCandsHighPt.end(); iJet++) {
@@ -328,13 +337,9 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     std::cout<< "EVENT FAILS, NO CANDIDATE JET ELECTRON PAIRS" <<std::endl;
     return false;
   }
+  myRECOevent.cutProgress++;
 
-  if (m_doTrig){
-    if (!passElectronTrig(iEvent, myRECOevent)){
-      std::cout<< "EVENTS FAILS ELECTRON TRIGGERS" << std::endl;
-      return false;
-    }
-  }
+  std::cout << "EVENT PASSES FLAVOR SIDEBAND" << std::endl;
   return true;
 }
 
