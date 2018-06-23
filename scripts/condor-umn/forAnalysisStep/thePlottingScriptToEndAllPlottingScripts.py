@@ -76,7 +76,7 @@ def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols 
     
     c.SaveAs(outname)
 
-def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,100], eventsWeight=1.0, dataType = "MC"):
+def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,100], eventsWeight=1.0, dataType = "MC", setLog=0):
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
@@ -90,17 +90,17 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,
             newDir=directory+"/"+key.GetName()
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(dir,directory=newDir, prefix=prefix,filter=filter,bg=bg,massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType)
+            saveHists(dir,directory=newDir, prefix=prefix,filter=filter,bg=bg,massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType)
+            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
 
 def getStack(plotName, folder, massPoint):
     #backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])+"/"
-    backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/"
+    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/FirstTry/"
     print backgroundsDir+folder+"/"+plotName+".root"
     sys.stdout.flush()
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
@@ -140,7 +140,7 @@ def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
  #   print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
     return 1.0
 
-def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPoint=[1000,100], eventsWeight=1.0, dataType = "MC"):
+def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPoint=[1000,100], eventsWeight=1.0, dataType = "MC", setLogy = 0):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     weight = 1.0
     if (dataType == "MC") :
@@ -149,7 +149,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         weight *= 1.0 #pb just for plotting purposes
        # weight *= 0.9820342339793464  #FUDGE FACTOR BASED ON ROOT FILES NEEDING RESKIMMED FOR ELECTRON FLAVOR SIDEBAND (127 OUT OF 7069)
        # weight *= 0.65                #FUDGE FACTOR FOR MUON DATA BASED ON Z PEAK SIDEBAND DISAGREEMENT
-        weight *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
+       # weight *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
     weight /= eventsWeight
                                
     newHist = copy.deepcopy(hist)
@@ -196,6 +196,8 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
             backgroundStack.SetMaximum(backgroundCombined.GetMaximum()*1.1)
         backgroundStack.SetTitle("")
         newHist.SetTitle("")
+	if setLogy:
+	    backgroundStack.SetMinimum(1)
         backgroundStack.Draw("HIST")
         if(dataType == "MC"):
             newHist.Draw(drawoptions+"same")
@@ -218,9 +220,12 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         else:
             legend.AddEntry(newHist, "2016 Data")
         for bg in backgrounds:
-            legend.AddEntry(backgroundPlotNames[bg], bg)
-        
+            legend.AddEntry(backgroundPlotNames[bg], bg, "F")
+
         #Now build the legend
+        if setLogy == 1:
+	    print "SETTING LOGy"
+	    c.SetLogy()
         c.SaveAs(name)
     else:
         print "HISTOGRAM EMPTY!"
@@ -283,7 +288,7 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
 #SingleMuon_WR_M-2400_LNu_M-240.root
 print "STARTING"
 sys.stdout.flush()
-backgroundListDir = "/home/aevans/CMS/thesis/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
+backgroundListDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
 backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
 signalsDir = "/data/whybee0b/user/aevans/thesis/signals/"
 with open(backgroundsList) as f:
@@ -309,21 +314,24 @@ print "Backgrounds"
 print backgrounds
 sys.stdout.flush()
 signalName = sys.argv[1].split("_")
+setLogY = int(sys.argv[6])
+print "setLogY: ", setLogY
 print sys.argv[5]
 if (not (sys.argv[5] == "data")):
     wrMass = int(signalName[1][2:])
     nuMass = int(signalName[3][2:])
-    eventsWeight = getEventsWeight(ROOT.TFile.Open(sys.argv[1], "read"),directory=signalsDir)
+#    eventsWeight = getEventsWeight(ROOT.TFile.Open(sys.argv[1], "read"),directory=signalsDir)
     print "GOT EVENTSWEIGHT"
     print eventsWeight
 sys.stdout.flush()
 if (sys.argv[5] == "data"): 
-    print signalName[2][2:]
-    print signalName[4][2:-5]
-    wrMass = int(signalName[2][2:])
-    nuMass = int(signalName[4][2:-5])
+    print "check1: ", signalName[2][2:]
+    print "check2: ", signalName[4][2:-5]
+#    wrMass = int(signalName[2][2:])
+#    nuMass = int(signalName[4][2:-5])
     eventsWeight = 1
-saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
+saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [1000,100], eventsWeight, sys.argv[5], setLogY)
+#saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
 
 
 print "DONE"
