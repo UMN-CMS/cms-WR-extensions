@@ -247,6 +247,9 @@ bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myREC
       }
     }
   }
+  if(passTriggers) myRECOevent.electronTrigger = 1.;
+  else myRECOevent.electronTrigger = 0.;
+
   return passTriggers;
 }
 
@@ -298,6 +301,9 @@ bool cmsWRextension::passMuonTrig(const edm::Event& iEvent, eventBits& myRECOeve
 //    ::wrTools::checkFilters(iLep->superCluster()->eta(),iLep->superCluster()->phi(),*trigObjsHandle,m_filtersToPass);
 //  }
 //
+  if(passTriggers) myRECOevent.muonTrigger = 1.;
+  else myRECOevent.muonTrigger = 0.;
+
   return passTriggers;
 }
 bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myRECOevent) {

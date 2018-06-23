@@ -96,6 +96,9 @@ eventBits::eventBits() {
 
   leadAK8JetElectronJetMuonEnergyFraction = -10000.0;
 
+  electronTrigger = -10000.0;
+  muonTrigger = -10000.0;
+
   selectedMuonEt = -10000.0;
   selectedMuonPhi = -10000.0;
   selectedMuonEta = -10000.0;

@@ -149,6 +149,9 @@ public:
   double leadAK8JetMuonJetMuonEnergyFraction;
   double leadAK8JetElectronJetMuonEnergyFraction;
   
+  double electronTrigger;
+  double muonTrigger;
+
   double selectedElectronEt;
   double selectedElectronPhi;
   double selectedElectronEta;
