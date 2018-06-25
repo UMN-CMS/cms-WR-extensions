@@ -153,7 +153,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Phi (rad);"  ,60,-3.0,3.0 ); 
 
     m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,   "Sublead Muon Selected Jet dPhi; Phi (rad);"  ,80,  0.0, 4.0);
-    m_subleadMuon_selElectrondPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelElectrondPhi", "Sublead Muon Selected Electron dPhi; Phi (rad);" ,80,  0.0, 4.0);
+    m_subleadMuon_selElectronPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelElectrondPhi", "Sublead Muon Selected Electron dPhi; Phi (rad);" ,80,  0.0, 4.0);
     m_subleadMuon_selElectronMass  =    m_histoFolder.make<TH1D>("subleadMuonSelElectronMass", "Sublead Muon Selected Electron Mass; Mass (GeV);" ,100, 0.0,2000);
     m_subleadMuon_selElectronZMass =    m_histoFolder.make<TH1D>("subleadMuonSelElectronZMass","Sublead Muon Selected Electron Mass; Mass (GeV);" ,100, 0.0,200);
     m_subleadMuon_selElectronPt    =    m_histoFolder.make<TH1D>("subleadMuonSelElectronPt"  , "Sublead Muon Selected Electron Pt; Pt (GeV);"   ,100, 0.0,2000);
@@ -229,7 +229,7 @@ void eventHistos::fillCutProgress(eventBits& event) {
   }
   while (FSBtoFill > 0) {
     m_FSBcutProgress->Fill(FSBtoFill , event.weight);
-    toFill--;
+    FSBtoFill--;
   }
 }
 void eventHistos::fillWeight(eventBits& event) {
@@ -360,7 +360,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selMuonMass,event.weight);
   m_subleadMuon_selMuonPt  -> Fill(event.subleadMuon_selMuonPt  ,event.weight); 
 
-  m_subleadMuon_selElectrondPhi-> Fill(event.subleadMuon_selElectrondPhi,event.weight);
+  m_subleadMuon_selElectronPhi-> Fill(event.subleadMuon_selElectronPhi,event.weight);
   m_subleadMuon_selElectronMass-> Fill(event.subleadMuon_selElectronMass,event.weight);
   m_subleadMuon_selElectronZMass->Fill(event.subleadMuon_selElectronMass,event.weight);
   m_subleadMuon_selElectronPt  -> Fill(event.subleadMuon_selElectronPt  ,event.weight); 

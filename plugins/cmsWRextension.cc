@@ -200,6 +200,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
     std::cout << "CHECKING THE FLAVOR SIDEBAND" << std::endl;
     myRECOevent.FSBcutProgress = 0;
+    myRECOevent.FSBcutProgress++;
     if(passFlavorSideband(iEvent, myRECOevent)) m_eventsPassingFlavorSidebandRECO.fill(myRECOevent);
     //if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
   }
@@ -342,6 +343,14 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   if( electronJetPairs.size() < 1 ) {
     std::cout<< "EVENT FAILS, NO CANDIDATE JET ELECTRON PAIRS" <<std::endl;
     return false;
+  }
+  myRECOevent.FSBcutProgress++;
+
+  myRECOevent.myElectronJetPairs = electronJetPairs;
+
+  if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
+      std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+      return false;
   }
   myRECOevent.FSBcutProgress++;
   std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointer);
@@ -533,6 +542,23 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuonEt           = subleadMuon->et();
 
   if(myEvent.subleadMuon_selMuonMass < 200) return true;
+  return false;
+}
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
+  //CHECK IF WE HAVE A SUBLEADING MUON
+  if(myEvent.mySubleadMuon == 0) return false;
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Electron* selEl   = myEvent.myElectronCand;
+  const pat::Jet*  selJet      = myEvent.myElectronJetPairs[0].first;
+
+  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi()));
+  myEvent.subleadMuon_selElectronPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
+  myEvent.subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+  myEvent.subleadMuon_selElectronPt   = (subleadMuon->p4() + selEl->p4()).pt();
+  myEvent.subleadMuonEt           = subleadMuon->et();
+
+  if(myEvent.subleadMuon_selElectronMass < 200) return true;
   return false;
 }
 bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
