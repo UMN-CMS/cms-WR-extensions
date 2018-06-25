@@ -546,7 +546,7 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
 }
 bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
   //CHECK IF WE HAVE A SUBLEADING MUON
-  if(myEvent.mySubleadMuon == 0) return false;
+  if(myEvent.mySubleadMuon == 0) return true;
 
   const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
   const pat::Electron* selEl   = myEvent.myElectronCand;
