@@ -199,7 +199,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
     }
     std::cout << "CHECKING THE FLAVOR SIDEBAND" << std::endl;
-    myRECOevent.cutProgress = 0;
+    myRECOevent.FSBcutProgress = 0;
     if(passFlavorSideband(iEvent, myRECOevent)) m_eventsPassingFlavorSidebandRECO.fill(myRECOevent);
     //if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
   }
@@ -315,24 +315,24 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
       return false;
     }
   }
-  myRECOevent.cutProgress++;
+  myRECOevent.FSBcutProgress++;
   if( myRECOevent.myJetCandsHighPt.size() < 1) {
     std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myJetCands.size()<<" JETS FOUND." << std::endl;
     return false;
   }
-  myRECOevent.cutProgress++;
+  myRECOevent.FSBcutProgress++;
   if( myRECOevent.myElectronCandsHighPt.size() < 1 ){
     std::cout<< "EVENTS FAILS, NO ELECTRONS OVER 200 GEV WITHIN ACCEPTANCE. " << myRECOevent.myElectronCandsHighPt.size()<< " ELECTRONS FOUND." << std::endl;
     return false;
   }
-  myRECOevent.cutProgress++;
+  myRECOevent.FSBcutProgress++;
   additionalMuons(iEvent, myRECOevent, true);
 
   if( myRECOevent.myMuonCands.size() < 1){
     std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
     return false;
   }
-  myRECOevent.cutProgress++;
+  myRECOevent.FSBcutProgress++;
   //BUILD PAIRS OF AK8 JETS WITH THE LEAD ELECTRON
   std::vector<std::pair<const pat::Jet*, const pat::Electron*>> electronJetPairs;
   for(std::vector<const pat::Jet*>::const_iterator iJet = myRECOevent.myJetCandsHighPt.begin(); iJet != myRECOevent.myJetCandsHighPt.end(); iJet++) {
@@ -343,7 +343,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     std::cout<< "EVENT FAILS, NO CANDIDATE JET ELECTRON PAIRS" <<std::endl;
     return false;
   }
-  myRECOevent.cutProgress++;
+  myRECOevent.FSBcutProgress++;
   std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointer);
 
   myRECOevent.selectedElectronEt  = electronJetPairs[0].second->et();

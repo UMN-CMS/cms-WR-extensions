@@ -56,6 +56,7 @@ public:
   //EVENT VALUES
   bool flavorSideband;
   int cutProgress;
+  int FSBcutProgress;
   bool passesWR2016;
   int muons10;
   int ak8jets40;

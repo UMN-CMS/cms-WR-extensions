@@ -58,6 +58,7 @@ class eventHistos {
   TH1D* m_eventFlavor       ;
 
   TH1D* m_cutProgress;
+  TH1D* m_FSBcutProgress;
 
   TH1D* m_parton1Et;
   TH1D* m_parton2Et;

@@ -16,6 +16,7 @@ eventBits::eventBits() {
   count = 0;
 
   cutProgress = -1;
+  FSBcutProgress = -1;
 
   secondInDecayMuon = -10000.0;
 
@@ -160,6 +161,7 @@ void eventBits::clear() {
   count = 0;
   
   cutProgress = 0;
+  FSBcutProgress = 0;
 
   parton1EtVal = 0.0;
   parton2EtVal = 0.0;

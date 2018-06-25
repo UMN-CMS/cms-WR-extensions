@@ -110,7 +110,7 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python backgroundStackPlot.py ../../../samples/backgrounds/multiCrabTest.txt /afs/cern.ch/work/a/aevans/public/thesis/backgrounds/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ 1.0"
+    print "python backgroundStackPlot.py ../../../samples/backgrounds/multiCrabTest.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 1.0"
     print ""
     exit(0)
 if len(sys.argv) != 5:
