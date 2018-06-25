@@ -13,8 +13,8 @@ WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt              
 WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt                :   2.635+.005432-.005432  : WJetsToLNu    :    1                                  
 WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt                : .4102+.0008981-.0008981  : WJetsToLNu    :    1                             
 TT_TuneCUETP8M1_13TeV-powheg-pythia8.txt                                          :      831.76+40.25-45.63  : TTJets_incl   :    4
-ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8.txt                        :          3.36+0.13-0.12  : SingleTopLept :    7        
-ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin.txt :         26.38+1.32-1.18  : SingleTopLept :    7
-ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin.txt     :         44.33+1.76-1.49  : SingleTopLept :    7
-ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4.txt          :         35.85+1.92-1.92  : tWincl        :    2
-ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4.txt              :         35.85+1.92-1.92  : tWincl        :    2
+ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8.txt                        :          3.36+0.13-0.12  : SingleTop     :    2        
+ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin.txt :         26.38+1.32-1.18  : SingleTop     :    2
+ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin.txt     :         44.33+1.76-1.49  : SingleTop     :    2
+ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4.txt          :         35.85+1.92-1.92  : SnigleTop     :    2
+ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4.txt              :         35.85+1.92-1.92  : SingleTop     :    2
