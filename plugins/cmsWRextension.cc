@@ -596,7 +596,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
   if (myEvent.muons10 > 0) {
     myEvent.myMuonCands = allMuons; 
   }
-//  if(myEvent.muons10 < 2) return false;  //The leading muon should also pass these cuts, so an additional muon would mean 2 or more
+  if(myEvent.muons10 < 1) return false;  //The leading muon should also pass these cuts, so an additional muon would mean 2 or more
 
   if(flavorSideband==true) {
     myEvent.mySubleadMuon = allMuons.at(0);
