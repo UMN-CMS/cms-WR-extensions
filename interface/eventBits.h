@@ -173,7 +173,7 @@ public:
   double subleadMuon_selMuondPhi;
   double subleadMuon_selMuonMass;
   double subleadMuon_selMuonPt;
-  double subleadMuon_selElectrondPhi;
+  double subleadMuon_selElectronPhi;
   double subleadMuon_selElectronMass;
   double subleadMuon_selElectronPt;
 

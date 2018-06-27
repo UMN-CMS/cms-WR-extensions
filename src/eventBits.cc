@@ -121,7 +121,7 @@ eventBits::eventBits() {
   subleadMuon_selMuonMass = -10000.0;
   subleadMuon_selMuonPt = -10000.0;
 
-  subleadMuon_selElectrondPhi = -10000.0;
+  subleadMuon_selElectronPhi = -10000.0;
   subleadMuon_selElectronMass = -10000.0;
   subleadMuon_selElectronPt = -10000.0;
 

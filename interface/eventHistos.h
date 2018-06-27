@@ -164,7 +164,7 @@ class eventHistos {
   TH1D* m_nAK8Jets40;
 
   TH1D* m_subleadMuon_selJetdPhi;
-  TH1D* m_subleadMuon_selElectrondPhi;
+  TH1D* m_subleadMuon_selElectronPhi;
   TH1D* m_subleadMuon_selElectronMass;
   TH1D* m_subleadMuon_selElectronZMass;
   TH1D* m_subleadMuon_selElectronPt;

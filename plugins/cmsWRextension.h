@@ -117,6 +117,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent);
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
       bool metCuts(const edm::Event& iEvent, eventBits& myEvent);
