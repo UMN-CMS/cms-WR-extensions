@@ -120,7 +120,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
       bool metCuts(const edm::Event& iEvent, eventBits& myEvent);
-      bool massCut(const edm::Event& iEvent, eventBits& myEvent);
+      //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
       // ----------member data ---------------------------

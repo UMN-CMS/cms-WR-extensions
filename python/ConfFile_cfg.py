@@ -146,8 +146,8 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(False),
                               isMC = cms.untracked.bool(True),
-                              MCL = cms.untracked.double(100),
-                              MCU = cms.untracked.double(8000),
+                              #MCL = cms.untracked.double(100),
+                              #MCU = cms.untracked.double(8000),
                               outputTag = cms.untracked.string(options.gitTag)
 
 )
