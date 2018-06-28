@@ -644,6 +644,8 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
     //how to check if everything passed:
     const bool heepIDVID = vidResult->cutFlowPassed();
 
+    if (!heepIDVID) continue;
+
     //IT PASSED EVERYTHING
     highPTelectrons.push_back(&(*iElec));
     std::cout<<"ELECTRON CAND WITH PT,ETA,PHI: "<<iElec->pt()<<","<<iElec->eta()<<","<<iElec->phi()<<std::endl;
