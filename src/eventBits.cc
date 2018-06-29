@@ -13,6 +13,8 @@ eventBits::eventBits() {
   myElectronCand = NULL;
   myMuonCand = NULL;
 
+  PVertex = NULL;
+
   count = 0;
 
   cutProgress = -1;

@@ -51,6 +51,8 @@ public:
   const pat::Muon*                  myMuonCand;
   const pat::Muon*                  mySubleadMuon;
 
+  const reco::Vertex*               PVertex;
+
   int secondInDecayMuon;
 
   //EVENT VALUES

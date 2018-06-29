@@ -133,6 +133,13 @@ cmsWRextension::~cmsWRextension() {
 void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   std::cout << "Beginning event analysis:" << std::endl;
+
+  edm::Handle<std::vector<reco::Vertex>> vertices;
+  iEvent.getByToken(m_offlineVerticesToken, vertices);
+  if(!vertices.isValid()) {
+    throw cms::Exception("Vertex collection not valid!");
+  }
+
   eventBits myEvent;
   eventBits myRECOevent;
   myEvent.flavorSideband = m_flavorSideband;
@@ -147,6 +154,28 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   setEventWeight(iEvent, myEvent);
   setEventWeight(iEvent, myRECOevent);
+
+  // Let's check that we have at least one good vertex!
+  std::cout << "Running vertex selection" << std::endl;
+  std::vector<const reco::Vertex*> PVertices;
+  std::vector<reco::Vertex>::const_iterator firstGoodVertex = vertices->end();
+
+  for (std::vector<reco::Vertex>::const_iterator it=vertices->begin(); it!=firstGoodVertex; ++it) {
+    if (!it->isFake() && it->ndof()>4 && it->position().Rho()<2. && std::abs(it->position().Z())<24.) {
+      if(firstGoodVertex == vertices->end()){
+	firstGoodVertex = it;
+	PVertices.push_back(&(*it));
+      }
+      break;
+    }
+  }
+  // Require a good vertex
+  if(firstGoodVertex == vertices->end()){
+    std::cout<<"NO GOOD VERTEX" << std::endl;
+    return;
+  }
+
+  myRECOevent.PVertex = PVertices.at(0);
 
   myRECOevent.cutProgress = 0;
 
@@ -681,8 +710,8 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   iEvent.getByToken(m_highMuonToken, highMuons);
   std::cout << "Vertex Handle" << std::endl;
 
-  edm::Handle<std::vector<reco::Vertex>> vertices;
-  iEvent.getByToken(m_offlineVerticesToken, vertices);
+//  edm::Handle<std::vector<reco::Vertex>> vertices;
+//  iEvent.getByToken(m_offlineVerticesToken, vertices);
   
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
     std::cout << "Looping through muons" << std::endl;
@@ -691,7 +720,7 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
 //      std::cout << "Checking Filter" << std::endl;
 //      if (! ::wrTools::checkFilters(iMuon->eta(),iMuon->phi(),*trigObjsHandle,m_muonFiltersToPass) ) continue;      
 //    }
-    if(( iMuon->isHighPtMuon(vertices->at(0)) && iMuon->tunePMuonBestTrack()->pt() > m_highPTleptonCut) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
+    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > m_highPTleptonCut) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
       std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
       highPTMuons.push_back(&(*iMuon));
