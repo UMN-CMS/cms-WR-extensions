@@ -6,47 +6,70 @@ import os
 import copy
 import sets
 import collections
+import math
+import tdrstyle
 
-"""
-Style options mostly from CMS's tdrStyle.C
-"""
-#def customROOTstyle() :
-#    ROOT.gROOT.SetBatch(True)
-#    ROOT.gStyle.SetOptTitle(True)
-#    ROOT.gStyle.SetOptStat(1111)
-#    ROOT.gStyle.SetPadTopMargin(0.06);
-#    ROOT.gStyle.SetPadBottomMargin(0.13);
-#    ROOT.gStyle.SetPadLeftMargin(0.12);
-#    ROOT.gStyle.SetPadRightMargin(.15)
-#    ROOT.gStyle.SetLabelColor(1, "XYZ");
-#    ROOT.gStyle.SetLabelFont(42, "XYZ");
-#    ROOT.gStyle.SetLabelOffset(0.007, "XYZ");
-#    ROOT.gStyle.SetLabelSize(0.05, "XYZ");
-#    ROOT.gStyle.SetTitleSize(0.05, "XYZ");
-#    ROOT.gStyle.SetTitleOffset(1.0, "X");
-#    ROOT.gStyle.SetTitleOffset(1.1, "Y");
-#    ROOT.gStyle.SetTitleOffset(1.0, "Z");
-#    ROOT.gStyle.SetAxisColor(1, "XYZ");
-#    ROOT.gStyle.SetStripDecimals(True);
-#    ROOT.gStyle.SetTickLength(0.03, "XYZ");
-#    ROOT.gStyle.SetNdivisions(510, "XYZ");
-#    ROOT.gStyle.SetPadTickX(0);
-#    ROOT.gStyle.SetPadTickY(0);
-#    ROOT.gStyle.SetMarkerStyle(20);
-#    ROOT.gStyle.SetHistLineColor(1);
-#    ROOT.gStyle.SetHistLineStyle(1);
-#    ROOT.gStyle.SetHistLineWidth(3);
-#    ROOT.gStyle.SetFrameBorderMode(0);
-#    ROOT.gStyle.SetFrameBorderSize(1);
-#    ROOT.gStyle.SetFrameFillColor(0);
-#    ROOT.gStyle.SetFrameFillStyle(0);
-#    ROOT.gStyle.SetFrameLineColor(1);
-#    ROOT.gStyle.SetFrameLineStyle(1);
-#    ROOT.gStyle.SetFrameLineWidth(1);
-#    ROOT.gStyle.SetPalette(55);
-#    ROOT.gStyle.SetNumberContours(100);
+
+
+
+tdrstyle.setTDRStyle()
+ROOT.gStyle.SetPadTopMargin(0.10)
+ROOT.gStyle.SetPadLeftMargin(0.16)
+ROOT.gStyle.SetPadRightMargin(0.10)
+ROOT.gStyle.SetPaintTextFormat("1.1f")
+ROOT.gStyle.SetOptFit(0000)
+ROOT.gROOT.SetBatch()
 
 import numpy as np
+def getRatio(hist, reference):
+        ratio = hist.Clone("%s_ratio"%hist.GetName())
+        ratio.SetDirectory(0)
+        ratio.SetLineColor(hist.GetLineColor())
+        for xbin in xrange(1,reference.GetNbinsX()+1):
+                ref = reference.GetBinContent(xbin)
+                val = hist.GetBinContent(xbin)
+
+                refE = reference.GetBinError(xbin)
+                valE = hist.GetBinError(xbin)
+
+                try:
+                        ratio.SetBinContent(xbin, val/ref)
+                        ratio.SetBinError(xbin, math.sqrt( (val*refE/(ref**2))**2 + (valE/ref)**2 ))
+                except ZeroDivisionError:
+                        #ratio.SetBinContent(xbin, 1.0)
+                        ratio.SetBinError(xbin, 0.0)
+
+        return ratio
+
+def TOTerror(hmc, ratio ):
+  hmc.Sumw2()
+  den1 = hmc.Clone ("den1");
+  den2 = hmc.Clone ("den2");
+
+  nvar = hmc.GetNbinsX();
+
+  x1 = []
+  y1 = []
+  exl1 = []
+  eyl1= []
+  exh1= []
+  eyh1= []
+
+  for km in range(1,nvar+1):
+    delta = hmc.GetBinError(km)
+    den1.SetBinError(km,0)
+
+  # ratio from variation and nominal
+  ratiop = hmc.Clone("ratiop");
+  ratiom = hmc.Clone("ratiom");
+
+  ratiop.Divide(den1);
+  ratiom.Divide(den1);
+  #den1.Divide(ratiop)
+  #den2.Divide(ratiom)
+
+  return ratiop;
+
 def customPalette(zeropoint = 0.5):
     Number = 3;
     Red    = np.array([0  ,  100,  110],dtype=float)/255.
@@ -77,7 +100,6 @@ def drawMultipleGrid(hists,outname,limits=[],setLogY=False,setLogZ=False, ncols 
     c.SaveAs(outname)
 
 def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,100], eventsWeight=1.0, dataType = "MC", setLog=0):
-    ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
     histObjectNames = hists1d + hists2d
@@ -96,11 +118,13 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
-            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+	    print "drawHist"
+            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".png",width=1000,height=800, drawoptions = drawoptions, bg=bg, massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+#            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".root",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
 
 def getStack(plotName, folder, massPoint):
     #backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])+"/"
-    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/FirstTry/"
+    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/PV_LooseMuonID/"
     print backgroundsDir+folder+"/"+plotName+".root"
     sys.stdout.flush()
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
@@ -113,7 +137,6 @@ def getStack(plotName, folder, massPoint):
             return file.Get(key.GetName())
     return 0
 def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
-    ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
     histObjectNames = hists1d + hists2d
@@ -153,15 +176,30 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
     weight /= eventsWeight
                                
     newHist = copy.deepcopy(hist)
-    ROOT.gStyle.SetPalette(61)
-    ROOT.gROOT.ForceStyle()
+    newHist.GetYaxis().SetTitle("Events")
     c = ROOT.TCanvas("c","c",width,height)
-    ROOT.gStyle.SetPalette(61)
-    ROOT.gROOT.ForceStyle()
+
+    oben = ROOT.TPad('oben','oben',0,0.3 ,1.0,1.0)
+    unten = ROOT.TPad('unten','unten',0,0.0,1.0,0.3)
+    oben.SetBottomMargin(0)
+    unten.SetTopMargin(0.)
+    unten.SetBottomMargin(0.35)
+
+    oben.SetFillStyle(4000)
+    oben.SetFrameFillStyle(1000)
+    oben.SetFrameFillColor(0)
+    unten.SetFillStyle(4000)
+    unten.SetFrameFillStyle(1000)
+    unten.SetFrameFillColor(0)
+    oben.Draw()
+    unten.Draw()
+    oben.cd()
 
     #hist.SetLineWidth(2)
     #print bg
     if (bg == "backgrounds"):
+#	print "name.split: ", name.split("/")[-1].split("_")[-1][:-3]
+#        backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-5],name.split("/")[-3]+"/"+name.split("/")[-2], massPoint)
         backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-4],name.split("/")[-3]+"/"+name.split("/")[-2], massPoint)
         if (backgroundStack != 0):
             print "GOT THE BACKGROUND"    
@@ -178,6 +216,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         backgroundCombined.Merge(backgroundStack.GetHists())
         
         scaleFactor = weight
+	print "scaleFactor: "
         print scaleFactor
         sys.stdout.flush()
         if scaleFactor == 0.0 :
@@ -187,45 +226,154 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         newHist.Scale(scaleFactor)
         newHist.SetLineColor(794)
         newHist.SetLineWidth(5)
+	newHist.GetYaxis().SetTitleOffset(1.3)
+        newHist.GetYaxis().SetLabelSize(.05)
+        newHist.GetYaxis().SetTitleSize(.05)
+	newHist.GetXaxis().SetLabelOffset(100)
 
         if (newHist.GetMaximum() > backgroundCombined.GetMaximum()) :
-            newHist.SetMaximum(newHist.GetMaximum()*1.1)
-            backgroundStack.SetMaximum(newHist.GetMaximum()*1.1)
+            newHist.SetMaximum(newHist.GetMaximum()*1.3)
+            backgroundStack.SetMaximum(newHist.GetMaximum()*1.3)
         else :
-            newHist.SetMaximum(backgroundCombined.GetMaximum()*1.1)
-            backgroundStack.SetMaximum(backgroundCombined.GetMaximum()*1.1)
+            newHist.SetMaximum(backgroundCombined.GetMaximum()*1.3)
+            backgroundStack.SetMaximum(backgroundCombined.GetMaximum()*1.3)
         backgroundStack.SetTitle("")
         newHist.SetTitle("")
 	if setLogy:
 	    backgroundStack.SetMinimum(1)
-        backgroundStack.Draw("HIST")
+#        backgroundStack.Draw("nostack")
         if(dataType == "MC"):
-            newHist.Draw(drawoptions+"same")
+            newHist.Draw(drawoptions)
         else:
-            newHist.Draw("esame")
+            newHist.Draw("e")
+        backgroundStack.Draw("HIST same")
+#        if(dataType == "MC"):
+#            newHist.Draw(drawoptions+"same")
+#        else:
+#            newHist.Draw("esame")
+        allMC=backgroundStack.GetStack().Last().Clone()
 
-        #c.SetLogy()
+	herr = allMC.Clone('herr')
+
+        theErrorGraph = ROOT.TGraphErrors(herr)
+        theErrorGraph.SetFillColor(ROOT.kGray+2)
+        theErrorGraph.SetFillStyle(3002)
+        herr.SetFillColor(ROOT.kGray+2)
+        herr.SetFillStyle(3002)
+        herr.SetMarkerColor(1111);
+
+        theErrorGraph.Draw('SAME2')
+
         print "Accessing X Axis Titles"
         print backgroundStack.GetXaxis().GetTitle()
         print newHist.GetXaxis().GetTitle()
         newHistTitle = newHist.GetXaxis().GetTitle()
-        backgroundStack.GetXaxis().SetTitle(newHistTitle)
         sys.stdout.flush()
         global colors
         global backgroundPlotNames
-        legend = c.BuildLegend()
-        legend.Clear()  #clear the legend to build it back again
+	print "colors: ", colors
+	print "backgroundPlotNames: ", backgroundPlotNames
+        leg_y = 0.88 - (2+int(len(backgroundPlotNames)/2))*0.03
+        legend = ROOT.TLegend(0.19,leg_y,0.42,0.88)
+	legend.SetFillStyle(0)
+        legend.SetBorderSize(0)
+        legend.SetTextSize(0.035)
+        legend.SetTextFont(42)
+        legend2 = ROOT.TLegend(0.42,leg_y,0.65,0.88)
+        legend2.SetFillStyle(0)
+        legend2.SetBorderSize(0)
+        legend2.SetTextSize(0.035)
+        legend2.SetTextFont(42)
+        legend3 = ROOT.TLegend(0.65,leg_y,0.88,0.88)
+        legend3.SetFillStyle(0)
+        legend3.SetBorderSize(0)
+        legend3.SetTextSize(0.035)
+        legend3.SetTextFont(42)
         if(dataType == "MC"):
-            legend.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
+            legend3.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
         else:
-            legend.AddEntry(newHist, "2016 Data")
-        for bg in backgrounds:
-            legend.AddEntry(backgroundPlotNames[bg], bg, "F")
+            legend3.AddEntry(newHist, "2016 Data")
+	print "backgrounds: ", backgrounds
 
+	count=1
+        for bg in backgrounds:
+	    print "bg: ", bg
+	    print "backgroundPlotNames[bg]: ", backgroundPlotNames[bg]
+            if count < 3: legend.AddEntry(backgroundPlotNames[bg], bg, "F")
+	    elif count > 2: legend2.AddEntry(backgroundPlotNames[bg], bg, "F")
+	    count = count+1
+
+	legend3.AddEntry(herr,"MC uncert. (stat.)","fl")
+
+	legend.Draw()
+	legend2.Draw()
+	legend3.Draw()
         #Now build the legend
         if setLogy == 1:
 	    print "SETTING LOGy"
 	    c.SetLogy()
+	print "name: ", name
+
+	lumi = 35.9
+        tag1 = ROOT.TLatex(0.72,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+        tag1.SetNDC(); tag1.SetTextFont(42)
+        tag1.SetTextSize(0.045)
+        tag2 = ROOT.TLatex(0.17,0.92,"CMS")
+        tag2.SetNDC()
+        tag2.SetTextFont(62)
+        tag3 = ROOT.TLatex(0.24,0.92,"Preliminary")
+        tag3.SetNDC()
+        tag3.SetTextFont(52)
+        tag2.SetTextSize(0.055)
+        tag3.SetTextSize(0.045)
+        tag1.Draw()
+        tag2.Draw()
+        tag3.Draw()
+
+	unten.cd()
+        ratio = getRatio(newHist,allMC)
+        herr3= TOTerror(allMC,ratio);
+        toterree = ROOT.TGraphErrors(herr3)
+
+        ratio.SetStats(0)
+        ratio.GetYaxis().SetRangeUser(0,5)
+        ratio.GetYaxis().SetNdivisions(504)
+        ratio.GetYaxis().SetTitle("Data/Simulation")
+        ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
+        ratio.GetXaxis().SetTitleSize(0.14)
+        ratio.GetXaxis().SetTitleOffset(1.0)
+        ratio.GetXaxis().SetLabelOffset(0.005)
+        ratio.GetYaxis().SetTitleOffset(0.5)
+        ratio.GetYaxis().SetLabelSize(0.12)
+        ratio.GetYaxis().SetTitleSize(0.11)
+        ratio.GetXaxis().SetLabelSize(0.11)
+
+        line = ROOT.TLine(ratio.GetXaxis().GetXmin(), 1.0,
+                      ratio.GetXaxis().GetXmax(), 1.0)
+        line.SetLineColor(ROOT.kGray)
+        line.SetLineStyle(2)
+        line.Draw()
+        tKsChi = ROOT.TLatex()
+        tKsChi.SetNDC()
+        tKsChi.SetTextFont(42)
+        tKsChi.SetTextSize(0.09)
+
+        ratio.Draw("P E ")
+
+        toterree.SetFillColor(ROOT.kGray+2)
+        toterree.SetLineColor(ROOT.kGray+2)
+        toterree.SetFillStyle(3002)
+        toterree.Draw("2 same")
+        line.Draw("same")
+
+        leg4 = ROOT.TLegend(0.7,0.89,0.5,0.8)
+        leg4.SetFillStyle(0)
+        leg4.SetBorderSize(0)
+        leg4.SetTextSize(0.05)
+        leg4.SetTextFont(42)
+        leg4.AddEntry(toterree,"MC uncert. (stat.)","fl")
+        leg4.Draw()
+
         c.SaveAs(name)
     else:
         print "HISTOGRAM EMPTY!"
@@ -289,7 +437,7 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
 print "STARTING"
 sys.stdout.flush()
 backgroundListDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
-backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
+backgroundsList = backgroundListDir+"backgroundStack/backgroundsList_HTbinned.txt"
 signalsDir = "/data/whybee0b/user/aevans/thesis/signals/"
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
@@ -305,6 +453,7 @@ for line in lines:
     backgrounds.add(line.split(':')[2].strip())
     colors[line.split(':')[0].strip()[:-4]] = int(line.split(':')[3].strip())
     backgroundPlotNames[line.split(':')[2].strip()] = line.split(':')[0].strip()[:-4]
+    print "test: ", line.split(':')[0].strip()[:-4]
 
 print "Background Plot Names"
 print backgroundPlotNames
