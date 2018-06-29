@@ -143,14 +143,14 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
 
     m_selectedMuonEt  =                 m_histoFolder.make<TH1D>("selectedMuonEt"  ,"Selected Muon Et; Et (GeV);"  ,80,0.0,4000 ); 
-    m_selectedElectronEt  =                 m_histoFolder.make<TH1D>("selectedElectronEt"  ,"Selected Electron Et; Et (GeV);"  ,80,0.0,4000 ); 
-    m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Jet Et; Et (GeV);"   ,80,0.0,4000 );  
+    m_selectedElectronEt  =                 m_histoFolder.make<TH1D>("selectedElectronEt"  ,"Selected Electron Et; Et (GeV);"  ,52,0.0,2600 ); 
+    m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Jet Et; Et (GeV);"   ,40,0.0,2000 );  
     m_selectedMuonPhi =                 m_histoFolder.make<TH1D>("selectedMuonPhi" ,"Selected Muon Phi; Phi (rad);" ,80,-4.0,4.0 );  
     m_selectedElectronPhi =                 m_histoFolder.make<TH1D>("selectedElectronPhi" ,"Selected Electron Phi; Phi (rad);" ,80,-4.0,4.0 );  
     m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi; Phi (rad);"  ,80,-4.0,4.0 );   
-    m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta; Phi (rad);" ,60,-3.0,3.0 );   
-    m_selectedElectronEta =                 m_histoFolder.make<TH1D>("selectedElectronEta" ,"Selected Electron Eta; Phi (rad);" ,60,-3.0,3.0 );   
-    m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Phi (rad);"  ,60,-3.0,3.0 ); 
+    m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta; Eta (rad);" ,60,-3.0,3.0 );   
+    m_selectedElectronEta =                 m_histoFolder.make<TH1D>("selectedElectronEta" ,"Selected Electron Eta; Eta (rad);" ,60,-3.0,3.0 );   
+    m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Eta (rad);"  ,60,-3.0,3.0 ); 
 
     m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,   "Sublead Muon Selected Jet dPhi; Phi (rad);"  ,80,  0.0, 4.0);
     m_subleadMuon_selElectronPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelElectrondPhi", "Sublead Muon Selected Electron dPhi; Phi (rad);" ,80,  0.0, 4.0);
