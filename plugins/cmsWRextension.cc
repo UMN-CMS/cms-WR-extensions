@@ -587,6 +587,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
   for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
     if ( iMuon->pt() < 10 || fabs(iMuon->eta()) > 2.4) continue;  //10 GeV is designed to capture slow muons from Z->MUMU
+    if ( ! iMuon->isLooseMuon() ) continue;  //Loose MuonID
     allMuons.push_back(&(*iMuon));
   }
   myEvent.muons10 = allMuons.size();
