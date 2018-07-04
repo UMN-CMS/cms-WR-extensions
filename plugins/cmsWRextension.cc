@@ -20,6 +20,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
 #include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
+#include "ExoAnalysis/cmsWRextensions/interface/HEEP.h"
 
 // system include files
 #include <memory>
@@ -114,6 +115,9 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
     m_genJetsToken      =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"));
     m_AK8genJetsToken   =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"));
   }
+
+  myHEEP.Initialize();
+
 }
 
 
@@ -200,7 +204,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.cutProgress++;
       if(passExtensionRECO(iEvent, myRECOevent)) { 
         myRECOevent.cutProgress++;
-        METcuts(iEvent, myRECOevent);
+//        METcuts(iEvent, myRECOevent);
         if(!pass2016) {
           myRECOevent.cutProgress++;
           addMuons = additionalMuons(iEvent, myRECOevent, false);
@@ -252,6 +256,26 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       myEvent.count = 1;
   }
 
+
+}
+void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double HEEPsf) {
+  if(m_isMC) {
+      edm::Handle<GenEventInfoProduct> eventInfo;
+      iEvent.getByToken(m_genEventInfoToken, eventInfo);
+      if(!m_amcatnlo) {
+        myEvent.weight = eventInfo->weight()*myEvent.puWeight;
+        myEvent.count = 1;
+      }
+      else {
+        myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
+        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      }
+  } else {
+      myEvent.weight = 1;
+      myEvent.count = 1;
+  }
+
+  myEvent.weight = myEvent.weight*HEEPsf;
 
 }
 bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
@@ -390,6 +414,11 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   myRECOevent.selectedJetEt   = electronJetPairs[0].first->et();
   myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi();
   myRECOevent.selectedJetEta  = electronJetPairs[0].first->eta();
+
+  if(m_isMC) {
+    double HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
+    setEventWeight_FSB(iEvent, myRECOevent, HEEP_SF);
+  }
 
   std::cout << "EVENT PASSES FLAVOR SIDEBAND" << std::endl;
   return true;
