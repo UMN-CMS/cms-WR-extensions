@@ -124,7 +124,7 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,
 
 def getStack(plotName, folder, massPoint):
     #backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])+"/"
-    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/PV_LooseMuonID/"
+    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/nVertices/"
     print backgroundsDir+folder+"/"+plotName+".root"
     sys.stdout.flush()
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
@@ -241,12 +241,13 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         newHist.SetTitle("")
 	if setLogy:
 	    backgroundStack.SetMinimum(1)
-#        backgroundStack.Draw("nostack")
+#        backgroundStack.Draw("HIST")
         if(dataType == "MC"):
             newHist.Draw(drawoptions)
         else:
             newHist.Draw("e")
         backgroundStack.Draw("HIST same")
+	newHist.Draw("esame")
 #        if(dataType == "MC"):
 #            newHist.Draw(drawoptions+"same")
 #        else:
@@ -311,7 +312,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         #Now build the legend
         if setLogy == 1:
 	    print "SETTING LOGy"
-	    c.SetLogy()
+	    oben.SetLogy()
 	print "name: ", name
 
 	lumi = 35.9
@@ -437,7 +438,7 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
 print "STARTING"
 sys.stdout.flush()
 backgroundListDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
-backgroundsList = backgroundListDir+"backgroundStack/backgroundsList_HTbinned.txt"
+backgroundsList = backgroundListDir+"backgroundStack/backgroundsList_HTbinned_DiBosons.txt"
 signalsDir = "/data/whybee0b/user/aevans/thesis/signals/"
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
