@@ -135,6 +135,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_muonTrigger =   m_histoFolder.make<TH1D>("muonTrigger", "muon trigger bit; TriggerBit;", 2, -0.5, 1.5);
 
     m_EtPlacementMuon2 =                m_histoFolder.make<TH1D>("EtPlacementMuon2", "Et ranking idx of muon 2;index;",                                 5, -.5, 4.5);
+    m_nVertices =                    m_histoFolder.make<TH1D>("nVertices", ";#  Muons;",                                                       70, -.5, 69.5);
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
     m_nMuonCands =                    m_histoFolder.make<TH1D>("nMuonCands", ";#  Muons;",                                                       10, -.5, 9.5);
@@ -393,6 +394,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedJetEta  ->Fill(event.selectedJetEta  ,event.weight); 
 
   m_EtPlacementMuon2->Fill(event.secondInDecayMuon, event.weight);
+  m_nVertices->Fill(event.nVtx, event.weight);
   //m_nJets->Fill(event.myGenJets.size(), event.weight);
   m_nAK8Jets->Fill(event.ak8jetCands, event.weight);
   m_nMuonCands->Fill(event.muonCands, event.weight);

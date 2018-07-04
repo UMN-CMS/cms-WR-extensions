@@ -186,7 +186,7 @@ class eventHistos {
 
   TH1D* m_selectedJetTransMET;
 
-
+  TH1D* m_nVertices;
 
 };
 

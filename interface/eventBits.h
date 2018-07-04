@@ -77,6 +77,12 @@ public:
 
   int    myEventFlavor  ;
 
+  int	 nVtx		;
+  int	 nPU		;
+  int	 nPUmean	;
+
+  float  puWeight	;
+
   double parton1EtVal;
   double parton2EtVal;
   double muon1EtVal;
@@ -151,10 +157,10 @@ public:
   double leadAK8JetElectronPhiVal;
   double leadAK8JetMuonJetMuonEnergyFraction;
   double leadAK8JetElectronJetMuonEnergyFraction;
-  
+
   double electronTrigger;
   double muonTrigger;
-
+  
   double selectedElectronEt;
   double selectedElectronPhi;
   double selectedElectronEta;
@@ -162,6 +168,7 @@ public:
   double selectedMuonEt;
   double selectedMuonPhi;
   double selectedMuonEta;
+
 
   double selectedJetEt;
   double selectedJetPhi;

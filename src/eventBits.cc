@@ -8,6 +8,9 @@ eventBits::eventBits() {
   event = 0;
   weight = 1.0;
   passesWR2016 = false;
+  nVtx = -1;
+  nPU = -1;
+  nPUmean = -1;
 
   mySubleadMuon = NULL;
   myElectronCand = NULL;
@@ -19,6 +22,8 @@ eventBits::eventBits() {
 
   cutProgress = -1;
   FSBcutProgress = -1;
+
+  puWeight = -10000.0;
 
   secondInDecayMuon = -10000.0;
 
@@ -159,11 +164,16 @@ void eventBits::clear() {
   run = -1;
   lumi = -1;
   event = 0;
+  nVtx = -1;
+  nPU = -1;
+  nPUmean = -1;
 
   count = 0;
   
   cutProgress = 0;
   FSBcutProgress = 0;
+
+  puWeight = 0.0;
 
   parton1EtVal = 0.0;
   parton2EtVal = 0.0;

@@ -21,6 +21,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 #include "ExoAnalysis/cmsWRextensions/interface/HEEP.h"
+#include "ExoAnalysis/cmsWRextensions/interface/eventInfo.h"
 
 // system include files
 #include <memory>
@@ -45,6 +46,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "DataFormats/JetReco/interface/GenJet.h"
 
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
+#include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Utilities/interface/EDGetToken.h"
@@ -80,6 +82,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
   m_offlineVerticesToken (consumes<std::vector<reco::Vertex>> (iConfig.getParameter<edm::InputTag>("vertices"))),
   m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),
+  m_PUInfoToken (consumes< std::vector<PileupSummaryInfo>> (iConfig.getParameter<edm::InputTag>("edmPileupInfo"))),
   m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
   m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false)),
   m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
@@ -157,29 +160,23 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool addMuons = false;
 
   setEventWeight(iEvent, myEvent);
-  setEventWeight(iEvent, myRECOevent);
 
-  // Let's check that we have at least one good vertex!
-  std::cout << "Running vertex selection" << std::endl;
-  std::vector<const reco::Vertex*> PVertices;
-  std::vector<reco::Vertex>::const_iterator firstGoodVertex = vertices->end();
-
-  for (std::vector<reco::Vertex>::const_iterator it=vertices->begin(); it!=firstGoodVertex; ++it) {
-    if (!it->isFake() && it->ndof()>4 && it->position().Rho()<2. && std::abs(it->position().Z())<24.) {
-      if(firstGoodVertex == vertices->end()){
-	firstGoodVertex = it;
-	PVertices.push_back(&(*it));
-      }
-      break;
-    }
-  }
-  // Require a good vertex
-  if(firstGoodVertex == vertices->end()){
-    std::cout<<"NO GOOD VERTEX" << std::endl;
+  if (!myEventInfo.PVselection(vertices)){
     return;
   }
 
-  myRECOevent.PVertex = PVertices.at(0);
+  myRECOevent.nVtx = myEventInfo.nVtx;
+
+  myRECOevent.PVertex = myEventInfo.PVertex;
+
+  if(m_isMC){
+    edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct;
+    iEvent.getByToken(m_PUInfoToken,hPileupInfoProduct);
+    assert(hPileupInfoProduct.isValid());
+    myRECOevent.puWeight = myEventInfo.PUweight(hPileupInfoProduct);
+  }
+
+  setEventWeight(iEvent, myRECOevent);
 
   myRECOevent.cutProgress = 0;
 
@@ -244,11 +241,11 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
       if(!m_amcatnlo) {
-        myEvent.weight = eventInfo->weight();
+        myEvent.weight = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
       }
       else {
-        myEvent.weight = eventInfo->weight()/fabs(eventInfo->weight());
+        myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
       }
   } else {

@@ -28,7 +28,7 @@ process = cms.Process("Analysis")
 
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = 1
+process.MessageLogger.cerr.FwkReport.reportEvery = 1000
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
@@ -43,7 +43,8 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
 	  fileNames = cms.untracked.vstring (options.inputFiles),
@@ -134,6 +135,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoJets = cms.InputTag("slimmedJetsAK8"),
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
+			      edmPileupInfo = cms.InputTag('slimmedAddPileupInfo'),
                               genInfo = cms.InputTag("generator"),
                               met = cms.InputTag("slimmedMETsPuppi"),
                               trigResults = cms.InputTag("TriggerResults","","HLT"),
@@ -144,7 +146,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
 			      electronFiltersToPass = cms.vstring(""),
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
-                              doGen = cms.untracked.bool(False),
+                              doGen = cms.untracked.bool(True),
                               isMC = cms.untracked.bool(True),
                               #MCL = cms.untracked.double(100),
                               #MCU = cms.untracked.double(8000),
