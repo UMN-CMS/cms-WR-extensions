@@ -315,6 +315,10 @@ with open(localInputListFile, 'r') as f:
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if isData:
       config.JobType.pyCfgParams = ['isMC=false']
+    if not isData:
+      isAMCATNLO = 'amcatnlo' in datasetName
+      if isAMCATNLO:
+        config.JobType.pyCfgParams = ['ISmcatnlo=True']
     #Handle the ext1 vs non ext case specially
     if 'ext' in dataset:
       extN = dataset[dataset.find('_ext')+4]
