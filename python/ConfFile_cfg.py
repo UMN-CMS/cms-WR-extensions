@@ -11,12 +11,19 @@ options.register ('gitTag',
 				  VarParsing.varType.string,
 				  "Git Tag")
 
+options.register( 'isMC',
+				  True,
+				  VarParsing.multiplicity.singleton,
+				  VarParsing.varType.bool,
+				  "True if is MC dataset")
 
+options.register( 'ISmcatnlo',
+                                  False,
+                                  VarParsing.multiplicity.singleton,
+                                  VarParsing.varType.bool,
+                                  "True if is MC @ NLO dataset")
 
 options.parseArguments()
-#APPLY DEFAULTS
-
-
 
 #LOCAL VARIABLE DEFINITIONS
 muonID =' userInt("highPtID") == 1'
@@ -43,7 +50,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
@@ -147,7 +154,8 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True),
-                              isMC = cms.untracked.bool(True),
+                              isMC = cms.untracked.bool(options.isMC),
+			      amcatnlo = cms.untracked.bool(options.ISmcatnlo),
                               #MCL = cms.untracked.double(100),
                               #MCU = cms.untracked.double(8000),
                               outputTag = cms.untracked.string(options.gitTag)
