@@ -54,6 +54,7 @@ class eventHistos {
   TH1D* m_nTops        ;
   TH1D* m_nBs          ;
   TH1D* m_nPartons     ;
+  TH1D* m_nAdditionalHEEP;
 
   TH1D* m_eventFlavor       ;
 
@@ -187,6 +188,8 @@ class eventHistos {
   TH1D* m_selectedJetTransMET;
 
   TH1D* m_nVertices;
+
+  TH1D* m_MuonWeight;
 
 };
 

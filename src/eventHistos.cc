@@ -135,13 +135,14 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_muonTrigger =   m_histoFolder.make<TH1D>("muonTrigger", "muon trigger bit; TriggerBit;", 2, -0.5, 1.5);
 
     m_EtPlacementMuon2 =                m_histoFolder.make<TH1D>("EtPlacementMuon2", "Et ranking idx of muon 2;index;",                                 5, -.5, 4.5);
-    m_nVertices =                    m_histoFolder.make<TH1D>("nVertices", ";#  Muons;",                                                       70, -.5, 69.5);
+    m_nVertices =                    m_histoFolder.make<TH1D>("nVertices", ";#  Vertices;",                                                       70, -.5, 69.5);
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
     m_nMuonCands =                    m_histoFolder.make<TH1D>("nMuonCands", ";#  Muons;",                                                       10, -.5, 9.5);
     m_nElectronCands =                    m_histoFolder.make<TH1D>("nElectronCands", ";#  Electrons;",                                                       10, -.5, 9.5);
     m_nMuons10 =                        m_histoFolder.make<TH1D>("nMuons10", ";#  Muons above 10 GeV;",                                                       10, -.5, 9.5);
     m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
+    m_nAdditionalHEEP =                    m_histoFolder.make<TH1D>("nAdditionalHEEP", ";#  Electrons;",                                                       10, -.5, 9.5);
 
     m_selectedMuonEt  =                 m_histoFolder.make<TH1D>("selectedMuonEt"  ,"Selected Muon Et; Et (GeV);"  ,80,0.0,4000 ); 
     m_selectedElectronEt  =                 m_histoFolder.make<TH1D>("selectedElectronEt"  ,"Selected Electron Et; Et (GeV);"  ,52,0.0,2600 ); 
@@ -179,6 +180,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_MET_selElectronPt                =    m_histoFolder.make<TH1D>("METselElectronPt"       ,"MET Selected Electron Pt; Pt (GeV);",      100,0.0 ,2000);
 
     m_selectedJetTransMET          =    m_histoFolder.make<TH1D>("selectedJetTransMET",";MET Transverse to Select Jet (GeV);", 100, 0.0, 500);
+
+    m_MuonWeight                   =    m_histoFolder.make<TH1D>("MuonWeight",";Muon Weight", 40, 0.0, 2.0);
 //
 //
 //  } else if (m_flavor == 2) {
@@ -400,6 +403,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_nMuonCands->Fill(event.muonCands, event.weight);
   m_nElectronCands->Fill(event.electronCands, event.weight);
   m_nMuons10->Fill(event.muons10, event.weight);
+  m_nAdditionalHEEP->Fill(event.nAdditionalHEEP, event.weight);
   m_nAK8Jets40->Fill(event.ak8jets40, event.weight);
   m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, event.weight);
   m_leadAK8JetElectronPhi->Fill(event.leadAK8JetElectronPhiVal, event.weight);
@@ -410,5 +414,7 @@ void eventHistos::fillReco(eventBits& event) {
 
   m_electronTrigger->Fill(event.electronTrigger, event.weight);
   m_muonTrigger->Fill(event.muonTrigger, event.weight);
+
+  m_MuonWeight->Fill(event.Muon_LooseID_Weight, event.weight);
 
 }
