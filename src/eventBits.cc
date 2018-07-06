@@ -142,6 +142,7 @@ eventBits::eventBits() {
   mynTops            = -1;
   mynBs              = -1;
   mynPartons         = -1;
+  nAdditionalHEEP    = -1;
 
   myEventFlavor      = -1;
 
@@ -254,6 +255,7 @@ void eventBits::clear() {
   mynTops            = 0;
   mynBs              = 0;
   mynPartons         = 0;
+  nAdditionalHEEP    = 0;
 
   myEventFlavor      = 0;
 

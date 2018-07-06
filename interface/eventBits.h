@@ -24,6 +24,7 @@ public:
   int lumi;
   int event;
   double weight;
+  double Muon_LooseID_Weight;
 
   std::string outputTag;  //LABELLING THE DATA
 
@@ -74,6 +75,7 @@ public:
   int    mynTops        ;
   int    mynBs          ;
   int    mynPartons     ;
+  int	 nAdditionalHEEP;
 
   int    myEventFlavor  ;
 
