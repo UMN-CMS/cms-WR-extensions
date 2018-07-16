@@ -1,0 +1,145 @@
+# Conditions read from  CMS_CONDITIONS  via FrontierProd 
+DEBUG 2018-04-24 15:47:37,666: 	 Executing command: 'submit'
+DEBUG 2018-04-24 15:47:37,666: 	 Found CRAB cache file /afs/cern.ch/user/a/aevans/.crab3
+DEBUG 2018-04-24 15:47:37,674: 	 Checking credentials
+DEBUG 2018-04-24 15:47:37,674: 	 Found proxy file /afs/cern.ch/work/a/aevans/public/proxyFile
+DEBUG 2018-04-24 15:47:37,674: 	 Getting proxy life time left
+DEBUG 2018-04-24 15:47:38,379: 	 Executing : 
+ command : voms-proxy-info -file /afs/cern.ch/work/a/aevans/public/proxyFile -timeleft
+ output : 691064
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:39,085: 	 Executing : 
+ command : voms-proxy-info -file /afs/cern.ch/work/a/aevans/public/proxyFile -actimeleft
+ output : 691063
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:39,086: 	 Proxy valid for 191:57:44 hours
+INFO 2018-04-24 15:47:39,086: 	 Will use CRAB configuration file ./mass_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.py
+DEBUG 2018-04-24 15:47:39,086: 	 Loading CRAB configuration file.
+DEBUG 2018-04-24 15:47:39,092: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+DEBUG 2018-04-24 15:47:39,212: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:39,213: 	 Checking credentials
+DEBUG 2018-04-24 15:47:39,213: 	 Found proxy file /afs/cern.ch/work/a/aevans/public/proxyFile
+DEBUG 2018-04-24 15:47:39,213: 	 Getting proxy life time left
+DEBUG 2018-04-24 15:47:39,922: 	 Executing : 
+ command : voms-proxy-info -file /afs/cern.ch/work/a/aevans/public/proxyFile -timeleft
+ output : 691063
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:40,528: 	 Executing : 
+ command : voms-proxy-info -file /afs/cern.ch/work/a/aevans/public/proxyFile -actimeleft
+ output : 691062
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:40,528: 	 Proxy valid for 191:57:43 hours
+DEBUG 2018-04-24 15:47:41,132: 	 Executing : 
+ command : env X509_USER_PROXY=/afs/cern.ch/work/a/aevans/public/proxyFile voms-proxy-info -fqan
+ output : /cms/Role=NULL/Capability=NULL
+/cms/uscms/Role=NULL/Capability=NULL
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:41,555: 	 Registering user credentials for server /DC=ch/DC=cern/OU=computers/CN=vocms(045|052|021|031|0118|0118a|0119|0108|0105|0109).cern.ch
+DEBUG 2018-04-24 15:47:41,670: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:41,671: 	 Getting myproxy life time left for myproxy.cern.ch
+DEBUG 2018-04-24 15:47:41,671: 	 Calculating hash of /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans_cmsweb.cern.ch for credential name
+DEBUG 2018-04-24 15:47:42,376: 	 Executing : 
+ command : myproxy-info -l 6e8b596a0ecb88668ea3603b5574bc53bcfde64c -s myproxy.cern.ch
+ output : username: 6e8b596a0ecb88668ea3603b5574bc53bcfde64c
+owner: /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=aevans/CN=759769/CN=Andrew Christopher Evans
+  renewal policy: /DC=ch/DC=cern/OU=computers/CN=vocms(045|052|021|031|0118|0118a|0119|0108|0105|0109).cern.ch
+  trusted retrieval policy: /DC=ch/DC=cern/OU=computers/CN=vocms(045|052|021|031|0118|0118a|0119|0108|0105|0109).cern.ch
+  timeleft: 626:04:16  (26.1 days)
+
+ error: 
+ retcode : 0
+DEBUG 2018-04-24 15:47:42,377: 	 Myproxy is valid: 2253856
+DEBUG 2018-04-24 15:47:42,377: 	 Command use: submit
+DEBUG 2018-04-24 15:47:42,377: 	 Options use: ['--config=./mass_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.py']
+DEBUG 2018-04-24 15:47:42,770: 	 CRABClient version: 3.3.1804.patch1
+DEBUG 2018-04-24 15:47:42,770: 	 Instance is prod
+DEBUG 2018-04-24 15:47:42,770: 	 Server base url is cmsweb.cern.ch
+DEBUG 2018-04-24 15:47:42,770: 	 Command url /crabserver/prod/workflow
+DEBUG 2018-04-24 15:47:42,770: 	 Started submission
+DEBUG 2018-04-24 15:47:42,770: 	 Working on /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+DEBUG 2018-04-24 15:47:43,127: 	 Loading required information from the environment
+DEBUG 2018-04-24 15:47:43,127: 	 Found CMSSW_8_0_25 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25
+DEBUG 2018-04-24 15:47:43,128: 	 Loading required information from the environment
+DEBUG 2018-04-24 15:47:43,128: 	 Found CMSSW_8_0_25 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25
+DEBUG 2018-04-24 15:47:43,141: 	 UNIQUE NAME: tarUUID c3228191-f46d-48b9-870f-f287ea2ada94 
+DEBUG 2018-04-24 15:47:43,142: 	 self.config: from WMCore.Configuration import Configuration
+config = Configuration()
+config.section_('General')
+config.General.transferLogs = True
+config.General.requestName = 'BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'
+config.section_('JobType')
+config.JobType.psetName = './background_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-2400_LNu_M-240_cfg.py'
+config.JobType.pluginName = 'Analysis'
+config.section_('Data')
+config.Data.inputDataset = '/DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'
+config.Data.outputDatasetTag = 'CRAB3_BoostedWRAnalysis'
+config.Data.publication = True
+config.Data.splitting = 'Automatic'
+config.Data.totalUnits = 10000000
+config.section_('Site')
+config.Site.storageSite = 'T2_CH_CERN'
+config.section_('User')
+config.section_('Debug')
+
+DEBUG 2018-04-24 15:47:43,142: 	 self.config.JobType.psetName: ./background_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-2400_LNu_M-240_cfg.py
+INFO 2018-04-24 15:47:43,142: 	 Importing CMSSW configuration ./background_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-2400_LNu_M-240_cfg.py
+INFO 2018-04-24 15:47:44,151: 	 Finished importing CMSSW configuration ./background_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8_WR_M-2400_LNu_M-240_cfg.py
+DEBUG 2018-04-24 15:47:44,151: 	 Writing CMSSW configuration to /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/inputs/PSet.py
+DEBUG 2018-04-24 15:47:44,285: 	 The following EDM output files will be collected: []
+DEBUG 2018-04-24 15:47:44,285: 	 The following TFile output files will be collected: ['WR_MASSWR_ToLNu_MASSNU_Analysis_MuMuJJ.root']
+DEBUG 2018-04-24 15:47:44,285: 	 The following user output files will be collected: []
+DEBUG 2018-04-24 15:47:44,285: 	 Loading required information from the environment
+DEBUG 2018-04-24 15:47:44,285: 	 Found CMSSW_8_0_25 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25
+DEBUG 2018-04-24 15:47:44,285: 	 Making tarball in /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/inputs/c3228191-f46d-48b9-870f-f287ea2ada94default.tgz
+DEBUG 2018-04-24 15:47:44,291: 	 Checking directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/lib
+DEBUG 2018-04-24 15:47:44,291: 	 Adding directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/lib to tarball
+DEBUG 2018-04-24 15:47:47,406: 	 Checking directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/biglib
+DEBUG 2018-04-24 15:47:47,406: 	 Adding directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/biglib to tarball
+DEBUG 2018-04-24 15:47:47,407: 	 Checking directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/module
+DEBUG 2018-04-24 15:47:47,410: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/RecoMET/METFilters/data to tarball
+DEBUG 2018-04-24 15:47:47,411: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/RecoMET/METFilters/interface to tarball
+DEBUG 2018-04-24 15:47:47,433: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/interface to tarball
+DEBUG 2018-04-24 15:47:47,438: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/data to tarball
+DEBUG 2018-04-24 15:47:47,542: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/PhysicsTools/PatAlgos/interface to tarball
+DEBUG 2018-04-24 15:47:47,561: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/PhysicsTools/SelectorUtils/interface to tarball
+DEBUG 2018-04-24 15:47:47,588: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/RecoEgamma/EgammaIsolationAlgos/interface to tarball
+DEBUG 2018-04-24 15:47:47,600: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/RecoEgamma/ElectronIdentification/data to tarball
+DEBUG 2018-04-24 15:47:47,603: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/RecoEgamma/ElectronIdentification/interface to tarball
+DEBUG 2018-04-24 15:47:47,615: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/CommonTools/PileupAlgos/interface to tarball
+DEBUG 2018-04-24 15:47:47,619: 	 Adding data directory /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/L1Trigger/L1TNtuples/interface to tarball
+DEBUG 2018-04-24 15:47:47,825: 	 Uploading archive /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/inputs/c3228191-f46d-48b9-870f-f287ea2ada94default.tgz (4.101562.1 MB) to the CRAB cache. Using URI https://cmsweb.cern.ch/crabcache
+DEBUG 2018-04-24 15:47:49,505: 	 Loading required information from the environment
+DEBUG 2018-04-24 15:47:49,505: 	 Found CMSSW_8_0_25 for slc6_amd64_gcc530 with base /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25
+DEBUG 2018-04-24 15:47:49,505: 	 Making tarball in /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/inputs/debugFiles.tgz
+DEBUG 2018-04-24 15:47:49,511: 	 Uploading archive /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/inputs/debugFiles.tgz (1 KB) to the CRAB cache. Using URI https://cmsweb.cern.ch/crabcache
+DEBUG 2018-04-24 15:47:49,895: 	 Result uploading input files: b8d29a3ce7342038ec8ed20dd183eb17380d847b8a6fbb3ce06915520bbe0edc.tar.gz 
+WARNING 2018-04-24 15:47:49,896: 	 Warning: The following output files will not be published, as they are not EDM files: ['WR_MASSWR_ToLNu_MASSNU_Analysis_MuMuJJ.root']
+INFO 2018-04-24 15:47:49,896: 	 Sending the request to the server
+DEBUG 2018-04-24 15:47:49,896: 	 Submitting {'maxjobruntime': 1250, 'extrajdl': [], 'ignorelocality': 0, 'savelogsflag': 1, 'useparent': 0, 'asyncdest': 'T2_CH_CERN', 'algoargs': 480, 'cachefilename': 'b8d29a3ce7342038ec8ed20dd183eb17380d847b8a6fbb3ce06915520bbe0edc.tar.gz', 'numcores': 1, 'addoutputfiles': [], 'generator': 'pythia', 'maxmemory': 2000, 'publishdbsurl': 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter', 'priority': 10, 'jobsw': 'CMSSW_8_0_25', 'edmoutfiles': [], 'userfiles': [], 'primarydataset': '', 'inputdata': '/DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM', 'dryrun': 0, 'workflow': 'crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8', 'cacheurl': u'https://cmsweb.cern.ch/crabcache', 'nonprodsw': 0, 'tfileoutfiles': ['WR_MASSWR_ToLNu_MASSNU_Analysis_MuMuJJ.root'], 'oneEventMode': 0, 'debugfilename': '557f243f6574a70e128efc93c534987d1bda82d7fd7bfbb91a6ec46a5c6a01bc.tar.gz', 'saveoutput': 1, 'publication': 1, 'jobarch': 'slc6_amd64_gcc530', 'totalunits': 10000000, 'splitalgo': 'Automatic', 'ignoreglobalblacklist': 0, 'nonvaliddata': 0, 'dbsurl': 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader', 'publishgroupname': 0, 'jobtype': 'Analysis', 'publishname2': 'CRAB3_BoostedWRAnalysis'} 
+DEBUG 2018-04-24 15:47:49,896: 	 Encoded submit request: maxjobruntime=1250&ignorelocality=0&savelogsflag=1&useparent=0&asyncdest=T2_CH_CERN&algoargs=480&cachefilename=b8d29a3ce7342038ec8ed20dd183eb17380d847b8a6fbb3ce06915520bbe0edc.tar.gz&numcores=1&generator=pythia&maxmemory=2000&publishdbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fphys03%2FDBSWriter&priority=10&jobsw=CMSSW_8_0_25&primarydataset=&inputdata=%2FDYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8%2FRunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1%2FMINIAODSIM&dryrun=0&workflow=crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8&cacheurl=https%3A%2F%2Fcmsweb.cern.ch%2Fcrabcache&nonprodsw=0&oneEventMode=0&debugfilename=557f243f6574a70e128efc93c534987d1bda82d7fd7bfbb91a6ec46a5c6a01bc.tar.gz&saveoutput=1&publication=1&jobarch=slc6_amd64_gcc530&totalunits=10000000&splitalgo=Automatic&ignoreglobalblacklist=0&nonvaliddata=0&dbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fglobal%2FDBSReader&publishgroupname=0&jobtype=Analysis&publishname2=CRAB3_BoostedWRAnalysis&tfileoutfiles=WR_MASSWR_ToLNu_MASSNU_Analysis_MuMuJJ.root
+DEBUG 2018-04-24 15:47:50,596: 	 Result: {u'result': [{u'RequestName': u'180424_134750:aevans_crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8'}]}
+INFO 2018-04-24 15:47:50,602: 	 Success: Your task has been delivered to the CRAB3 server.
+INFO 2018-04-24 15:47:50,602: 	 Task name: 180424_134750:aevans_crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8
+INFO 2018-04-24 15:47:50,602: 	 Please use 'crab status' to check how the submission process proceeds.
+DEBUG 2018-04-24 15:47:50,602: 	 About to return
+INFO 2018-04-24 15:47:50,607: 	 Log file is /afs/cern.ch/user/a/aevans/public/wr/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/crab_BoostedWRAnalysis_DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/crab.log
