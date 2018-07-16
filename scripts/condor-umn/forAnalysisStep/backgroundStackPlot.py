@@ -139,7 +139,17 @@ for line in lines:
     if lineNum < 2 : 
         lineNum+=1
         continue
-    xsecs[line.split()[0].strip().split("/")[1]] = float(line.split()[3].strip().split("+")[0])
+    xsec = 0.0
+    xsecLine = line.split()[3].strip().split("+")[0]
+    if "*" in xsecLine:
+        xsec = float(xsecLine.split("*")[0])*float(xsecLine.split("*")[1])
+    else:
+        xsec = float(xsecLine)
+    if xsec == 0.0:
+        print "ERROR MALFORMED XSEC: "
+        print xsecLine
+        exit(1)
+    xsecs[line.split()[0].strip().split("/")[1]] = xsec
     colors[line.split()[0].strip().split("/")[1]] = int(line.split()[5].strip())
     #print line.split(':')[2].strip()
 
