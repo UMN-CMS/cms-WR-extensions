@@ -51,7 +51,7 @@ double Muons::MuonLooseIDweight(double MuonPt, double MuonEta) {
   if(std::abs(MuonEta) > 2.3){
     muEtaForId = 2.3;
   }else{
-    muEtaForId = MuonEta;
+    muEtaForId = std::abs(MuonEta);
   }
 
   muidweight = Muon_LooseID_eff->GetBinContent(Muon_LooseID_eff->FindBin(muPtForId, muEtaForId));
