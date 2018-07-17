@@ -373,7 +373,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         toterree.SetFillColor(ROOT.kGray+2)
         toterree.SetLineColor(ROOT.kGray+2)
         toterree.SetFillStyle(3002)
-        toterree.Draw("2 same")
+#        toterree.Draw("2 same")
         line.Draw("same")
 
         leg4 = ROOT.TLegend(0.7,0.89,0.5,0.8)
