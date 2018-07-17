@@ -124,7 +124,7 @@ def saveHists(file,directory="",prefix="",filter="",bg="simple",massPoint=[1000,
 
 def getStack(plotName, folder, massPoint):
     #backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])+"/"
-    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/nVertices/"
+    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/PuppiJets_FixMuonWeight/"
     print backgroundsDir+folder+"/"+plotName+".root"
     sys.stdout.flush()
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
@@ -240,7 +240,14 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         backgroundStack.SetTitle("")
         newHist.SetTitle("")
 	if setLogy:
-	    backgroundStack.SetMinimum(1)
+	    newHist.SetMinimum(1)
+	    if (newHist.GetMaximum() > backgroundCombined.GetMaximum()) :
+	      newHist.SetMaximum(newHist.GetMaximum()*4)
+              backgroundStack.SetMaximum(newHist.GetMaximum()*4)
+            else :
+              newHist.SetMaximum(backgroundCombined.GetMaximum()*4)
+              backgroundStack.SetMaximum(backgroundCombined.GetMaximum()*4)
+
 #        backgroundStack.Draw("HIST")
         if(dataType == "MC"):
             newHist.Draw(drawoptions)
@@ -248,6 +255,8 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
             newHist.Draw("e")
         backgroundStack.Draw("HIST same")
 	newHist.Draw("esame")
+	print "Data Integral: ", newHist.Integral()
+	print "MC Integral: ", backgroundStack.GetStack().Last().Integral()
 #        if(dataType == "MC"):
 #            newHist.Draw(drawoptions+"same")
 #        else:
@@ -438,7 +447,8 @@ def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500,
 print "STARTING"
 sys.stdout.flush()
 backgroundListDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/samples/backgrounds/"
-backgroundsList = backgroundListDir+"backgroundStack/backgroundsList_HTbinned_DiBosons.txt"
+backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
+#backgroundsList = backgroundListDir+"backgroundStack/backgroundsList_HTbinned_DiBosons.txt"
 signalsDir = "/data/whybee0b/user/aevans/thesis/signals/"
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
