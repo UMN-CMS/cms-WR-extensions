@@ -36,6 +36,9 @@ scram b -j 4
 
 git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_80X_V3
 scram b -j 18
+
+git clone https://github.com/Michael-Krohn/BaconAna.git
+scram b -j8
 ```
 
 Example incantations to drive the crab3 interface python (in progress):
