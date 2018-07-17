@@ -11,5 +11,6 @@
 <use name="DataFormats/PatCandidates"/>
 <use name="DataFormats/Math"/>
 <use name="SimDataFormats/GeneratorProducts"/>
+<use name="BaconAna/DataFormats"/>
 <use name="ExoAnalysis/cmsWRextensions"/>
 <flags EDM_PLUGIN="1"/>
