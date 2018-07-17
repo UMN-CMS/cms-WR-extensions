@@ -11,6 +11,7 @@
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
+#include "BaconAna/DataFormats/interface/TAddJet.hh"
 
 #include "TLorentzVector.h"
 
@@ -39,14 +40,16 @@ public:
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
-  std::vector<std::pair<const pat::Jet*, const pat::Electron*>> myElectronJetPairs;
-  std::vector<std::pair<const pat::Jet*, const pat::Muon*>>     myMuonJetPairs;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs;
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
   std::vector<const pat::Electron*> myElectronCandsHighPt;
   std::vector<const pat::Muon*>     myMuonCandsHighPt;
   std::vector<const pat::Muon*>     myMuonCands;
   const pat::MET*                   myMET;
+
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt;
 
   const pat::Electron*              myElectronCand;
   const pat::Muon*                  myMuonCand;
@@ -84,6 +87,7 @@ public:
   int	 nPUmean	;
 
   float  puWeight	;
+  double HEEP_SF	;
 
   double parton1EtVal;
   double parton2EtVal;
@@ -175,6 +179,8 @@ public:
   double selectedJetEt;
   double selectedJetPhi;
   double selectedJetEta;
+  double selectedJetMass;
+  double selectedJetTau21;
 
   double subleadMuonEt;
   double subleadMuonEta;

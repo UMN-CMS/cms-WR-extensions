@@ -151,6 +151,8 @@ class eventHistos {
   TH1D* m_selectedJetEt;
   TH1D* m_selectedJetPhi;
   TH1D* m_selectedJetEta;
+  TH1D* m_selectedJetMass;
+  TH1D* m_selectedJetTau21;
 
   TH1D* m_subleadMuonEt;
   TH1D* m_subleadMuonEta;
@@ -190,6 +192,8 @@ class eventHistos {
   TH1D* m_nVertices;
 
   TH1D* m_MuonWeight;
+  TH1D* m_PUWeight;
+  TH1D* m_HEEP_SF;
 
 };
 

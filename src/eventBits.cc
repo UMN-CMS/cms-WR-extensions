@@ -24,6 +24,7 @@ eventBits::eventBits() {
   FSBcutProgress = -1;
 
   puWeight = -10000.0;
+  HEEP_SF  = -10000.0;
 
   secondInDecayMuon = -10000.0;
 
@@ -118,6 +119,8 @@ eventBits::eventBits() {
   selectedJetEt = -10000.0;
   selectedJetPhi = -10000.0;
   selectedJetEta = -10000.0;
+  selectedJetMass= -10000.0;
+  selectedJetTau21= -10000.0;
 
   subleadMuonEt = -10000.0;
   subleadMuonEta = -10000.0;
@@ -175,6 +178,7 @@ void eventBits::clear() {
   FSBcutProgress = 0;
 
   puWeight = 0.0;
+  HEEP_SF  = 0.0;
 
   parton1EtVal = 0.0;
   parton2EtVal = 0.0;

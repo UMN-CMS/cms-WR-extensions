@@ -24,12 +24,29 @@ namespace wrTools {
     if ( cand1->et() > cand2->et() ) return true;
     return false;
   }
+  bool compareEtCandidatePointerTAddJet(const baconhep::TAddJet* cand1, const baconhep::TAddJet* cand2) {
+    if ( cand1->pT > cand2->pT ) return true;
+    return false;
+  }
   bool compareEtLorentzVectorPointer(const math::XYZTLorentzVector* lv1, const math::XYZTLorentzVector* lv2) {
     if ( lv1->Et() > lv2->Et() ) return true;
     return false;
   }
   bool comparePairMassPointer(std::pair< const reco::Candidate*, const reco::Candidate* > pair1, std::pair< const reco::Candidate*, const reco::Candidate* > pair2) {
     if ( (pair1.first->p4() + pair1.second->p4()).mass() > (pair2.first->p4() + pair2.second->p4()).mass() )  return true;
+    return false;
+  }
+  bool comparePairMassPointerTAddJet(std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair1, std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair2) {
+    TLorentzVector *JetVector1_temp = new TLorentzVector();
+    JetVector1_temp->SetPtEtaPhiM(pair1.first->pT,pair1.first->eta,pair1.first->phi,pair1.first->SDmass);
+    TLorentzVector *JetVector2_temp = new TLorentzVector();
+    JetVector2_temp->SetPtEtaPhiM(pair2.first->pT,pair2.first->eta,pair2.first->phi,pair2.first->SDmass);
+
+    math::XYZTLorentzVector JetVector1;
+    JetVector1.SetXYZT(JetVector1_temp->X(),JetVector1_temp->Y(),JetVector1_temp->Z(),JetVector1_temp->T());
+    math::XYZTLorentzVector JetVector2;
+    JetVector2.SetXYZT(JetVector2_temp->X(),JetVector2_temp->Y(),JetVector2_temp->Z(),JetVector2_temp->T());
+    if ( (pair1.second->p4() + (JetVector1)).mass() > (pair2.second->p4() + (JetVector2)).mass() )  return true;
     return false;
   }
   bool compareLvPairMassPointer(std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair1, std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair2) {

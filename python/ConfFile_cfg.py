@@ -43,10 +43,10 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 #setup global tag
-from Configuration.AlCa.GlobalTag import GlobalTag
+from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 from Configuration.AlCa.autoCond import autoCond
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '') #WORKS FOR TESTING BUT NOT TRUSTWORTHY
-process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v4', '') #
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v8') #
 
 
 
@@ -117,6 +117,11 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
 from HEEP.VID.tools import addHEEPV70ElesMiniAOD
 addHEEPV70ElesMiniAOD(process,useStdName=True)
 
+
+from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
+jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, addSoftDrop=True , addNsub=True)  
+
+process.options.allowUnscheduled = cms.untracked.bool(True)
 ##this is our example analysis module reading the results, you will have your own module
 #process.heepIdExample = cms.EDAnalyzer("HEEPV70PATExample",
 #                                       eles=cms.InputTag("slimmedElectrons"),
@@ -140,7 +145,11 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               highElectrons = cms.InputTag("slimmedElectrons"),
                               regMuons = cms.InputTag("removeBadAndCloneGlobalMuons"),
                               recoJets = cms.InputTag("slimmedJets"),
-                              AK8recoJets = cms.InputTag("slimmedJetsAK8"),
+                              AK8recoCHSJets = cms.InputTag("slimmedJetsAK8"),
+                              AK8recoPUPPIJets = cms.InputTag("selectedPatJetsAK8PFPuppi"),
+#			      AK8recoPUPPIJets = cms.InputTag("AK8PFJetsPuppi"),
+          		      jettinessPUPPI  = cms.untracked.string("NjettinessAK8Puppi"),
+
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
 			      edmPileupInfo = cms.InputTag('slimmedAddPileupInfo'),
                               genInfo = cms.InputTag("generator"),

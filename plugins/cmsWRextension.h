@@ -71,6 +71,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 //ROOT includes
 #include "TH1D.h"
 #include "TTree.h"
+#include "TF1.h"
 //local includes
 #include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
 #include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
@@ -128,6 +129,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double HEEPsf, double MuonLooseIDWeight);
+      double PUPPIweight(double puppipt, double puppieta);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
@@ -152,7 +154,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_highElectronToken;
       edm::EDGetToken m_regMuonToken;
       edm::EDGetToken m_recoJetsToken;
-      edm::EDGetToken m_AK8recoJetsToken;
+      edm::EDGetToken m_AK8recoCHSJetsToken;
+      edm::EDGetToken m_AK8recoPUPPIJetsToken;
       edm::EDGetToken m_offlineVerticesToken;
       edm::EDGetToken m_genEventInfoToken;
       edm::EDGetToken m_metToken;
@@ -173,6 +176,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       double m_subleadPTleptonCut = 10;
       double m_leptonEtaCut = 2.4;
       double m_muonIsoCut = .05;
+
+      std::string m_jettiness;
 
       std::vector<std::string> m_muonPathsToPass;
       std::vector<std::string> m_muonFiltersToPass;
