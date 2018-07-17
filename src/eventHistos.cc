@@ -26,6 +26,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
   m_flavor = flavor;
   m_histoFolder = histoFolder;
 
+
   std::cout<<"TAGGING EVENTS WITH: "  <<tag<<std::endl;
   m_metaData = m_histoFolder.make<TH1D>("metadata", "events metadata", 10, 0.0, 10);
   m_metaData->GetXaxis()->SetBinLabel(1, tag.c_str());

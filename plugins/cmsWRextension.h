@@ -134,12 +134,14 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingExtension;
       eventHistos m_eventsPassingExtensionRECO;
       eventHistos m_eventsPassingExtensionRECO2016VETO;
+      eventHistos m_eventsPassingExtensionRECO2016VETO_noTrig;
       eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
       eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
       eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
       eventHistos m_eventsPassingWR2016RECO;
       eventHistos m_eventsPassingFlavorSidebandRECO;
+      eventHistos m_eventsPassingFlavorSidebandRECO_noTrig;
       HEEP myHEEP;
       eventInfo myEventInfo;
       Muons myMuons;

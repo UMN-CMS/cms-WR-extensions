@@ -203,19 +203,24 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if(passExtensionRECO(iEvent, myRECOevent)) { 
         myRECOevent.cutProgress++;
 //        METcuts(iEvent, myRECOevent);
+        bool muonTrigPass = true;
+        if (m_doTrig){
+          muonTrigPass = passMuonTrig(iEvent, myRECOevent);
+        }
         if(!pass2016) {
           myRECOevent.cutProgress++;
           addMuons = additionalMuons(iEvent, myRECOevent, false);
           ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
-          if(!addMuons) {
+          if(!addMuons && muonTrigPass) {
             m_eventsPassingExtensionRECO2016VETOSINGLEMUON.fill(myRECOevent);
           }
-          if(ZMASS) {
+          if(ZMASS && muonTrigPass) {
             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);          
           } else if ((m_isMC || m_flavorSideband) && addMuons){
             myRECOevent.cutProgress++;
             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
-            m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
+            if(muonTrigPass && m_doTrig) m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
+            m_eventsPassingExtensionRECO2016VETO_noTrig.fill(myRECOevent);
             //if(massCut(iEvent, myRECOevent)) {
             //  m_eventsPassingExtensionRECO2016VETOMASSCUT.fill(myRECOevent);
             //  myRECOevent.cutProgress++;
@@ -232,8 +237,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     std::cout << "CHECKING THE FLAVOR SIDEBAND" << std::endl;
     myRECOevent.FSBcutProgress = 0;
     myRECOevent.FSBcutProgress++;
-    if(passFlavorSideband(iEvent, myRECOevent)) m_eventsPassingFlavorSidebandRECO.fill(myRECOevent);
-    //if(passWR2016Reco(iEvent,myRECOevent)) m_eventsPassingWR2016RECO.fill(myRECOevent);
+
+    if(passFlavorSideband(iEvent, myRECOevent)) {
+      if (m_doTrig){
+        if (passElectronTrig(iEvent, myRECOevent)){
+          std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
+          m_eventsPassingFlavorSidebandRECO.fill(myRECOevent);
+        }
+      }
+      m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent);
+    }
   }
   m_allEvents.fill(myRECOevent);
 }
@@ -361,13 +374,6 @@ bool cmsWRextension::passMuonTrig(const edm::Event& iEvent, eventBits& myRECOeve
 bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myRECOevent) {
 
   std::cout<< "BEGINNING SELECTION ON FLAVOR SIDEBAND" << std::endl;
-  if (m_doTrig){
-    if (!passElectronTrig(iEvent, myRECOevent)){
-      std::cout<< "EVENTS FAILS ELECTRON TRIGGERS" << std::endl;
-      return false;
-    }
-  }
-  myRECOevent.FSBcutProgress++;
   if( myRECOevent.myJetCandsHighPt.size() < 1) {
     std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myJetCands.size()<<" JETS FOUND." << std::endl;
     return false;
@@ -430,12 +436,6 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
   electronSelection(iEvent, myRECOevent);
   jetSelection(iEvent, myRECOevent); 
 
-  if (m_doTrig){
-    if (!passMuonTrig(iEvent, myRECOevent)){
-      std::cout<< "EVENTS FAILS MUON TRIGGERS" << std::endl;
-      return false;
-    }
-  }
 
   if( myRECOevent.myJetCandsHighPt.size() < 1) {
     std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myJetCands.size()<<" JETS FOUND." << std::endl;
@@ -1329,11 +1329,13 @@ cmsWRextension::beginJob()
     m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3, m_outputTag);
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 3, m_outputTag);
     m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 3, m_outputTag);
+    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 3, m_outputTag);
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3, m_outputTag);
     m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 3, m_outputTag);
+    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 3, m_outputTag);
   }
   if (m_doGen && !m_doReco) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
@@ -1350,11 +1352,13 @@ cmsWRextension::beginJob()
     m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 2, m_outputTag);
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 2, m_outputTag);
     m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 2, m_outputTag);
+    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 2, m_outputTag);
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag);
     m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 2, m_outputTag);
+    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 2, m_outputTag);
 
   }
 }
