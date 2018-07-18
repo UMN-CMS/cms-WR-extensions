@@ -203,10 +203,10 @@ for plot,stack in stackList.items():
             pos+=2
         else:
             pos+=1
-ROOT.gStyle.SetPalette(55)
+    ROOT.gStyle.SetPalette(55)
 #stackHist.Draw()
-print "THIS MANY HISTS"
-print stackHist.GetNhists()
+    print "THIS MANY HISTS"
+    print stackHist.GetNhists()
 #c.BuildLegend()
 #c.SaveAs(plot)
-stackHist.SaveAs(plot)
+    stackHist.SaveAs(plot)
