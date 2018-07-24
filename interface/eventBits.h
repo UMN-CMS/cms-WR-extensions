@@ -177,7 +177,7 @@ public:
   double selectedMuonEta;
 
 
-  double selectedJetEt;
+  double selectedJetPt;
   double selectedJetPhi;
   double selectedJetEta;
   double selectedJetMass;

@@ -146,7 +146,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
     m_selectedMuonEt  =                 m_histoFolder.make<TH1D>("selectedMuonEt"  ,"Selected Muon Et; High-p_{T} Muon Et (GeV);"  ,80,0.0,4000 ); 
     m_selectedElectronEt  =                 m_histoFolder.make<TH1D>("selectedElectronEt"  ,"Selected Electron Et; Electron Et (GeV);"  ,52,0.0,2000 ); 
-    m_selectedJetEt   =                 m_histoFolder.make<TH1D>("selectedJetEt"   ,"Selected Jet Et; Jet Et (GeV);"   ,40,0.0,2000 );  
+    m_selectedJetPt   =                 m_histoFolder.make<TH1D>("selectedJetPt"   ,"Selected Jet Pt; Jet p_{T} (GeV);"   ,40,0.0,2000 );  
     m_selectedMuonPhi =                 m_histoFolder.make<TH1D>("selectedMuonPhi" ,"Selected Muon Phi; High-p_{T} Muon Phi (rad);" ,80,-4.0,4.0 );  
     m_selectedElectronPhi =                 m_histoFolder.make<TH1D>("selectedElectronPhi" ,"Selected Electron Phi; Electron Phi (rad);" ,80,-4.0,4.0 );  
     m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi; Jet Phi (rad);"  ,80,-4.0,4.0 );   
@@ -393,7 +393,7 @@ void eventHistos::fillReco(eventBits& event) {
 
   m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,event.weight); 
   m_selectedElectronEt  ->Fill(event.selectedElectronEt  ,event.weight); 
-  m_selectedJetEt   ->Fill(event.selectedJetEt   ,event.weight);  
+  m_selectedJetPt   ->Fill(event.selectedJetPt   ,event.weight);  
   m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,event.weight);  
   m_selectedElectronPhi ->Fill(event.selectedElectronPhi ,event.weight);  
   m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,event.weight);   

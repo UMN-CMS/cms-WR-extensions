@@ -148,7 +148,7 @@ class eventHistos {
   TH1D* m_selectedElectronPhi;
   TH1D* m_selectedElectronEta;
 
-  TH1D* m_selectedJetEt;
+  TH1D* m_selectedJetPt;
   TH1D* m_selectedJetPhi;
   TH1D* m_selectedJetEta;
   TH1D* m_selectedJetMass;

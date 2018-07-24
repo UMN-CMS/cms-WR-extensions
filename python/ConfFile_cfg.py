@@ -50,7 +50,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
@@ -119,7 +119,7 @@ addHEEPV70ElesMiniAOD(process,useStdName=True)
 
 
 from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
-jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, addSoftDrop=True , addNsub=True)  
+jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addNsub=True)  
 
 process.options.allowUnscheduled = cms.untracked.bool(True)
 ##this is our example analysis module reading the results, you will have your own module
@@ -162,7 +162,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
 			      electronFiltersToPass = cms.vstring(""),
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
-                              doGen = cms.untracked.bool(True),
+                              doGen = cms.untracked.bool(False),
                               isMC = cms.untracked.bool(options.isMC),
 			      amcatnlo = cms.untracked.bool(options.ISmcatnlo),
                               #MCL = cms.untracked.double(100),

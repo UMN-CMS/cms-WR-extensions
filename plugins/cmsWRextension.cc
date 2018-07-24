@@ -175,7 +175,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool ZMASS = false;
   bool addMuons = false;
 
-  setEventWeight(iEvent, myEvent);
+  setEventWeight(iEvent, myEvent, 1., 1.);
 
   if (!myEventInfo.PVselection(vertices)){
     return;
@@ -192,7 +192,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.puWeight = myEventInfo.PUweight(hPileupInfoProduct);
   }
 
-  setEventWeight(iEvent, myRECOevent);
+  setEventWeight(iEvent, myRECOevent, 1., 1.);
 
   myRECOevent.cutProgress = 0;
 
@@ -222,14 +222,19 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         if (m_doTrig){
           muonTrigPass = passMuonTrig(iEvent, myRECOevent);
         }
-        if(!pass2016) {
+//        if(!pass2016) {
           myRECOevent.cutProgress++;
           addMuons = additionalMuons(iEvent, myRECOevent, false);
           ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
           if(!addMuons && muonTrigPass) {
             m_eventsPassingExtensionRECO2016VETOSINGLEMUON.fill(myRECOevent);
           }
-          if(ZMASS && muonTrigPass) {
+          if(m_isMC && addMuons) {
+            double Muon_LooseID_Weight = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+            double Muon_HighPtID_Weight = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
+            setEventWeight(iEvent, myRECOevent, Muon_LooseID_Weight, Muon_HighPtID_Weight);
+          }
+          if(addMuons && ZMASS && muonTrigPass) {
             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);          
           } else if ((m_isMC || m_flavorSideband) && addMuons){
             myRECOevent.cutProgress++;
@@ -243,7 +248,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             //    m_eventsPassingExtensionRECO2016VETOMASSMETCUT.fill(myRECOevent);
             //}
           }
-        }
+//        }
         if (m_isMC || m_flavorSideband) m_eventsPassingExtensionRECO.fill(myRECOevent);
         //std::cout <<"rECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
         std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
@@ -265,7 +270,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   m_allEvents.fill(myRECOevent);
 }
-void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent) {
+void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight, double MuonHighPtIDWeight) {
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
@@ -282,6 +287,7 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       myEvent.count = 1;
   }
 
+  myEvent.weight = myEvent.weight*MuonHighPtIDWeight*MuonLooseIDWeight;
 
 }
 void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight) {
@@ -431,7 +437,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   myRECOevent.selectedElectronEt  = electronJetPairs[0].second->et();
   myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
   myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
-  myRECOevent.selectedJetEt   = electronJetPairs[0].first->pT;
+  myRECOevent.selectedJetPt   = electronJetPairs[0].first->pT;
   myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi;
   myRECOevent.selectedJetEta  = electronJetPairs[0].first->eta;
   myRECOevent.selectedJetMass = electronJetPairs[0].first->SDmass;
@@ -1211,7 +1217,7 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.selectedMuonEt  = myRECOevent.myMuonJetPairs[0].second->et();
   myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs[0].second->phi();
   myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs[0].second->eta();
-  myRECOevent.selectedJetEt   = JetVector.Et();
+  myRECOevent.selectedJetPt   = myRECOevent.myMuonJetPairs[0].first->pT;
   myRECOevent.selectedJetPhi  = myRECOevent.myMuonJetPairs[0].first->phi;
   myRECOevent.selectedJetEta  = myRECOevent.myMuonJetPairs[0].first->eta;
   myRECOevent.selectedJetMass = myRECOevent.myMuonJetPairs[0].first->SDmass;

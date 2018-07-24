@@ -116,7 +116,7 @@ eventBits::eventBits() {
   selectedElectronPhi = -10000.0;
   selectedElectronEta = -10000.0;
 
-  selectedJetEt = -10000.0;
+  selectedJetPt = -10000.0;
   selectedJetPhi = -10000.0;
   selectedJetEta = -10000.0;
   selectedJetMass= -10000.0;
