@@ -21,6 +21,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 #include "ExoAnalysis/cmsWRextensions/interface/HEEP.h"
+#include "ExoAnalysis/cmsWRextensions/interface/egammaEffi.h"
 #include "ExoAnalysis/cmsWRextensions/interface/eventInfo.h"
 #include "ExoAnalysis/cmsWRextensions/interface/Muons.h"
 #include "BaconAna/DataFormats/interface/BaconAnaDefs.hh"
@@ -136,6 +137,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   }
 
   myHEEP.Initialize();
+  myEgammaEffi.Initialize();
 
 }
 
@@ -282,7 +284,7 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
 
 
 }
-void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double HEEPsf, double MuonLooseIDWeight) {
+void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight) {
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
@@ -299,7 +301,7 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
       myEvent.count = 1;
   }
 
-  myEvent.weight = myEvent.weight*HEEPsf*MuonLooseIDWeight;
+  myEvent.weight = myEvent.weight*myEvent.HEEP_SF*myEvent.egamma_SF*MuonLooseIDWeight;
 
 }
 bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
@@ -444,8 +446,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     double Muon_LooseID_Weight = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
     myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weight;
     double HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
+    double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronEt);
     myRECOevent.HEEP_SF = HEEP_SF;
-    setEventWeight_FSB(iEvent, myRECOevent, HEEP_SF, Muon_LooseID_Weight);
+    myRECOevent.egamma_SF = egamma_SF;
+    setEventWeight_FSB(iEvent, myRECOevent, Muon_LooseID_Weight);
   }
 
   std::cout << "EVENT PASSES FLAVOR SIDEBAND" << std::endl;

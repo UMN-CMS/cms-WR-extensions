@@ -88,6 +88,7 @@ public:
 
   float  puWeight	;
   double HEEP_SF	;
+  double egamma_SF	;
 
   double parton1EtVal;
   double parton2EtVal;

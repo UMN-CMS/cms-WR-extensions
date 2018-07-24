@@ -76,6 +76,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/eventBits.h"
 #include "ExoAnalysis/cmsWRextensions/interface/eventHistos.h"
 #include "ExoAnalysis/cmsWRextensions/interface/HEEP.h"
+#include "ExoAnalysis/cmsWRextensions/interface/egammaEffi.h"
 #include "ExoAnalysis/cmsWRextensions/interface/eventInfo.h"
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 #include "ExoAnalysis/cmsWRextensions/interface/Muons.h"
@@ -128,7 +129,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
-      void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double HEEPsf, double MuonLooseIDWeight);
+      void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight);
       double PUPPIweight(double puppipt, double puppieta);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
@@ -145,6 +146,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingFlavorSidebandRECO;
       eventHistos m_eventsPassingFlavorSidebandRECO_noTrig;
       HEEP myHEEP;
+      egammaEffi myEgammaEffi;
       eventInfo myEventInfo;
       Muons myMuons;
       edm::EDGetToken m_genParticleToken;
