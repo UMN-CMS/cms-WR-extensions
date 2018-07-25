@@ -841,15 +841,15 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, eventBits& myEvent) 
     //APPLYING ETA AND PT CUT
     if ( iJet->pt() < 40 ) continue;
     if ( fabs(iJet->eta()) > 2.4) continue;
-    //APPLYING TIGHT AND LEPTON VETO QUALITY CUTS
+    //APPLYING TIGHT QUALITY CUTS
     if (NHF > .9) continue;
     if (NEMF > .9) continue;
     if (NumConst <= 1) continue;
-    if (MUF > .8 ) continue;
+//    if (MUF > .8 ) continue;
     //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
     if (CHF == 0) continue;
     if (CHM == 0) continue;
-    if (CEMF > .9) continue;
+    if (CEMF > .99) continue;
     //ANALYSIS SPECIFIC CUTS
    // if (MUF <= .05) continue;
     //JETS PASSING CUTS
