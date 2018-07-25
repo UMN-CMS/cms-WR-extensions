@@ -18,6 +18,7 @@ class Muons {
   public:
   Muons();
   double MuonLooseIDweight(double MuonPt, double MuonEta);
+  double MuonHighPTIDweight(double MuonPt, double MuonEta);
 
   double muidweight;
   double muidweightUp;
@@ -32,6 +33,9 @@ class Muons {
   TH2D* Muon_LooseID_BCDEF;
   TH2D* Muon_LooseID_GH;
   TH2D* Muon_LooseID_eff;
+  TH2D* Muon_HighPT_BCDEF;
+  TH2D* Muon_HighPT_GH;
+  TH2D* Muon_HighPT_eff;
 
 };
 
