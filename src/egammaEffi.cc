@@ -32,6 +32,10 @@ double egammaEffi::ScaleFactor(double ElectronEta, double ElectronPt) {
   int etaBin = -1;
   int ptBin = -1;
 
+  if(ElectronPt > 500){
+    ElectronPt = 499;
+  }
+
   etaBin = m_egamma_sf->GetXaxis()->FindBin(ElectronEta);
   ptBin = m_egamma_sf->GetYaxis()->FindBin(ElectronPt);
 
