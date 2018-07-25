@@ -235,8 +235,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             setEventWeight(iEvent, myRECOevent, Muon_LooseID_Weight, Muon_HighPtID_Weight);
           }
           if(addMuons && ZMASS && muonTrigPass) {
-            m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);          
-          } else if ((m_isMC || m_flavorSideband) && addMuons){
+            std::cout<< "FILLING ZPeak Region" << std::endl;
+            m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent);
+          } else if ((m_isMC || m_flavorSideband) && addMuons && !ZMASS){
             myRECOevent.cutProgress++;
             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
             if(muonTrigPass && m_doTrig) m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
