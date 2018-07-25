@@ -45,6 +45,7 @@ class eventHistos {
 
   //GEN PLOTS
   TH1D* m_eventsWeight;
+  TH1D* m_finalEventWeight;
 
   TH1D* m_nLeptons     ;
   TH1D* m_nMuons       ;

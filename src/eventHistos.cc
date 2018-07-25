@@ -186,6 +186,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_MuonWeight                   =    m_histoFolder.make<TH1D>("MuonWeight",";Muon Weight", 40, 0.0, 2.0);
     m_PUWeight                     =    m_histoFolder.make<TH1D>("PUWeight",";Pileup Weight", 40, 0.0, 2.0);
     m_HEEP_SF                      =    m_histoFolder.make<TH1D>("HEEP_SF",";HEEP Weight", 40, 0.0, 2.0);
+    m_finalEventWeight             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
 
 //
 //
@@ -425,5 +426,6 @@ void eventHistos::fillReco(eventBits& event) {
   m_MuonWeight->Fill(event.Muon_LooseID_Weight, event.weight);
   m_PUWeight->Fill(event.puWeight, event.weight);
   m_HEEP_SF->Fill(event.HEEP_SF, event.weight);
+  m_finalEventWeight->Fill(event.weight, event.weight);
 
 }
