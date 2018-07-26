@@ -1,34 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 import HLTrigger.HLTfilters.hltHighLevel_cfi
 from FWCore.ParameterSet.VarParsing import VarParsing
-###############################################################################
-from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
-process = regressionWeights(process)
-
-process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
-                  calibratedPatElectrons  = cms.PSet( initialSeed = cms.untracked.uint32(8675389),
-                                                      engineName = cms.untracked.string('TRandom3'),
-                                                      ),
-                  calibratedPatPhotons    = cms.PSet( initialSeed = cms.untracked.uint32(8675389),
-                                                      engineName = cms.untracked.string('TRandom3'),
-                                                      ),
-                                                   )
-process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
-process.load('EgammaAnalysis.ElectronTools.calibratedPatElectronsRun2_cfi')
-process.load('EgammaAnalysis.ElectronTools.calibratedPatPhotonsRun2_cfi')
-
-# Path and EndPath definitions
-process.EGMRegression = cms.Path(process.regressionApplication)
-process.EGMSmearerElectrons = cms.Path(process.calibratedPatElectrons)
-process.EGMSmearerPhotons   = cms.Path(process.calibratedPatPhotons)
-
-# Set the lines below to True or False depending if you are correcting the scale (data) or smearing the resolution (MC) 
-process.EGMSmearerElectrons.isMC = cms.bool(False)
-process.EGMSmearerPhotons.isMC = cms.bool(False)
-
-# process.analysis is the path with your analyzer
-process.schedule = cms.Schedule(process.EGMRegression,process.EGMSmearerElectrons,process.EGMSmearerPhotons,process.analysis)
-################################################################################
 
 #INPUT PARSING SECTION
 options = VarParsing ('analysis')
@@ -78,7 +50,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
@@ -143,8 +115,7 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
 #it creates a sequence "process.heepSequence" which we add to our path
 
 from HEEP.VID.tools import addHEEPV70ElesMiniAOD
-addHEEPV70ElesMiniAOD(process,useStdName=True)
-
+addHEEPV70ElesMiniAOD(process,useStdName=False)
 
 from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
 jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addNsub=True)  
@@ -165,12 +136,14 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 #process.muonSelectionSeq = cms.Sequence(process.TriggerFilter * process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
+
+
 process.analysis = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
                               AK8genJets = cms.InputTag("slimmedGenJetsAK8"),
                               genParticles = cms.InputTag("prunedGenParticles"),
                               highMuons = cms.InputTag("tuneIDMuons"),
-                              highElectrons = cms.InputTag("slimmedElectrons"),
+                              highElectrons = cms.InputTag("selectedElectrons"),
                               regMuons = cms.InputTag("removeBadAndCloneGlobalMuons"),
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoCHSJets = cms.InputTag("slimmedJetsAK8"),
@@ -199,4 +172,47 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
 
 )
 
-process.p = cms.Path(process.muonSelectionSeq * process.heepSequence * process.analysis)
+from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
+process = regressionWeights(process)
+
+process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
+                  calibratedPatElectrons  = cms.PSet( initialSeed = cms.untracked.uint32(8675389),
+                                                      engineName = cms.untracked.string('TRandom3'),
+                                                      ),
+                  calibratedPatPhotons    = cms.PSet( initialSeed = cms.untracked.uint32(8675389),
+                                                      engineName = cms.untracked.string('TRandom3'),
+                                                      ),
+                                                   )
+process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
+process.load('EgammaAnalysis.ElectronTools.calibratedPatElectronsRun2_cfi')
+process.load('EgammaAnalysis.ElectronTools.calibratedPatPhotonsRun2_cfi')
+
+
+# Path and EndPath definitions
+#process.EGMRegression = cms.Path(process.regressionApplication)
+#process.EGMSmearerElectrons = cms.Path(process.calibratedPatElectrons)
+
+process.EGMsequence = cms.Sequence(process.regressionApplication * process.calibratedPatElectrons)
+
+
+# Set the lines below to True or False depending if you are correcting the scale (data) or smearing the resolution (MC) 
+process.calibratedPatElectrons.isMC = cms.bool(True)
+#process.calibratedPatPhotons.isMC = cms.bool(True)
+
+process.selectedElectrons = cms.EDFilter("PATElectronSelector",
+    src = cms.InputTag("calibratedPatElectrons"),
+    cut = cms.string("pt>5 && abs(eta)")
+)
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
+#process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.heepIDVarValueMaps.elesMiniAOD  = 'selectedElectrons'
+process.electronRegressionValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.heepElectrons.src = cms.InputTag('selectedElectrons')
+
+process.load('FWCore.Modules.printContent_cfi')
+
+process.totalPath = cms.Path(process.EGMsequence * process.selectedElectrons * process.heepSequence * process.muonSelectionSeq * process.analysis)
+
+#process.printContent
+#print process.dumpPython()
