@@ -25,6 +25,7 @@ public:
   int lumi;
   int event;
   double weight;
+  double FSBweight;
   double Muon_LooseID_Weight;
 
   std::string outputTag;  //LABELLING THE DATA
@@ -87,7 +88,10 @@ public:
   int	 nPUmean	;
 
   float  puWeight	;
-  double HEEP_SF	;
+
+  double HEEP_SF        ;
+  double HEEP_SF_E	;
+  double HEEP_SF_B	;
   double egamma_SF	;
 
   double parton1EtVal;

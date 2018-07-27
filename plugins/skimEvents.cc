@@ -105,7 +105,7 @@ skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
 {
   //now do what ever initialization is needed
   edm::Service<TFileService> fs;
-  m_allEvents.book((fs->mkdir("allEvents")), 4, "skim");
+  m_allEvents.book((fs->mkdir("allEvents")), 4, "skim", false);
   if(m_isMC) {
     m_genEventInfoToken = consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
     m_amcatnlo = iConfig.getUntrackedParameter<bool> ("amcatnlo", false);   //DO AMC@NLO STYLE EVENT WEIGHTING

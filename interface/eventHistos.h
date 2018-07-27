@@ -25,7 +25,7 @@
 class eventHistos {
   public:
   eventHistos();
-  void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag);
+  void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, bool FSB);
   void fill(eventBits& event);
 
 
@@ -39,6 +39,7 @@ class eventHistos {
  
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
+  bool m_FSB;
 
   //METADATA
   TH1D* m_metaData;
@@ -46,6 +47,9 @@ class eventHistos {
   //GEN PLOTS
   TH1D* m_eventsWeight;
   TH1D* m_finalEventWeight;
+
+  TH1D* m_FSBfinalEventWeight_E;
+  TH1D* m_FSBfinalEventWeight_B;
 
   TH1D* m_nLeptons     ;
   TH1D* m_nMuons       ;
@@ -194,7 +198,9 @@ class eventHistos {
 
   TH1D* m_MuonWeight;
   TH1D* m_PUWeight;
-  TH1D* m_HEEP_SF;
+
+  TH1D* m_HEEP_SF_E;
+  TH1D* m_HEEP_SF_B;
 
 };
 

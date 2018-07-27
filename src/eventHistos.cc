@@ -20,11 +20,12 @@ eventHistos::eventHistos () {}
 
 
 
-void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string tag="blah") {
+void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, bool FSB) {
 
   //CREATED FOLDER IN HISTO
   m_flavor = flavor;
   m_histoFolder = histoFolder;
+  m_FSB = FSB;
 
   std::cout<<"TAGGING EVENTS WITH: "  <<tag<<std::endl;
   m_metaData = m_histoFolder.make<TH1D>("metadata", "events metadata", 10, 0.0, 10);
@@ -185,7 +186,12 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
     m_MuonWeight                   =    m_histoFolder.make<TH1D>("MuonWeight",";Muon Weight", 40, 0.0, 2.0);
     m_PUWeight                     =    m_histoFolder.make<TH1D>("PUWeight",";Pileup Weight", 40, 0.0, 2.0);
-    m_HEEP_SF                      =    m_histoFolder.make<TH1D>("HEEP_SF",";HEEP Weight", 40, 0.0, 2.0);
+
+    m_HEEP_SF_E                      =    m_histoFolder.make<TH1D>("HEEP_SF_E",";HEEP Weight Endcap Electron", 40, 0.0, 2.0);
+    m_HEEP_SF_B                      =    m_histoFolder.make<TH1D>("HEEP_SF_B",";HEEP Weight Barrel Electron", 40, 0.0, 2.0);
+    m_FSBfinalEventWeight_E             =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_E",";final EventWeight FSB Endcap", 40, 0.0, 2.0);
+    m_FSBfinalEventWeight_B             =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_B",";final EventWeight FSB Barrel", 40, 0.0, 2.0);
+
     m_finalEventWeight             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
 
 //
@@ -230,15 +236,20 @@ void eventHistos::fill(eventBits& event) {
 
 //SPECIFIC 
 void eventHistos::fillCutProgress(eventBits& event) {
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
   std::cout << "Filling Cut Progress" << std::endl;
   int toFill = event.cutProgress;
   int FSBtoFill = event.FSBcutProgress;
   while (toFill > 0) {
-    m_cutProgress->Fill(toFill , event.weight);
+    m_cutProgress->Fill(toFill , weight);
     toFill--;
   }
   while (FSBtoFill > 0) {
-    m_FSBcutProgress->Fill(FSBtoFill , event.weight);
+    m_FSBcutProgress->Fill(FSBtoFill , weight);
     FSBtoFill--;
   }
 }
@@ -252,95 +263,100 @@ void eventHistos::fillGen(eventBits& event) {
 //    std::cout << "ERROR! THIS EVENT SHOULD HAVE FAILED" <<std::endl;
 //    return;
 //  }
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
 
   std::cout << "Filling Event plots" << std::endl;
-  m_nLeptons       ->Fill(event.mynLeptons     , event.weight) ;
-  m_nMuons         ->Fill(event.mynMuons       , event.weight) ;
-  m_nTaus          ->Fill(event.mynTaus        , event.weight) ;
-  m_nElectrons     ->Fill(event.mynElectrons   , event.weight) ;
-  m_nLightPartons  ->Fill(event.mynLightPartons, event.weight) ;
-  m_nTops          ->Fill(event.mynTops        , event.weight) ;
-  m_nBs            ->Fill(event.mynBs          , event.weight) ;
-  m_nPartons       ->Fill(event.mynPartons     , event.weight) ;
+  m_nLeptons       ->Fill(event.mynLeptons     , weight) ;
+  m_nMuons         ->Fill(event.mynMuons       , weight) ;
+  m_nTaus          ->Fill(event.mynTaus        , weight) ;
+  m_nElectrons     ->Fill(event.mynElectrons   , weight) ;
+  m_nLightPartons  ->Fill(event.mynLightPartons, weight) ;
+  m_nTops          ->Fill(event.mynTops        , weight) ;
+  m_nBs            ->Fill(event.mynBs          , weight) ;
+  m_nPartons       ->Fill(event.mynPartons     , weight) ;
 
-  m_parton1Et->Fill(event.parton1EtVal, event.weight);
+  m_parton1Et->Fill(event.parton1EtVal, weight);
   std::cout << "FILLING 1.2"<<std::endl;
-  m_parton2Et->Fill(event.parton2EtVal, event.weight);
+  m_parton2Et->Fill(event.parton2EtVal, weight);
   std::cout << "FILLING 1.3"<<std::endl;
-  m_muon1Et->Fill(event.muon1EtVal, event.weight);
+  m_muon1Et->Fill(event.muon1EtVal, weight);
   std::cout << "FILLING 1.4"<<std::endl;
-  m_muon2Et->Fill(event.muon2EtVal, event.weight);
+  m_muon2Et->Fill(event.muon2EtVal, weight);
   std::cout << "FILLING 1.5"<<std::endl;
-  m_firstPartonJetEt->Fill(event.firstPartonJetEtVal, event.weight);
+  m_firstPartonJetEt->Fill(event.firstPartonJetEtVal, weight);
   std::cout << "FILLING 1.6"<<std::endl;
-  m_secondPartonJetEt->Fill(event.secondPartonJetEtVal, event.weight);
+  m_secondPartonJetEt->Fill(event.secondPartonJetEtVal, weight);
   std::cout << "FILLING 1.7"<<std::endl;
-  m_firstPartonAK8JetEt->Fill(event.firstPartonAK8JetEtVal, event.weight);
+  m_firstPartonAK8JetEt->Fill(event.firstPartonAK8JetEtVal, weight);
   std::cout << "FILLING 1.8"<<std::endl;
-  m_secondPartonAK8JetEt->Fill(event.secondPartonAK8JetEtVal, event.weight);
+  m_secondPartonAK8JetEt->Fill(event.secondPartonAK8JetEtVal, weight);
   std::cout << "FILLING 1.9"<<std::endl;
 
-  m_parton1Eta->Fill(event.parton1EtaVal, event.weight);
-  m_parton2Eta->Fill(event.parton2EtaVal, event.weight);
-  m_muon1Eta->Fill(event.muon1EtaVal, event.weight);
-  m_muon2Eta->Fill(event.muon2EtaVal, event.weight);
-  m_firstPartonJetEta->Fill(event.firstPartonJetEtaVal, event.weight);
-  m_secondPartonJetEta->Fill(event.secondPartonJetEtaVal, event.weight);
-  m_firstPartonAK8JetEta->Fill(event.firstPartonAK8JetEtaVal, event.weight);
-  m_secondPartonAK8JetEta->Fill(event.secondPartonAK8JetEtaVal, event.weight);
+  m_parton1Eta->Fill(event.parton1EtaVal, weight);
+  m_parton2Eta->Fill(event.parton2EtaVal, weight);
+  m_muon1Eta->Fill(event.muon1EtaVal, weight);
+  m_muon2Eta->Fill(event.muon2EtaVal, weight);
+  m_firstPartonJetEta->Fill(event.firstPartonJetEtaVal, weight);
+  m_secondPartonJetEta->Fill(event.secondPartonJetEtaVal, weight);
+  m_firstPartonAK8JetEta->Fill(event.firstPartonAK8JetEtaVal, weight);
+  m_secondPartonAK8JetEta->Fill(event.secondPartonAK8JetEtaVal, weight);
   std::cout << "FILLING 2"<<std::endl;
 
-  m_parton1Phi->Fill(event.parton1PhiVal, event.weight);
-  m_parton2Phi->Fill(event.parton2PhiVal, event.weight);
-  m_muon1Phi->Fill(event.muon1PhiVal, event.weight);
-  m_muon2Phi->Fill(event.muon2PhiVal, event.weight);
-  m_firstPartonJetPhi->Fill(event.firstPartonJetPhiVal, event.weight);
-  m_secondPartonJetPhi->Fill(event.secondPartonJetPhiVal, event.weight);
-  m_firstPartonAK8JetPhi->Fill(event.firstPartonAK8JetPhiVal, event.weight);
-  m_secondPartonAK8JetPhi->Fill(event.secondPartonAK8JetPhiVal, event.weight);
+  m_parton1Phi->Fill(event.parton1PhiVal, weight);
+  m_parton2Phi->Fill(event.parton2PhiVal, weight);
+  m_muon1Phi->Fill(event.muon1PhiVal, weight);
+  m_muon2Phi->Fill(event.muon2PhiVal, weight);
+  m_firstPartonJetPhi->Fill(event.firstPartonJetPhiVal, weight);
+  m_secondPartonJetPhi->Fill(event.secondPartonJetPhiVal, weight);
+  m_firstPartonAK8JetPhi->Fill(event.firstPartonAK8JetPhiVal, weight);
+  m_secondPartonAK8JetPhi->Fill(event.secondPartonAK8JetPhiVal, weight);
   std::cout << "FILLING 3"<<std::endl;
 
-  m_dRparton1parton2->Fill(event.dRparton1parton2Val, event.weight);
-  m_dRmuon1muon2->Fill(event.dRmuon1muon2Val, event.weight);
-  m_dRparton1muon2->Fill(event.dRparton1muon2Val, event.weight);
-  m_dRparton1muon1->Fill(event.dRparton1muon1Val, event.weight);
-  m_dRparton2muon2->Fill(event.dRparton2muon2Val, event.weight);
-  m_dRparton2muon1->Fill(event.dRparton2muon1Val, event.weight);
-  m_dRparton1jet->Fill(event.dRparton1jetVal, event.weight);
-  m_dRparton2jet->Fill(event.dRparton2jetVal, event.weight);
-  m_dRparton1AK8jet->Fill(event.dRparton1AK8jetVal, event.weight);
-  m_dRparton2AK8jet->Fill(event.dRparton2AK8jetVal, event.weight);
+  m_dRparton1parton2->Fill(event.dRparton1parton2Val, weight);
+  m_dRmuon1muon2->Fill(event.dRmuon1muon2Val, weight);
+  m_dRparton1muon2->Fill(event.dRparton1muon2Val, weight);
+  m_dRparton1muon1->Fill(event.dRparton1muon1Val, weight);
+  m_dRparton2muon2->Fill(event.dRparton2muon2Val, weight);
+  m_dRparton2muon1->Fill(event.dRparton2muon1Val, weight);
+  m_dRparton1jet->Fill(event.dRparton1jetVal, weight);
+  m_dRparton2jet->Fill(event.dRparton2jetVal, weight);
+  m_dRparton1AK8jet->Fill(event.dRparton1AK8jetVal, weight);
+  m_dRparton2AK8jet->Fill(event.dRparton2AK8jetVal, weight);
   std::cout << "FILLING 4"<<std::endl;
 
 
 
-  m_firstPartonJetEtHadronic->Fill(event.firstPartonJetEtHadronicVal, event.weight);
-  m_secondPartonJetEtHadronic->Fill(event.secondPartonJetEtHadronicVal, event.weight);
-  m_firstPartonJetEtEM->Fill(event.firstPartonJetEtEMVal, event.weight);
-  m_secondPartonJetEtEM->Fill(event.secondPartonJetEtEMVal, event.weight);
-  m_firstPartonJetEtInvisible->Fill(event.firstPartonJetEtInvisibleVal, event.weight);
-  m_secondPartonJetEtInvisible->Fill(event.secondPartonJetEtInvisibleVal, event.weight);
+  m_firstPartonJetEtHadronic->Fill(event.firstPartonJetEtHadronicVal, weight);
+  m_secondPartonJetEtHadronic->Fill(event.secondPartonJetEtHadronicVal, weight);
+  m_firstPartonJetEtEM->Fill(event.firstPartonJetEtEMVal, weight);
+  m_secondPartonJetEtEM->Fill(event.secondPartonJetEtEMVal, weight);
+  m_firstPartonJetEtInvisible->Fill(event.firstPartonJetEtInvisibleVal, weight);
+  m_secondPartonJetEtInvisible->Fill(event.secondPartonJetEtInvisibleVal, weight);
   std::cout << "FILLING 5"<<std::endl;
   
 
-  m_firstPartonAK8JetEtHadronic->Fill(event.firstPartonAK8JetEtHadronicVal, event.weight);
-  m_secondPartonAK8JetEtHadronic->Fill(event.secondPartonAK8JetEtHadronicVal, event.weight);
-  m_firstPartonAK8JetEtEM->Fill(event.firstPartonAK8JetEtEMVal, event.weight);
-  m_secondPartonAK8JetEtEM->Fill(event.secondPartonAK8JetEtEMVal, event.weight);
-  m_firstPartonAK8JetEtInvisible->Fill(event.firstPartonAK8JetEtInvisibleVal, event.weight);
-  m_secondPartonAK8JetEtInvisible->Fill(event.secondPartonAK8JetEtInvisibleVal, event.weight);
+  m_firstPartonAK8JetEtHadronic->Fill(event.firstPartonAK8JetEtHadronicVal, weight);
+  m_secondPartonAK8JetEtHadronic->Fill(event.secondPartonAK8JetEtHadronicVal, weight);
+  m_firstPartonAK8JetEtEM->Fill(event.firstPartonAK8JetEtEMVal, weight);
+  m_secondPartonAK8JetEtEM->Fill(event.secondPartonAK8JetEtEMVal, weight);
+  m_firstPartonAK8JetEtInvisible->Fill(event.firstPartonAK8JetEtInvisibleVal, weight);
+  m_secondPartonAK8JetEtInvisible->Fill(event.secondPartonAK8JetEtInvisibleVal, weight);
   std::cout << "FILLING 6"<<std::endl;
 
-  m_leadSubleadingPartonsMuonsMass->Fill(event.leadSubleadingPartonsMuonsMassVal, event.weight);
+  m_leadSubleadingPartonsMuonsMass->Fill(event.leadSubleadingPartonsMuonsMassVal, weight);
   std::cout << "FILLING 7"<<std::endl;
 
-  m_leadSubleadingPartonsMuonsPt->Fill(event.leadSubleadingPartonsMuonsPtVal, event.weight);
+  m_leadSubleadingPartonsMuonsPt->Fill(event.leadSubleadingPartonsMuonsPtVal, weight);
   std::cout << "FILLING 8"<<std::endl;
 
-  //m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal, event.weight);
-  //m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal, event.weight);
-  //m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal, event.weight);
-  //m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal, event.weight);
+  //m_leadSubleadingJetsMuonsEta->Fill(event.leadSubleadingJetsMuonsEtaVal, weight);
+  //m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal, weight);
+  //m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal, weight);
+  //m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal, weight);
 
   std::cout << "FILLING 9"<<std::endl;
 
@@ -356,76 +372,87 @@ void eventHistos::fillGen(eventBits& event) {
 
 }
 void eventHistos::fillReco(eventBits& event) {
-  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, event.weight);
-  m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, event.weight);
-  m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, event.weight);
-  m_leadAK8JetElectronPt->Fill(event.leadAK8JetElectronPtVal, event.weight);
-  m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, event.weight);
-  m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, event.weight);
-  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, event.weight);
-  m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, event.weight);
-  m_subleadMuon_selJetdPhi ->   Fill(event.subleadMuon_selJetdPhi ,event.weight); 
-  m_subleadMuon_selMuondPhi-> Fill(event.subleadMuon_selMuondPhi,event.weight);
-  m_subleadMuon_selMuonMass-> Fill(event.subleadMuon_selMuonMass,event.weight);
-  m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selMuonMass,event.weight);
-  m_subleadMuon_selMuonPt  -> Fill(event.subleadMuon_selMuonPt  ,event.weight); 
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
 
-  m_subleadMuon_selElectronPhi-> Fill(event.subleadMuon_selElectronPhi,event.weight);
-  m_subleadMuon_selElectronMass-> Fill(event.subleadMuon_selElectronMass,event.weight);
-  m_subleadMuon_selElectronZMass->Fill(event.subleadMuon_selElectronMass,event.weight);
-  m_subleadMuon_selElectronPt  -> Fill(event.subleadMuon_selElectronPt  ,event.weight); 
+  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, weight);
+  m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, weight);
+  m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, weight);
+  m_leadAK8JetElectronPt->Fill(event.leadAK8JetElectronPtVal, weight);
+  m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, weight);
+  m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, weight);
+  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
+  m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
+  m_subleadMuon_selJetdPhi ->   Fill(event.subleadMuon_selJetdPhi ,weight); 
+  m_subleadMuon_selMuondPhi-> Fill(event.subleadMuon_selMuondPhi,weight);
+  m_subleadMuon_selMuonMass-> Fill(event.subleadMuon_selMuonMass,weight);
+  m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selMuonMass,weight);
+  m_subleadMuon_selMuonPt  -> Fill(event.subleadMuon_selMuonPt  ,weight); 
 
-  m_subleadMuonEt           ->   Fill(event.subleadMuonEt           ,event.weight); 
-  m_subleadMuonEta          ->   Fill(event.subleadMuonEta          ,event.weight); 
-  m_subleadMuonPhi          ->   Fill(event.subleadMuonPhi          ,event.weight); 
+  m_subleadMuon_selElectronPhi-> Fill(event.subleadMuon_selElectronPhi,weight);
+  m_subleadMuon_selElectronMass-> Fill(event.subleadMuon_selElectronMass,weight);
+  m_subleadMuon_selElectronZMass->Fill(event.subleadMuon_selElectronMass,weight);
+  m_subleadMuon_selElectronPt  -> Fill(event.subleadMuon_selElectronPt  ,weight); 
+
+  m_subleadMuonEt           ->   Fill(event.subleadMuonEt           ,weight); 
+  m_subleadMuonEta          ->   Fill(event.subleadMuonEta          ,weight); 
+  m_subleadMuonPhi          ->   Fill(event.subleadMuonPhi          ,weight); 
                                                                
-  m_MET                    ->Fill(event.MET                    ,event.weight); 
-  m_MET_selJetdPhi         ->Fill(event.MET_selJetdPhi         ,event.weight); 
-  m_MET_selMuondPhi        ->Fill(event.MET_selMuondPhi        ,event.weight); 
-  m_MET_selElectrondPhi        ->Fill(event.MET_selElectrondPhi        ,event.weight); 
-  m_MET_selJetMass         ->Fill(event.MET_selJetMass         ,event.weight); 
-  m_MET_selMuonMass        ->Fill(event.MET_selMuonMass        ,event.weight); 
-  m_MET_selElectronMass        ->Fill(event.MET_selElectronMass        ,event.weight); 
-  m_MET_selJetPt           ->Fill(event.MET_selJetPt           ,event.weight); 
-  m_MET_selMuonPt          ->Fill(event.MET_selMuonPt          ,event.weight); 
-  m_MET_selElectronPt          ->Fill(event.MET_selElectronPt          ,event.weight); 
+  m_MET                    ->Fill(event.MET                    ,weight); 
+  m_MET_selJetdPhi         ->Fill(event.MET_selJetdPhi         ,weight); 
+  m_MET_selMuondPhi        ->Fill(event.MET_selMuondPhi        ,weight); 
+  m_MET_selElectrondPhi        ->Fill(event.MET_selElectrondPhi        ,weight); 
+  m_MET_selJetMass         ->Fill(event.MET_selJetMass         ,weight); 
+  m_MET_selMuonMass        ->Fill(event.MET_selMuonMass        ,weight); 
+  m_MET_selElectronMass        ->Fill(event.MET_selElectronMass        ,weight); 
+  m_MET_selJetPt           ->Fill(event.MET_selJetPt           ,weight); 
+  m_MET_selMuonPt          ->Fill(event.MET_selMuonPt          ,weight); 
+  m_MET_selElectronPt          ->Fill(event.MET_selElectronPt          ,weight); 
 
-  m_selectedJetTransMET    ->Fill(event.selectedJetTransMET    ,event.weight);
+  m_selectedJetTransMET    ->Fill(event.selectedJetTransMET    ,weight);
 
-  m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,event.weight); 
-  m_selectedElectronEt  ->Fill(event.selectedElectronEt  ,event.weight); 
-  m_selectedJetPt   ->Fill(event.selectedJetPt   ,event.weight);  
-  m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,event.weight);  
-  m_selectedElectronPhi ->Fill(event.selectedElectronPhi ,event.weight);  
-  m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,event.weight);   
-  m_selectedMuonEta ->Fill(event.selectedMuonEta ,event.weight);   
-  m_selectedElectronEta ->Fill(event.selectedElectronEta ,event.weight);   
-  m_selectedJetEta  ->Fill(event.selectedJetEta  ,event.weight); 
-  m_selectedJetMass->Fill(event.selectedJetMass  , event.weight);
-  m_selectedJetTau21->Fill(event.selectedJetTau21, event.weight);
+  m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,weight); 
+  m_selectedElectronEt  ->Fill(event.selectedElectronEt  ,weight); 
+  m_selectedJetPt   ->Fill(event.selectedJetPt   ,weight);  
+  m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,weight);  
+  m_selectedElectronPhi ->Fill(event.selectedElectronPhi ,weight);  
+  m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,weight);   
+  m_selectedMuonEta ->Fill(event.selectedMuonEta ,weight);   
+  m_selectedElectronEta ->Fill(event.selectedElectronEta ,weight);   
+  m_selectedJetEta  ->Fill(event.selectedJetEta  ,weight); 
+  m_selectedJetMass->Fill(event.selectedJetMass  , weight);
+  m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
 
-  m_EtPlacementMuon2->Fill(event.secondInDecayMuon, event.weight);
-  m_nVertices->Fill(event.nVtx, event.weight);
-  //m_nJets->Fill(event.myGenJets.size(), event.weight);
-  m_nAK8Jets->Fill(event.ak8jetCands, event.weight);
-  m_nMuonCands->Fill(event.muonCands, event.weight);
-  m_nElectronCands->Fill(event.electronCands, event.weight);
-  m_nMuons10->Fill(event.muons10, event.weight);
-  m_nAdditionalHEEP->Fill(event.nAdditionalHEEP, event.weight);
-  m_nAK8Jets40->Fill(event.ak8jets40, event.weight);
-  m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, event.weight);
-  m_leadAK8JetElectronPhi->Fill(event.leadAK8JetElectronPhiVal, event.weight);
+  m_EtPlacementMuon2->Fill(event.secondInDecayMuon, weight);
+  m_nVertices->Fill(event.nVtx, weight);
+  //m_nJets->Fill(event.myGenJets.size(), weight);
+  m_nAK8Jets->Fill(event.ak8jetCands, weight);
+  m_nMuonCands->Fill(event.muonCands, weight);
+  m_nElectronCands->Fill(event.electronCands, weight);
+  m_nMuons10->Fill(event.muons10, weight);
+  m_nAdditionalHEEP->Fill(event.nAdditionalHEEP, weight);
+  m_nAK8Jets40->Fill(event.ak8jets40, weight);
+  m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, weight);
+  m_leadAK8JetElectronPhi->Fill(event.leadAK8JetElectronPhiVal, weight);
 
 
-  m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction, event.weight);
-  m_leadAK8JetElectronJetMuonEnergyFraction->Fill(event.leadAK8JetElectronJetMuonEnergyFraction, event.weight);
+  m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction, weight);
+  m_leadAK8JetElectronJetMuonEnergyFraction->Fill(event.leadAK8JetElectronJetMuonEnergyFraction, weight);
 
-  m_electronTrigger->Fill(event.electronTrigger, event.weight);
-  m_muonTrigger->Fill(event.muonTrigger, event.weight);
+  m_electronTrigger->Fill(event.electronTrigger, weight);
+  m_muonTrigger->Fill(event.muonTrigger, weight);
 
-  m_MuonWeight->Fill(event.Muon_LooseID_Weight, event.weight);
-  m_PUWeight->Fill(event.puWeight, event.weight);
-  m_HEEP_SF->Fill(event.HEEP_SF, event.weight);
-  m_finalEventWeight->Fill(event.weight, event.weight);
+  m_MuonWeight->Fill(event.Muon_LooseID_Weight, weight);
+  m_PUWeight->Fill(event.puWeight, weight);
+
+  m_HEEP_SF_E->Fill(event.HEEP_SF_E, weight);
+  m_HEEP_SF_B->Fill(event.HEEP_SF_B, weight);
+  m_FSBfinalEventWeight_E->Fill(weight, weight);
+  m_FSBfinalEventWeight_B->Fill(weight, weight);
+
+  m_finalEventWeight->Fill(weight, weight);
 
 }

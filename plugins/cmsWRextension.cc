@@ -1414,42 +1414,42 @@ cmsWRextension::beginJob()
     std::cout << "BOOKING PLOTS FLAVOR 3" << std::endl;
   //flavor 3
 
-    m_allEvents.book((fs->mkdir("allEvents")), 3, m_outputTag);          
-    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3, m_outputTag); 
-    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 3, m_outputTag);
-    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3, m_outputTag);
-    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 3, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 3, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 3, m_outputTag);
-    //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag);
-    //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3, m_outputTag);
-    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 3, m_outputTag);
-    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 3, m_outputTag);
+    m_allEvents.book((fs->mkdir("allEvents")), 3, m_outputTag, false);          
+    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3, m_outputTag, false); 
+    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 3, m_outputTag, false);
+    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3, m_outputTag, false);
+    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 3, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 3, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 3, m_outputTag, false);
+    //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag, false);
+    //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3, m_outputTag, false);
+    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 3, m_outputTag, true);
   }
   if (m_doGen && !m_doReco) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
   //flavor 1
-    m_allEvents.book((fs->mkdir("allEvents")), 1, m_outputTag);          
-    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1, m_outputTag); 
-    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1, m_outputTag);
+    m_allEvents.book((fs->mkdir("allEvents")), 1, m_outputTag, false);          
+    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1, m_outputTag, false); 
+    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1, m_outputTag, false);
 
   }
   if (!m_doGen && m_doReco) {
     std::cout << "BOOKING PLOTS FLAVOR 2" << std::endl;
   //flavor 2
-    m_allEvents.book((fs->mkdir("allEvents")), 2, m_outputTag);          
-    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 2, m_outputTag);
-    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 2, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 2, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 2, m_outputTag);
-    //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag);
-    //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag);
-    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag);
-    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 2, m_outputTag);
-    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 2, m_outputTag);
+    m_allEvents.book((fs->mkdir("allEvents")), 2, m_outputTag, false);          
+    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 2, m_outputTag, false);
+    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 2, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 2, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 2, m_outputTag, false);
+    //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag, false);
+    //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag, false);
+    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 2, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 2, m_outputTag, true);
 
   }
 }

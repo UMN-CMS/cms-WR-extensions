@@ -7,6 +7,7 @@ eventBits::eventBits() {
   lumi = -1;
   event = 0;
   weight = 1.0;
+  FSBweight = 1.0;
   passesWR2016 = false;
   nVtx = -1;
   nPU = -1;
@@ -24,7 +25,10 @@ eventBits::eventBits() {
   FSBcutProgress = -1;
 
   puWeight = -10000.0;
-  HEEP_SF  = -10000.0;
+
+  HEEP_SF    = -10000.0;
+  HEEP_SF_E  = -10000.0;
+  HEEP_SF_B  = -10000.0;
 
   secondInDecayMuon = -10000.0;
 
@@ -178,7 +182,10 @@ void eventBits::clear() {
   FSBcutProgress = 0;
 
   puWeight = 0.0;
-  HEEP_SF  = 0.0;
+
+  HEEP_SF = 0.0;
+  HEEP_SF_E  = 0.0;
+  HEEP_SF_B  = 0.0;
 
   parton1EtVal = 0.0;
   parton2EtVal = 0.0;
