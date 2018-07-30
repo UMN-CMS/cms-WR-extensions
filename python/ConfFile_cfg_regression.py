@@ -114,7 +114,9 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
 #otherwise it calls them "heepElectrons"
 #it creates a sequence "process.heepSequence" which we add to our path
 
-from HEEP.VID.tools import addHEEPV70ElesMiniAOD
+#from HEEP.VID.tools import addHEEPV70ElesMiniAOD
+
+from ExoAnalysis.cmsWRextensions.tools import addHEEPV70ElesMiniAOD
 addHEEPV70ElesMiniAOD(process,useStdName=False)
 
 from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
