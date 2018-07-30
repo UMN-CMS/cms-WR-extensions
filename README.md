@@ -12,9 +12,14 @@ https://twiki.cern.ch/twiki/bin/viewauth/CMS/HEEPElectronIdentificationRun2
 
 As of 12-6-18 the sequence is:
 ```
-cmsrel CMSSW_8_0_25
-cd CMSSW_8_0_25/src/
+cmsrel CMSSW_8_0_26_patch1
+cd CMSSW_8_0_26_patch1/src/
 cmsenv
+git cms-merge-topic cms-egamma:EGM_gain_v1
+cd EgammaAnalysis/ElectronTools/data
+git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
+cd ../../..
+git cms-merge-topic rafaellopesdesa:RegressionCheckNegEnergy
 git cms-merge-topic gpetruc:badMuonFilters_80X_v2               #bad global muon tagger
 git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
 git cms-merge-topic ikrav:egm_id_80X_v3 #for other E/gamma IDs in VID if you wish to have them
