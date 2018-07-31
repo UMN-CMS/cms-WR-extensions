@@ -199,6 +199,7 @@ class eventHistos {
   TH1D* m_MuonWeight;
   TH1D* m_PUWeight;
 
+  TH1D* m_HEEP_SF;
   TH1D* m_HEEP_SF_E;
   TH1D* m_HEEP_SF_B;
 

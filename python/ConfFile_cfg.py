@@ -1,3 +1,12 @@
+print "############################################################################"
+print "#################WARNING! WARNING! WARNING! WARNING! #######################"
+print "############################################################################"
+print "========================= THIS PYTHON IS DEPRECATED ########################"
+print "########################PLEASE SWITCH TO THE CONFIG WITH REGRESSION#########"
+print "############################################################################"
+print "################WARNING! WARNING! WARNING! WARNING! ##i#####################"
+print "############################################################################"
+
 import FWCore.ParameterSet.Config as cms
 import HLTrigger.HLTfilters.hltHighLevel_cfi
 from FWCore.ParameterSet.VarParsing import VarParsing

@@ -454,6 +454,8 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weight;
     double HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
     double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronEt);
+    if (fabs(myRECOevent.selectedElectronEta) > 1.6) myRECOevent.HEEP_SF_E = HEEP_SF;
+    if (fabs(myRECOevent.selectedElectronEta) < 1.4) myRECOevent.HEEP_SF_B = HEEP_SF;
     myRECOevent.HEEP_SF = HEEP_SF;
     myRECOevent.egamma_SF = egamma_SF;
     setEventWeight_FSB(iEvent, myRECOevent, Muon_LooseID_Weight);

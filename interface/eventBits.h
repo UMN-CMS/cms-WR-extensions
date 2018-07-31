@@ -26,6 +26,8 @@ public:
   int event;
   double weight;
   double FSBweight;
+  double FSBweight_E;
+  double FSBweight_B;
   double Muon_LooseID_Weight;
 
   std::string outputTag;  //LABELLING THE DATA
