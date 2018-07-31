@@ -49,7 +49,7 @@ scram b -j8
 Example incantations to drive the crab3 interface python (in progress):
 ```
 MC
-python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i Inputs_RunIISpring15DR74_MC/InputList_DYJetsToLL_MG.txt -c Leptoquarks/RootTupleMakerV2/test/rootTupleMaker_MiniAOD_MC_74X_cfg.py
+python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt -c ExoAnalysis/cmsWRextensions/python/ConfFile_cfg_regression.py
 
 DATA
 python createAndSubmitJobsWithCrab3.py -i Inputs_RunII_Data/InputList_Run2015_SingleElectron.txt -d testRunIISingleElectron -c Leptoquarks/RootTupleMakerV2/test/rootTupleMaker_MiniAOD_Data_74X_cfg.py -j  /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Cert_246908-257599_13TeV_PromptReco_Collisions15_25ns_JSON.txt
