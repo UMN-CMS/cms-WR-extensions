@@ -296,19 +296,19 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
       if(!m_amcatnlo) {
-        myEvent.weight = eventInfo->weight()*myEvent.puWeight;
+        myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
       }
       else {
-        myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
+        myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
       }
   } else {
-      myEvent.weight = 1;
+      myEvent.FSBweight = 1;
       myEvent.count = 1;
   }
 
-  myEvent.weight = myEvent.weight*myEvent.HEEP_SF*myEvent.egamma_SF*MuonLooseIDWeight;
+  myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*MuonLooseIDWeight;
 
 }
 bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myRECOevent) {

@@ -186,8 +186,7 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
                                                       ),
                                                    )
 process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
-process.load('EgammaAnalysis.ElectronTools.calibratedPatElectronsRun2_cfi')
-process.load('EgammaAnalysis.ElectronTools.calibratedPatPhotonsRun2_cfi')
+process.load('ExoAnalysis.cmsWRextensions.calibratedPatElectronsRun2_cfi')
 
 
 # Path and EndPath definitions
