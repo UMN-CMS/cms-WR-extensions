@@ -435,7 +435,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   myRECOevent.FSBcutProgress++;
   std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
 
-  myRECOevent.selectedElectronEt  = electronJetPairs[0].second->et();
+  myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
   myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
   myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
   myRECOevent.selectedJetPt   = electronJetPairs[0].first->pT;
@@ -453,7 +453,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     double Muon_LooseID_Weight = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
     myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weight;
     double HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
-    double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronEt);
+    double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt);
     if (fabs(myRECOevent.selectedElectronEta) > 1.6) myRECOevent.HEEP_SF_E = HEEP_SF;
     if (fabs(myRECOevent.selectedElectronEta) < 1.4) myRECOevent.HEEP_SF_B = HEEP_SF;
     myRECOevent.HEEP_SF = HEEP_SF;
@@ -743,10 +743,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
 
     //PHASE SPACE CUTS
     std::cout << "Electron pT: " << iElec->pt() << std::endl;
-    if( iElec->pt() < 40. || fabs(iElec->eta()) > m_leptonEtaCut ){
-      continue;
-    }
-    if( iElec->pt() < m_highPTleptonCut || fabs(iElec->eta()) > m_leptonEtaCut ){
+    if( iElec->pt() < m_highPTleptonCut){
       myEvent.nAdditionalHEEP++;
       continue;
     }
@@ -1217,7 +1214,7 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.leadAK8JetMuonPtVal   = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).pt();
   myRECOevent.leadAK8JetMuonEtaVal  = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).eta();
   myRECOevent.leadAK8JetMuonPhiVal  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs[0].first->phi, myRECOevent.myMuonJetPairs[0].second->phi())));
-  myRECOevent.selectedMuonEt  = myRECOevent.myMuonJetPairs[0].second->et();
+  myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs[0].second->pt();
   myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs[0].second->phi();
   myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs[0].second->eta();
   myRECOevent.selectedJetPt   = myRECOevent.myMuonJetPairs[0].first->pT;
@@ -1416,8 +1413,8 @@ cmsWRextension::beginJob()
     std::cout << "BOOKING PLOTS FLAVOR 3" << std::endl;
   //flavor 3
 
-    m_allEvents.book((fs->mkdir("allEvents")), 3, m_outputTag, false);          
-    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3, m_outputTag, false); 
+    m_allEvents.book((fs->mkdir("allEvents")), 3, m_outputTag, false);
+    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3, m_outputTag, false);
     m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 3, m_outputTag, false);
     m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3, m_outputTag, false);
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 3, m_outputTag, false);
@@ -1433,15 +1430,15 @@ cmsWRextension::beginJob()
   if (m_doGen && !m_doReco) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
   //flavor 1
-    m_allEvents.book((fs->mkdir("allEvents")), 1, m_outputTag, false);          
-    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1, m_outputTag, false); 
+    m_allEvents.book((fs->mkdir("allEvents")), 1, m_outputTag, false);
+    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1, m_outputTag, false);
     m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1, m_outputTag, false);
 
   }
   if (!m_doGen && m_doReco) {
     std::cout << "BOOKING PLOTS FLAVOR 2" << std::endl;
   //flavor 2
-    m_allEvents.book((fs->mkdir("allEvents")), 2, m_outputTag, false);          
+    m_allEvents.book((fs->mkdir("allEvents")), 2, m_outputTag, false);
     m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 2, m_outputTag, false);

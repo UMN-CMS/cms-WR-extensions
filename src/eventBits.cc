@@ -26,7 +26,7 @@ eventBits::eventBits() {
 
   puWeight = -10000.0;
 
-  HEEP_SF    = -10000.0;
+  HEEP_SF  = -10000.0;
   HEEP_SF_E  = -10000.0;
   HEEP_SF_B  = -10000.0;
 
@@ -112,11 +112,11 @@ eventBits::eventBits() {
   electronTrigger = -10000.0;
   muonTrigger = -10000.0;
 
-  selectedMuonEt = -10000.0;
+  selectedMuonPt = -10000.0;
   selectedMuonPhi = -10000.0;
   selectedMuonEta = -10000.0;
 
-  selectedElectronEt = -10000.0;
+  selectedElectronPt = -10000.0;
   selectedElectronPhi = -10000.0;
   selectedElectronEta = -10000.0;
 

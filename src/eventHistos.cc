@@ -125,8 +125,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     //m_leadSubleadingPartonsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsEta","Four Object Eta of the 2 leading Partons and Muons",  80, -4.0,4.0);
     //m_leadAK8JetMuonEta  =              m_histoFolder.make<TH1D>("leadAK8JetMuonEta","2 Object Eta of the leading Jet and Muon"                           ,80, -4.0,4.0);
 
-    m_leadAK8JetMuonPhi  =              m_histoFolder.make<TH1D>("leadAK8JetMuonAbsdphi","2 Object delta Phi of the leading Jet and Muon; Phi (rad);"                     ,60, 2.0,3.2);
-    m_leadAK8JetElectronPhi  =              m_histoFolder.make<TH1D>("leadAK8JetElectronAbsdphi","2 Object delta Phi of the leading Jet and Electron; Phi (rad);"                     ,60, 2.0,3.2);
+    m_leadAK8JetMuonPhi  =              m_histoFolder.make<TH1D>("leadAK8JetMuonAbsdphi","2 Object delta Phi of the leading Jet and Muon; #phi (rad);"                     ,60, 2.0,3.2);
+    m_leadAK8JetElectronPhi  =              m_histoFolder.make<TH1D>("leadAK8JetElectronAbsdphi","2 Object delta Phi of the leading Jet and Electron; #phi (rad);"                     ,60, 2.0,3.2);
 
     m_leadAK8JetMuonJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetMuonJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet lepton pair; percent muon energy;", 100, 0.0, 1.0);
     m_leadAK8JetElectronJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetElectronJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet lepton pair; percent muon energy;", 100, 0.0, 1.0);
@@ -145,36 +145,36 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
     m_nAdditionalHEEP =                    m_histoFolder.make<TH1D>("nAdditionalHEEP", ";#  Electrons;",                                                       10, -.5, 9.5);
 
-    m_selectedMuonEt  =                 m_histoFolder.make<TH1D>("selectedMuonEt"  ,"Selected Muon Et; High-p_{T} Muon Et (GeV);"  ,80,0.0,4000 ); 
-    m_selectedElectronEt  =                 m_histoFolder.make<TH1D>("selectedElectronEt"  ,"Selected Electron Et; Electron Et (GeV);"  ,52,0.0,2000 ); 
+    m_selectedMuonPt  =                 m_histoFolder.make<TH1D>("selectedMuonPt"  ,"Selected Muon Pt; High-p_{T} Muon p_{T} (GeV);"  ,52,0.0,2000 ); 
+    m_selectedElectronPt  =                 m_histoFolder.make<TH1D>("selectedElectronPt"  ,"Selected Electron pT; Electron p_{T} (GeV);"  ,52,0.0,2000 ); 
     m_selectedJetPt   =                 m_histoFolder.make<TH1D>("selectedJetPt"   ,"Selected Jet Pt; Jet p_{T} (GeV);"   ,40,0.0,2000 );  
-    m_selectedMuonPhi =                 m_histoFolder.make<TH1D>("selectedMuonPhi" ,"Selected Muon Phi; High-p_{T} Muon Phi (rad);" ,80,-4.0,4.0 );  
-    m_selectedElectronPhi =                 m_histoFolder.make<TH1D>("selectedElectronPhi" ,"Selected Electron Phi; Electron Phi (rad);" ,80,-4.0,4.0 );  
-    m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi; Jet Phi (rad);"  ,80,-4.0,4.0 );   
-    m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta; High-p_{T} Muon Eta (rad);" ,60,-3.0,3.0 );   
-    m_selectedElectronEta =                 m_histoFolder.make<TH1D>("selectedElectronEta" ,"Selected Electron Eta; Electron Eta (rad);" ,60,-3.0,3.0 );   
-    m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Jet Eta (rad);"  ,60,-3.0,3.0 ); 
+    m_selectedMuonPhi =                 m_histoFolder.make<TH1D>("selectedMuonPhi" ,"Selected Muon Phi; High-p_{T} Muon #phi (rad);" ,80,-4.0,4.0 );  
+    m_selectedElectronPhi =                 m_histoFolder.make<TH1D>("selectedElectronPhi" ,"Selected Electron Phi; Electron #phi (rad);" ,80,-4.0,4.0 );  
+    m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi; Jet #phi (rad);"  ,80,-4.0,4.0 );   
+    m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta; High-p_{T} Muon #eta (rad);" ,60,-3.0,3.0 );   
+    m_selectedElectronEta =                 m_histoFolder.make<TH1D>("selectedElectronEta" ,"Selected Electron Eta; Electron #eta (rad);" ,60,-3.0,3.0 );   
+    m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Jet #eta (rad);"  ,60,-3.0,3.0 ); 
     m_selectedJetMass  =                 m_histoFolder.make<TH1D>("selectedJetMass"  ,"Selected Jet Mass; Jet softdrop mass (GeV);"  ,60,0.0, 300.0 );
     m_selectedJetTau21  =                 m_histoFolder.make<TH1D>("selectedJetTau21"  ,"Selected Jet Tau21; Jet #tau_{21};"  ,30,0.0, 1.0 );
 
-    m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,   "Sublead Muon Selected Jet dPhi; Phi (rad);"  ,80,  0.0, 4.0);
-    m_subleadMuon_selElectronPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelElectrondPhi", "Sublead Muon Selected Electron dPhi; Phi (rad);" ,80,  0.0, 4.0);
+    m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,   "Sublead Muon Selected Jet dPhi; #phi (rad);"  ,80,  0.0, 4.0);
+    m_subleadMuon_selElectronPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelElectrondPhi", "Sublead Muon Selected Electron dPhi; #phi (rad);" ,80,  0.0, 4.0);
     m_subleadMuon_selElectronMass  =    m_histoFolder.make<TH1D>("subleadMuonSelElectronMass", "Sublead Muon Selected Electron Mass; Mass (GeV);" ,100, 0.0,2000);
     m_subleadMuon_selElectronZMass =    m_histoFolder.make<TH1D>("subleadMuonSelElectronZMass","Sublead Muon Selected Electron Mass; Mass (GeV);" ,100, 0.0,200);
     m_subleadMuon_selElectronPt    =    m_histoFolder.make<TH1D>("subleadMuonSelElectronPt"  , "Sublead Muon Selected Electron Pt; Pt (GeV);"   ,100, 0.0,2000);
-    m_subleadMuon_selMuondPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelMuondPhi", "Sublead Muon Selected Muon dPhi; Phi (rad);" ,80,  0.0, 4.0);
+    m_subleadMuon_selMuondPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelMuondPhi", "Sublead Muon Selected Muon dPhi; #phi (rad);" ,80,  0.0, 4.0);
     m_subleadMuon_selMuonMass  =    m_histoFolder.make<TH1D>("subleadMuonSelMuonMass", "Sublead Muon Selected Muon Mass; Mass (GeV);" ,100, 0.0,2000);
     m_subleadMuon_selMuonZMass =    m_histoFolder.make<TH1D>("subleadMuonSelMuonZMass","Sublead Muon Selected Muon Mass; Mass (GeV);" ,100, 0.0,200);
     m_subleadMuon_selMuonPt    =    m_histoFolder.make<TH1D>("subleadMuonSelMuonPt"  , "Sublead Muon Selected Muon Pt; Pt (GeV);"   ,100, 0.0,2000);
 
     m_subleadMuonEt                 =    m_histoFolder.make<TH1D>("subleadMuonEt"           ,  "Sublead Muon Et; Et  (GeV);"              ,100,  0.0, 1000);
-    m_subleadMuonEta                =    m_histoFolder.make<TH1D>("subleadMuonEta"          ,  "Sublead Muon Eta; Eta;"                    , 60, -3.0,  3.0);
-    m_subleadMuonPhi                =    m_histoFolder.make<TH1D>("subleadMuonPhi"          ,  "Sublead Muon Phi; Phi (rad);"              , 80, -4.0,  4.0);
+    m_subleadMuonEta                =    m_histoFolder.make<TH1D>("subleadMuonEta"          ,  "Sublead Muon Eta; Loose Muon #eta (rad);"                    , 60, -3.0,  3.0);
+    m_subleadMuonPhi                =    m_histoFolder.make<TH1D>("subleadMuonPhi"          ,  "Sublead Muon Phi; Loose Muon #phi (rad);"              , 80, -4.0,  4.0);
 
     m_MET                          =    m_histoFolder.make<TH1D>("MET"                 ,"MET;MET (GeV);# events",                       100, 0.0,2000); //THIS LINE WORKS
-    m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("METselJetdPhi"      ,"MET Selected Jet dPhi; Phi (rad);",      80, 0.0 ,4.0);
-    m_MET_selMuondPhi              =    m_histoFolder.make<TH1D>("METselMuondPhi"     ,"MET Selected Muon dPhi; Phi (rad);",     80, 0.0 ,4.0);
-    m_MET_selElectrondPhi              =    m_histoFolder.make<TH1D>("METselElectrondPhi"     ,"MET Selected Electron dPhi; Phi (rad);",     80, 0.0 ,4.0);
+    m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("METselJetdPhi"      ,"MET Selected Jet dPhi; #phi (rad);",      80, 0.0 ,4.0);
+    m_MET_selMuondPhi              =    m_histoFolder.make<TH1D>("METselMuondPhi"     ,"MET Selected Muon dPhi; #phi (rad);",     80, 0.0 ,4.0);
+    m_MET_selElectrondPhi              =    m_histoFolder.make<TH1D>("METselElectrondPhi"     ,"MET Selected Electron dPhi; #phi (rad);",     80, 0.0 ,4.0);
     m_MET_selJetMass               =    m_histoFolder.make<TH1D>("METselJetMass"      ,"MET Selected Jet Mass; Mass (GeV);",     100,0.0 ,2000);
     m_MET_selMuonMass              =    m_histoFolder.make<TH1D>("METselMuonMass"     ,"MET Selected Muon Mass; Mass (GeV);",    100,0.0 ,2000);
     m_MET_selElectronMass              =    m_histoFolder.make<TH1D>("METselElectronMass"     ,"MET Selected Electron Mass; Mass (GeV);",    100,0.0 ,2000);
@@ -187,13 +187,15 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_MuonWeight                   =    m_histoFolder.make<TH1D>("MuonWeight",";Muon Weight", 40, 0.0, 2.0);
     m_PUWeight                     =    m_histoFolder.make<TH1D>("PUWeight",";Pileup Weight", 40, 0.0, 2.0);
 
-    m_HEEP_SF                      =    m_histoFolder.make<TH1D>("HEEP_SF_E",";HEEP Weight All Electron", 40, 0.0, 2.0);
+    m_HEEP_SF                      =    m_histoFolder.make<TH1D>("HEEP_SF",";HEEP Weight", 40, 0.0, 2.0);
     m_HEEP_SF_E                      =    m_histoFolder.make<TH1D>("HEEP_SF_E",";HEEP Weight Endcap Electron", 40, 0.0, 2.0);
     m_HEEP_SF_B                      =    m_histoFolder.make<TH1D>("HEEP_SF_B",";HEEP Weight Barrel Electron", 40, 0.0, 2.0);
     m_FSBfinalEventWeight_E             =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_E",";final EventWeight FSB Endcap", 40, 0.0, 2.0);
     m_FSBfinalEventWeight_B             =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_B",";final EventWeight FSB Barrel", 40, 0.0, 2.0);
 
     m_finalEventWeight             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
+    m_Electron_Reco_SF             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
+
 
 //
 //
@@ -415,8 +417,8 @@ void eventHistos::fillReco(eventBits& event) {
 
   m_selectedJetTransMET    ->Fill(event.selectedJetTransMET    ,weight);
 
-  m_selectedMuonEt  ->Fill(event.selectedMuonEt  ,weight); 
-  m_selectedElectronEt  ->Fill(event.selectedElectronEt  ,weight); 
+  m_selectedMuonPt  ->Fill(event.selectedMuonPt  ,weight); 
+  m_selectedElectronPt  ->Fill(event.selectedElectronPt  ,weight); 
   m_selectedJetPt   ->Fill(event.selectedJetPt   ,weight);  
   m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,weight);  
   m_selectedElectronPhi ->Fill(event.selectedElectronPhi ,weight);  
@@ -456,5 +458,6 @@ void eventHistos::fillReco(eventBits& event) {
   m_FSBfinalEventWeight_B->Fill(event.FSBweight_B, weight);
 
   m_finalEventWeight->Fill(weight, weight);
+  m_Electron_Reco_SF->Fill(event.egamma_SF, weight);
 
 }
