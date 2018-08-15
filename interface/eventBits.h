@@ -92,9 +92,9 @@ public:
   float  puWeight	;
 
   double HEEP_SF        ;
-  double HEEP_SF_E	;
-  double HEEP_SF_B	;
-  double egamma_SF	;
+  double HEEP_SF_E      ;
+  double HEEP_SF_B      ;
+  double egamma_SF      ;
 
   double parton1EtVal;
   double parton2EtVal;
@@ -174,11 +174,11 @@ public:
   double electronTrigger;
   double muonTrigger;
   
-  double selectedElectronEt;
+  double selectedElectronPt;
   double selectedElectronPhi;
   double selectedElectronEta;
 
-  double selectedMuonEt;
+  double selectedMuonPt;
   double selectedMuonPhi;
   double selectedMuonEta;
 

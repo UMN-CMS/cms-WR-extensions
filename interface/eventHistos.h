@@ -145,11 +145,11 @@ class eventHistos {
   TH1D* m_electronTrigger;
   TH1D* m_muonTrigger;
   //RECO PLOTS
-  TH1D* m_selectedMuonEt; 
+  TH1D* m_selectedMuonPt; 
   TH1D* m_selectedMuonPhi;
   TH1D* m_selectedMuonEta;
 
-  TH1D* m_selectedElectronEt; 
+  TH1D* m_selectedElectronPt; 
   TH1D* m_selectedElectronPhi;
   TH1D* m_selectedElectronEta;
 
@@ -202,6 +202,7 @@ class eventHistos {
   TH1D* m_HEEP_SF;
   TH1D* m_HEEP_SF_E;
   TH1D* m_HEEP_SF_B;
+  TH1D* m_Electron_Reco_SF;
 
 };
 
