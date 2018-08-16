@@ -50,7 +50,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
@@ -162,7 +162,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               muonPathsToPass = cms.vstring("HLT_Mu50_v", "HLT_TkMu50_v"),
                               muonFiltersToPass = cms.vstring(""),
 			      #electronPathsToPass = cms.vstring("HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v"),
-			      electronPathsToPass = cms.vstring("HLT_DoubleEle33_CaloIdL_MW", "HLT_DoubleEle33_CaloIdL_GsfTrkIdVL"),
+			      electronPathsToPass = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v"),
 			      electronFiltersToPass = cms.vstring(""),
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
