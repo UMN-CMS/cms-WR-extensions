@@ -47,7 +47,10 @@ public:
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs;
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
-  std::vector<const pat::Electron*> myElectronCandsHighPt;
+  std::vector<const pat::Electron*> myElectronCandsHighPt200;
+  std::vector<const pat::Electron*> myElectronCandsHighPt150;
+  std::vector<const pat::Electron*> myElectronCandsHighPt100;
+  std::vector<const pat::Electron*> myElectronCandsHighPt50;
   std::vector<const pat::Muon*>     myMuonCandsHighPt;
   std::vector<const pat::Muon*>     myMuonCands;
   const pat::MET*                   myMET;
@@ -71,7 +74,10 @@ public:
   int ak8jets40;
 
   int    muonCands;
-  int    electronCands;
+  int    electronCands50;
+  int    electronCands100;
+  int    electronCands150;
+  int    electronCands200;
   int    ak8jetCands;
   int    mynLeptons     ;
   int    mynMuons       ;

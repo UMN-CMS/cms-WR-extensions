@@ -167,7 +167,10 @@ class eventHistos {
   TH1D* m_nJets;
   TH1D* m_nAK8Jets;
   TH1D* m_nMuonCands;
-  TH1D* m_nElectronCands;
+  TH1D* m_nElectronCands50;
+  TH1D* m_nElectronCands100;
+  TH1D* m_nElectronCands150;
+  TH1D* m_nElectronCands200;
   TH1D* m_nMuons10;
   TH1D* m_nAK8Jets40;
 

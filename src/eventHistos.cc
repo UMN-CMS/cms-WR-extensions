@@ -140,7 +140,10 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
     m_nMuonCands =                    m_histoFolder.make<TH1D>("nMuonCands", ";#  Muons;",                                                       10, -.5, 9.5);
-    m_nElectronCands =                    m_histoFolder.make<TH1D>("nElectronCands", ";#  Electrons;",                                                       10, -.5, 9.5);
+    m_nElectronCands50 =                    m_histoFolder.make<TH1D>("nElectronCands50" , ";#  Electrons Pt > 50;" ,                                                       10, -.5, 9.5);
+    m_nElectronCands100 =                   m_histoFolder.make<TH1D>("nElectronCands100", ";#  Electrons Pt > 100;",                                                       10, -.5, 9.5);
+    m_nElectronCands150 =                   m_histoFolder.make<TH1D>("nElectronCands150", ";#  Electrons Pt > 150;",                                                       10, -.5, 9.5);
+    m_nElectronCands200 =                   m_histoFolder.make<TH1D>("nElectronCands200", ";#  Electrons Pt > 200;",                                                       10, -.5, 9.5);
     m_nMuons10 =                        m_histoFolder.make<TH1D>("nMuons10", ";#  Muons above 10 GeV;",                                                       10, -.5, 9.5);
     m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
     m_nAdditionalHEEP =                    m_histoFolder.make<TH1D>("nAdditionalHEEP", ";#  Electrons;",                                                       10, -.5, 9.5);
@@ -434,7 +437,10 @@ void eventHistos::fillReco(eventBits& event) {
   //m_nJets->Fill(event.myGenJets.size(), weight);
   m_nAK8Jets->Fill(event.ak8jetCands, weight);
   m_nMuonCands->Fill(event.muonCands, weight);
-  m_nElectronCands->Fill(event.electronCands, weight);
+  m_nElectronCands50-> Fill(event.electronCands50 , weight);
+  m_nElectronCands100->Fill(event.electronCands100, weight);
+  m_nElectronCands150->Fill(event.electronCands150, weight);
+  m_nElectronCands200->Fill(event.electronCands200, weight);
   m_nMuons10->Fill(event.muons10, weight);
   m_nAdditionalHEEP->Fill(event.nAdditionalHEEP, weight);
   m_nAK8Jets40->Fill(event.ak8jets40, weight);

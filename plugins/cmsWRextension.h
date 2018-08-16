@@ -143,7 +143,10 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
       eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
       eventHistos m_eventsPassingWR2016RECO;
-      eventHistos m_eventsPassingFlavorSidebandRECO;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt150;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
       eventHistos m_eventsPassingFlavorSidebandRECO_noTrig;
       HEEP myHEEP;
       egammaEffi myEgammaEffi;

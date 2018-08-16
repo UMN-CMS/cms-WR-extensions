@@ -263,10 +263,18 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if (m_doTrig){
         if (passElectronTrig(iEvent, myRECOevent)){
           std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
-          m_eventsPassingFlavorSidebandRECO.fill(myRECOevent);
+          if (myRECOevent.electronCands50 > 1)
+            m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent);
+          if (myRECOevent.electronCands100 > 1)
+            m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent);
+          if (myRECOevent.electronCands150 > 1)
+            m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent);
+          if (myRECOevent.electronCands200 > 1)
+            m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent);
         }
       }
-      m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent);
+      if (myRECOevent.electronCands50 > 1)
+        m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent);
     }
   }
   m_allEvents.fill(myRECOevent);
@@ -402,8 +410,8 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   }
 
   myRECOevent.FSBcutProgress++;
-  if( myRECOevent.myElectronCandsHighPt.size() < 1 ){
-    std::cout<< "EVENTS FAILS, NO ELECTRONS OVER 200 GEV WITHIN ACCEPTANCE. " << myRECOevent.myElectronCandsHighPt.size()<< " ELECTRONS FOUND." << std::endl;
+  if( myRECOevent.myElectronCandsHighPt50.size() < 1 ){
+    std::cout<< "EVENTS FAILS, NO ELECTRONS OVER 50 GEV WITHIN ACCEPTANCE. " << myRECOevent.myElectronCandsHighPt50.size()<< " ELECTRONS FOUND." << std::endl;
     return false;
   }
   myRECOevent.FSBcutProgress++;
@@ -716,7 +724,10 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
 bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEvent) {  //Flavor sideband
   std::cout<<"STARTING ELECTRON SELECTION"<<std::endl;
-  std::vector<const pat::Electron*> highPTelectrons;
+  std::vector<const pat::Electron*> highPTelectrons200;
+  std::vector<const pat::Electron*> highPTelectrons150;
+  std::vector<const pat::Electron*> highPTelectrons100;
+  std::vector<const pat::Electron*> highPTelectrons50;
 
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
   if(m_doTrig) {
@@ -743,29 +754,51 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
 
     //PHASE SPACE CUTS
     std::cout << "Electron pT: " << iElec->pt() << std::endl;
-    if( iElec->pt() < m_highPTleptonCut){
+    if( iElec->pt() < 50){
       myEvent.nAdditionalHEEP++;
       continue;
     }
 
-    //IT PASSED EVERYTHING
-    highPTelectrons.push_back(&(*iElec));
-    std::cout<<"ELECTRON CAND WITH PT,ETA,PHI: "<<iElec->pt()<<","<<iElec->eta()<<","<<iElec->phi()<<std::endl;
+    if (iElec->pt() >= 50){
+      highPTelectrons50.push_back(&(*iElec));
+    }
+    else if (iElec->pt() >= 100){
+      highPTelectrons100.push_back(&(*iElec));
+    }
+    else if (iElec->pt() >= 150){
+      highPTelectrons150.push_back(&(*iElec));
+    }
+    else if (iElec->pt() >= 200){
+      highPTelectrons200.push_back(&(*iElec));
+    }
+    //std::cout<<"ELECTRON CAND WITH PT,ETA,PHI: "<<iElec->pt()<<","<<iElec->eta()<<","<<iElec->phi()<<std::endl;
   }
       //if( iLep->pt() > 200 ) highPTMuons.push_back(&(*iLep));
   //COLLECT MUONS INTO HIGHPT AND ALLPT WITHIN ACCEPTANCE
-  myEvent.electronCands = highPTelectrons.size();
-  if (myEvent.electronCands > 1) {
-    std::sort(highPTelectrons.begin(),highPTelectrons.end(),::wrTools::compareEtCandidatePointer); 
+  myEvent.electronCands200 = highPTelectrons200.size();
+  myEvent.electronCands150 = highPTelectrons150.size();
+  myEvent.electronCands100 = highPTelectrons100.size();
+  myEvent.electronCands50  = highPTelectrons50.size();
+  if (myEvent.electronCands200 > 1) {
+    std::sort(highPTelectrons200.begin(),highPTelectrons200.end(),::wrTools::compareEtCandidatePointer); 
+    myEvent.myElectronCandsHighPt200 = highPTelectrons200;
   }
-  if (myEvent.electronCands < 1) {
-    return false;
-  } else {
-    myEvent.myElectronCandsHighPt = highPTelectrons;
-    //We select the lead muon in the event
-    myEvent.myElectronCand = highPTelectrons[0];
+  if (myEvent.electronCands150 > 1) {
+    std::sort(highPTelectrons150.begin(),highPTelectrons150.end(),::wrTools::compareEtCandidatePointer); 
+    myEvent.myElectronCandsHighPt150 = highPTelectrons150;
   }
-  return true;
+  if (myEvent.electronCands100 > 1) {
+    std::sort(highPTelectrons100.begin(),highPTelectrons100.end(),::wrTools::compareEtCandidatePointer); 
+    myEvent.myElectronCandsHighPt100 = highPTelectrons100;
+  }
+  if (myEvent.electronCands50 > 1) {
+    std::sort(highPTelectrons50.begin(),highPTelectrons50.end(),::wrTools::compareEtCandidatePointer); 
+    myEvent.myElectronCandsHighPt50 =  highPTelectrons50;
+    myEvent.myElectronCand = highPTelectrons50[0];
+    return true;  //NOT CURRENTLY USED
+  }
+  return false;//NOT CURRENTLY USED
+
 }
 bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout<<"STARTING MUON SELECTION"<<std::endl;
@@ -1424,8 +1457,11 @@ cmsWRextension::beginJob()
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3, m_outputTag, false);
-    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 3, m_outputTag, true);
-    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  3, m_outputTag, true);
   }
   if (m_doGen && !m_doReco) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
@@ -1447,8 +1483,11 @@ cmsWRextension::beginJob()
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag, false);
-    m_eventsPassingFlavorSidebandRECO.book((fs->mkdir("eventsPassingFlavorSidebandRECO")), 2, m_outputTag, true);
-    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECO_noTrig")), 2, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  3, m_outputTag, true);
 
   }
 }
