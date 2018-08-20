@@ -146,7 +146,7 @@ for line in lines:
         continue
     xsec = 0.0
     if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0]):
-        name = line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/"[2]
+        name = line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/")[2]
         colors[name] = int(line.split()[5].strip())
         print "Found: "+name
     else::
