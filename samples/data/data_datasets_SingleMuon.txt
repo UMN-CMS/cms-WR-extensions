@@ -1,8 +1,10 @@
-/SingleMuon/Run2016B-03Feb2017_ver2-v2/MINIAOD
-/SingleMuon/Run2016C-03Feb2017-v1/MINIAOD 
-/SingleMuon/Run2016D-03Feb2017-v1/MINIAOD
-/SingleMuon/Run2016E-03Feb2017-v1/MINIAOD 
-/SingleMuon/Run2016F-03Feb2017-v1/MINIAOD
-/SingleMuon/Run2016G-03Feb2017-v1/MINIAOD 
-/SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD
-/SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD
+                              DATASET                                                                                                    ||MAX EVENTS||JOBS PER LUMI||XSEC IN PB||LEGEND||COLOR CODE||
+=======================================================================================================================================================================================================
+/SingleMuon/Run2016B-03Feb2017_ver2-v2/MINIAOD    -1 30   NA  2016_Data_SingleMuon 794     
+/SingleMuon/Run2016C-03Feb2017-v1/MINIAOD         -1 30   NA  2016_Data_SingleMuon 794        
+/SingleMuon/Run2016D-03Feb2017-v1/MINIAOD         -1 30   NA  2016_Data_SingleMuon 794       
+/SingleMuon/Run2016E-03Feb2017-v1/MINIAOD         -1 30   NA  2016_Data_SingleMuon 794        
+/SingleMuon/Run2016F-03Feb2017-v1/MINIAOD         -1 30   NA  2016_Data_SingleMuon 794      
+/SingleMuon/Run2016G-03Feb2017-v1/MINIAOD         -1 30   NA  2016_Data_SingleMuon 794          
+/SingleMuon/Run2016H-03Feb2017_ver2-v1/MINIAOD    -1 30   NA  2016_Data_SingleMuon 794        
+/SingleMuon/Run2016H-03Feb2017_ver3-v1/MINIAOD    -1 30   NA  2016_Data_SingleMuon 794         
