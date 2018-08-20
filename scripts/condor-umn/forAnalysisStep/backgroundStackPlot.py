@@ -149,7 +149,7 @@ for line in lines:
         name = line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/")[2]
         colors[name] = int(line.split()[5].strip())
         print "Found: "+name
-    else::
+    else:
         xsecLine = line.split()[3].strip().split("+")[0]
         if "*" in xsecLine:
             xsec = float(xsecLine.split("*")[0])*float(xsecLine.split("*")[1])
