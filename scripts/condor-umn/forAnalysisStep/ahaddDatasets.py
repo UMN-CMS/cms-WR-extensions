@@ -38,10 +38,10 @@ for line in lines:
         continue
     dataset_fullpath = line.split()[0].strip()  #first entry in row is dataset's full path
     datasetPrefix = dataset_fullpath.split("/")[1]
-    if ("SingleElectron" in datasetPrefix or "SingleMuon" in datasetPrefix)
-        datasetFlavor = datasetPrefix + dataset_fullpath.split("/")[2].split("-")[1]
+    if ("SingleElectron" in datasetPrefix or "SingleMuon" in datasetPrefix):
+        datasetFlavor = datasetPrefix + "--" + dataset_fullpath.split("/")[2]
         datasets.append(datasetFlavor)
-    else
+    else:
         datasets.append(datasetPrefix)  #we grab just the name BUT this is a bad idea with data as all the like datasets have the same name
 
 print datasets
@@ -52,6 +52,9 @@ for dataset in datasets:
     removePrevious = "rm "+ahaddOut
     print removePrevious
     subprocess.call(removePrevious, shell=True)
-    ahaddCommand = "ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*.root"
+    if("SingleElectron" in dataset or "SingleMuon" in dataset): #DATA
+        ahaddCommand = "ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset.split("--")[0]+"/"+dataset.split("--")[1]+"*/*/*/*.root"
+    else:
+        ahaddCommand = "ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*.root"
     print ahaddCommand
     subprocess.call(ahaddCommand, shell=True)   
