@@ -434,27 +434,31 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "=========="
     print "This program takes collections histogram stacks ROOT file by ROOT file and \npairs and plots  each set together into one ROOT file"
     print "In order, please specify:"
-    print "Location of primary stack (data/signal)"
+    print "Location of primary stack directory (data/signal)"
     print "Directory of where to make plots"
-    print "Optional prefix for output naming"
     print "Text file contain list of datasets to compare to:"
     print "Directory where the comparison datasets are stored:"
     print "DATA or MC plots"
+    print "Optional prefix for output naming"
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python superPlotter2000.py /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ prefix ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA"
+    print "python superPlotter2000.py /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA prefix"
     print ""
     exit(0)
-if len(sys.argv) != 4:
+if len(sys.argv) != 7:
     print "inputs not understood, try help/h"
     exit(1)
-
 sys.stdout.flush()
-backgroundsList = backgroundListDir+"backgroundStack/backgroundsList.txt"
-#backgroundsList = backgroundListDir+"backgroundStack/backgroundsList_HTbinned_DiBosons.txt"
-#signalsDir = "/data/whybee0b/user/aevans/thesis/signals/"
-with open(backgroundsList) as f:
+
+inputStackDir = sys.argv[1]
+outputDir = sys.argv[2]
+backgroundStackList = sys.argv[3]
+bgStackDir = sys.argv[4]
+flavor = sys.argv[5]
+prefix = sys.argv[6]
+
+with open(backgroundStackList) as f:
     lines = f.read().splitlines()
 
 backgrounds = sets.Set()
@@ -494,7 +498,7 @@ if (sys.argv[5] == "data"):
 #    wrMass = int(signalName[2][2:])
 #    nuMass = int(signalName[4][2:-5])
     eventsWeight = 1
-saveHists(sys.argv[1],sys.argv[2],sys.argv[3],"", sys.argv[4], eventsWeight, sys.argv[5], setLogY)
+saveHists(inputStackDir,outputDir,prefix,"", sys.argv[4], eventsWeight, sys.argv[5], setLogY)
 #saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
 #def saveHists(folder,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
