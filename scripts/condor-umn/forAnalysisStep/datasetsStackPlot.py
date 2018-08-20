@@ -100,17 +100,17 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
 #INPUT FILTERING
 if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "=========="
-    print "This program takes a directory containing backgrounds and builds stack plots of them together."
-    print "It is driven by a text file specifying which backgrounds to look at as well as their cross-sections"
+    print "This program takes a directory containing MC or data and builds stack plots of them together."
+    print "It is driven by a text file specifying which datasets to look at as well as other details"
     print "In order, please specify:"
-    print "Text file contain list of backgrounds:"
-    print "Directory where the background ROOTs are stored:"
+    print "Text file contain list of datasets:"
+    print "Directory where the dataset ROOTs are stored:"
     print "Destination directory to put combined files in:"
-    print "OPTIONAL: Lumi adjustment factor (35.9 fb-1 default)"
+    print "OPTIONAL: Lumi adjustment factor (35.9 fb-1 scaling default)"
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python backgroundStackPlot.py ../../../samples/backgrounds/multiCrabTest.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 1.0"
+    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 1.0"
     print ""
     exit(0)
 if len(sys.argv) != 5:
