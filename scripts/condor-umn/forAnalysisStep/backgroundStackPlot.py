@@ -128,33 +128,45 @@ lumiAdjust = sys.argv[4]
 integratedLuminosity = 35900.0
 integratedLuminosity *= float(lumiAdjust)
 
-stackList = collections.OrderedDict()
 with open(backgroundsList) as f:
     lines = f.read().splitlines()
 
 xsecs = collections.OrderedDict()
 colors = collections.OrderedDict()
 lineNum = 0
+data = False;
+
+#datasetPrefix = dataset_fullpath.split("/")[1]
+#    if ("SingleElectron" in datasetPrefix or "SingleMuon" in datasetPrefix):
+#            datasetFlavor = datasetPrefix + "--" + dataset_fullpath.split("/")[2]
+
 for line in lines:
     if lineNum < 2 : 
         lineNum+=1
         continue
     xsec = 0.0
-    xsecLine = line.split()[3].strip().split("+")[0]
-    if "*" in xsecLine:
-        xsec = float(xsecLine.split("*")[0])*float(xsecLine.split("*")[1])
-    else:
-        xsec = float(xsecLine)
-    if xsec == 0.0:
-        print "ERROR MALFORMED XSEC: "
-        print xsecLine
-        exit(1)
-    xsecs[line.split()[0].strip().split("/")[1]] = xsec
-    colors[line.split()[0].strip().split("/")[1]] = int(line.split()[5].strip())
+    if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0]):
+        name = line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/"[2]
+        colors[name] = int(line.split()[5].strip())
+        print "Found: "+name
+    else::
+        xsecLine = line.split()[3].strip().split("+")[0]
+        if "*" in xsecLine:
+            xsec = float(xsecLine.split("*")[0])*float(xsecLine.split("*")[1])
+        else:
+            xsec = float(xsecLine)
+        if xsec == 0.0:
+            print "ERROR MALFORMED XSEC: "
+            print xsecLine
+            exit(1)
+        name = line.split()[0].strip().split("/")[1]
+        xsecs[name] = xsec
+        colors[name] = int(line.split()[5].strip())
+        print "Found: "+name
     #print line.split(':')[2].strip()
 
-print "NEW COLOR"
-print colors
+#print "NEW COLOR"
+#print colors
 #print backgrounds
 #run over backgrounds
 stackList = collections.OrderedDict()
@@ -162,23 +174,24 @@ stackList.clear()
 
 
 
-for background,xsec in xsecs.items():
+for background in colors: #HERE WE LOOP OVER THE KEYS IN COLORS, WHICH IS ALWAYS FILLED AND FOR BACKGROUNDS WILL HAVE A VALUE PAIRING IN XSECS
     ahaddOut = backgroundsROOToutputDir+background+".root"
     backgroundEventsWeight = eventsWeightsDir+background+".root"
     print backgroundEventsWeight
     weight = 1.0
-    weight *= integratedLuminosity
-    weight *= xsecs[background]
-    print "Lumi*xsec="+str(weight)
-    print "LOOKING FOR EVENTS WEIGHT IN FILE"
-    eventsWeight = 0
-    eventsWeight = getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=backgroundsROOToutputDir)
-    if (eventsWeight == 0):
-        print "BACKGROUND HAS ZERO EVENTS WEIGHT"
-        continue
-    print "Found # events:"+str(eventsWeight)
-    weight /= eventsWeight
-    print "DONE CALCULATING"
+    if ("SingleElectron" not in background and "SingleMuon" not in background):  #MC ONLY
+        weight *= integratedLuminosity
+        weight *= xsecs[background]
+        print "Lumi*xsec="+str(weight)
+        print "LOOKING FOR EVENTS WEIGHT IN FILE"
+        eventsWeight = 0
+        eventsWeight = getEventsWeight(ROOT.TFile.Open(backgroundEventsWeight, "read"),directory=backgroundsROOToutputDir)
+        if (eventsWeight == 0):
+            print "BACKGROUND HAS ZERO EVENTS WEIGHT"
+            continue
+        print "Found # events:"+str(eventsWeight)
+        weight /= eventsWeight
+        print "DONE CALCULATING"
     print "Scale: "+str(weight)
     saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOToutputDir)
 
