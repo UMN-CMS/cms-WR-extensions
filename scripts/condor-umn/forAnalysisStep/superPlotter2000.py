@@ -426,7 +426,7 @@ if len(sys.argv) != 9:
 sys.stdout.flush()
 
 signalName = sys.argv[1]
-setLogY = int(sys.argv[2]
+setLogY = int(sys.argv[2])
 inputStackDir = sys.argv[3]
 outputDir = sys.argv[4]
 backgroundStackList = sys.argv[5]
