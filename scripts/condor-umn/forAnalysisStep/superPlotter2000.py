@@ -80,35 +80,38 @@ def customPalette(zeropoint = 0.5):
     ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb)
 
 
-def saveHists(folder,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
+def saveHists(folder,bgStacks,path,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
     for entry in os.listdir(folder):
         print "LOOPING THROUGH:"
         print entry
-        obj = folder+"/"+entry
+        absPath = folder+"/"+entry
         sys.stdout.flush()
-        if os.path.isdir(obj):
-            newFolder = obj
+        if os.path.isdir(absPath):
+            newFolder = absPath
             newDir=directory+"/"+entry
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(obj,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
+            saveHists(obj,bgStacks,path,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
         myHisto = 0
         if os.path.isfile(obj) and ".root" in entry:
             histoROOTfile = ROOT.TFile(obj,"READ")
             for key in histoROOTfile.GetListOfKeys():
-                if ("TH1" in key.GetClassName()):
-                    myHisto = histoROOTfile.Get(key.GetName)
+                print key.GetName()
+                print key.GetClassName()
+                if ("THStack" in key.GetClassName()):
+                    myHisto = histoROOTfile.Get(key.GetName())
                     break
             if (myHisto == 0):
                 print "BAD ROOT FILE, SKIPPING..."
                 continue 
 	    print "Drawing Hist"
-            drawHist(myHisto,directory+"/"+prefix+"_"+myHisto.GetName()+".png",width=1000,height=800, drawoptions = drawoptions, bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
-#            drawHist(hist,directory+"/"+prefix+"_"+key.GetName()+".root",width=1000,height=1000, drawoptions = drawoptions, bg=bg, massPoint=massPoint, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+            print myHisto
+            #myHisto.Draw()
+            combiHisto = histFromStackNoRef(myHisto)
+            drawHist(combiHisto,bgStacks,directory+"/"+prefix+"_",entry,".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
 
-def getStack(plotName, folder, massPoint):
-    #backgroundsDir = "/data/whybee0b/user/aevans/thesis/backgrounds/WR_M-"+str(massPoint[0])+"_LNu_M-"+str(massPoint[1])+"/"
+def getStack(plotName, folder):
     backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/PuppiJets_FixMuonWeight/"
     print backgroundsDir+folder+"/"+plotName+".root"
     sys.stdout.flush()
@@ -121,8 +124,18 @@ def getStack(plotName, folder, massPoint):
             sys.stdout.flush()
             return file.Get(key.GetName())
     return 0
-
-def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple", eventsWeight=1.0, dataType = "MC", setLogy = 0):
+def histFromStackWithRef(refHisto, stack): #CREATES A HISTOGRAM FROM A THSTACK
+    newHist = copy.deepcopy(refHisto)
+    newHist.Scale(0.0)
+    newHist.Merge(stack.GetHists())
+    return newHist
+def histFromStackNoRef(stack):
+    newHist = copy.deepcopy(stack.GetHists()[0])
+    newHist.Scale(0.0)
+    newHist.Merge(stack.GetHists())
+    return newHist
+    
+def drawHist(hist,bgStacks,prefix,name,postfix,width=1500,height=1500, drawoptions="",bg="simple", eventsWeight=1.0, dataType = "MC", setLogy = 0):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     weight = 1.0
     if (dataType == "MC") :
@@ -135,6 +148,10 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple", event
     weight /= eventsWeight
                                
     newHist = copy.deepcopy(hist)
+    print hist
+    print newHist
+    print hist.GetYaxis()
+    print newHist.GetYaxis()
     newHist.GetYaxis().SetTitle("Events")
     c = ROOT.TCanvas("c","c",width,height)
 
@@ -158,8 +175,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple", event
     #print bg
     if (bg == "backgrounds"):
 #	print "name.split: ", name.split("/")[-1].split("_")[-1][:-3]
-#        backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-5],name.split("/")[-3]+"/"+name.split("/")[-2], massPoint)
-        backgroundStack = getStack(name.split("/")[-1].split("_")[-1][:-4],name.split("/")[-3]+"/"+name.split("/")[-2], massPoint)
+        backgroundStack = getStack(name,prefix,bgStacks)
         if (backgroundStack != 0):
             print "GOT THE BACKGROUND"    
             sys.stdout.flush()
@@ -258,6 +274,7 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple", event
         legend3.SetBorderSize(0)
         legend3.SetTextSize(0.035)
         legend3.SetTextFont(42)
+        massPoint = ["NA", "NA"]
         if(dataType == "MC"):
             legend3.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
         else:
@@ -417,7 +434,7 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python superPlotter2000.py SingleElectron 1 /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA prefix"
+    print "python superPlotter2000.py SingleElectron 1 /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA prefix"
     print ""
     exit(0)
 if len(sys.argv) != 9:
@@ -429,29 +446,12 @@ signalName = sys.argv[1]
 setLogY = int(sys.argv[2])
 inputStackDir = sys.argv[3]
 outputDir = sys.argv[4]
-backgroundStackList = sys.argv[5]
+backgroundStacks = sys.argv[5]
 bgStackDir = sys.argv[6]
 flavor = sys.argv[7]
 prefix = sys.argv[8]
 
-with open(backgroundStackList) as f:
-    lines = f.read().splitlines()
-
-backgrounds = sets.Set()
-backgroundPlotNames = collections.OrderedDict()
-colors = collections.OrderedDict()
-lineNum = 0
-for line in lines:
-    if lineNum < 2 :
-        lineNum+=1
-        continue
-    name = line.split()[0].strip().split("/")[1]
-    colors[name] = int(line.split()[5].strip())
-    backgrounds.add(name)
-    print "Found: "+name
-
-
-saveHists(inputStackDir,outputDir,prefix,"", 1, flavor, setLogY)
+saveHists(inputStackDir,backgroundStacks,outputDir,prefix,"backgrounds", 1, flavor, setLogY)
 #saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
 #def saveHists(folder,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
