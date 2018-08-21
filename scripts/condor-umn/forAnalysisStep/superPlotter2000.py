@@ -442,13 +442,14 @@ backgroundPlotNames = collections.OrderedDict()
 colors = collections.OrderedDict()
 lineNum = 0
 for line in lines:
-    if lineNum < 2 : 
+    if lineNum < 2 :
         lineNum+=1
         continue
-    backgrounds.add(line.split(':')[2].strip())
-    colors[line.split(':')[0].strip()[:-4]] = int(line.split(':')[3].strip())
-    backgroundPlotNames[line.split(':')[2].strip()] = line.split(':')[0].strip()[:-4]
-    print "test: ", line.split(':')[0].strip()[:-4]
+    name = line.split()[0].strip().split("/")[1]
+    colors[name] = int(line.split()[5].strip())
+    backgrounds.add(name)
+    print "Found: "+name
+
 
 saveHists(inputStackDir,outputDir,prefix,"", 1, flavor, setLogY)
 #saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
