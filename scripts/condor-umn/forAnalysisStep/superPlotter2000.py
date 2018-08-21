@@ -85,17 +85,17 @@ def saveHists(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple",
     for entry in os.listdir(folder):
         print "LOOPING THROUGH:"
         print entry
-        absPath = folder+"/"+entry
+        absPathObj = folder+"/"+entry
         sys.stdout.flush()
-        if os.path.isdir(absPath):
+        if os.path.isdir(absPathObj):
             newOutPathFolder = outPath+"/"+entry
             newDir=directory+"/"+entry
             if(not (os.path.isdir(newOutPathFolder))):
                 subprocess.call(["mkdir", newOutPathFolder])
-            saveHists(obj,bgStacksRootDir,newOutPathFolder,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
+            saveHists(absPathObj,bgStacksRootDir,newOutPathFolder,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
         myHisto = 0
-        if os.path.isfile(obj) and ".root" in entry:
-            histoROOTfile = ROOT.TFile(obj,"READ")
+        if os.path.isfile(absPathObj) and ".root" in entry:
+            histoROOTfile = ROOT.TFile(absPathObj,"READ")
             for key in histoROOTfile.GetListOfKeys():
                 print key.GetName()
                 print key.GetClassName()
@@ -109,14 +109,14 @@ def saveHists(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple",
             print myHisto
             #myHisto.Draw()
             combiHisto = histFromStackNoRef(myHisto)
-            drawHist(combiHisto,bgStacksRootDir,directory+"/"+prefix+"_",entry,".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+            drawHist(combiHisto,bgStacksRootDir,directory,prefix,entry[:-5],".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
 
-def getStack(plotName, folder):
-    print backgroundsDir+folder+"/"+plotName+".root"
+def getStack(folder, plotName):
+    print folder+"/"+plotName+".root"
     sys.stdout.flush()
-    if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
+    if not os.path.isfile(folder+"/"+plotName+".root"):
         return 0
-    file = ROOT.TFile.Open(backgroundsDir+folder+"/"+plotName+".root", "read")
+    file = ROOT.TFile.Open(folder+"/"+plotName+".root", "read")
     for key in file.GetListOfKeys():
         if (not key.IsFolder()) and (key.GetName() == plotName):
             print "THSTACK PLOT FOUND"
@@ -134,7 +134,7 @@ def histFromStackNoRef(stack):
     newHist.Merge(stack.GetHists())
     return newHist
     
-def drawHist(hist,bgStacks,prefix,name,postfix,width=1500,height=1500, drawoptions="",bg="simple", eventsWeight=1.0, dataType = "MC", setLogy = 0):
+def drawHist(hist,bgStacks,stackPlotPath,prefix,name,postfix,width=1500,height=1500, drawoptions="",bg="simple", eventsWeight=1.0, dataType = "MC", setLogy = 0):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     weight = 1.0
     if (dataType == "MC") :
@@ -174,7 +174,7 @@ def drawHist(hist,bgStacks,prefix,name,postfix,width=1500,height=1500, drawoptio
     #print bg
     if (bg == "backgrounds"):
 #	print "name.split: ", name.split("/")[-1].split("_")[-1][:-3]
-        backgroundStack = getStack(name,prefix,bgStacks)
+        backgroundStack = getStack(bgStacks+stackPlotPath,name)
         if (backgroundStack != 0):
             print "GOT THE BACKGROUND"    
             sys.stdout.flush()
