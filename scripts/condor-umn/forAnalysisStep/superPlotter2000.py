@@ -80,7 +80,7 @@ def customPalette(zeropoint = 0.5):
     ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb)
 
 
-def saveHists(folder,bgStacks,path,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
+def saveHists(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
     for entry in os.listdir(folder):
         print "LOOPING THROUGH:"
@@ -88,11 +88,11 @@ def saveHists(folder,bgStacks,path,directory="",prefix="",bg="simple", eventsWei
         absPath = folder+"/"+entry
         sys.stdout.flush()
         if os.path.isdir(absPath):
-            newFolder = absPath
+            newOutPathFolder = outPath+"/"+entry
             newDir=directory+"/"+entry
-            if(not (os.path.isdir(newDir))):
-                subprocess.call(["mkdir", newDir])
-            saveHists(obj,bgStacks,path,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
+            if(not (os.path.isdir(newOutPathFolder))):
+                subprocess.call(["mkdir", newOutPathFolder])
+            saveHists(obj,bgStacksRootDir,newOutPathFolder,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
         myHisto = 0
         if os.path.isfile(obj) and ".root" in entry:
             histoROOTfile = ROOT.TFile(obj,"READ")
@@ -109,10 +109,9 @@ def saveHists(folder,bgStacks,path,directory="",prefix="",bg="simple", eventsWei
             print myHisto
             #myHisto.Draw()
             combiHisto = histFromStackNoRef(myHisto)
-            drawHist(combiHisto,bgStacks,directory+"/"+prefix+"_",entry,".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+            drawHist(combiHisto,bgStacksRootDir,directory+"/"+prefix+"_",entry,".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
 
 def getStack(plotName, folder):
-    backgroundsDir = "/uscms_data/d3/mkrohn/WR/CMSSW_8_0_25/src/ExoAnalysis/cmsWRextensions/OutputRoot/PuppiJets_FixMuonWeight/"
     print backgroundsDir+folder+"/"+plotName+".root"
     sys.stdout.flush()
     if not os.path.isfile(backgroundsDir+folder+"/"+plotName+".root"):
@@ -451,7 +450,7 @@ bgStackDir = sys.argv[6]
 flavor = sys.argv[7]
 prefix = sys.argv[8]
 
-saveHists(inputStackDir,backgroundStacks,outputDir,prefix,"backgrounds", 1, flavor, setLogY)
+saveHists(inputStackDir,backgroundStacks,outputDir,"",prefix,"backgrounds", 1, flavor, setLogY)
 #saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
 #def saveHists(folder,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
