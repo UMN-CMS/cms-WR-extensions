@@ -121,32 +121,6 @@ def getStack(plotName, folder, massPoint):
             sys.stdout.flush()
             return file.Get(key.GetName())
     return 0
-def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
-    hists1d = ["TH1D", "TH1F", "TH1"]
-    hists2d = ["TH2D", "TH2F", "TH2"]
-    histObjectNames = hists1d + hists2d
-    print "Looking for eventsWeight histogram"
-    sys.stdout.flush()
-    if inFolder:
-   #     print "Accessing folder"
-        for key in file.GetListOfKeys():
-   #         print key.GetName()
-            if key.GetClassName() in histObjectNames and filter in prefix and key.GetName() == "eventsWeight":
-   #             print "Found events weight" 
-                return float(file.Get(key.GetName()).GetBinContent(1))
-    else:
-  #      print "Not in folder yet"
-        for key in file.GetListOfKeys():
-   #         print "Looping through keys"
-            if key.IsFolder():
-                if key.GetName() == "allEvents":
-   #                 print "Found Folder"
-                    inFolder = True
-                dir = file.Get(key.GetName())
-                newDir=directory+"/"+key.GetName()
-                return getEventsWeight(dir,directory=newDir, prefix=prefix,filter=filter, inFolder = inFolder)
- #   print "UH OH! NO EVENTS WEIGHT PLOT FOUND!"
-    return 1.0
 
 def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple", eventsWeight=1.0, dataType = "MC", setLogy = 0):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
@@ -443,20 +417,22 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python superPlotter2000.py /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA prefix"
+    print "python superPlotter2000.py SingleElectron 1 /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA prefix"
     print ""
     exit(0)
-if len(sys.argv) != 7:
+if len(sys.argv) != 9:
     print "inputs not understood, try help/h"
     exit(1)
 sys.stdout.flush()
 
-inputStackDir = sys.argv[1]
-outputDir = sys.argv[2]
-backgroundStackList = sys.argv[3]
-bgStackDir = sys.argv[4]
-flavor = sys.argv[5]
-prefix = sys.argv[6]
+signalName = sys.argv[1]
+setLogY = int(sys.argv[2]
+inputStackDir = sys.argv[3]
+outputDir = sys.argv[4]
+backgroundStackList = sys.argv[5]
+bgStackDir = sys.argv[6]
+flavor = sys.argv[7]
+prefix = sys.argv[8]
 
 with open(backgroundStackList) as f:
     lines = f.read().splitlines()
@@ -474,31 +450,7 @@ for line in lines:
     backgroundPlotNames[line.split(':')[2].strip()] = line.split(':')[0].strip()[:-4]
     print "test: ", line.split(':')[0].strip()[:-4]
 
-print "Background Plot Names"
-print backgroundPlotNames
-print "Plot Colors"
-print colors
-print "Backgrounds"
-print backgrounds
-sys.stdout.flush()
-signalName = sys.argv[1].split("_")
-setLogY = int(sys.argv[6])
-print "setLogY: ", setLogY
-print sys.argv[5]
-if (not (sys.argv[5] == "data")):
-    wrMass = int(signalName[1][2:])
-    nuMass = int(signalName[3][2:])
-#    eventsWeight = getEventsWeight(ROOT.TFile.Open(sys.argv[1], "read"),directory=signalsDir)
-    print "GOT EVENTSWEIGHT"
-    print eventsWeight
-sys.stdout.flush()
-if (sys.argv[5] == "data"): 
-    print "check1: ", signalName[2][2:]
-    print "check2: ", signalName[4][2:-5]
-#    wrMass = int(signalName[2][2:])
-#    nuMass = int(signalName[4][2:-5])
-    eventsWeight = 1
-saveHists(inputStackDir,outputDir,prefix,"", sys.argv[4], eventsWeight, sys.argv[5], setLogY)
+saveHists(inputStackDir,outputDir,prefix,"", 1, flavor, setLogY)
 #saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
 #def saveHists(folder,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
