@@ -224,8 +224,10 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
             sys.stdout.flush()
             scaleFactor = 1.0
         newHist.Scale(scaleFactor)
-        newHist.SetLineColor(794)
-        newHist.SetLineWidth(5)
+        newHist.SetLineColor(ROOT.kBlack)
+        newHist.SetLineStyle(1)
+        newHist.SetLineWidth(2)
+        newHist.SetFillStyle(0)
 	newHist.GetYaxis().SetTitleOffset(1.3)
         newHist.GetYaxis().SetLabelSize(.05)
         newHist.GetYaxis().SetTitleSize(.05)
@@ -302,15 +304,15 @@ def drawHist(hist,name,width=1500,height=1500, drawoptions="",bg="simple",massPo
         if(dataType == "MC"):
             legend3.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
         else:
-            legend3.AddEntry(newHist, "2016 Data")
+            legend3.AddEntry(newHist, "2016 Data", "L")
 	print "backgrounds: ", backgrounds
 
 	count=1
         for bg in backgrounds:
 	    print "bg: ", bg
 	    print "backgroundPlotNames[bg]: ", backgroundPlotNames[bg]
-            if count < 3: legend.AddEntry(backgroundPlotNames[bg], bg, "F")
-	    elif count > 2: legend2.AddEntry(backgroundPlotNames[bg], bg, "F")
+            if count < 4: legend.AddEntry(backgroundPlotNames[bg], bg, "F")
+	    elif count > 3: legend2.AddEntry(backgroundPlotNames[bg], bg, "F")
 	    count = count+1
 
 	legend3.AddEntry(herr,"MC uncert. (stat.)","fl")
