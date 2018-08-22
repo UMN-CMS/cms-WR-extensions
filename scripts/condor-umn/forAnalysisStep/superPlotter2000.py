@@ -253,9 +253,7 @@ def drawHist(hist,bgStacks,stackPlotPath,prefix,name,postfix,width=1500,height=1
         print newHist.GetXaxis().GetTitle()
         newHistTitle = newHist.GetXaxis().GetTitle()
         sys.stdout.flush()
-        global colors
         global backgroundPlotNames
-	print "colors: ", colors
 	print "backgroundPlotNames: ", backgroundPlotNames
         leg_y = 0.88 - (2+int(len(backgroundPlotNames)/2))*0.03
         legend = ROOT.TLegend(0.19,leg_y,0.42,0.88)
@@ -364,58 +362,6 @@ def drawHist(hist,bgStacks,stackPlotPath,prefix,name,postfix,width=1500,height=1
         print "HISTOGRAM EMPTY!"
         sys.stdout.flush()
 
-def drawMultipleSame(hists,labels,filename,colors=[], width = 500, height = 500, norm = False, xtitle = "", ytitle = "", rebin = 0, leg="top",logy=False):
-    hist_max = 0
-    if not colors:
-        colors = [ROOT.kRed, ROOT.kBlue, ROOT.kBlack]
-        colors = colors[:len(hists)]
-    for h in hists:
-        if rebin:
-           h.Rebin(rebin)
-        if norm:
-           h.Scale(1./h.Integral())
-        if h.GetMaximum() > hist_max:
-            hist_max = h.GetMaximum()
-
-    canv = ROOT.TCanvas("c","c",width,height)
-    if logy:
-         canv.SetLogy()
-    first = True
-
-    x1 = ROOT.gStyle.GetPadLeftMargin();
-    x2 = 1 - ROOT.gStyle.GetPadRightMargin();
-    if leg == "top":
-       y2 = 1 - ROOT.gStyle.GetPadTopMargin();
-       y1 = y2*.9
-       y2 = ROOT.gStyle.SetPadTopMargin(y2);
-    if leg == "bot":
-       y1 = ROOT.gStyle.GetPadBottomMargin();
-       y2 = y1 + 0.1
-       ROOT.gStyle.SetPadBottomMargin(y1);
-
-    leg = ROOT.TLegend(x1,y1,x2,y2)
-    leg.SetFillColor(ROOT.kWhite)
-    leg.SetNColumns(len(hists))
-    for h,l,c in zip(hists,labels,colors):
-        h.SetMaximum(1.2 * hist_max)
-        h.SetTitle(l)
-        h.SetLineColor(c)
-        h.SetLineWidth(3)
-        h.GetYaxis().SetTitleOffset(1.5)
-        #h.SetOptStat(0)
-        if first:
-            if xtitle: h.GetXaxis().SetTitle(xtitle)
-            if ytitle: h.GetYaxis().SetTitle(ytitle)
-            h.Draw()
-            first = False
-        else:
-            h.Draw("same")
-
-        leg.AddEntry(h,l)
-
-
-    leg.Draw()
-    canv.SaveAs(filename)
 #############################################################################################
 #WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
 #SingleMuon_WR_M-2400_LNu_M-240.root
@@ -433,10 +379,10 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python superPlotter2000.py SingleElectron 1 /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA prefix"
+    print "python superPlotter2000.py SingleElectron 1 /afs/cern.ch/work/a/aevans/public/thesis/dataStacks/ ../../../plots/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt /afs/cern.ch/work/a/aevans/public/backgroundStacks/ DATA prefix"
     print ""
     exit(0)
-if len(sys.argv) != 9:
+if len(sys.argv) != 10:
     print "inputs not understood, try help/h"
     exit(1)
 sys.stdout.flush()
@@ -446,9 +392,28 @@ setLogY = int(sys.argv[2])
 inputStackDir = sys.argv[3]
 outputDir = sys.argv[4]
 backgroundStacks = sys.argv[5]
-bgStackDir = sys.argv[6]
-flavor = sys.argv[7]
-prefix = sys.argv[8]
+backgroundStackList = sys.argv[6]
+bgStackDir = sys.argv[7]
+flavor = sys.argv[8]
+prefix = sys.argv[9]
+
+with open(backgroundStackList) as f:
+    lines = f.read().splitlines()
+
+backgroundPlotNames = collections.OrderedDict()
+backgrounds = sets.Set()
+
+lineNum=0
+for line in lines:
+    if lineNum < 2 : 
+        lineNum+=1
+        continue
+    cleanLine = line.strip()
+    fullBGname = cleanLine.split()[0]
+    legendName = cleanLine.split()[4]
+    backgroundName = fullBGname.split("/")[1]
+    backgroundPlotNames[legendName] = backgroundName
+    backgrounds.add(legendName)
 
 saveHists(inputStackDir,backgroundStacks,outputDir,"",prefix,"backgrounds", 1, flavor, setLogY)
 #saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
