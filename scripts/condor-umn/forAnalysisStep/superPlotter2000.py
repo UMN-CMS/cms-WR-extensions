@@ -87,6 +87,7 @@ def saveHists(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple",
         print entry
         absPathObj = folder+"/"+entry
         sys.stdout.flush()
+        newOutPathFolder = outPath
         if os.path.isdir(absPathObj):
             newOutPathFolder = outPath+"/"+entry
             newDir=directory+"/"+entry
@@ -109,7 +110,7 @@ def saveHists(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple",
             print myHisto
             #myHisto.Draw()
             combiHisto = histFromStackNoRef(myHisto)
-            drawHist(combiHisto,bgStacksRootDir,directory,prefix,entry[:-5],".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+            drawHist(combiHisto,bgStacksRootDir,directory,newOutPathFolder,prefix,entry[:-5],".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
 
 def getStack(folder, plotName):
     print folder+"/"+plotName+".root"
@@ -134,7 +135,7 @@ def histFromStackNoRef(stack):
     newHist.Merge(stack.GetHists())
     return newHist
     
-def drawHist(hist,bgStacks,stackPlotPath,prefix,name,postfix,width=1500,height=1500, drawoptions="",bg="simple", eventsWeight=1.0, dataType = "MC", setLogy = 0):
+def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,name,postfix,width=1500,height=1500, drawoptions="",bg="simple", eventsWeight=1.0, dataType = "MC", setLogy = 0):
 #/home/aevans/public_html/plots/21_Aug_2017_14-49-11-CDT//demo/eventsPassingWR2016RECO/WR_M-4000_ToLNu_M-1333_Analysis_MuMuJJ_selectedJetEta.png
     weight = 1.0
     if (dataType == "MC") :
@@ -174,7 +175,7 @@ def drawHist(hist,bgStacks,stackPlotPath,prefix,name,postfix,width=1500,height=1
     #print bg
     if (bg == "backgrounds"):
 #	print "name.split: ", name.split("/")[-1].split("_")[-1][:-3]
-        backgroundStack = getStack(bgStacks+stackPlotPath,name)
+        backgroundStack = getStack(bgStacks+stackPlotRelPath,name)
         if (backgroundStack != 0):
             print "GOT THE BACKGROUND"    
             sys.stdout.flush()
@@ -357,7 +358,7 @@ def drawHist(hist,bgStacks,stackPlotPath,prefix,name,postfix,width=1500,height=1
         leg4.AddEntry(toterree,"MC uncert. (stat.)","fl")
         leg4.Draw()
 
-        c.SaveAs(name)
+        c.SaveAs(outpathDir+"/"+name+postfix)
     else:
         print "HISTOGRAM EMPTY!"
         sys.stdout.flush()
