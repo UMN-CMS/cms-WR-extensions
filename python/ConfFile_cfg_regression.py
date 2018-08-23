@@ -198,7 +198,7 @@ process.EGMsequence = cms.Sequence(process.regressionApplication * process.calib
 
 
 # Set the lines below to True or False depending if you are correcting the scale (data) or smearing the resolution (MC) 
-process.calibratedPatElectrons.isMC = cms.bool(True)
+process.calibratedPatElectrons.isMC = cms.bool(options.isMC)
 #process.calibratedPatPhotons.isMC = cms.bool(True)
 
 process.selectedElectrons = cms.EDFilter("PATElectronSelector",
