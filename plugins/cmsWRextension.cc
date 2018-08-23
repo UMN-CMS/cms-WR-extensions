@@ -759,17 +759,17 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
       continue;
     }
 
-    if (iElec->pt() >= 50){
-      highPTelectrons50.push_back(&(*iElec));
+    if (iElec->pt() >= 200){
+      highPTelectrons200.push_back(&(*iElec));
     }
-    else if (iElec->pt() >= 100){
-      highPTelectrons100.push_back(&(*iElec));
-    }
-    else if (iElec->pt() >= 150){
+    if (iElec->pt() >= 150){
       highPTelectrons150.push_back(&(*iElec));
     }
-    else if (iElec->pt() >= 200){
-      highPTelectrons200.push_back(&(*iElec));
+    if (iElec->pt() >= 100){
+      highPTelectrons100.push_back(&(*iElec));
+    }
+    if (iElec->pt() >= 50){
+      highPTelectrons50.push_back(&(*iElec));
     }
     //std::cout<<"ELECTRON CAND WITH PT,ETA,PHI: "<<iElec->pt()<<","<<iElec->eta()<<","<<iElec->phi()<<std::endl;
   }
@@ -779,19 +779,19 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
   myEvent.electronCands150 = highPTelectrons150.size();
   myEvent.electronCands100 = highPTelectrons100.size();
   myEvent.electronCands50  = highPTelectrons50.size();
-  if (myEvent.electronCands200 > 1) {
+  if (myEvent.electronCands200 > 0) {
     std::sort(highPTelectrons200.begin(),highPTelectrons200.end(),::wrTools::compareEtCandidatePointer); 
     myEvent.myElectronCandsHighPt200 = highPTelectrons200;
   }
-  if (myEvent.electronCands150 > 1) {
+  if (myEvent.electronCands150 > 0) {
     std::sort(highPTelectrons150.begin(),highPTelectrons150.end(),::wrTools::compareEtCandidatePointer); 
     myEvent.myElectronCandsHighPt150 = highPTelectrons150;
   }
-  if (myEvent.electronCands100 > 1) {
+  if (myEvent.electronCands100 > 0) {
     std::sort(highPTelectrons100.begin(),highPTelectrons100.end(),::wrTools::compareEtCandidatePointer); 
     myEvent.myElectronCandsHighPt100 = highPTelectrons100;
   }
-  if (myEvent.electronCands50 > 1) {
+  if (myEvent.electronCands50 > 0) {
     std::sort(highPTelectrons50.begin(),highPTelectrons50.end(),::wrTools::compareEtCandidatePointer); 
     myEvent.myElectronCandsHighPt50 =  highPTelectrons50;
     myEvent.myElectronCand = highPTelectrons50[0];
