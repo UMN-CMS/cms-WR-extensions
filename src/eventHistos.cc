@@ -33,7 +33,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
   std::cout<<"TAG SET TO: "<<m_metaData->GetXaxis()->GetBinLabel(1)<<std::endl;
 
-  if (m_flavor != 4) {
+  if (m_flavor != 4 && m_flavor != 5) {
   //MAKE GEN PLOTS
     std::cout << "HERE WE CONSTRUCT THE PLOTS" << std::endl;
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
@@ -111,8 +111,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_leadSubleadingJetsMuonsMass  =    m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsMass","Four Object Mass of the 2 leading Jets and Muons;Mass (GeV);",      80, 0.0,4000);
     m_leadSubleadingAK8JetsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsMass","Four Object Mass of the 2 leading AK8Jets and Muons;Mass (GeV);",80, 0.0,4000);
     m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons;Mass (GeV);",80, 0.0,4000);
-    m_leadAK8JetMuonMass  =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,80, 0.0,4000);
-    m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                         ,80, 0.0,4000);
+    m_leadAK8JetMuonMass  =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
+    m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                         ,120, 0.0,6000);
 
     m_leadSubleadingJetsMuonsPt  =      m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons; Pt (GeV);",          80, 0.0,4000);
     m_leadSubleadingAK8JetsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsPt","Four Object Pt of the 2 leading AK8Jets and Muons; Pt (GeV);",    80, 0.0,4000);
@@ -219,6 +219,9 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
   } else if (m_flavor == 4) {
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
 
+  }else if (m_flavor == 5){
+    m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
+    m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
   }
 }
 void eventHistos::fill(eventBits& event) {
@@ -236,6 +239,8 @@ void eventHistos::fill(eventBits& event) {
     fillWeight(event);
   } else if (m_flavor == 4) {
     fillWeight(event);
+  } else if (m_flavor == 5){
+    fillCombine(event);
   }
   else return;
 }
@@ -465,5 +470,17 @@ void eventHistos::fillReco(eventBits& event) {
 
   m_finalEventWeight->Fill(weight, weight);
   m_Electron_Reco_SF->Fill(event.egamma_SF, weight);
+
+}
+
+void eventHistos::fillCombine(eventBits& event) {
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
+
+  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
+  m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
 
 }

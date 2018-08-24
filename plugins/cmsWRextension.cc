@@ -1443,7 +1443,7 @@ cmsWRextension::beginJob()
   std::cout << "BOOKING PLOTS" << std::endl;
   edm::Service<TFileService> fs; 
   //THESE CASES ARE EXCLUSIVE OF EACH OTHER
-  if (m_doGen && m_doReco) {
+  if (m_doGen && m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 3" << std::endl;
   //flavor 3
 
@@ -1464,7 +1464,7 @@ cmsWRextension::beginJob()
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, true);
     m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  3, m_outputTag, true);
   }
-  if (m_doGen && !m_doReco) {
+  if (m_doGen && !m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
   //flavor 1
     m_allEvents.book((fs->mkdir("allEvents")), 1, m_outputTag, false);
@@ -1472,7 +1472,7 @@ cmsWRextension::beginJob()
     m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1, m_outputTag, false);
 
   }
-  if (!m_doGen && m_doReco) {
+  if (!m_doGen && m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 2" << std::endl;
   //flavor 2
     m_allEvents.book((fs->mkdir("allEvents")), 2, m_outputTag, false);

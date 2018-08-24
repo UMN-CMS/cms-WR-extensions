@@ -35,6 +35,7 @@ class eventHistos {
   void fillReco(eventBits& event);
   void fillWeight(eventBits& event);
   void fillCutProgress(eventBits& event);
+  void fillCombine(eventBits& event);
 
  
   TFileDirectory m_histoFolder;
