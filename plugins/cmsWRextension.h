@@ -173,6 +173,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_doReco;
       bool m_isMC;
       bool m_doTrig;
+      bool m_doFast;
       double m_MCL;    //MASS UPPER AND LOWER CUTS
       double m_MCU;
 

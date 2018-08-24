@@ -104,6 +104,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true)),
   m_doTrig (iConfig.getUntrackedParameter<bool>("doTrig",false)),
+  m_doFast (iConfig.getUntrackedParameter<bool>("doFast",false)),
   m_jettiness (iConfig.getUntrackedParameter<std::string>("jettinessPUPPI")),
   //m_MCL (iConfig.getUntrackedParameter<double>("MCL", 400)),
   //m_MCU (iConfig.getUntrackedParameter<double>("MCU", 8000)),
@@ -263,17 +264,17 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if (m_doTrig){
         if (passElectronTrig(iEvent, myRECOevent)){
           std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
-          if (myRECOevent.electronCands50 > 1)
+          if (myRECOevent.electronCands50  > 0)
             m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent);
-          if (myRECOevent.electronCands100 > 1)
+          if (myRECOevent.electronCands100 > 0)
             m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent);
-          if (myRECOevent.electronCands150 > 1)
+          if (myRECOevent.electronCands150 > 0)
             m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent);
-          if (myRECOevent.electronCands200 > 1)
+          if (myRECOevent.electronCands200 > 0)
             m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent);
         }
       }
-      if (myRECOevent.electronCands50 > 1)
+      if (myRECOevent.electronCands50 > 0)
         m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent);
     }
   }
@@ -1483,12 +1484,19 @@ cmsWRextension::beginJob()
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag, false);
-    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  3, m_outputTag, true);
-    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 3, m_outputTag, true);
-    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 3, m_outputTag, true);
-    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, true);
-    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  3, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  2, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 2, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 2, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 2, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  2, m_outputTag, true);
 
+  }
+  if (m_doReco && m_doFast) {
+    std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
+    m_allEvents.book((fs->mkdir("allEvents")), 5, m_outputTag, false);
+    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 5, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 5, m_outputTag, false);
+    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  5, m_outputTag, true);
   }
 }
 
