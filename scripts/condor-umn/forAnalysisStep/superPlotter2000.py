@@ -80,7 +80,31 @@ def customPalette(zeropoint = 0.5):
     ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb)
 
 
-def saveHists(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
+def saveHistsTDir(file,bgStacksRootDir,outPath,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
+    hists1d = ["TH1D", "TH1F", "TH1"]
+    hists2d = ["TH2D", "TH2F", "TH2"]
+    histObjectNames = hists1d + hists2d
+    for key in file.GetListOfKeys():
+        print "LOOPING THROUGH:"
+        print key.GetName()
+        sys.stdout.flush()
+        if key.IsFolder():
+            dir = file.Get(key.GetName())
+            newDir=directory+"/"+key.GetName()
+            if(not (os.path.isdir(newDir))):
+                subprocess.call(["mkdir", newDir])
+            saveHists(dir,directory=newDir, prefix=prefix,prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
+            saveHistsTDir(file,bgStacksRootDir,newDir,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
+        if key.GetClassName() in histObjectNames and filter in prefix:
+            hist = file.Get(key.GetName())
+            drawoptions = ""
+            if key.GetClassName() in hists2d:
+                drawoptions = "colz"
+        print "drawHist"
+            drawHist(hist,bgStacksRootDir,directory,newDir,prefix,key.GetName(),".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+
+
+def saveHistsTStack(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
     for entry in os.listdir(folder):
         print "LOOPING THROUGH:"
@@ -93,7 +117,7 @@ def saveHists(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple",
             newDir=directory+"/"+entry
             if(not (os.path.isdir(newOutPathFolder))):
                 subprocess.call(["mkdir", newOutPathFolder])
-            saveHists(absPathObj,bgStacksRootDir,newOutPathFolder,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
+            saveHistsTStack(absPathObj,bgStacksRootDir,newOutPathFolder,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
         myHisto = 0
         if os.path.isfile(absPathObj) and ".root" in entry:
             histoROOTfile = ROOT.TFile(absPathObj,"READ")
@@ -393,6 +417,9 @@ sys.stdout.flush()
 signalName = sys.argv[1]
 setLogY = int(sys.argv[2])
 inputStackDir = sys.argv[3]
+nonStack = False
+if(".root" in inputStackDir):
+    nonStack = True
 outputDir = sys.argv[4]
 backgroundStacks = sys.argv[5]
 backgroundStackList = sys.argv[6]
@@ -418,7 +445,10 @@ for line in lines:
     backgroundPlotNames[legendName] = backgroundName
     backgrounds.add(legendName)
 
-saveHists(inputStackDir,backgroundStacks,outputDir,"",prefix,"backgrounds", 1, flavor, setLogY)
+if nonStack:
+    saveHistsTDir(inputStackDir,backgroundStacks,outputDir,"",prefix,"backgrounds", 1, flavor, setLogY)
+else:
+    saveHistsTStack(inputStackDir,backgroundStacks,outputDir,"",prefix,"backgrounds", 1, flavor, setLogY)
 #saveHists(ROOT.TFile.Open(sys.argv[1], "read"),sys.argv[2],sys.argv[3],"", sys.argv[4], [wrMass,nuMass], eventsWeight, sys.argv[5])
 #def saveHists(folder,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
 
