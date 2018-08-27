@@ -494,7 +494,7 @@ void eventHistos::fillCombine(eventBits& event) {
   std::cout << "FILL FSB MASS" << std::endl;
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
   std::cout << "FILL Z MASS" << std::endl;
-  m_subleadMuon_selElectronZMass->Fill(event.subleadMuon_selElectronMass,weight);
+  m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selElectronMass,weight);
   std::cout << "DONE WITH COMBINE FILL" << std::endl;
 
 }
