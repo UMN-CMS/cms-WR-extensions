@@ -219,9 +219,12 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
   } else if (m_flavor == 4) {
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
 
+//THIS FLAVOR IS FOR THE STREAMLINED ANALYSIS.  IT ONLY CONTAINS PLOTS NECESSARY FOR THE FINAL ANALYSIS
   }else if (m_flavor == 5){
-    m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
+    m_eventsWeight             =           m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
+    m_leadAK8JetMuonMass       =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass",     "2 Object Mass of the leading Jet and Muon;Mass (GeV);"        ,120, 0.0,6000);
+    m_leadAK8JetElectronMass   =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass", "2 Object Mass of the leading Jet and Electron;Mass (GeV);"    ,120, 0.0,6000);
+    m_subleadMuon_selMuonZMass =           m_histoFolder.make<TH1D>("subleadMuonSelMuonZMass","Sublead Muon Selected Muon Mass; Mass (GeV);"                 ,100, 0.0,200);
   }
 }
 void eventHistos::fill(eventBits& event) {
@@ -240,7 +243,10 @@ void eventHistos::fill(eventBits& event) {
   } else if (m_flavor == 4) {
     fillWeight(event);
   } else if (m_flavor == 5){
+    std::cout << "FLAVOR 5 FILL" << std::endl;
     fillCombine(event);
+    std::cout << "FLAVOR 5 WEIGHT FILL" << std::endl;
+    fillWeight(event);
   }
   else return;
 }
@@ -267,6 +273,7 @@ void eventHistos::fillCutProgress(eventBits& event) {
 void eventHistos::fillWeight(eventBits& event) {
   std::cout << "Filling Weights" << std::endl;
   m_eventsWeight->Fill(0.5, event.count);
+  std::cout << "Done Filling Weight" << std::endl;
 }
 void eventHistos::fillGen(eventBits& event) {
 //  std::cout << "Making GEN plots" << std::endl;
@@ -474,13 +481,20 @@ void eventHistos::fillReco(eventBits& event) {
 }
 
 void eventHistos::fillCombine(eventBits& event) {
+  std::cout << "FILL COMBINE" << std::endl;
   double weight = 0.0;
   if(m_FSB == true)
     weight = event.FSBweight;
   else
     weight = event.weight;
 
+  
+  std::cout << "FILL MAIN MASS" << std::endl;
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
+  std::cout << "FILL FSB MASS" << std::endl;
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
+  std::cout << "FILL Z MASS" << std::endl;
+  m_subleadMuon_selElectronZMass->Fill(event.subleadMuon_selElectronMass,weight);
+  std::cout << "DONE WITH COMBINE FILL" << std::endl;
 
 }

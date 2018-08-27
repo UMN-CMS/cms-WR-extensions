@@ -197,14 +197,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   myRECOevent.cutProgress = 0;
 
-  if(m_isMC && m_doGen) {
+  if(m_isMC && m_doGen && !m_doFast) {
     genCounter(iEvent, myEvent);
     genCounter(iEvent, myRECOevent);
   }
    
-  if (m_doGen && m_isMC && !m_flavorSideband) {
+  if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
     if(preSelectGen(iEvent, myEvent)) {
-      std::cout << "plotting all events" << std::endl;
       std::cout << "analyzing wr2016" << std::endl;
       pass2016 = passWR2016GEN(iEvent, myEvent);
       if(pass2016) m_eventsPassingWR2016.fill(myEvent);
@@ -242,7 +241,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             myRECOevent.cutProgress++;
             std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
             if(muonTrigPass && m_doTrig) m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent);
-            m_eventsPassingExtensionRECO2016VETO_noTrig.fill(myRECOevent);
+            if(!m_doFast) m_eventsPassingExtensionRECO2016VETO_noTrig.fill(myRECOevent);
             //if(massCut(iEvent, myRECOevent)) {
             //  m_eventsPassingExtensionRECO2016VETOMASSCUT.fill(myRECOevent);
             //  myRECOevent.cutProgress++;
@@ -261,23 +260,28 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.FSBcutProgress++;
 
     if(passFlavorSideband(iEvent, myRECOevent)) {
+      std::cout << "PASSES THE FLAVOR SIDEBAND" << std::endl;
       if (m_doTrig){
         if (passElectronTrig(iEvent, myRECOevent)){
           std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
           if (myRECOevent.electronCands50  > 0)
             m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent);
-          if (myRECOevent.electronCands100 > 0)
-            m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent);
-          if (myRECOevent.electronCands150 > 0)
-            m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent);
-          if (myRECOevent.electronCands200 > 0)
-            m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent);
+          if (!m_doFast) {
+            if (myRECOevent.electronCands100 > 0)
+              m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent);
+            if (myRECOevent.electronCands150 > 0)
+              m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent);
+            if (myRECOevent.electronCands200 > 0)
+              m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent);
+          }
         }
       }
-      if (myRECOevent.electronCands50 > 0)
+      if (myRECOevent.electronCands50 > 0 && !m_doFast)
         m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent);
     }
+    std::cout << "DONE WITH FSB" << std::endl;
   }
+  std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
   m_allEvents.fill(myRECOevent);
 }
 void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight, double MuonHighPtIDWeight) {
@@ -475,6 +479,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
 }
 
 bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOevent) {
+  std::cout << "beginning preselection" << std::endl;
   //METselection(iEvent, myRECOevent);
   muonSelection(iEvent, myRECOevent);
   electronSelection(iEvent, myRECOevent);
@@ -1496,6 +1501,7 @@ cmsWRextension::beginJob()
     m_allEvents.book((fs->mkdir("allEvents")), 5, m_outputTag, false);
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 5, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 5, m_outputTag, false);
+    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 5, m_outputTag, false);
     m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  5, m_outputTag, true);
   }
 }
