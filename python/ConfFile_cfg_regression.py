@@ -22,7 +22,12 @@ options.register( 'ISmcatnlo',
                                   VarParsing.multiplicity.singleton,
                                   VarParsing.varType.bool,
                                   "True if is MC @ NLO dataset")
-
+options.register( 'doFast',
+                                  False,
+                                  VarParsing.multiplicity.singleton,
+                                  VarParsing.varType.bool,
+                                  "True to run a condensed analysis for HiggsCombine"
+               )                 
 options.parseArguments()
 
 #LOCAL VARIABLE DEFINITIONS
@@ -167,7 +172,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(False),
-                              doFast = cms.untracked.bool(True),
+                              doFast = cms.untracked.bool(options.doFast),
                               isMC = cms.untracked.bool(options.isMC),
 			      amcatnlo = cms.untracked.bool(options.ISmcatnlo),
                               #MCL = cms.untracked.double(100),
