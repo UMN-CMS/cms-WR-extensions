@@ -274,7 +274,7 @@ if options.eosDir is not None:
   else:
     config.Data.outLFNDirBase = outputLFN
 print 'Using outLFNDirBase:',config.Data.outLFNDirBase
-config.Site.storageSite = 'T2_CH_CERN'
+config.Site.storageSite = 'T3_US_FNALLPC'
 
 # look at the input list
 # use DAS to find the dataset names.
