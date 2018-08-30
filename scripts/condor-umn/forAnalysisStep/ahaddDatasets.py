@@ -53,8 +53,8 @@ for dataset in datasets:
     print removePrevious
     subprocess.call(removePrevious, shell=True)
     if("SingleElectron" in dataset or "SingleMuon" in dataset): #DATA
-        ahaddCommand = "ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset.split("--")[0]+"/"+dataset.split("--")[1]+"*/*/*/*.root"
+        ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset.split("--")[0]+"/"+dataset.split("--")[1]+"*/*/*/*.root"
     else:
-        ahaddCommand = "ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*.root"
+        ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*.root"
     print ahaddCommand
     subprocess.call(ahaddCommand, shell=True)   

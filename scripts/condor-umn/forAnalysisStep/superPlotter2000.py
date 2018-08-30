@@ -93,7 +93,6 @@ def saveHistsTDir(file,bgStacksRootDir,outPath,directory="",prefix="",bg="simple
             newDir=directory+"/"+key.GetName()
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(dir,directory=newDir, prefix=prefix,prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
             saveHistsTDir(file,bgStacksRootDir,newDir,directory=newDir, prefix=prefix,bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLog=setLog)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
@@ -101,7 +100,7 @@ def saveHistsTDir(file,bgStacksRootDir,outPath,directory="",prefix="",bg="simple
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
         print "drawHist"
-            drawHist(hist,bgStacksRootDir,directory,newDir,prefix,key.GetName(),".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
+        drawHist(hist,bgStacksRootDir,directory,newDir,prefix,key.GetName(),".png",width=1000,height=800, drawoptions = "", bg=bg, eventsWeight=eventsWeight, dataType=dataType, setLogy=setLog)
 
 
 def saveHistsTStack(folder,bgStacksRootDir,outPath,directory="",prefix="",bg="simple", eventsWeight=1.0, dataType = "MC", setLog=0):
