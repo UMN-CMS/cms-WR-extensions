@@ -161,9 +161,40 @@ for line in lines:
             exit(1)
         name = line.split()[0].strip().split("/")[1]
         xsecs[name] = xsec
-        colors[name] = int(line.split()[5].strip())
+#        colors[name] = int(line.split()[5].strip())
         print "Found: "+name
     #print line.split(':')[2].strip()
+    
+colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'WW_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
+          'WZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
+          'ZZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
+          'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8': ROOT.kRed,
+          'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
+          'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
+          'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
+          'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
+          'DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+          'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_Wpt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8': ROOT.kGray}
+    
 
 #print "NEW COLOR"
 #print colors
