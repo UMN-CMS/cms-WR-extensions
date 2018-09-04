@@ -149,7 +149,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_nAdditionalHEEP =                    m_histoFolder.make<TH1D>("nAdditionalHEEP", ";#  Electrons;",                                                       10, -.5, 9.5);
 
     m_selectedMuonPt  =                 m_histoFolder.make<TH1D>("selectedMuonPt"  ,"Selected Muon Pt; High-p_{T} Muon p_{T} (GeV);"  ,52,0.0,2000 ); 
-    m_selectedElectronPt  =                 m_histoFolder.make<TH1D>("selectedElectronPt"  ,"Selected Electron pT; Electron p_{T} (GeV);"  ,52,0.0,2000 ); 
+    m_selectedElectronPt  =                 m_histoFolder.make<TH1D>("selectedElectronPt"  ,"Selected Electron pT; Electron p_{T} (GeV);"  ,80,0.0,2000 ); 
     m_selectedJetPt   =                 m_histoFolder.make<TH1D>("selectedJetPt"   ,"Selected Jet Pt; Jet p_{T} (GeV);"   ,40,0.0,2000 );  
     m_selectedMuonPhi =                 m_histoFolder.make<TH1D>("selectedMuonPhi" ,"Selected Muon Phi; High-p_{T} Muon #phi (rad);" ,80,-4.0,4.0 );  
     m_selectedElectronPhi =                 m_histoFolder.make<TH1D>("selectedElectronPhi" ,"Selected Electron Phi; Electron #phi (rad);" ,80,-4.0,4.0 );  
