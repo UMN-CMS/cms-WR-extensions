@@ -431,7 +431,19 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs;
   for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
      if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+
+     TLorentzVector* jetVec_temp = new TLorentzVector();
+     jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+
+     math::XYZTLorentzVector jetVec;
+     jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+ 
+     double eventMass = ( jetVec + myRECOevent.myElectronCand->p4() ).mass();
+
+     if( eventMass < 200 ) continue;
+
      electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+     myRECOevent.leadAK8JetElectronMassVal = eventMass;
   }
   if( electronJetPairs.size() < 1 ) {
     std::cout<< "EVENT FAILS, NO CANDIDATE JET ELECTRON PAIRS" <<std::endl;
@@ -441,10 +453,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
 
   myRECOevent.myElectronJetPairs = electronJetPairs;
 
-  if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
-      std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
-      return false;
-  }
+  //if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
+  //    std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+  //    return false;
+  //}
   myRECOevent.FSBcutProgress++;
   std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
 
@@ -502,7 +514,19 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, eventBits& myRECOev
     //if( ((*iJet)->p4() + (*iMuon)->p4()).mass() < 400) continue;
     //if (sqrt(deltaR2(*(*iJet),*(*iMuon)))<2.0) continue;
     if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myMuonCand->phi())) < 2.0 ) continue;
+
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+ 
+    double eventMass = ( jetVec + myRECOevent.myMuonCand->p4() ).mass();
+
+    if( eventMass < 200 ) continue;
+
     muonJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myMuonCand ));
+    myRECOevent.leadAK8JetMuonMassVal = eventMass;
 
   }
   if( muonJetPairs.size() < 1 ) {
