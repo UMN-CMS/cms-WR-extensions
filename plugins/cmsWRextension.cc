@@ -191,6 +191,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     iEvent.getByToken(m_PUInfoToken,hPileupInfoProduct);
     assert(hPileupInfoProduct.isValid());
     myRECOevent.puWeight = myEventInfo.PUweight(hPileupInfoProduct);
+
   }
 
   setEventWeight(iEvent, myRECOevent, 1., 1.);
@@ -200,6 +201,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if(m_isMC && m_doGen && !m_doFast) {
     genCounter(iEvent, myEvent);
     genCounter(iEvent, myRECOevent);
+    vertexDiff(myRECOevent);
   }
    
   if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
@@ -283,6 +285,23 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
   m_allEvents.fill(myRECOevent);
+}
+void cmsWRextension::vertexDiff(eventBits& myEvent) {
+  
+  double dx = myEvent.PVertex->x() - myEvent.genVtx->x();
+  double dy = myEvent.PVertex->y() - myEvent.genVtx->y();
+  double dz = myEvent.PVertex->z() - myEvent.genVtx->z();
+
+  math::XYZPoint* diff = new math::XYZPoint();
+
+  diff->SetXYZ(dx,dy,dz);
+
+  myEvent.myVertexDiff = diff;
+
+  myEvent.myVertexDiffTan = sqrt(dx*dx + dz*dz);
+  myEvent.myVertexDiffLon = abs(dy);
+  
+
 }
 void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight, double MuonHighPtIDWeight) {
   if(m_isMC) {
@@ -463,6 +482,31 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
   myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
   myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
+  //HEEP RELATED VALUES
+  if(myRECOevent.selectedElectronEta < 1.4442) {//BARREL
+    myRECOevent.selElectron_barrel_dEtaInSeed         = electronJetPairs[0].second->();          
+    myRECOevent.selElectron_barrel_dPhiIn             = electronJetPairs[0].second->();       
+    myRECOevent.selElectron_barrel_HoverE             = electronJetPairs[0].second->();     
+    myRECOevent.selElectron_barrel_sig_ietaieta_5x5   = electronJetPairs[0].second->();    
+    myRECOevent.selElectron_barrel_E2x5vE5x5          = electronJetPairs[0].second->();  
+    myRECOevent.selElectron_barrel_EM_had_depIso      = electronJetPairs[0].second->();  
+    myRECOevent.selElectron_barrel_trackIso           = electronJetPairs[0].second->();   
+    myRECOevent.selElectron_barrel_trackPnt           = electronJetPairs[0].second->(); 
+    myRECOevent.selElectron_barrel_innerLostHits      = electronJetPairs[0].second->();  
+    myRECOevent.selElectron_barrel_dxy                = electronJetPairs[0].second->();    
+  }
+  if(myRECOevent.selectedElectronEta > 1.566) {//ENDCAP
+    myRECOevent.selElectron_endcap_dEtaInSeed         = electronJetPairs[0].second->();      
+    myRECOevent.selElectron_endcap_dPhiIn             = electronJetPairs[0].second->();   
+    myRECOevent.selElectron_endcap_HoverE             = electronJetPairs[0].second->();     
+    myRECOevent.selElectron_endcap_sig_ietaieta_5x5   = electronJetPairs[0].second->();        
+    myRECOevent.selElectron_endcap_E2x5vE5x5          = electronJetPairs[0].second->();   
+    myRECOevent.selElectron_endcap_EM_had_depIso      = electronJetPairs[0].second->();    
+    myRECOevent.selElectron_endcap_trackIso           = electronJetPairs[0].second->();    
+    myRECOevent.selElectron_endcap_trackPnt           = electronJetPairs[0].second->();    
+    myRECOevent.selElectron_endcap_innerLostHits      = electronJetPairs[0].second->();      
+    myRECOevent.selElectron_endcap_dxy                = electronJetPairs[0].second->();
+  }
   myRECOevent.selectedJetPt   = electronJetPairs[0].first->pT;
   myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi;
   myRECOevent.selectedJetEta  = electronJetPairs[0].first->eta;
@@ -994,16 +1038,33 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   int nPartons         = 0;
   int flavor           = 0;
 
+  std::vector<const reco::GenParticle*> genLeptons;
+
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
     if(!iParticle->isHardProcess())   continue;
     if(iParticle->status() == 21)     continue;
-    if(abs(iParticle->pdgId()) == 13) nMuons++;
-    if(abs(iParticle->pdgId()) == 11) nElectrons++;
+    if(abs(iParticle->pdgId()) == 13) {
+      nMuons++;
+      genLeptons.push_back(&(*iParticle));
+    }
+    if(abs(iParticle->pdgId()) == 11) {
+      nElectrons++;
+      genLeptons.push_back(&(*iParticle));
+    }
     if(abs(iParticle->pdgId()) == 15) nTaus++;
     if(abs(iParticle->pdgId())  <= 4) nLightPartons++;
     if(abs(iParticle->pdgId())  == 5) nBs++;
     if(abs(iParticle->pdgId())  == 6) nTops++;
   }
+  if ( genLeptons.size() > 0 ) { 
+    std::sort( genLeptons.begin(), genLeptons.end(), ::wrTools::compareEtGenParticlePointer ); 
+    myEvent.myGenLeptons = genLeptons;
+    double x =  myEvent.myGenLeptons[0]->vertex().x();
+    double y =  myEvent.myGenLeptons[0]->vertex().y();
+    double z =  myEvent.myGenLeptons[0]->vertex().z();
+    
+    myEvent.genVtx->SetXYZ( x, y, z );
+  } 
   nLeptons = nMuons + nTaus + nElectrons;
   nPartons = nTops + nBs + nLightPartons;
 

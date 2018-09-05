@@ -43,6 +43,7 @@ public:
   std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
+  std::vector<const reco::GenParticle*> myGenLeptons;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs;
   std::vector<const pat::Jet*>      myJetCandsHighPt;
@@ -63,6 +64,8 @@ public:
 
   const reco::Vertex*               PVertex;
 
+  math::XYZPoint*             genVtx;
+
   int secondInDecayMuon;
 
   //EVENT VALUES
@@ -72,6 +75,10 @@ public:
   bool passesWR2016;
   int muons10;
   int ak8jets40;
+
+  math::XYZPoint*  myVertexDiff;
+  double myVertexDiffTan;
+  double myVertexDiffLon;
 
   int    muonCands;
   int    electronCands50;
