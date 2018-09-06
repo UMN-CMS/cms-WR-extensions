@@ -482,30 +482,31 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
   myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
   myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
-  //HEEP RELATED VALUES
+
+  //NOW WE ACCES THE VIDRESULT AGAIN FOR THE CHOSEN ELECTRON
+  const vid::CutFlowResult* vidResult =  electronJetPairs[0].second->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+
   if(myRECOevent.selectedElectronEta < 1.4442) {//BARREL
-    myRECOevent.selElectron_barrel_dEtaInSeed         = electronJetPairs[0].second->();          
-    myRECOevent.selElectron_barrel_dPhiIn             = electronJetPairs[0].second->();       
-    myRECOevent.selElectron_barrel_HoverE             = electronJetPairs[0].second->();     
-    myRECOevent.selElectron_barrel_sig_ietaieta_5x5   = electronJetPairs[0].second->();    
-    myRECOevent.selElectron_barrel_E2x5vE5x5          = electronJetPairs[0].second->();  
-    myRECOevent.selElectron_barrel_EM_had_depIso      = electronJetPairs[0].second->();  
-    myRECOevent.selElectron_barrel_trackIso           = electronJetPairs[0].second->();   
-    myRECOevent.selElectron_barrel_trackPnt           = electronJetPairs[0].second->(); 
-    myRECOevent.selElectron_barrel_innerLostHits      = electronJetPairs[0].second->();  
-    myRECOevent.selElectron_barrel_dxy                = electronJetPairs[0].second->();    
+    myRECOevent.selElectron_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+    myRECOevent.selElectron_barrel_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+    myRECOevent.selElectron_barrel_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+    myRECOevent.selElectron_barrel_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+//NOT SUPPORTED    myRECOevent.selElectron_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+    myRECOevent.selElectron_barrel_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+    myRECOevent.selElectron_barrel_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+    myRECOevent.selElectron_barrel_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+    myRECOevent.selElectron_barrel_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
   }
   if(myRECOevent.selectedElectronEta > 1.566) {//ENDCAP
-    myRECOevent.selElectron_endcap_dEtaInSeed         = electronJetPairs[0].second->();      
-    myRECOevent.selElectron_endcap_dPhiIn             = electronJetPairs[0].second->();   
-    myRECOevent.selElectron_endcap_HoverE             = electronJetPairs[0].second->();     
-    myRECOevent.selElectron_endcap_sig_ietaieta_5x5   = electronJetPairs[0].second->();        
-    myRECOevent.selElectron_endcap_E2x5vE5x5          = electronJetPairs[0].second->();   
-    myRECOevent.selElectron_endcap_EM_had_depIso      = electronJetPairs[0].second->();    
-    myRECOevent.selElectron_endcap_trackIso           = electronJetPairs[0].second->();    
-    myRECOevent.selElectron_endcap_trackPnt           = electronJetPairs[0].second->();    
-    myRECOevent.selElectron_endcap_innerLostHits      = electronJetPairs[0].second->();      
-    myRECOevent.selElectron_endcap_dxy                = electronJetPairs[0].second->();
+    myRECOevent.selElectron_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+    myRECOevent.selElectron_endcap_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+    myRECOevent.selElectron_endcap_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+    myRECOevent.selElectron_endcap_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+//NOT SUPPORTED    myRECOevent.selElectron_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+    myRECOevent.selElectron_endcap_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+    myRECOevent.selElectron_endcap_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+    myRECOevent.selElectron_endcap_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+    myRECOevent.selElectron_endcap_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
   }
   myRECOevent.selectedJetPt   = electronJetPairs[0].first->pT;
   myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi;

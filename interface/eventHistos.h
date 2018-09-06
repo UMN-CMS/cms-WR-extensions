@@ -208,6 +208,28 @@ class eventHistos {
   TH1D* m_HEEP_SF_B;
   TH1D* m_Electron_Reco_SF;
 
+  TH1D* m_selElectron_barrel_dEtaInSeed      ; 
+  TH1D* m_selElectron_barrel_dPhiIn          ; 
+  TH1D* m_selElectron_barrel_HoverE          ; 
+  TH1D* m_selElectron_barrel_sig_ietaieta_5x5;
+  TH1D* m_selElectron_barrel_E2x5vE5x5       ; 
+  TH1D* m_selElectron_barrel_EM_had_depIso   ; 
+  TH1D* m_selElectron_barrel_trackIso        ; 
+  TH1D* m_selElectron_barrel_trackPnt        ; 
+  TH1D* m_selElectron_barrel_innerLostHits   ; 
+  TH1D* m_selElectron_barrel_dxy             ; 
+
+  TH1D* m_selElectron_endcap_dEtaInSeed      ; 
+  TH1D* m_selElectron_endcap_dPhiIn          ; 
+  TH1D* m_selElectron_endcap_HoverE          ; 
+  TH1D* m_selElectron_endcap_sig_ietaieta_5x5;
+  TH1D* m_selElectron_endcap_E2x5vE5x5       ; 
+  TH1D* m_selElectron_endcap_EM_had_depIso   ; 
+  TH1D* m_selElectron_endcap_trackIso        ; 
+  TH1D* m_selElectron_endcap_trackPnt        ; 
+  TH1D* m_selElectron_endcap_innerLostHits   ; 
+  TH1D* m_selElectron_endcap_dxy             ; 
+
 };
 
 #endif

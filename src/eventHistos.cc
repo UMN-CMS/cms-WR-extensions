@@ -199,6 +199,26 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_finalEventWeight             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
     m_Electron_Reco_SF             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
 
+    m_selElectron_barrel_dEtaInSeed        =  m_histoFolder.make<TH1D>("selElectron_barrel_dEtaInSeed"      ,";selected Electron barrel dEtaInSeed"      , 100, 0.0, .006); 
+    m_selElectron_barrel_dPhiIn            =  m_histoFolder.make<TH1D>("selElectron_barrel_dPhiIn"          ,";selected Electron barrel dPhiIn"          , 100, 0.0, .06); 
+    m_selElectron_barrel_HoverE            =  m_histoFolder.make<TH1D>("selElectron_barrel_HoverE"          ,";selected Electron barrel HoverE"          , 100, 0.0, 1.0); 
+    m_selElectron_barrel_sig_ietaieta_5x5  =  m_histoFolder.make<TH1D>("selElectron_barrel_sig_ietaieta_5x5",";selected Electron barrel sig_ietaieta_5x5", 100, 0.0, .03);
+//    m_selElectron_barrel_E2x5vE5x5         =  m_histoFolder.make<TH1D>("selElectron_barrel_E2x5vE5x5"       ,";selected Electron barrel E2x5vE5x5"       , 100, 0.0, ); 
+    m_selElectron_barrel_EM_had_depIso     =  m_histoFolder.make<TH1D>("selElectron_barrel_EM_had_depIso"   ,";selected Electron barrel EM_had_depIso"   , 100, 0.0, 10); 
+    m_selElectron_barrel_trackIso          =  m_histoFolder.make<TH1D>("selElectron_barrel_trackIso"        ,";selected Electron barrel trackIso"        , 100, 0.0, 5); 
+    m_selElectron_barrel_innerLostHits     =  m_histoFolder.make<TH1D>("selElectron_barrel_innerLostHits"   ,";selected Electron barrel innerLostHits"   ,   5, 0.0, 1); 
+    m_selElectron_barrel_dxy               =  m_histoFolder.make<TH1D>("selElectron_barrel_dxy"             ,";selected Electron barrel dxy"             , 100, 0.0, .05); 
+                                                                                                                                                  
+    m_selElectron_endcap_dEtaInSeed        =  m_histoFolder.make<TH1D>("selElectron_endcap_dEtaInSeed"      ,";selected Electron endcap dEtaInSeed"      , 100, 0.0, .006); 
+    m_selElectron_endcap_dPhiIn            =  m_histoFolder.make<TH1D>("selElectron_endcap_dPhiIn"          ,";selected Electron endcap dPhiIn"          , 100, 0.0, .06); 
+    m_selElectron_endcap_HoverE            =  m_histoFolder.make<TH1D>("selElectron_endcap_HoverE"          ,";selected Electron endcap HoverE"          , 100, 0.0, 1.0); 
+    m_selElectron_endcap_sig_ietaieta_5x5  =  m_histoFolder.make<TH1D>("selElectron_endcap_sig_ietaieta_5x5",";selected Electron endcap sig_ietaieta_5x5", 100, 0.0, .03);
+//    m_selElectron_endcap_E2x5vE5x5         =  m_histoFolder.make<TH1D>("selElectron_endcap_E2x5vE5x5"       ,";selected Electron endcap E2x5vE5x5"       , 100, 0.0, ); 
+    m_selElectron_endcap_EM_had_depIso     =  m_histoFolder.make<TH1D>("selElectron_endcap_EM_had_depIso"   ,";selected Electron endcap EM_had_depIso"   , 100, 0.0, 10); 
+    m_selElectron_endcap_trackIso          =  m_histoFolder.make<TH1D>("selElectron_endcap_trackIso"        ,";selected Electron endcap trackIso"        , 100, 0.0, 5); 
+    m_selElectron_endcap_innerLostHits     =  m_histoFolder.make<TH1D>("selElectron_endcap_innerLostHits"   ,";selected Electron endcap innerLostHits"   ,   5, 0.0, 1); 
+    m_selElectron_endcap_dxy               =  m_histoFolder.make<TH1D>("selElectron_endcap_dxy"             ,";selected Electron endcap dxy"             , 100, 0.0, .05); 
+
 
 //
 //

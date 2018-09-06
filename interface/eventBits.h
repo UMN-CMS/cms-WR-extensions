@@ -109,6 +109,32 @@ public:
   double HEEP_SF_B      ;
   double egamma_SF      ;
 
+  //HEEP THINGS
+  double selElectron_barrel_dEtaInSeed      ; 
+  double selElectron_barrel_dPhiIn          ; 
+  double selElectron_barrel_HoverE          ; 
+  double selElectron_barrel_sig_ietaieta_5x5;
+  double selElectron_barrel_E2x5vE5x5       ; 
+  double selElectron_barrel_EM_had_depIso   ; 
+  double selElectron_barrel_trackIso        ; 
+  double selElectron_barrel_trackPnt        ; 
+  double selElectron_barrel_innerLostHits   ; 
+  double selElectron_barrel_dxy             ; 
+
+  double selElectron_endcap_dEtaInSeed      ; 
+  double selElectron_endcap_dPhiIn          ; 
+  double selElectron_endcap_HoverE          ; 
+  double selElectron_endcap_sig_ietaieta_5x5;
+  double selElectron_endcap_E2x5vE5x5       ; 
+  double selElectron_endcap_EM_had_depIso   ; 
+  double selElectron_endcap_trackIso        ; 
+  double selElectron_endcap_trackPnt        ; 
+  double selElectron_endcap_innerLostHits   ; 
+  double selElectron_endcap_dxy             ; 
+
+
+
+
   double parton1EtVal;
   double parton2EtVal;
   double muon1EtVal;
