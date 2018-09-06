@@ -498,6 +498,25 @@ void eventHistos::fillReco(eventBits& event) {
   m_finalEventWeight->Fill(weight, weight);
   m_Electron_Reco_SF->Fill(event.egamma_SF, weight);
 
+  m_selElectron_barrel_dEtaInSeed        ->Fill(event.selElectron_barrel_dEtaInSeed       , weight); 
+  m_selElectron_barrel_dPhiIn            ->Fill(event.selElectron_barrel_dPhiIn           , weight); 
+  m_selElectron_barrel_HoverE            ->Fill(event.selElectron_barrel_HoverE           , weight); 
+  m_selElectron_barrel_sig_ietaieta_5x5  ->Fill(event.selElectron_barrel_sig_ietaieta_5x5 , weight); 
+//  m_selElectron_barrel_E2x5vE5x5       ->Fill(event.m_selElectron_barrel_E2x5vE5x5      , weight); 
+  m_selElectron_barrel_EM_had_depIso     ->Fill(event.selElectron_barrel_EM_had_depIso    , weight); 
+  m_selElectron_barrel_trackIso          ->Fill(event.selElectron_barrel_trackIso         , weight); 
+  m_selElectron_barrel_innerLostHits     ->Fill(event.selElectron_barrel_innerLostHits    , weight); 
+  m_selElectron_barrel_dxy               ->Fill(event.selElectron_barrel_dxy              , weight); 
+  m_selElectron_endcap_dEtaInSeed        ->Fill(event.selElectron_endcap_dEtaInSeed       , weight); 
+  m_selElectron_endcap_dPhiIn            ->Fill(event.selElectron_endcap_dPhiIn           , weight); 
+  m_selElectron_endcap_HoverE            ->Fill(event.selElectron_endcap_HoverE           , weight); 
+  m_selElectron_endcap_sig_ietaieta_5x5  ->Fill(event.selElectron_endcap_sig_ietaieta_5x5 , weight); 
+//  m_selElectron_endcap_E2x5vE5x5       ->Fill(event.m_selElectron_endcap_E2x5vE5x5      , weight); 
+  m_selElectron_endcap_EM_had_depIso     ->Fill(event.selElectron_endcap_EM_had_depIso    , weight); 
+  m_selElectron_endcap_trackIso          ->Fill(event.selElectron_endcap_trackIso         , weight); 
+  m_selElectron_endcap_innerLostHits     ->Fill(event.selElectron_endcap_innerLostHits    , weight); 
+  m_selElectron_endcap_dxy               ->Fill(event.selElectron_endcap_dxy              , weight); 
+
 }
 
 void eventHistos::fillCombine(eventBits& event) {
