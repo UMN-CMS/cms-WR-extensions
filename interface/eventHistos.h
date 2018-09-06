@@ -200,6 +200,9 @@ class eventHistos {
 
   TH1D* m_nVertices;
 
+  TH1D* m_vertexDiffTan;
+  TH1D* m_vertexDiffLon;
+
   TH1D* m_MuonWeight;
   TH1D* m_PUWeight;
 
@@ -229,6 +232,7 @@ class eventHistos {
   TH1D* m_selElectron_endcap_trackPnt        ; 
   TH1D* m_selElectron_endcap_innerLostHits   ; 
   TH1D* m_selElectron_endcap_dxy             ; 
+
 
 };
 
