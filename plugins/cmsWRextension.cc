@@ -947,6 +947,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
   if (myEvent.electronCands50_noISO > 0) {
     std::sort(highPTelectrons50_noISO.begin(),highPTelectrons50_noISO.end(),::wrTools::compareEtCandidatePointer);
     myEvent.myElectronCandsHighPt50_noISO = highPTelectrons50_noISO;
+    myEvent.myElectronCand_noISO = highPTelectrons50_noISO[0];
   }
   if (myEvent.electronCands200 > 0) {
     std::sort(highPTelectrons200.begin(),highPTelectrons200.end(),::wrTools::compareEtCandidatePointer); 
