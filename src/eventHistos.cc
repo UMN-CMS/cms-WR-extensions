@@ -113,12 +113,14 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons;Mass (GeV);",80, 0.0,4000);
     m_leadAK8JetMuonMass  =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
     m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_noISO  =     m_histoFolder.make<TH1D>("leadAK8JetElectronMass_noISO","2 Object Mass of the leading Jet and nonISO Electron;Mass (GeV);"            ,60, 0.0,6000);
 
     m_leadSubleadingJetsMuonsPt  =      m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsPt","Four Object Pt of the 2 leading Jets and Muons; Pt (GeV);",          80, 0.0,4000);
     m_leadSubleadingAK8JetsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsPt","Four Object Pt of the 2 leading AK8Jets and Muons; Pt (GeV);",    80, 0.0,4000);
     m_leadSubleadingPartonsMuonsPt  =   m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsPt","Four Object Pt of the 2 leading Partons and Muons; Pt (GeV);",    80, 0.0,4000);
     m_leadAK8JetMuonPt  =             m_histoFolder.make<TH1D>("leadAK8JetMuonPt","2 Object Pt of the leading Jet and Muon; Pt (GeV);"                             ,80, 0.0,4000);
     m_leadAK8JetElectronPt  =             m_histoFolder.make<TH1D>("leadAK8JetElectronPt","2 Object Pt of the leading Jet and Electron; Pt (GeV);"                             ,80, 0.0,4000);
+    m_leadAK8JetElectronPt_noISO  =       m_histoFolder.make<TH1D>("leadAK8JetElectronPt_noISO","2 Object Pt of the leading Jet and nonISO Electron; Pt (GeV);"            ,80, 0.0,4000);
 
     //m_leadSubleadingJetsMuonsEta  =     m_histoFolder.make<TH1D>("leadingSubleadingJetsMuonsEta","Four Object Eta of the 2 leading Jets and Muons",        80, -4.0,4.0);
     //m_leadSubleadingAK8JetsMuonsEta  =  m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsEta","Four Object Eta of the 2 leading AK8Jets and Muons",  80, -4.0,4.0);
@@ -126,10 +128,12 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     //m_leadAK8JetMuonEta  =              m_histoFolder.make<TH1D>("leadAK8JetMuonEta","2 Object Eta of the leading Jet and Muon"                           ,80, -4.0,4.0);
 
     m_leadAK8JetMuonPhi  =              m_histoFolder.make<TH1D>("leadAK8JetMuonAbsdphi","2 Object delta Phi of the leading Jet and Muon; #phi (rad);"                     ,60, 2.0,3.2);
-    m_leadAK8JetElectronPhi  =              m_histoFolder.make<TH1D>("leadAK8JetElectronAbsdphi","2 Object delta Phi of the leading Jet and Electron; #phi (rad);"                     ,60, 2.0,3.2);
+    m_leadAK8JetElectronPhi  =          m_histoFolder.make<TH1D>("leadAK8JetElectronAbsdphi","2 Object delta Phi of the leading Jet and Electron; #phi (rad);"                     ,60, 2.0,3.2);
+    m_leadAK8JetElectronPhi_noISO  =    m_histoFolder.make<TH1D>("leadAK8JetElectronAbsdphi_noISO","2 Object delta Phi of the leading Jet and nonISO Electron; #phi (rad);"           ,60, 2.0,3.2);
 
     m_leadAK8JetMuonJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetMuonJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet lepton pair; percent muon energy;", 100, 0.0, 1.0);
-    m_leadAK8JetElectronJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetElectronJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet lepton pair; percent muon energy;", 100, 0.0, 1.0);
+    m_leadAK8JetElectronJetMuonEnergyFraction =   m_histoFolder.make<TH1D>("leadAK8JetElectronJetMuonEnergyFraction", "muon energy fraction of ak8jet in the selected jet electron pair; percent muon energy;", 100, 0.0, 1.0);
+    m_leadAK8JetElectronJetMuonEnergyFraction_noISO =   m_histoFolder.make<TH1D>("leadAK8JetElectronJetMuonEnergyFraction_noISO", "muon energy fraction of ak8jet in the selected jet non ISO electron pair; percent muon energy;", 100, 0.0, 1.0);
 
     m_electronTrigger =   m_histoFolder.make<TH1D>("electronTrigger", "electron trigger bit; TriggerBit;", 2, -0.5, 1.5);
 
@@ -143,13 +147,16 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
     m_nMuonCands =                    m_histoFolder.make<TH1D>("nMuonCands", ";#  Muons;",                                                       10, -.5, 9.5);
-    m_nElectronCands50 =                    m_histoFolder.make<TH1D>("nElectronCands50" , ";#  Electrons Pt > 50;" ,                                                       10, -.5, 9.5);
-    m_nElectronCands100 =                   m_histoFolder.make<TH1D>("nElectronCands100", ";#  Electrons Pt > 100;",                                                       10, -.5, 9.5);
-    m_nElectronCands150 =                   m_histoFolder.make<TH1D>("nElectronCands150", ";#  Electrons Pt > 150;",                                                       10, -.5, 9.5);
-    m_nElectronCands200 =                   m_histoFolder.make<TH1D>("nElectronCands200", ";#  Electrons Pt > 200;",                                                       10, -.5, 9.5);
+    m_nElectronCands50 =                    m_histoFolder.make<TH1D>("nElectronCands50" , ";#  Electrons Pt > 50;" ,                                        10, -.5, 9.5);
+    m_nElectronCands100 =                   m_histoFolder.make<TH1D>("nElectronCands100", ";#  Electrons Pt > 100;",                                        10, -.5, 9.5);
+    m_nElectronCands150 =                   m_histoFolder.make<TH1D>("nElectronCands150", ";#  Electrons Pt > 150;",                                        10, -.5, 9.5);
+    m_nElectronCands200 =                   m_histoFolder.make<TH1D>("nElectronCands200", ";#  Electrons Pt > 200;",                                        10, -.5, 9.5);
+    m_nElectronCands50_noISO =                    m_histoFolder.make<TH1D>("nElectronCands50_noISO" , ";#  Non Isolated Electrons Pt > 50;" ,                                        10, -.5, 9.5);
+    m_nElectronCands200_noISO =                   m_histoFolder.make<TH1D>("nElectronCands200_noISO", ";#  Non Isolated Electrons Pt > 200;",                                        10, -.5, 9.5);
     m_nMuons10 =                        m_histoFolder.make<TH1D>("nMuons10", ";#  Muons above 10 GeV;",                                                       10, -.5, 9.5);
     m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
-    m_nAdditionalHEEP =                    m_histoFolder.make<TH1D>("nAdditionalHEEP", ";#  Electrons;",                                                       10, -.5, 9.5);
+    m_nAdditionalHEEP =                    m_histoFolder.make<TH1D>("nAdditionalHEEP", ";#  Electrons passing HEEP;",                                            10, -.5, 9.5);
+    m_nAdditionalHEEP_noISO =             m_histoFolder.make<TH1D>("nAdditionalHEEP_noISO", ";#  Electrons passing HEEP (non ISO);",                           10, -.5, 9.5);
 
     m_selectedMuonPt  =                 m_histoFolder.make<TH1D>("selectedMuonPt"  ,"Selected Muon Pt; High-p_{T} Muon p_{T} (GeV);"  ,40,0.0,2000 ); 
     m_selectedElectronPt  =                 m_histoFolder.make<TH1D>("selectedElectronPt"  ,"Selected Electron pT; Electron p_{T} (GeV);"  ,40,0.0,2000 ); 
@@ -162,6 +169,15 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Jet #eta (rad);"  ,30,-3.0,3.0 ); 
     m_selectedJetMass  =                 m_histoFolder.make<TH1D>("selectedJetMass"  ,"Selected Jet Mass; Jet softdrop mass (GeV);"  ,60,0.0, 300.0 );
     m_selectedJetTau21  =                 m_histoFolder.make<TH1D>("selectedJetTau21"  ,"Selected Jet Tau21; Jet #tau_{21};"  ,30,0.0, 1.0 );
+
+    m_selectedElectron_noISO_Pt  =      m_histoFolder.make<TH1D>("selectedElectron_noISO_Pt"   ,"Selected nonISO Electron pT; Electron p_{T} (GeV);"  ,40,0.0,2000 ); 
+    m_selectedElectron_noISO_Eta =      m_histoFolder.make<TH1D>("selectedElectron_noISO_Eta"  ,"Selected nonISO Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );   
+    m_selectedElectron_noISO_Phi =      m_histoFolder.make<TH1D>("selectedElectron_noISO_Phi"  ,"Selected nonISO Electron Phi; Electron #phi (rad);" ,30,-4.0,4.0 );  
+    m_selectedJet_EleNoISO_Pt   =       m_histoFolder.make<TH1D>("selectedJet_EleNoISO_Pt"     ,"Selected (with nonISO Electron) Jet Pt; Jet p_{T} (GeV);"   ,40,0.0,2000 );  
+    m_selectedJet_EleNoISO_Phi  =       m_histoFolder.make<TH1D>("selectedJet_EleNoISO_Phi"    ,"Selected (with nonISO Electron) Jet Phi; Jet #phi (rad);"  ,30,-4.0,4.0 );   
+    m_selectedJet_EleNoISO_Eta  =       m_histoFolder.make<TH1D>("selectedJet_EleNoISO_Eta"    ,"Selected (with nonISO Electron) Jet Eta; Jet #eta (rad);"  ,30,-3.0,3.0 ); 
+    m_selectedJet_EleNoISO_Mass  =      m_histoFolder.make<TH1D>("selectedJet_EleNoISO_Mass"   ,"Selected (with nonISO Electron) Jet Mass; Jet softdrop mass (GeV);"  ,60,0.0, 300.0 );
+    m_selectedJet_EleNoISO_Tau21  =     m_histoFolder.make<TH1D>("selectedJet_EleNoISO_Tau21"  ,"Selected (with nonISO Electron) Jet Tau21; Jet #tau_{21};"  ,30,0.0, 1.0 );
 
     m_subleadMuon_selJetdPhi       =    m_histoFolder.make<TH1D>("subleadMuonSelJetdPhi" ,   "Sublead Muon Selected Jet dPhi; #phi (rad);"  ,80,  0.0, 4.0);
     m_subleadMuon_selElectronPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelElectrondPhi", "Sublead Muon Selected Electron dPhi; #phi (rad);" ,80,  0.0, 4.0);
@@ -221,6 +237,23 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selElectron_endcap_trackIso          =  m_histoFolder.make<TH1D>("selElectron_endcap_trackIso"        ,";selected Electron endcap trackIso"        , 100, 0.0, 5); 
     m_selElectron_endcap_innerLostHits     =  m_histoFolder.make<TH1D>("selElectron_endcap_innerLostHits"   ,";selected Electron endcap innerLostHits"   ,   5, 0.0, 1); 
     m_selElectron_endcap_dxy               =  m_histoFolder.make<TH1D>("selElectron_endcap_dxy"             ,";selected Electron endcap dxy"             , 100, 0.0, .05); 
+
+    m_selElectron_noISO_barrel_dEtaInSeed        =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_dEtaInSeed"      ,";selected nonISO Electron barrel dEtaInSeed"      , 100, 0.0, .006); 
+    m_selElectron_noISO_barrel_dPhiIn            =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_dPhiIn"          ,";selected nonISO Electron barrel dPhiIn"          , 100, 0.0, .06); 
+    m_selElectron_noISO_barrel_HoverE            =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_HoverE"          ,";selected nonISO Electron barrel HoverE"          , 100, 0.0, 1.0); 
+    m_selElectron_noISO_barrel_sig_ietaieta_5x5  =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_sig_ietaieta_5x5",";selected nonISO Electron barrel sig_ietaieta_5x5", 100, 0.0, .03);
+    m_selElectron_noISO_barrel_EM_had_depIso     =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_EM_had_depIso"   ,";selected nonISO Electron barrel EM_had_depIso"   , 100, 0.0, 10); 
+    m_selElectron_noISO_barrel_trackIso          =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_trackIso"        ,";selected nonISO Electron barrel trackIso"        , 100, 0.0, 5); 
+    m_selElectron_noISO_barrel_innerLostHits     =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_innerLostHits"   ,";selected nonISO Electron barrel innerLostHits"   ,   5, 0.0, 1); 
+    m_selElectron_noISO_barrel_dxy               =  m_histoFolder.make<TH1D>("selElectron_noISO_barrel_dxy"             ,";selected nonISO Electron barrel dxy"             , 100, 0.0, .05); 
+    m_selElectron_noISO_endcap_dEtaInSeed        =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_dEtaInSeed"      ,";selected nonISO Electron endcap dEtaInSeed"      , 100, 0.0, .006); 
+    m_selElectron_noISO_endcap_dPhiIn            =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_dPhiIn"          ,";selected nonISO Electron endcap dPhiIn"          , 100, 0.0, .06); 
+    m_selElectron_noISO_endcap_HoverE            =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_HoverE"          ,";selected nonISO Electron endcap HoverE"          , 100, 0.0, 1.0); 
+    m_selElectron_noISO_endcap_sig_ietaieta_5x5  =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_sig_ietaieta_5x5",";selected nonISO Electron endcap sig_ietaieta_5x5", 100, 0.0, .03);
+    m_selElectron_noISO_endcap_EM_had_depIso     =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_EM_had_depIso"   ,";selected nonISO Electron endcap EM_had_depIso"   , 100, 0.0, 10); 
+    m_selElectron_noISO_endcap_trackIso          =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_trackIso"        ,";selected nonISO Electron endcap trackIso"        , 100, 0.0, 5); 
+    m_selElectron_noISO_endcap_innerLostHits     =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_innerLostHits"   ,";selected nonISO Electron endcap innerLostHits"   ,   5, 0.0, 1); 
+    m_selElectron_noISO_endcap_dxy               =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_dxy"             ,";selected nonISO Electron endcap dxy"             , 100, 0.0, .05); 
 
 
 //
@@ -423,10 +456,12 @@ void eventHistos::fillReco(eventBits& event) {
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, weight);
   m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, weight);
   m_leadAK8JetElectronPt->Fill(event.leadAK8JetElectronPtVal, weight);
+  m_leadAK8JetElectronPt_noISO->Fill(event.leadAK8JetElectronPtVal_noISO, weight);
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, weight);
   m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, weight);
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
+  m_leadAK8JetElectronMass_noISO->Fill(event.leadAK8JetElectronMassVal_noISO, weight);
   m_subleadMuon_selJetdPhi ->   Fill(event.subleadMuon_selJetdPhi ,weight); 
   m_subleadMuon_selMuondPhi-> Fill(event.subleadMuon_selMuondPhi,weight);
   m_subleadMuon_selMuonMass-> Fill(event.subleadMuon_selMuonMass,weight);
@@ -467,6 +502,16 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedJetMass->Fill(event.selectedJetMass  , weight);
   m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
 
+  m_selectedElectron_noISO_Pt  ->Fill(event.selectedElectron_noISO_Pt  ,weight); 
+  m_selectedElectron_noISO_Phi ->Fill(event.selectedElectron_noISO_Phi ,weight);  
+  m_selectedElectron_noISO_Eta ->Fill(event.selectedElectron_noISO_Eta ,weight);   
+
+  m_selectedJet_EleNoISO_Pt    ->Fill(event.selectedJet_EleNoISO_Pt   ,weight);  
+  m_selectedJet_EleNoISO_Phi   ->Fill(event.selectedJet_EleNoISO_Phi  ,weight);   
+  m_selectedJet_EleNoISO_Eta   ->Fill(event.selectedJet_EleNoISO_Eta  ,weight); 
+  m_selectedJet_EleNoISO_Mass  ->Fill(event.selectedJet_EleNoISO_Mass  , weight);
+  m_selectedJet_EleNoISO_Tau21 ->Fill(event.selectedJet_EleNoISO_Tau21, weight);
+
   m_EtPlacementMuon2->Fill(event.secondInDecayMuon, weight);
   m_nVertices->Fill(event.nVtx, weight);
 
@@ -480,15 +525,20 @@ void eventHistos::fillReco(eventBits& event) {
   m_nElectronCands100->Fill(event.electronCands100, weight);
   m_nElectronCands150->Fill(event.electronCands150, weight);
   m_nElectronCands200->Fill(event.electronCands200, weight);
+  m_nElectronCands50_noISO-> Fill(event.electronCands50_noISO , weight);
+  m_nElectronCands200_noISO->Fill(event.electronCands200_noISO, weight);
   m_nMuons10->Fill(event.muons10, weight);
   m_nAdditionalHEEP->Fill(event.nAdditionalHEEP, weight);
+  m_nAdditionalHEEP_noISO->Fill(event.nAdditionalHEEP_noISO, weight);
   m_nAK8Jets40->Fill(event.ak8jets40, weight);
   m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, weight);
   m_leadAK8JetElectronPhi->Fill(event.leadAK8JetElectronPhiVal, weight);
+  m_leadAK8JetElectronPhi_noISO->Fill(event.leadAK8JetElectronPhiVal_noISO, weight);
 
 
   m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction, weight);
   m_leadAK8JetElectronJetMuonEnergyFraction->Fill(event.leadAK8JetElectronJetMuonEnergyFraction, weight);
+  m_leadAK8JetElectronJetMuonEnergyFraction_noISO->Fill(event.leadAK8JetElectronJetMuonEnergyFraction_noISO, weight);
 
   m_electronTrigger->Fill(event.electronTrigger, weight);
   m_muonTrigger->Fill(event.muonTrigger, weight);
@@ -524,6 +574,23 @@ void eventHistos::fillReco(eventBits& event) {
   m_selElectron_endcap_innerLostHits     ->Fill(event.selElectron_endcap_innerLostHits    , weight); 
   m_selElectron_endcap_dxy               ->Fill(event.selElectron_endcap_dxy              , weight); 
 
+  m_selElectron_noISO_barrel_dEtaInSeed        ->Fill(event.selElectron_noISO_barrel_dEtaInSeed       , weight); 
+  m_selElectron_noISO_barrel_dPhiIn            ->Fill(event.selElectron_noISO_barrel_dPhiIn           , weight); 
+  m_selElectron_noISO_barrel_HoverE            ->Fill(event.selElectron_noISO_barrel_HoverE           , weight); 
+  m_selElectron_noISO_barrel_sig_ietaieta_5x5  ->Fill(event.selElectron_noISO_barrel_sig_ietaieta_5x5 , weight); 
+  m_selElectron_noISO_barrel_EM_had_depIso     ->Fill(event.selElectron_noISO_barrel_EM_had_depIso    , weight); 
+  m_selElectron_noISO_barrel_trackIso          ->Fill(event.selElectron_noISO_barrel_trackIso         , weight); 
+  m_selElectron_noISO_barrel_innerLostHits     ->Fill(event.selElectron_noISO_barrel_innerLostHits    , weight); 
+  m_selElectron_noISO_barrel_dxy               ->Fill(event.selElectron_noISO_barrel_dxy              , weight); 
+  m_selElectron_noISO_endcap_dEtaInSeed        ->Fill(event.selElectron_noISO_endcap_dEtaInSeed       , weight); 
+  m_selElectron_noISO_endcap_dPhiIn            ->Fill(event.selElectron_noISO_endcap_dPhiIn           , weight); 
+  m_selElectron_noISO_endcap_HoverE            ->Fill(event.selElectron_noISO_endcap_HoverE           , weight); 
+  m_selElectron_noISO_endcap_sig_ietaieta_5x5  ->Fill(event.selElectron_noISO_endcap_sig_ietaieta_5x5 , weight); 
+  m_selElectron_noISO_endcap_EM_had_depIso     ->Fill(event.selElectron_noISO_endcap_EM_had_depIso    , weight); 
+  m_selElectron_noISO_endcap_trackIso          ->Fill(event.selElectron_noISO_endcap_trackIso         , weight); 
+  m_selElectron_noISO_endcap_innerLostHits     ->Fill(event.selElectron_noISO_endcap_innerLostHits    , weight); 
+  m_selElectron_noISO_endcap_dxy               ->Fill(event.selElectron_noISO_endcap_dxy              , weight); 
+
 }
 
 void eventHistos::fillCombine(eventBits& event) {
@@ -539,6 +606,7 @@ void eventHistos::fillCombine(eventBits& event) {
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
   std::cout << "FILL FSB MASS" << std::endl;
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
+  m_leadAK8JetElectronMass_noISO->Fill(event.leadAK8JetElectronMassVal_noISO, weight);
   std::cout << "FILL Z MASS" << std::endl;
   m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selElectronMass,weight);
   std::cout << "DONE WITH COMBINE FILL" << std::endl;

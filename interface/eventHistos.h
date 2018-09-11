@@ -61,6 +61,7 @@ class eventHistos {
   TH1D* m_nBs          ;
   TH1D* m_nPartons     ;
   TH1D* m_nAdditionalHEEP;
+  TH1D* m_nAdditionalHEEP_noISO;
 
   TH1D* m_eventFlavor       ;
 
@@ -124,24 +125,29 @@ class eventHistos {
   TH1D* m_leadSubleadingPartonsMuonsMass ;
   TH1D* m_leadAK8JetMuonMass;
   TH1D* m_leadAK8JetElectronMass;
+  TH1D* m_leadAK8JetElectronMass_noISO;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;
   TH1D* m_leadSubleadingPartonsMuonsPt ;
   TH1D* m_leadAK8JetMuonPt;
   TH1D* m_leadAK8JetElectronPt;
+  TH1D* m_leadAK8JetElectronPt_noISO;
 
   TH1D* m_leadSubleadingJetsMuonsEta ;
   TH1D* m_leadSubleadingAK8JetsMuonsEta ;
   TH1D* m_leadSubleadingPartonsMuonsEta ;
   TH1D* m_leadAK8JetMuonEta;
   TH1D* m_leadAK8JetElectronEta;
+  TH1D* m_leadAK8JetElectronEta_noISO;
 
   TH1D* m_leadAK8JetMuonPhi;
   TH1D* m_leadAK8JetElectronPhi;
+  TH1D* m_leadAK8JetElectronPhi_noISO;
 
   TH1D* m_leadAK8JetMuonJetMuonEnergyFraction;
   TH1D* m_leadAK8JetElectronJetMuonEnergyFraction;
+  TH1D* m_leadAK8JetElectronJetMuonEnergyFraction_noISO;
 
   TH1D* m_electronTrigger;
   TH1D* m_muonTrigger;
@@ -154,11 +160,21 @@ class eventHistos {
   TH1D* m_selectedElectronPhi;
   TH1D* m_selectedElectronEta;
 
+  TH1D* m_selectedElectron_noISO_Pt; 
+  TH1D* m_selectedElectron_noISO_Phi;
+  TH1D* m_selectedElectron_noISO_Eta;
+
   TH1D* m_selectedJetPt;
   TH1D* m_selectedJetPhi;
   TH1D* m_selectedJetEta;
   TH1D* m_selectedJetMass;
   TH1D* m_selectedJetTau21;
+
+  TH1D* m_selectedJet_EleNoISO_Pt;
+  TH1D* m_selectedJet_EleNoISO_Phi;
+  TH1D* m_selectedJet_EleNoISO_Eta;
+  TH1D* m_selectedJet_EleNoISO_Mass;
+  TH1D* m_selectedJet_EleNoISO_Tau21;
 
   TH1D* m_subleadMuonEt;
   TH1D* m_subleadMuonEta;
@@ -172,6 +188,8 @@ class eventHistos {
   TH1D* m_nElectronCands100;
   TH1D* m_nElectronCands150;
   TH1D* m_nElectronCands200;
+  TH1D* m_nElectronCands50_noISO;
+  TH1D* m_nElectronCands200_noISO;
   TH1D* m_nMuons10;
   TH1D* m_nAK8Jets40;
 
@@ -233,6 +251,27 @@ class eventHistos {
   TH1D* m_selElectron_endcap_innerLostHits   ; 
   TH1D* m_selElectron_endcap_dxy             ; 
 
+  TH1D* m_selElectron_noISO_barrel_dEtaInSeed      ; 
+  TH1D* m_selElectron_noISO_barrel_dPhiIn          ; 
+  TH1D* m_selElectron_noISO_barrel_HoverE          ; 
+  TH1D* m_selElectron_noISO_barrel_sig_ietaieta_5x5;
+  TH1D* m_selElectron_noISO_barrel_E2x5vE5x5       ; 
+  TH1D* m_selElectron_noISO_barrel_EM_had_depIso   ; 
+  TH1D* m_selElectron_noISO_barrel_trackIso        ; 
+  TH1D* m_selElectron_noISO_barrel_trackPnt        ; 
+  TH1D* m_selElectron_noISO_barrel_innerLostHits   ; 
+  TH1D* m_selElectron_noISO_barrel_dxy             ; 
+
+  TH1D* m_selElectron_noISO_endcap_dEtaInSeed      ; 
+  TH1D* m_selElectron_noISO_endcap_dPhiIn          ; 
+  TH1D* m_selElectron_noISO_endcap_HoverE          ; 
+  TH1D* m_selElectron_noISO_endcap_sig_ietaieta_5x5;
+  TH1D* m_selElectron_noISO_endcap_E2x5vE5x5       ; 
+  TH1D* m_selElectron_noISO_endcap_EM_had_depIso   ; 
+  TH1D* m_selElectron_noISO_endcap_trackIso        ; 
+  TH1D* m_selElectron_noISO_endcap_trackPnt        ; 
+  TH1D* m_selElectron_noISO_endcap_innerLostHits   ; 
+  TH1D* m_selElectron_noISO_endcap_dxy             ; 
 
 };
 

@@ -45,6 +45,7 @@ public:
   std::vector<const reco::GenParticle*> myGenMuons;
   std::vector<const reco::GenParticle*> myGenLeptons;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_noISO;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs;
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
@@ -52,6 +53,8 @@ public:
   std::vector<const pat::Electron*> myElectronCandsHighPt150;
   std::vector<const pat::Electron*> myElectronCandsHighPt100;
   std::vector<const pat::Electron*> myElectronCandsHighPt50;
+  std::vector<const pat::Electron*> myElectronCandsHighPt50_noISO;
+  std::vector<const pat::Electron*> myElectronCandsHighPt200_noISO;
   std::vector<const pat::Muon*>     myMuonCandsHighPt;
   std::vector<const pat::Muon*>     myMuonCands;
   const pat::MET*                   myMET;
@@ -59,6 +62,7 @@ public:
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt;
 
   const pat::Electron*              myElectronCand;
+  const pat::Electron*              myElectronCand_noISO;
   const pat::Muon*                  myMuonCand;
   const pat::Muon*                  mySubleadMuon;
 
@@ -85,6 +89,8 @@ public:
   int    electronCands100;
   int    electronCands150;
   int    electronCands200;
+  int    electronCands200_noISO;
+  int    electronCands50_noISO;
   int    ak8jetCands;
   int    mynLeptons     ;
   int    mynMuons       ;
@@ -95,6 +101,7 @@ public:
   int    mynBs          ;
   int    mynPartons     ;
   int	 nAdditionalHEEP;
+  int	 nAdditionalHEEP_noISO;
 
   int    myEventFlavor  ;
 
@@ -131,6 +138,28 @@ public:
   double selElectron_endcap_trackPnt        ; 
   double selElectron_endcap_innerLostHits   ; 
   double selElectron_endcap_dxy             ; 
+
+  double selElectron_noISO_barrel_dEtaInSeed      ; 
+  double selElectron_noISO_barrel_dPhiIn          ; 
+  double selElectron_noISO_barrel_HoverE          ; 
+  double selElectron_noISO_barrel_sig_ietaieta_5x5;
+  double selElectron_noISO_barrel_E2x5vE5x5       ; 
+  double selElectron_noISO_barrel_EM_had_depIso   ; 
+  double selElectron_noISO_barrel_trackIso        ; 
+  double selElectron_noISO_barrel_trackPnt        ; 
+  double selElectron_noISO_barrel_innerLostHits   ; 
+  double selElectron_noISO_barrel_dxy             ; 
+
+  double selElectron_noISO_endcap_dEtaInSeed      ; 
+  double selElectron_noISO_endcap_dPhiIn          ; 
+  double selElectron_noISO_endcap_HoverE          ; 
+  double selElectron_noISO_endcap_sig_ietaieta_5x5;
+  double selElectron_noISO_endcap_E2x5vE5x5       ; 
+  double selElectron_noISO_endcap_EM_had_depIso   ; 
+  double selElectron_noISO_endcap_trackIso        ; 
+  double selElectron_noISO_endcap_trackPnt        ; 
+  double selElectron_noISO_endcap_innerLostHits   ; 
+  double selElectron_noISO_endcap_dxy             ; 
 
 
 
@@ -192,23 +221,28 @@ public:
   double leadSubleadingPartonsMuonsMassVal;
   double leadAK8JetMuonMassVal;
   double leadAK8JetElectronMassVal;
+  double leadAK8JetElectronMassVal_noISO;
 
   double leadSubleadingAK8JetsMuonsPtVal;
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
   double leadAK8JetMuonPtVal;
   double leadAK8JetElectronPtVal;
+  double leadAK8JetElectronPtVal_noISO;
 
   double leadSubleadingAK8JetsMuonsEtaVal;
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
   double leadAK8JetMuonEtaVal;
   double leadAK8JetElectronEtaVal;
+  double leadAK8JetElectronEtaVal_noISO;
 
   double leadAK8JetMuonPhiVal;
   double leadAK8JetElectronPhiVal;
+  double leadAK8JetElectronPhiVal_noISO;
   double leadAK8JetMuonJetMuonEnergyFraction;
   double leadAK8JetElectronJetMuonEnergyFraction;
+  double leadAK8JetElectronJetMuonEnergyFraction_noISO;
 
   double electronTrigger;
   double muonTrigger;
@@ -216,6 +250,10 @@ public:
   double selectedElectronPt;
   double selectedElectronPhi;
   double selectedElectronEta;
+
+  double selectedElectron_noISO_Pt;
+  double selectedElectron_noISO_Phi;
+  double selectedElectron_noISO_Eta;
 
   double selectedMuonPt;
   double selectedMuonPhi;
@@ -227,6 +265,12 @@ public:
   double selectedJetEta;
   double selectedJetMass;
   double selectedJetTau21;
+
+  double selectedJet_EleNoISO_Pt;
+  double selectedJet_EleNoISO_Phi;
+  double selectedJet_EleNoISO_Eta;
+  double selectedJet_EleNoISO_Mass;
+  double selectedJet_EleNoISO_Tau21;
 
   double subleadMuonEt;
   double subleadMuonEta;

@@ -105,9 +105,14 @@ eventBits::eventBits() {
   leadAK8JetElectronPtVal = -10000.0;
   leadAK8JetElectronEtaVal = -10000.0;
 
+  leadAK8JetElectronMassVal_noISO = -10000.0;
+  leadAK8JetElectronPtVal_noISO = -10000.0;
+  leadAK8JetElectronEtaVal_noISO = -10000.0;
+
   leadAK8JetMuonJetMuonEnergyFraction = -10000.0;
 
   leadAK8JetElectronJetMuonEnergyFraction = -10000.0;
+  leadAK8JetElectronJetMuonEnergyFraction_noISO = -10000.0;
 
   electronTrigger = -10000.0;
   muonTrigger = -10000.0;
@@ -125,6 +130,16 @@ eventBits::eventBits() {
   selectedJetEta = -10000.0;
   selectedJetMass= -10000.0;
   selectedJetTau21= -10000.0;
+
+  selectedElectron_noISO_Pt = -10000.0;
+  selectedElectron_noISO_Phi = -10000.0;
+  selectedElectron_noISO_Eta = -10000.0;
+
+  selectedJet_EleNoISO_Pt = -10000.0;
+  selectedJet_EleNoISO_Phi = -10000.0;
+  selectedJet_EleNoISO_Eta = -10000.0;
+  selectedJet_EleNoISO_Mass= -10000.0;
+  selectedJet_EleNoISO_Tau21= -10000.0;
 
   subleadMuonEt = -10000.0;
   subleadMuonEta = -10000.0;
@@ -167,6 +182,50 @@ eventBits::eventBits() {
   selectedJetTransMET = -10000.0;
 
   myEventMass = -10000.0;
+  //HEEP THINGS
+  selElectron_barrel_dEtaInSeed       = -10000.0; 
+  selElectron_barrel_dPhiIn           = -10000.0; 
+  selElectron_barrel_HoverE           = -10000.0; 
+  selElectron_barrel_sig_ietaieta_5x5 = -10000.0;
+  selElectron_barrel_E2x5vE5x5        = -10000.0; 
+  selElectron_barrel_EM_had_depIso    = -10000.0; 
+  selElectron_barrel_trackIso         = -10000.0; 
+  selElectron_barrel_trackPnt         = -10000.0; 
+  selElectron_barrel_innerLostHits    = -10000.0; 
+  selElectron_barrel_dxy              = -10000.0; 
+
+  selElectron_endcap_dEtaInSeed       = -10000.0; 
+  selElectron_endcap_dPhiIn           = -10000.0; 
+  selElectron_endcap_HoverE           = -10000.0; 
+  selElectron_endcap_sig_ietaieta_5x5 = -10000.0;
+  selElectron_endcap_E2x5vE5x5        = -10000.0; 
+  selElectron_endcap_EM_had_depIso    = -10000.0; 
+  selElectron_endcap_trackIso         = -10000.0; 
+  selElectron_endcap_trackPnt         = -10000.0; 
+  selElectron_endcap_innerLostHits    = -10000.0; 
+  selElectron_endcap_dxy              = -10000.0; 
+
+  selElectron_noISO_barrel_dEtaInSeed       = -10000.0; 
+  selElectron_noISO_barrel_dPhiIn           = -10000.0; 
+  selElectron_noISO_barrel_HoverE           = -10000.0; 
+  selElectron_noISO_barrel_sig_ietaieta_5x5 = -10000.0;
+  selElectron_noISO_barrel_E2x5vE5x5        = -10000.0; 
+  selElectron_noISO_barrel_EM_had_depIso    = -10000.0; 
+  selElectron_noISO_barrel_trackIso         = -10000.0; 
+  selElectron_noISO_barrel_trackPnt         = -10000.0; 
+  selElectron_noISO_barrel_innerLostHits    = -10000.0; 
+  selElectron_noISO_barrel_dxy              = -10000.0; 
+
+  selElectron_noISO_endcap_dEtaInSeed       = -10000.0; 
+  selElectron_noISO_endcap_dPhiIn           = -10000.0; 
+  selElectron_noISO_endcap_HoverE           = -10000.0; 
+  selElectron_noISO_endcap_sig_ietaieta_5x5 = -10000.0;
+  selElectron_noISO_endcap_E2x5vE5x5        = -10000.0; 
+  selElectron_noISO_endcap_EM_had_depIso    = -10000.0; 
+  selElectron_noISO_endcap_trackIso         = -10000.0; 
+  selElectron_noISO_endcap_trackPnt         = -10000.0; 
+  selElectron_noISO_endcap_innerLostHits    = -10000.0; 
+  selElectron_noISO_endcap_dxy              = -10000.0; 
 }
 void eventBits::clear() {
   run = -1;

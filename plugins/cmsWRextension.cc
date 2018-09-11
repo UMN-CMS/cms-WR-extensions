@@ -432,91 +432,147 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     std::cout<< "EVENT FAILS, NO JETS OVER 200 GEV WITHIN ACCEPTANCE. "<< std::endl;
     return false;
   }
-
-  myRECOevent.FSBcutProgress++;
-  if( myRECOevent.myElectronCandsHighPt50.size() < 1 ){
-    std::cout<< "EVENTS FAILS, NO ELECTRONS OVER 50 GEV WITHIN ACCEPTANCE. " << myRECOevent.myElectronCandsHighPt50.size()<< " ELECTRONS FOUND." << std::endl;
-    return false;
-  }
   myRECOevent.FSBcutProgress++;
   additionalMuons(iEvent, myRECOevent, true);
-
   if( myRECOevent.myMuonCands.size() < 1){
     std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
     return false;
   }
+
   myRECOevent.FSBcutProgress++;
-  //BUILD PAIRS OF AK8 JETS WITH THE LEAD ELECTRON
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs;
-  for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
-     if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_noISO;
+  if( myRECOevent.myElectronCandsHighPt50.size() > 0 ){
+    
 
-     TLorentzVector* jetVec_temp = new TLorentzVector();
-     jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+    //BUILD PAIRS OF AK8 JETS WITH THE LEAD ELECTRON
+    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
+       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
 
-     math::XYZTLorentzVector jetVec;
-     jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       TLorentzVector* jetVec_temp = new TLorentzVector();
+       jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+
+       math::XYZTLorentzVector jetVec;
+       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
  
-     double eventMass = ( jetVec + myRECOevent.myElectronCand->p4() ).mass();
+       double eventMass = ( jetVec + myRECOevent.myElectronCand->p4() ).mass();
 
-     if( eventMass < 200 ) continue;
+       if( eventMass < 200 ) continue;
 
-     electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
-     myRECOevent.leadAK8JetElectronMassVal = eventMass;
+       electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+       myRECOevent.leadAK8JetElectronMassVal = eventMass;
+    }
   }
-  if( electronJetPairs.size() < 1 ) {
-    std::cout<< "EVENT FAILS, NO CANDIDATE JET ELECTRON PAIRS" <<std::endl;
-    return false;
-  }
-  myRECOevent.FSBcutProgress++;
+  //NO ISO CHECKING
+  if( myRECOevent.myElectronCandsHighPt50_noISO.size() > 0){
+    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
+       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand_noISO->phi())) < 2.0 ) continue;
 
-  myRECOevent.myElectronJetPairs = electronJetPairs;
+       TLorentzVector* jetVec_temp = new TLorentzVector();
+       jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+
+       math::XYZTLorentzVector jetVec;
+       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+ 
+       double eventMass_noISO = ( jetVec + myRECOevent.myElectronCand_noISO->p4() ).mass();
+
+       if( eventMass_noISO < 200 ) continue;
+
+       electronJetPairs_noISO.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand_noISO ));
+       myRECOevent.leadAK8JetElectronMassVal_noISO = eventMass_noISO;
+    }
+  }
+  if( electronJetPairs.size() > 0 ) {
+    myRECOevent.myElectronJetPairs = electronJetPairs;
+    std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
+    myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
+    myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
+    myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
+
+    //NOW WE ACCES THE VIDRESULT AGAIN FOR THE CHOSEN ELECTRON
+    const vid::CutFlowResult* vidResult =  electronJetPairs[0].second->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+
+    if(myRECOevent.selectedElectronEta < 1.4442) {//BARREL
+      myRECOevent.selElectron_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+      myRECOevent.selElectron_barrel_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+      myRECOevent.selElectron_barrel_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+      myRECOevent.selElectron_barrel_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+//  NOT SUPPORTED    myRECOevent.selElectron_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+      myRECOevent.selElectron_barrel_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+      myRECOevent.selElectron_barrel_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+      myRECOevent.selElectron_barrel_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+      myRECOevent.selElectron_barrel_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
+    }
+    if(myRECOevent.selectedElectronEta > 1.566) {//ENDCAP
+      myRECOevent.selElectron_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+      myRECOevent.selElectron_endcap_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+      myRECOevent.selElectron_endcap_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+      myRECOevent.selElectron_endcap_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+//  NOT SUPPORTED    myRECOevent.selElectron_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+      myRECOevent.selElectron_endcap_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+      myRECOevent.selElectron_endcap_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+      myRECOevent.selElectron_endcap_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+      myRECOevent.selElectron_endcap_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
+    }
+    myRECOevent.selectedJetPt   = electronJetPairs[0].first->pT;
+    myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi;
+    myRECOevent.selectedJetEta  = electronJetPairs[0].first->eta;
+    myRECOevent.selectedJetMass = electronJetPairs[0].first->SDmass;
+  }
+  if( electronJetPairs_noISO.size() > 0 ) {
+    myRECOevent.myElectronJetPairs_noISO = electronJetPairs_noISO;
+    std::sort(electronJetPairs_noISO.begin(),electronJetPairs_noISO.end(),::wrTools::comparePairMassPointerTAddJet);
+    myRECOevent.selectedElectron_noISO_Pt  = electronJetPairs_noISO[0].second->pt();
+    myRECOevent.selectedElectron_noISO_Phi = electronJetPairs_noISO[0].second->phi();
+    myRECOevent.selectedElectron_noISO_Eta = electronJetPairs_noISO[0].second->eta();
+
+    //NOW WE ACCES THE VIDRESULT AGAIN FOR THE CHOSEN ELECTRON
+    const vid::CutFlowResult* vidResult =  electronJetPairs_noISO[0].second->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+
+    if(myRECOevent.selectedElectron_noISO_Eta < 1.4442) {//BARREL
+      myRECOevent.selElectron_noISO_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+      myRECOevent.selElectron_noISO_barrel_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+      myRECOevent.selElectron_noISO_barrel_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+      myRECOevent.selElectron_noISO_barrel_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+//  NOT SUPPORTED    myRECOevent.selElectron_noISO_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+      myRECOevent.selElectron_noISO_barrel_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+      myRECOevent.selElectron_noISO_barrel_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+      myRECOevent.selElectron_noISO_barrel_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+      myRECOevent.selElectron_noISO_barrel_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
+    }
+    if(myRECOevent.selectedElectron_noISO_Eta > 1.566) {//ENDCAP
+      myRECOevent.selElectron_noISO_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+      myRECOevent.selElectron_noISO_endcap_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+      myRECOevent.selElectron_noISO_endcap_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+      myRECOevent.selElectron_noISO_endcap_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+//  NOT SUPPORTED    myRECOevent.selElectron_noISO_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+      myRECOevent.selElectron_noISO_endcap_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+      myRECOevent.selElectron_noISO_endcap_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+      myRECOevent.selElectron_noISO_endcap_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+      myRECOevent.selElectron_noISO_endcap_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
+    }
+    myRECOevent.selectedJet_EleNoISO_Pt   = electronJetPairs_noISO[0].first->pT;
+    myRECOevent.selectedJet_EleNoISO_Phi  = electronJetPairs_noISO[0].first->phi;
+    myRECOevent.selectedJet_EleNoISO_Eta  = electronJetPairs_noISO[0].first->eta;
+    myRECOevent.selectedJet_EleNoISO_Mass = electronJetPairs_noISO[0].first->SDmass;
+  }
+
 
   //if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
   //    std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
   //    return false;
   //}
-  myRECOevent.FSBcutProgress++;
-  std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
 
-  myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
-  myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
-  myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
-
-  //NOW WE ACCES THE VIDRESULT AGAIN FOR THE CHOSEN ELECTRON
-  const vid::CutFlowResult* vidResult =  electronJetPairs[0].second->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
-
-  if(myRECOevent.selectedElectronEta < 1.4442) {//BARREL
-    myRECOevent.selElectron_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
-    myRECOevent.selElectron_barrel_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
-    myRECOevent.selElectron_barrel_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
-    myRECOevent.selElectron_barrel_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
-//NOT SUPPORTED    myRECOevent.selElectron_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
-    myRECOevent.selElectron_barrel_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
-    myRECOevent.selElectron_barrel_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
-    myRECOevent.selElectron_barrel_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
-    myRECOevent.selElectron_barrel_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
-  }
-  if(myRECOevent.selectedElectronEta > 1.566) {//ENDCAP
-    myRECOevent.selElectron_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
-    myRECOevent.selElectron_endcap_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
-    myRECOevent.selElectron_endcap_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
-    myRECOevent.selElectron_endcap_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
-//NOT SUPPORTED    myRECOevent.selElectron_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
-    myRECOevent.selElectron_endcap_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
-    myRECOevent.selElectron_endcap_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
-    myRECOevent.selElectron_endcap_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
-    myRECOevent.selElectron_endcap_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
-  }
-  myRECOevent.selectedJetPt   = electronJetPairs[0].first->pT;
-  myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi;
-  myRECOevent.selectedJetEta  = electronJetPairs[0].first->eta;
-  myRECOevent.selectedJetMass = electronJetPairs[0].first->SDmass;
 
   if(electronJetPairs[0].first->tau1==0){
     myRECOevent.selectedJetTau21 = -9999.;
   }else{
     myRECOevent.selectedJetTau21 = (electronJetPairs[0].first->tau2)/(electronJetPairs[0].first->tau1);
+  }
+  if(electronJetPairs_noISO[0].first->tau1==0){
+    myRECOevent.selectedJet_EleNoISO_Tau21 = -9999.;
+  }else{
+    myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
   }
 
   if(m_isMC) {
@@ -804,6 +860,9 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
   std::vector<const pat::Electron*> highPTelectrons100;
   std::vector<const pat::Electron*> highPTelectrons50;
 
+  std::vector<const pat::Electron*> highPTelectrons200_noISO;
+  std::vector<const pat::Electron*> highPTelectrons50_noISO;   //MUST FAIL HEEP TRACK ISO
+
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
   if(m_doTrig) {
     iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
@@ -825,26 +884,50 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
     //how to check if everything passed:
     const bool heepIDVID = vidResult->cutFlowPassed();
 
-    if (!heepIDVID) continue;
+    //MUST PASS ALL BUT ISO
+    if (!heepIDVID) {
+      if ( vidResult->getCutResultByIndex(cutnrs::HEEPV70::ET           )  == true && 
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::ETA          )  == true && 
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::DETAINSEED   )  == true &&   
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::DPHIIN       )  == true &&    
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA)  == true &&       
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::E2X5OVER5X5  )  == true &&   
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::HADEM        )  == true &&     
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO       )  == false &&  //MUST FAIL TRACK ISOLATION 
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   )  == true &&     
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          )  == true &&  
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&  
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true     
+        ) {
+        if (iElec->pt() < 50) {
+          myEvent.nAdditionalHEEP_noISO++;    
+        }
+        if (iElec->pt() >= 200){
+          highPTelectrons200_noISO.push_back(&(*iElec));
+        }
+        if (iElec->pt() >= 50){
+          highPTelectrons50_noISO.push_back(&(*iElec));
+        }
+      } 
+    } else {
+      //PHASE SPACE CUTS
+      std::cout << "Electron pT: " << iElec->pt() << std::endl;
+      if( iElec->pt() < 50){
+        myEvent.nAdditionalHEEP++;
+      }
 
-    //PHASE SPACE CUTS
-    std::cout << "Electron pT: " << iElec->pt() << std::endl;
-    if( iElec->pt() < 50){
-      myEvent.nAdditionalHEEP++;
-      continue;
-    }
-
-    if (iElec->pt() >= 200){
-      highPTelectrons200.push_back(&(*iElec));
-    }
-    if (iElec->pt() >= 150){
-      highPTelectrons150.push_back(&(*iElec));
-    }
-    if (iElec->pt() >= 100){
-      highPTelectrons100.push_back(&(*iElec));
-    }
-    if (iElec->pt() >= 50){
-      highPTelectrons50.push_back(&(*iElec));
+      if (iElec->pt() >= 200){
+        highPTelectrons200.push_back(&(*iElec));
+      }
+      if (iElec->pt() >= 150){
+        highPTelectrons150.push_back(&(*iElec));
+      }
+      if (iElec->pt() >= 100){
+        highPTelectrons100.push_back(&(*iElec));
+      }
+      if (iElec->pt() >= 50){
+        highPTelectrons50.push_back(&(*iElec));
+      }
     }
     //std::cout<<"ELECTRON CAND WITH PT,ETA,PHI: "<<iElec->pt()<<","<<iElec->eta()<<","<<iElec->phi()<<std::endl;
   }
@@ -854,6 +937,17 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
   myEvent.electronCands150 = highPTelectrons150.size();
   myEvent.electronCands100 = highPTelectrons100.size();
   myEvent.electronCands50  = highPTelectrons50.size();
+
+  myEvent.electronCands200_noISO = highPTelectrons200_noISO.size();
+  myEvent.electronCands50_noISO  = highPTelectrons50_noISO.size();
+  if (myEvent.electronCands200_noISO > 0) {
+    std::sort(highPTelectrons200_noISO.begin(),highPTelectrons200_noISO.end(),::wrTools::compareEtCandidatePointer);
+    myEvent.myElectronCandsHighPt200_noISO = highPTelectrons200_noISO;
+  }
+  if (myEvent.electronCands50_noISO > 0) {
+    std::sort(highPTelectrons50_noISO.begin(),highPTelectrons50_noISO.end(),::wrTools::compareEtCandidatePointer);
+    myEvent.myElectronCandsHighPt50_noISO = highPTelectrons50_noISO;
+  }
   if (myEvent.electronCands200 > 0) {
     std::sort(highPTelectrons200.begin(),highPTelectrons200.end(),::wrTools::compareEtCandidatePointer); 
     myEvent.myElectronCandsHighPt200 = highPTelectrons200;
