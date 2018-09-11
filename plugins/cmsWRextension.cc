@@ -518,6 +518,13 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     myRECOevent.selectedJetPhi  = electronJetPairs[0].first->phi;
     myRECOevent.selectedJetEta  = electronJetPairs[0].first->eta;
     myRECOevent.selectedJetMass = electronJetPairs[0].first->SDmass;
+
+    if(electronJetPairs[0].first->tau1==0){
+      myRECOevent.selectedJetTau21 = -9999.;
+    }else{
+      myRECOevent.selectedJetTau21 = (electronJetPairs[0].first->tau2)/(electronJetPairs[0].first->tau1);
+    }
+
   }
   if( electronJetPairs_noISO.size() > 0 ) {
     myRECOevent.myElectronJetPairs_noISO = electronJetPairs_noISO;
@@ -555,6 +562,12 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     myRECOevent.selectedJet_EleNoISO_Phi  = electronJetPairs_noISO[0].first->phi;
     myRECOevent.selectedJet_EleNoISO_Eta  = electronJetPairs_noISO[0].first->eta;
     myRECOevent.selectedJet_EleNoISO_Mass = electronJetPairs_noISO[0].first->SDmass;
+
+    if(electronJetPairs_noISO[0].first->tau1==0){
+      myRECOevent.selectedJet_EleNoISO_Tau21 = -9999.;
+    }else{
+      myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
+    }
   }
 
 
@@ -564,18 +577,8 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   //}
 
 
-  if(electronJetPairs[0].first->tau1==0){
-    myRECOevent.selectedJetTau21 = -9999.;
-  }else{
-    myRECOevent.selectedJetTau21 = (electronJetPairs[0].first->tau2)/(electronJetPairs[0].first->tau1);
-  }
-  if(electronJetPairs_noISO[0].first->tau1==0){
-    myRECOevent.selectedJet_EleNoISO_Tau21 = -9999.;
-  }else{
-    myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
-  }
 
-  if(m_isMC) {
+  if(m_isMC && electronJetPairs.size() > 0) {
     double Muon_LooseID_Weight = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
     myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weight;
     double HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
