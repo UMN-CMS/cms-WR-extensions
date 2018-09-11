@@ -442,6 +442,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   myRECOevent.FSBcutProgress++;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_noISO;
+  std::cout << "CHECKING FOR ELEC CANDS" << std::endl;
   if( myRECOevent.myElectronCandsHighPt50.size() > 0 ){
     
 
@@ -459,13 +460,18 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
 
        if( eventMass < 200 ) continue;
 
+       std::cout << "FOUND CAND DIOBJECT WITH ISO ELE" << std::endl;
+
        electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
        myRECOevent.leadAK8JetElectronMassVal = eventMass;
     }
   }
   //NO ISO CHECKING
+  std::cout << "CHECKING FOR NON ISO ELEC CANDS" << std::endl;
   if( myRECOevent.myElectronCandsHighPt50_noISO.size() > 0){
+    std::cout << "FOUND NON ISO ELEC CANDS" << std::endl;
     for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
+       std::cout << "LOOPING THROUGH DIOBJECT CANDS" << std::endl;
        if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand_noISO->phi())) < 2.0 ) continue;
 
        TLorentzVector* jetVec_temp = new TLorentzVector();
@@ -477,6 +483,8 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        double eventMass_noISO = ( jetVec + myRECOevent.myElectronCand_noISO->p4() ).mass();
 
        if( eventMass_noISO < 200 ) continue;
+
+       std::cout << "FOUND CAND DIOBJECT WITH NON ISO ELE" << std::endl;
 
        electronJetPairs_noISO.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand_noISO ));
        myRECOevent.leadAK8JetElectronMassVal_noISO = eventMass_noISO;
