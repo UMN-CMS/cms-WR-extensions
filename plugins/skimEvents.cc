@@ -143,7 +143,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     myRECOevent.weight = 1;
   }
   
-  m_allEvents.fill(myRECOevent);
+  m_allEvents.fill(myRECOevent, 1);
   std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myRECOevent.weight <<std::endl;
 
   int muonPass = 0;
