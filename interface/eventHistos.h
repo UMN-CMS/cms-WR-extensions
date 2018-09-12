@@ -25,7 +25,7 @@
 class eventHistos {
   public:
   eventHistos();
-  void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, bool FSB);
+  void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, int FSB);
   void fill(eventBits& event);
 
 
@@ -40,7 +40,7 @@ class eventHistos {
  
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
-  bool m_FSB;
+  int m_FSB;
 
   //METADATA
   TH1D* m_metaData;

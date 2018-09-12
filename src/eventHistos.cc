@@ -20,12 +20,12 @@ eventHistos::eventHistos () {}
 
 
 
-void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, bool FSB) {
+void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, int Region) {
 
   //CREATED FOLDER IN HISTO
   m_flavor = flavor;
   m_histoFolder = histoFolder;
-  m_FSB = FSB;
+  m_FSB = Region;
 
   std::cout<<"TAGGING EVENTS WITH: "  <<tag<<std::endl;
   m_metaData = m_histoFolder.make<TH1D>("metadata", "events metadata", 10, 0.0, 10);
@@ -318,8 +318,10 @@ void eventHistos::fill(eventBits& event) {
 //SPECIFIC 
 void eventHistos::fillCutProgress(eventBits& event) {
   double weight = 0.0;
-  if(m_FSB == true)
+  if(m_FSB == 1)
     weight = event.FSBweight;
+  else if(m_FSB == 2)
+    weight = event.FSBweight_noISO;
   else
     weight = event.weight;
   std::cout << "Filling Cut Progress" << std::endl;
@@ -346,8 +348,10 @@ void eventHistos::fillGen(eventBits& event) {
 //    return;
 //  }
   double weight = 0.0;
-  if(m_FSB == true)
+  if(m_FSB == 1)
     weight = event.FSBweight;
+  else if(m_FSB == 2)
+    weight = event.FSBweight_noISO;
   else
     weight = event.weight;
 
@@ -455,8 +459,10 @@ void eventHistos::fillGen(eventBits& event) {
 }
 void eventHistos::fillReco(eventBits& event) {
   double weight = 0.0;
-  if(m_FSB == true)
+  if(m_FSB == 1)
     weight = event.FSBweight;
+  else if(m_FSB == 2)
+    weight = event.FSBweight_noISO;
   else
     weight = event.weight;
 
@@ -611,8 +617,10 @@ void eventHistos::fillReco(eventBits& event) {
 void eventHistos::fillCombine(eventBits& event) {
   std::cout << "FILL COMBINE" << std::endl;
   double weight = 0.0;
-  if(m_FSB == true)
+  if(m_FSB == 1)
     weight = event.FSBweight;
+  else if(m_FSB == 2)
+    weight = event.FSBweight_noISO;
   else
     weight = event.weight;
 
