@@ -285,13 +285,15 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
 //THIS FLAVOR IS FOR THE STREAMLINED ANALYSIS.  IT ONLY CONTAINS PLOTS NECESSARY FOR THE FINAL ANALYSIS
   }else if (m_flavor == 5){
-    m_eventsWeight             =           m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
-    m_leadAK8JetMuonMass       =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass",     "2 Object Mass of the leading Jet and Muon;Mass (GeV);"        ,120, 0.0,6000);
-    m_leadAK8JetElectronMass   =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass", "2 Object Mass of the leading Jet and Electron;Mass (GeV);"    ,120, 0.0,6000);
-    m_subleadMuon_selMuonZMass =           m_histoFolder.make<TH1D>("subleadMuonSelMuonZMass","Sublead Muon Selected Muon Mass; Mass (GeV);"                 ,100, 0.0,200);
+    m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
+    m_leadAK8JetMuonMass_JECUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass JEC Up","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
+    m_leadAK8JetMuonMass_JECDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass JEC Down","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
+    m_leadAK8JetMuonMass_JERUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass JER Up","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
+    m_leadAK8JetMuonMass_JERDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass JER Down","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
+    m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
   }
 }
-void eventHistos::fill(eventBits& event) {
+void eventHistos::fill(eventBits& event, int systematicRegion) {
  // m_outputTag->SetString("blahblah");
   if(m_flavor == 1) fillGen(event);
   else if(m_flavor == 2) {
@@ -307,10 +309,17 @@ void eventHistos::fill(eventBits& event) {
   } else if (m_flavor == 4) {
     fillWeight(event);
   } else if (m_flavor == 5){
-    std::cout << "FLAVOR 5 FILL" << std::endl;
-    fillCombine(event);
-    std::cout << "FLAVOR 5 WEIGHT FILL" << std::endl;
-    fillWeight(event);
+    if (systematicRegion == 1){
+      fillCombine_Nominal(event);
+    }else if(systematicRegion == 2){
+      fillCombine_JECUp(event);
+    }else if(systematicRegion == 3){
+      fillCombine_JECDown(event);
+    }else if(systematicRegion == 4){
+      fillCombine_JERUp(event);
+    }else if(systematicRegion == 5){
+      fillCombine_JERDown(event);
+    }
   }
   else return;
 }
@@ -318,12 +327,13 @@ void eventHistos::fill(eventBits& event) {
 //SPECIFIC 
 void eventHistos::fillCutProgress(eventBits& event) {
   double weight = 0.0;
-  if(m_FSB == 1)
+  if(m_FSB == 1){
     weight = event.FSBweight;
-  else if(m_FSB == 2)
+  }else if(m_FSB == 2){
     weight = event.FSBweight_noISO;
-  else
+  }else{
     weight = event.weight;
+  }
   std::cout << "Filling Cut Progress" << std::endl;
   int toFill = event.cutProgress;
   int FSBtoFill = event.FSBcutProgress;
@@ -614,24 +624,53 @@ void eventHistos::fillReco(eventBits& event) {
 
 }
 
-void eventHistos::fillCombine(eventBits& event) {
-  std::cout << "FILL COMBINE" << std::endl;
+void eventHistos::fillCombine_Nominal(eventBits& event) {
   double weight = 0.0;
-  if(m_FSB == 1)
+  if(m_FSB == true)
     weight = event.FSBweight;
-  else if(m_FSB == 2)
-    weight = event.FSBweight_noISO;
   else
     weight = event.weight;
 
-  
-  std::cout << "FILL MAIN MASS" << std::endl;
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
-  std::cout << "FILL FSB MASS" << std::endl;
-  m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
-  m_leadAK8JetElectronMass_noISO->Fill(event.leadAK8JetElectronMassVal_noISO, weight);
-  std::cout << "FILL Z MASS" << std::endl;
-  m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selElectronMass,weight);
-  std::cout << "DONE WITH COMBINE FILL" << std::endl;
+
+}
+void eventHistos::fillCombine_JECUp(eventBits& event) {
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
+
+  m_leadAK8JetMuonMass_JECUp->Fill(event.leadAK8JetMuonMassVal_JECUp, weight);
+
+}
+void eventHistos::fillCombine_JECDown(eventBits& event) {
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
+
+  m_leadAK8JetMuonMass_JECDown->Fill(event.leadAK8JetMuonMassVal_JECDown, weight);
+
+}
+void eventHistos::fillCombine_JERUp(eventBits& event) {
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
+
+  m_leadAK8JetMuonMass_JERUp->Fill(event.leadAK8JetMuonMassVal_JERUp, weight);
+
+}
+void eventHistos::fillCombine_JERDown(eventBits& event) {
+  double weight = 0.0;
+  if(m_FSB == true)
+    weight = event.FSBweight;
+  else
+    weight = event.weight;
+
+  m_leadAK8JetMuonMass_JERDown->Fill(event.leadAK8JetMuonMassVal_JERDown, weight);
 
 }

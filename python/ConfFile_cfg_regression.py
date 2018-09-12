@@ -1,7 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 import HLTrigger.HLTfilters.hltHighLevel_cfi
 from FWCore.ParameterSet.VarParsing import VarParsing
-
+import os
 #INPUT PARSING SECTION
 options = VarParsing ('analysis')
 
@@ -27,7 +27,7 @@ options.register( 'doFast',
                                   VarParsing.multiplicity.singleton,
                                   VarParsing.varType.bool,
                                   "True to run a condensed analysis for HiggsCombine"
-               )                 
+               )
 options.parseArguments()
 
 #LOCAL VARIABLE DEFINITIONS
@@ -52,10 +52,10 @@ from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 from Configuration.AlCa.autoCond import autoCond
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '') #WORKS FOR TESTING BUT NOT TRUSTWORTHY
 process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_TrancheIV_v8') #
+if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v7')
 
 
-
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
@@ -125,7 +125,7 @@ from ExoAnalysis.cmsWRextensions.tools import addHEEPV70ElesMiniAOD
 addHEEPV70ElesMiniAOD(process,useStdName=False)
 
 from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
-jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addNsub=True)  
+jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])  
 
 process.options.allowUnscheduled = cms.untracked.bool(True)
 ##this is our example analysis module reading the results, you will have your own module
@@ -138,8 +138,6 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 #    process.heepIdExample) #our analysing example module, replace with your module
 #
 
-
-                                   
 #process.muonSelectionSeq = cms.Sequence(process.TriggerFilter * process.badGlobalMuonTagger * process.cloneGlobalMuonTagger * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
@@ -157,7 +155,8 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               AK8recoPUPPIJets = cms.InputTag("selectedPatJetsAK8PFPuppi"),
 #			      AK8recoPUPPIJets = cms.InputTag("AK8PFJetsPuppi"),
           		      jettinessPUPPI  = cms.untracked.string("NjettinessAK8Puppi"),
-
+			      jecUncName  = (cms.untracked.string('AK8Puppi')),
+			      rhoLabel    = cms.InputTag("fixedGridRhoFastjetAll"),
                               vertices = cms.InputTag("offlineSlimmedPrimaryVertices"),
 			      edmPileupInfo = cms.InputTag('slimmedAddPileupInfo'),
                               genInfo = cms.InputTag("generator"),

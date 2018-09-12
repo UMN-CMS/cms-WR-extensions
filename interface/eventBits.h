@@ -50,6 +50,11 @@ public:
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_noISO;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_JECUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_JECDown;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_JERUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_JERDown;
+
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
   std::vector<const pat::Electron*> myElectronCandsHighPt200;
@@ -63,6 +68,10 @@ public:
   const pat::MET*                   myMET;
 
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JECUp;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JECDown;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JERUp;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JERDown;
 
   const pat::Electron*              myElectronCand;
   const pat::Electron*              myElectronCand_noISO;
@@ -231,6 +240,24 @@ public:
   double leadAK8JetElectronMassVal;
   double leadAK8JetElectronMassVal_noISO;
 
+  double leadAK8JetMuonMassVal_JECUp;
+  double leadAK8JetMuonMassVal_JECDown;
+  double leadAK8JetMuonPtVal_JECUp;
+  double leadAK8JetMuonPtVal_JECDown;
+  double leadAK8JetMuonEtaVal_JECUp;
+  double leadAK8JetMuonEtaVal_JECDown;
+  double leadAK8JetMuonPhiVal_JECUp;
+  double leadAK8JetMuonPhiVal_JECDown;
+
+  double leadAK8JetMuonMassVal_JERUp;
+  double leadAK8JetMuonMassVal_JERDown;
+  double leadAK8JetMuonPtVal_JERUp;
+  double leadAK8JetMuonPtVal_JERDown;
+  double leadAK8JetMuonEtaVal_JERUp;
+  double leadAK8JetMuonEtaVal_JERDown;
+  double leadAK8JetMuonPhiVal_JERUp;
+  double leadAK8JetMuonPhiVal_JERDown;
+
   double leadSubleadingAK8JetsMuonsPtVal;
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
@@ -280,6 +307,30 @@ public:
   double selectedJet_EleNoISO_Mass;
   double selectedJet_EleNoISO_Tau21;
 
+  double selectedJetPt_JECUp;
+  double selectedJetPhi_JECUp;
+  double selectedJetEta_JECUp;
+  double selectedJetMass_JECUp;
+  double selectedJetTau21_JECUp;
+
+  double selectedJetPt_JECDown;
+  double selectedJetPhi_JECDown;
+  double selectedJetEta_JECDown;
+  double selectedJetMass_JECDown;
+  double selectedJetTau21_JECDown;
+
+  double selectedJetPt_JERUp;
+  double selectedJetPhi_JERUp;
+  double selectedJetEta_JERUp;
+  double selectedJetMass_JERUp;
+  double selectedJetTau21_JERUp;
+
+  double selectedJetPt_JERDown;
+  double selectedJetPhi_JERDown;
+  double selectedJetEta_JERDown;
+  double selectedJetMass_JERDown;
+  double selectedJetTau21_JERDown;
+
   double subleadMuonEt;
   double subleadMuonEta;
   double subleadMuonPhi;
@@ -310,6 +361,11 @@ public:
 
   double myEventMass;
   double myEventSidebandMass;
+
+  double myEventMass_JECUp;
+  double myEventMass_JECDown;
+  double myEventMass_JERUp;
+  double myEventMass_JERDown;
 
 private:
 

@@ -244,6 +244,7 @@ config.JobType.inputFiles.extend(additionalInputFiles)
 config.JobType.psetName    = '' # overridden per dataset
 # need to execute the user_script
 #config.JobType.scriptExe = 'user_script.sh'
+config.JobType.maxMemoryMB = 7000
 config.Data.inputDataset = '' # overridden per dataset
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'FileBased' #LumiBased for data
@@ -284,17 +285,17 @@ with open(localInputListFile, 'r') as f:
   lineNum = 0
   for line in f:
     if lineNum < 2 :
-      lineNum+=1
-      continue
+        lineNum+=1
+        continue    
     split = line.split()
     if len(split) <= 0:
       continue
     if '#' in split[0]: # skip comments
       #print 'found comment:',line
       continue
-    if len(split) < 3:
-      print 'inputList line is not properly formatted:',line
-      exit(-3)
+#    if len(split) < 3:
+#      print 'inputList line is not properly formatted:',line
+#      exit(-3)
     dataset = split[0]
     nUnits = int(split[1]) #also used for total lumis for data
     nUnitsPerJob = int(split[2])
@@ -314,12 +315,14 @@ with open(localInputListFile, 'r') as f:
       config.Data.outputDatasetTag=secondaryDatasetName
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if isData:
-      config.JobType.pyCfgParams = ['isMC=false']
+      config.JobType.pyCfgParams = ['isMC=False']
+      options.jsonFile = 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+    #Handle the ext1 vs non ext case specially
     if not isData:
       isAMCATNLO = 'amcatnlo' in datasetName
+      print "isAMCATNLO: ", isAMCATNLO
       if isAMCATNLO:
-        config.JobType.pyCfgParams = ['ISmcatnlo=True']
-    #Handle the ext1 vs non ext case specially
+	config.JobType.pyCfgParams = ['ISmcatnlo=True']
     if 'ext' in dataset:
       extN = dataset[dataset.find('_ext')+4]
       datasetName=datasetName+'_ext'+extN
@@ -435,6 +438,7 @@ with open(localInputListFile, 'r') as f:
         newLumiList.writeJSON('newJSON_minus_oldJSON.json')
         config.Data.lumiMask = 'newJSON_minus_oldJSON.json'
       else:
+	print "USING JSON: ", options.jsonFile
         config.Data.lumiMask = options.jsonFile
     if options.runRange is not None:
       config.Data.runRange = runRange

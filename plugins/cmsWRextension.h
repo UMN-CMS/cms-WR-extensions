@@ -66,7 +66,13 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "CommonTools/TriggerUtils/interface/GenericTriggerEventFlag.h"
 
-
+#include "JetMETCorrections/JetCorrector/interface/JetCorrector.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "CondFormats/JetMETObjects/interface/FactorizedJetCorrector.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
+#include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Framework/interface/EventSetup.h"
 
 //ROOT includes
 #include "TH1D.h"
@@ -81,6 +87,11 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 #include "ExoAnalysis/cmsWRextensions/interface/Muons.h"
 
+#include "FWCore/Framework/interface/ConsumesCollector.h"
+
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
+
+#include "TRandom3.h"
 //
 // class declaration
 //
@@ -90,10 +101,11 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 // from  edm::one::EDAnalyzer<> and also remove the line from
 // constructor "usesResource("TFileService");"
 // This will improve performance in multithreaded jobs.
-
+class FactorizedJetCorrector;
+class JetCorrectionUncertainty;
 class cmsWRextension : public edm::EDAnalyzer {
    public:
-      explicit cmsWRextension(const edm::ParameterSet&);
+      explicit cmsWRextension(const edm::ParameterSet& iConfig);
       ~cmsWRextension();
 
       static void fillDescriptions(edm::ConfigurationDescriptions& descriptions);
@@ -107,17 +119,19 @@ class cmsWRextension : public edm::EDAnalyzer {
       // ----------member functions---------------------
       void selectMuons(const edm::Event&, eventBits&);
       bool preSelectGen (const edm::Event&, eventBits&);
-      bool preSelectReco (const edm::Event&, eventBits&);
+      bool preSelectReco (const edm::Event&, const edm::EventSetup&, eventBits&);
+      bool preSelectReco_Fast (const edm::Event&, const edm::EventSetup&, eventBits&);
       bool passMuonTrig (const edm::Event&, eventBits&);
       bool passElectronTrig (const edm::Event&, eventBits&);
       bool passWR2016GEN (const edm::Event&, eventBits&);
       bool passExtensionGEN (const edm::Event&, eventBits&);
       bool passWR2016RECO (const edm::Event&, eventBits&);
       bool passExtensionRECO(const edm::Event&, eventBits&);
+      void passExtensionRECO_Fast(const edm::Event&, eventBits&);
       bool passFlavorSideband(const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
       bool passWR2016Reco(const edm::Event&, eventBits&);
-      bool jetSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool);
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
@@ -133,6 +147,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight);
       void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight);
       double PUPPIweight(double puppipt, double puppieta);
+      void loadCMSSWPath();
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
@@ -165,12 +180,14 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_recoJetsToken;
       edm::EDGetToken m_AK8recoCHSJetsToken;
       edm::EDGetToken m_AK8recoPUPPIJetsToken;
+      edm::EDGetToken JECName;
       edm::EDGetToken m_offlineVerticesToken;
       edm::EDGetToken m_genEventInfoToken;
       edm::EDGetToken m_metToken;
       edm::EDGetToken m_trigResultsToken;
       edm::EDGetToken m_trigObjsToken;
       edm::EDGetToken m_PUInfoToken;
+      edm::EDGetToken m_rhoLabel;
       bool m_wantHardProcessMuons;
       bool m_doGen;
       bool m_amcatnlo;
@@ -188,6 +205,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       double m_muonIsoCut = .05;
 
       std::string m_jettiness;
+      std::string JECUName;
 
       std::vector<std::string> m_muonPathsToPass;
       std::vector<std::string> m_muonFiltersToPass;
@@ -198,6 +216,16 @@ class cmsWRextension : public edm::EDAnalyzer {
       GenericTriggerEventFlag* m_genericTriggerEventFlag;
 
       std::string m_outputTag;
+
+      FactorizedJetCorrector   *fJetCorr;
+      JetCorrectionUncertainty *fJetUnc;
+
+      JME::JetResolution resolution;
+      JME::JetResolutionScaleFactor resolution_sf;
+
+      TRandom3* r;
+
+      std::string cmsswPath;
 
 };
 

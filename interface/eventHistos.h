@@ -26,7 +26,7 @@ class eventHistos {
   public:
   eventHistos();
   void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, int FSB);
-  void fill(eventBits& event);
+  void fill(eventBits& event, int systematicRegion);
 
 
 
@@ -35,7 +35,11 @@ class eventHistos {
   void fillReco(eventBits& event);
   void fillWeight(eventBits& event);
   void fillCutProgress(eventBits& event);
-  void fillCombine(eventBits& event);
+  void fillCombine_Nominal(eventBits& event);
+  void fillCombine_JECUp(eventBits& event);
+  void fillCombine_JECDown(eventBits& event);
+  void fillCombine_JERUp(eventBits& event);
+  void fillCombine_JERDown(eventBits& event);
 
  
   TFileDirectory m_histoFolder;
@@ -129,6 +133,12 @@ class eventHistos {
   TH1D* m_leadAK8JetMuonMass;
   TH1D* m_leadAK8JetElectronMass;
   TH1D* m_leadAK8JetElectronMass_noISO;
+
+  TH1D* m_leadAK8JetMuonMass_JECUp;
+  TH1D* m_leadAK8JetMuonMass_JECDown;
+
+  TH1D* m_leadAK8JetMuonMass_JERUp;
+  TH1D* m_leadAK8JetMuonMass_JERDown;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;
