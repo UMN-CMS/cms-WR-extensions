@@ -52,6 +52,9 @@ class eventHistos {
   TH1D* m_FSBfinalEventWeight_E;
   TH1D* m_FSBfinalEventWeight_B;
 
+  TH1D* m_FSBfinalEventWeight_E_noISO;
+  TH1D* m_FSBfinalEventWeight_B_noISO;
+
   TH1D* m_nLeptons     ;
   TH1D* m_nMuons       ;
   TH1D* m_nTaus        ;
@@ -228,6 +231,11 @@ class eventHistos {
   TH1D* m_HEEP_SF_E;
   TH1D* m_HEEP_SF_B;
   TH1D* m_Electron_Reco_SF;
+
+  TH1D* m_HEEP_SF_noISO;
+  TH1D* m_HEEP_SF_E_noISO;
+  TH1D* m_HEEP_SF_B_noISO;
+  TH1D* m_Electron_Reco_SF_noISO;
 
   TH1D* m_selElectron_barrel_dEtaInSeed      ; 
   TH1D* m_selElectron_barrel_dPhiIn          ; 

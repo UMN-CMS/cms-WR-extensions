@@ -8,6 +8,7 @@ eventBits::eventBits() {
   event = 0;
   weight = 1.0;
   FSBweight = 1.0;
+  FSBweight_noISO = 1.0;
   passesWR2016 = false;
   nVtx = -1;
   nPU = -1;
@@ -29,6 +30,10 @@ eventBits::eventBits() {
   HEEP_SF  = -10000.0;
   HEEP_SF_E  = -10000.0;
   HEEP_SF_B  = -10000.0;
+
+  HEEP_SF_noISO  = -10000.0;
+  HEEP_SF_E_noISO  = -10000.0;
+  HEEP_SF_B_noISO  = -10000.0;
 
   secondInDecayMuon = -10000.0;
 

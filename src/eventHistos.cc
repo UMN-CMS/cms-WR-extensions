@@ -215,6 +215,14 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_FSBfinalEventWeight_E             =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_E",";final EventWeight FSB Endcap", 40, 0.0, 2.0);
     m_FSBfinalEventWeight_B             =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_B",";final EventWeight FSB Barrel", 40, 0.0, 2.0);
 
+    m_HEEP_SF_noISO                 =    m_histoFolder.make<TH1D>("HEEP_SF_noISO",";HEEP Weight nonISO", 40, 0.0, 2.0);                                        
+    m_HEEP_SF_E_noISO               =    m_histoFolder.make<TH1D>("HEEP_SF_E_noISO",";HEEP Weight Endcap nonISO Electron", 40, 0.0, 2.0);                          
+    m_HEEP_SF_B_noISO               =    m_histoFolder.make<TH1D>("HEEP_SF_B_noISO",";HEEP Weight Barrel nonISO Electron", 40, 0.0, 2.0);                       
+    m_FSBfinalEventWeight_E_noISO   =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_E_noISO",";final EventWeight FSB Endcap nonISO", 40, 0.0, 2.0);        
+    m_FSBfinalEventWeight_B_noISO   =    m_histoFolder.make<TH1D>("FSBfinalEventWeight_B_noISO",";final EventWeight FSB Barrel nonISO", 40, 0.0, 2.0);         
+
+    m_Electron_Reco_SF_noISO        =    m_histoFolder.make<TH1D>("finalEventWeight_noISO",";finalEventWeight nonISO", 40, 0.0, 2.0);
+
     m_finalEventWeight             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
     m_Electron_Reco_SF             =    m_histoFolder.make<TH1D>("finalEventWeight",";finalEventWeight", 40, 0.0, 2.0);
 
@@ -552,8 +560,15 @@ void eventHistos::fillReco(eventBits& event) {
   m_FSBfinalEventWeight_E->Fill(event.FSBweight_E, weight);
   m_FSBfinalEventWeight_B->Fill(event.FSBweight_B, weight);
 
+  m_HEEP_SF_noISO->Fill(event.HEEP_SF_noISO, weight);
+  m_HEEP_SF_E_noISO->Fill(event.HEEP_SF_E_noISO, weight);
+  m_HEEP_SF_B_noISO->Fill(event.HEEP_SF_B_noISO, weight);
+  m_FSBfinalEventWeight_E_noISO->Fill(event.FSBweight_E_noISO, weight);
+  m_FSBfinalEventWeight_B_noISO->Fill(event.FSBweight_B_noISO, weight);
+
   m_finalEventWeight->Fill(weight, weight);
   m_Electron_Reco_SF->Fill(event.egamma_SF, weight);
+  m_Electron_Reco_SF_noISO->Fill(event.egamma_SF_noISO, weight);
 
   m_selElectron_barrel_dEtaInSeed        ->Fill(event.selElectron_barrel_dEtaInSeed       , weight); 
   m_selElectron_barrel_dPhiIn            ->Fill(event.selElectron_barrel_dPhiIn           , weight); 

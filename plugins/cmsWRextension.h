@@ -131,6 +131,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight, double MuonHighPtIDWeight);
       void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight);
+      void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight);
       double PUPPIweight(double puppipt, double puppieta);
       // ----------member data ---------------------------
       eventHistos m_allEvents;
@@ -149,6 +150,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingFlavorSidebandRECOelePt150;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
       eventHistos m_eventsPassingFlavorSidebandRECO_noTrig;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt50_noISO;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO;
       HEEP myHEEP;
       egammaEffi myEgammaEffi;
       eventInfo myEventInfo;

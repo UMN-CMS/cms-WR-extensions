@@ -28,6 +28,9 @@ public:
   double FSBweight;
   double FSBweight_E;
   double FSBweight_B;
+  double FSBweight_noISO;
+  double FSBweight_E_noISO;
+  double FSBweight_B_noISO;
   double Muon_LooseID_Weight;
 
   std::string outputTag;  //LABELLING THE DATA
@@ -115,6 +118,11 @@ public:
   double HEEP_SF_E      ;
   double HEEP_SF_B      ;
   double egamma_SF      ;
+
+  double HEEP_SF_noISO        ;
+  double HEEP_SF_E_noISO      ;
+  double HEEP_SF_B_noISO      ;
+  double egamma_SF_noISO      ;
 
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
