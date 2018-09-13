@@ -1168,8 +1168,7 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
     if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > m_highPTleptonCut) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
       std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
-//      highPTMuons.push_back(&(*iMuon));
-    if( iMuon->pt() > 200 ) highPTMuons.push_back(&(*iMuon));
+      highPTMuons.push_back(&(*iMuon));
     }
 
   }
