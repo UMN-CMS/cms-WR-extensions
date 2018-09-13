@@ -141,6 +141,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
       bool metCuts(const edm::Event& iEvent, eventBits& myEvent);
       void vertexDiff(eventBits& myEvent);
+      bool sameSign(eventBits& myEvent, bool noISO);
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight, double MuonHighPtIDWeight);
@@ -163,10 +164,14 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt150;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
       eventHistos m_eventsPassingFlavorSidebandRECO_noTrig;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt50_noISO;
+
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_samesign;
+
       HEEP myHEEP;
       egammaEffi myEgammaEffi;
       eventInfo myEventInfo;
