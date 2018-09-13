@@ -1169,8 +1169,8 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
       std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
 //      highPTMuons.push_back(&(*iMuon));
-    }
     if( iMuon->pt() > 200 ) highPTMuons.push_back(&(*iMuon));
+    }
 
   }
 
