@@ -1,47 +1,137 @@
-164c164
-< #        colors[name] = int(line.split()[5].strip())
+319,320d318
+< 
+<       std::cout << "PASSES THE FLAVOR SIDEBAND" << std::endl;
+361c359
+<   
 ---
->         colors[name] = int(line.split()[5].strip())
-167,208d166
+> 
+374c372
+<   
+---
+> 
+538c536
 <     
-< #colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'QCD_HT300to500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'QCD_HT500to700_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'QCD_HT700to1000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
-< #          'WW_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
-< #          'WZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
-< #          'ZZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
-< #          'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8': ROOT.kRed,
-< #          'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
-< #          'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
-< #          'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
-< #          'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
-< #          'DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
-< #          'DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
-< #          'DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
-< #          'DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
-< #          'DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
-< #          'DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
-< #          'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
-< #          'WJetsToLNu_Wpt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
-< #          'WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
-< #          'WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
-< #          'WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
-< #          'WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
-< #          'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8': ROOT.kGray
-< #         }
-< colors = {
-<           'SingleElectron--Run2016B-03Feb2017_ver2-v2'          : 794,
-<           'SingleElectron--Run2016C-03Feb2017-v1'               : 794,
-<           'SingleElectron--Run2016D-03Feb2017-v1'               : 794,
-<           'SingleElectron--Run2016E-03Feb2017-v1'               : 794,
-<           'SingleElectron--Run2016F-03Feb2017-v1'               : 794,
-<           'SingleElectron--Run2016G-03Feb2017-v1'               : 794,
-<           'SingleElectron--Run2016H-03Feb2017_ver2-v1'          : 794,
-<           'SingleElectron--Run2016H-03Feb2017_ver3-v1'          : 794
-<          }
+---
+> 
+549c547
+<  
+---
+> 
+554,555d551
+<        std::cout << "FOUND CAND DIOBJECT WITH ISO ELE" << std::endl;
+< 
+572c568
+<  
+---
+> 
+594c590
+<       myRECOevent.selElectron_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+---
+>       myRECOevent.selElectron_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED);
+605c601
+<       myRECOevent.selElectron_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+---
+>       myRECOevent.selElectron_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED);
+638c634
+<       myRECOevent.selElectron_noISO_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+---
+>       myRECOevent.selElectron_noISO_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED);
+649c645
+<       myRECOevent.selElectron_noISO_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+---
+>       myRECOevent.selElectron_noISO_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED);
+682c678
+<     if (electronJetPairs.size() > 0) { 
+---
+>     if (electronJetPairs.size() > 0) {
+691c687
+<     if (electronJetPairs_noISO.size() > 0) { 
+---
+>     if (electronJetPairs_noISO.size() > 0) {
+726,727d721
+<     //if( ((*iJet)->p4() + (*iMuon)->p4()).mass() < 400) continue;
+<     //if (sqrt(deltaR2(*(*iJet),*(*iMuon)))<2.0) continue;
+735c729
+<  
+---
+> 
+744c738
+<   if( muonJetPairs.size() < 1 ) {
+---
+>   if( muonJetPairs.size() < 1) {
+757c751
+<   jetSelection(iEvent, iSetup, myRECOevent);
+---
+>   jetSelection(iEvent, iSetup, myRECOevent); 
+1057d1050
+<     //MUST PASS ALL BUT ISO
+1059,1070c1052,1063
+<       if ( vidResult->getCutResultByIndex(cutnrs::HEEPV70::ET           )  == true && 
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::ETA          )  == true && 
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DETAINSEED   )  == true &&   
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DPHIIN       )  == true &&    
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA)  == true &&       
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::E2X5OVER5X5  )  == true &&   
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::HADEM        )  == true &&     
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO       )  == false &&  //MUST FAIL TRACK ISOLATION 
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   )  == true &&     
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          )  == true &&  
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&  
+<            vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true     
+---
+>       if ( vidResult->getCutResultByIndex(cutnrs::HEEPV70::ET           )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::ETA          )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DETAINSEED   )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DPHIIN       )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA)  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::E2X5OVER5X5  )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::HADEM        )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO       )  == false &&  //MUST FAIL TRACK ISOLATION
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&
+>            vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true
+1073c1066
+<           myEvent.nAdditionalHEEP_noISO++;    
+---
+>           myEvent.nAdditionalHEEP_noISO++;
+1081c1074
+<       } 
+---
+>       }
+1171c1164
+<       highPTMuons.push_back(&(*iMuon));
+---
+> //      highPTMuons.push_back(&(*iMuon));
+1173c1166
+<     //if( iMuon->pt() > 200 ) highPTMuons.push_back(&(*iMuon));
+---
+>     if( iMuon->pt() > 200 ) highPTMuons.push_back(&(*iMuon));
+1240c1233
+<     double jetUNC =              fJetUnc->getUncertainty(true);
+---
+>     double jetUNC = 		 fJetUnc->getUncertainty(true);
+1300a1294
+> //      std::cout<<"AK8JET CAND WITH PT,ETA,PHI: "<<iJet->pt()*iJet->jecFactor("Uncorrected")*JEC<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
+1301a1296
+> 
+1351c1346
+<   } 
+---
+>   }
+1439,1440c1434,1435
+<   if ( genLeptons.size() > 0 ) { 
+<     std::sort( genLeptons.begin(), genLeptons.end(), ::wrTools::compareEtGenParticlePointer ); 
+---
+>   if ( genLeptons.size() > 0 ) {
+>     std::sort( genLeptons.begin(), genLeptons.end(), ::wrTools::compareEtGenParticlePointer );
+1445c1440
 <     
+---
+> 
+1447c1442
+<   } 
+---
+>   }
+1844a1840
+> 

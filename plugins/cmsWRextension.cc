@@ -267,10 +267,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if ((m_doReco || !m_isMC) && !m_doFast) {
     std::cout<<"running preselection reco"<<std::endl;
     if(preSelectReco(iEvent, iSetup, myRECOevent)) {
-      myRECOevent.cutProgress++;
       if(passExtensionRECO(iEvent, myRECOevent)) { 
-        myRECOevent.cutProgress++;
-//        METcuts(iEvent, myRECOevent);
         if (m_doTrig){
           muonTrigPass = passMuonTrig(iEvent, myRECOevent);
         }
@@ -289,17 +286,23 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           if(addMuons && ZMASS && muonTrigPass) {
             std::cout<< "FILLING ZPeak Region" << std::endl;
             m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 1);
-          } else if ((m_isMC || m_flavorSideband) && addMuons && !ZMASS){
+          } else if ((m_isMC || m_flavorSideband) && addMuons){
             myRECOevent.cutProgress++;
-            std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
-            if(muonTrigPass && m_doTrig) m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent, 1);
-            m_eventsPassingExtensionRECO2016VETO_noTrig.fill(myRECOevent, 1);
+	    if(!ZMASS){
+              myRECOevent.cutProgress++;
+              std::cout << "HERE WE FILL THE GOOD STUFF" << std::endl;
+              if(muonTrigPass && m_doTrig){
+                myRECOevent.cutProgress++;
+	        m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent, 1);
+	      }
+              m_eventsPassingExtensionRECO2016VETO_noTrig.fill(myRECOevent, 1);
             //if(massCut(iEvent, myRECOevent)) {
             //  m_eventsPassingExtensionRECO2016VETOMASSCUT.fill(myRECOevent);
             //  myRECOevent.cutProgress++;
             //  if(metCuts(iEvent, myRECOevent))
             //    m_eventsPassingExtensionRECO2016VETOMASSMETCUT.fill(myRECOevent);
             //}
+            }
           }
 //        }
         if (m_isMC || m_flavorSideband) m_eventsPassingExtensionRECO.fill(myRECOevent, 1);
