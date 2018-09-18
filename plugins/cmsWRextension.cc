@@ -220,9 +220,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   myRECOevent.cutProgress = 0;
 
   if(m_isMC && m_doGen && !m_doFast) {
-    genCounter(iEvent, myEvent);
-    genCounter(iEvent, myRECOevent);
-    vertexDiff(myRECOevent);
+//    genCounter(iEvent, myEvent);
+    if (genCounter(iEvent, myRECOevent))
+      vertexDiff(myRECOevent);
   }
    
   if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
@@ -361,18 +361,31 @@ bool cmsWRextension::sameSign(eventBits& myEvent, bool noISO) {
   return false;
 }
 void cmsWRextension::vertexDiff(eventBits& myEvent) {
+  std::cout << "RUNNING VTX DIFF" << std::endl;
+  if (myEvent.genVtx == 0) return;
+  if (myEvent.PVertex == 0) return;
   
+
+
+  std::cout << "RUNNING VTX DIFF X" << std::endl;
   double dx = myEvent.PVertex->x() - myEvent.genVtx->x();
+  std::cout << "RUNNING VTX DIFF Y" << std::endl;
   double dy = myEvent.PVertex->y() - myEvent.genVtx->y();
+  std::cout << "RUNNING VTX DIFF Z" << std::endl;
   double dz = myEvent.PVertex->z() - myEvent.genVtx->z();
 
+  std::cout << "NEW POINT" << std::endl;
   math::XYZPoint* diff = new math::XYZPoint();
 
+  std::cout << "SETTING POINT" << std::endl;
   diff->SetXYZ(dx,dy,dz);
 
+  std::cout << "SETTING DIFF VTX" << std::endl;
   myEvent.myVertexDiff = diff;
 
+  std::cout << "SETTING DIFF VTX TAN" << std::endl;
   myEvent.myVertexDiffTan = sqrt(dx*dx + dz*dz);
+  std::cout << "SETTING DIFF VTX LON" << std::endl;
   myEvent.myVertexDiffLon = abs(dy);
   
 
@@ -1444,9 +1457,11 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
     double x =  myEvent.myGenLeptons[0]->vertex().x();
     double y =  myEvent.myGenLeptons[0]->vertex().y();
     double z =  myEvent.myGenLeptons[0]->vertex().z();
-    
-    myEvent.genVtx->SetXYZ( x, y, z );
+    std::cout << "GEN VTX: X: "<<x <<" Y: "<<y<<" Z: "<<z<<""<< std::endl;   
+    myEvent.genVtx = new math::XYZPoint();
+//    myEvent.genVtx->SetXYZ( x, y, z );
   } 
+  std::cout << "SETTING VALS" << std::endl;
   nLeptons = nMuons + nTaus + nElectrons;
   nPartons = nTops + nBs + nLightPartons;
 
@@ -1460,16 +1475,19 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   myEvent.mynPartons         = nPartons     ;
 
 //HERE IS THE CHARACTERIZATION DECODER TABLE
-
-  if (nMuons == 2 && nPartons == 2)   flavor = 1;     
-  if (nTaus >= 1 && nTops >= 1)       flavor = 2;       
-  else if (nTaus >= 1 && nTops == 0)       flavor = 3;
-  //else if (mynMuons == 1 && mynElectrons >= 1) flavor = 4;
-  else flavor = 9;
-  
+//
+//  if (nMuons == 2 && nPartons == 2)   flavor = 1;     
+//  if (nTaus >= 1 && nTops >= 1)       flavor = 2;       
+//  else if (nTaus >= 1 && nTops == 0)       flavor = 3;
+//  //else if (mynMuons == 1 && mynElectrons >= 1) flavor = 4;
+//  else flavor = 9;
+//  
   myEvent.myEventFlavor = flavor;
 
-  return true;
+  if (genLeptons.size() > 0)
+    return true;
+  else
+    return false;
 
 }
 bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
