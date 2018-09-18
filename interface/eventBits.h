@@ -78,6 +78,8 @@ public:
   const pat::Muon*                  myMuonCand;
   const pat::Muon*                  mySubleadMuon;
 
+  const reco::GenParticle*          genSecondMuon;
+
   const reco::Vertex*               PVertex;
 
   math::XYZPoint*             genVtx;
@@ -334,6 +336,8 @@ public:
   double subleadMuonEt;
   double subleadMuonEta;
   double subleadMuonPhi;
+
+  double dRmuon2;
 
   double subleadMuon_selJetdPhi;
   double subleadMuon_selMuondPhi;

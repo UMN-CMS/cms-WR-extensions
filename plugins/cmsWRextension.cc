@@ -1024,11 +1024,15 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
   if(flavorSideband==true) {
     myEvent.mySubleadMuon = allMuons.at(0);
+    if(myEvent.genSecondMuon != 0) 
+      myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
   }else{
   //IF WE HAVE ADDITION MUONS, WE SHOULD SEE WHICH IS THE LEADING MUON WHICH ISN'T THE MAIN CANDIDATE
     for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
       if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
         myEvent.mySubleadMuon = *iMuon;
+        if(myEvent.genSecondMuon != 0) 
+          myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
         break;
       }
     }
@@ -1441,6 +1445,10 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
     if(abs(iParticle->pdgId()) == 13) {
       nMuons++;
       genLeptons.push_back(&(*iParticle));
+
+      if(abs(iParticle->mother(0)->pdgId()) == 9900014)
+        std::cout << "FOUND MUON NEUTRINO DECAY MUON" << std::endl;
+        myEvent.genSecondMuon = &(*iParticle);
     }
     if(abs(iParticle->pdgId()) == 11) {
       nElectrons++;
