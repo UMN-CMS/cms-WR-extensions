@@ -312,6 +312,7 @@ with open(localInputListFile, 'r') as f:
     thisWorkDir = workDir+'/'+datasetName
     isData = 'Run201' in datasetName
     makeDirAndCheck(thisWorkDir)
+    config.Data.outputPrimaryDataset = datasetName
 #outputFileNames = []
 #outputFileNames.append(dataset[1:dataset.find('_Tune')])
 #outputFileNames.append(dataset[1:dataset.find('_13TeV')])
