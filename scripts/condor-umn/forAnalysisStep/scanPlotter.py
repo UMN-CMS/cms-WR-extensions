@@ -20,6 +20,24 @@ ROOT.gStyle.SetPaintTextFormat("1.1f")
 ROOT.gStyle.SetOptFit(0000)
 ROOT.gROOT.SetBatch()
 
+colors = [
+#ROOT.kWhite  ,      
+ROOT.kBlack  ,       
+#ROOT.kGray   ,   
+ROOT.kRed    ,       
+ROOT.kGreen  ,          
+ROOT.kBlue   ,       
+#ROOT.kYellow ,        
+#ROOT.kMagenta,        
+ROOT.kCyan   ,       
+ROOT.kOrange ,          
+#ROOT.kSpring ,          
+#ROOT.kTeal   ,         
+ROOT.kAzure  ,        
+ROOT.kViolet ,         
+ROOT.kPink       
+]
+
 
 #############################################################################################
 #WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
@@ -70,23 +88,25 @@ legend = ROOT.TLegend(0.19,leg_y,0.42,0.88)
 legend.SetFillStyle(0)
 legend.SetBorderSize(0)
 
-firstPlot = myFile.Get(plotNameFull)
-firstPlot.Draw()
-firstPlot.SetLineColor(ROOT.kRed)
-
-legend.AddEntry(firstPlot, ROOTs[0].split("/")[-1][:-5], "L")
+#firstPlot = myFile.Get(plotNameFull)
+#firstPlot.Draw()
+#firstPlot.SetLineColor(colors[0])
+#
+#legend.AddEntry(firstPlot, ROOTs[0].split("/")[-1][:-5], "L")
 
 offset = 0
 
 plotsHolder = []
 for ROOTfile in ROOTs:
     print "At point: "+ROOTfile.split("/")[-1][:-5]
-    offset = offset - 10
     newFile = ROOT.TFile.Open(ROOTfile, "read")
     plotsHolder.append(copy.deepcopy(newFile.Get(plotNameFull)))
     plotsHolder[-1].Draw("samee")
-    plotsHolder[-1].SetLineColor(ROOT.kRed + offset)
+    plotsHolder[-1].SetLineColor(colors[offset])
     legend.AddEntry(plotsHolder[-1], ROOTfile.split("/")[-1][:-5], "L")
+    offset = offset + 1 
+    if (offset == len(colors)):
+        offset = 0
     
 legend.Draw()
 c.SaveAs(output+plotName+".png")
