@@ -220,16 +220,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   myRECOevent.cutProgress = 0;
 
   if(m_isMC && m_doGen && !m_doFast) {
-<<<<<<< HEAD
-    genCounter(iEvent, myEvent);
-    genCounter(iEvent, myRECOevent);
-    std::cout << "nDaughters: " << myRECOevent.nDaughters << std::endl;
-//    vertexDiff(myRECOevent);
-=======
 //    genCounter(iEvent, myEvent);
     if (genCounter(iEvent, myRECOevent))
       vertexDiff(myRECOevent);
->>>>>>> 4b390c54aed2ba313d39b2c405a7033e630e1a4f
   }
    
   if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
@@ -1542,12 +1535,8 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
     double x =  myEvent.myGenLeptons[0]->vertex().x();
     double y =  myEvent.myGenLeptons[0]->vertex().y();
     double z =  myEvent.myGenLeptons[0]->vertex().z();
-<<<<<<< HEAD
-    
-=======
     std::cout << "GEN VTX: X: "<<x <<" Y: "<<y<<" Z: "<<z<<""<< std::endl;   
     myEvent.genVtx = new math::XYZPoint();
->>>>>>> 4b390c54aed2ba313d39b2c405a7033e630e1a4f
 //    myEvent.genVtx->SetXYZ( x, y, z );
   } 
   std::cout << "SETTING VALS" << std::endl;
