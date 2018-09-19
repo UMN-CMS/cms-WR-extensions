@@ -182,6 +182,12 @@ class eventHistos {
   TH1D* m_selectedJetEta;
   TH1D* m_selectedJetMass;
   TH1D* m_selectedJetTau21;
+  TH1D* m_selectedJetMaxDRGenDaughters;
+
+  TH1D* m_DrDaughters;
+  TH1D* m_nWRDaughters;
+  TH1D* m_capturedBothDaughtersInSingleJet;
+  TH1D* m_pickedCorrectJet;
 
   TH1D* m_selectedJet_EleNoISO_Pt;
   TH1D* m_selectedJet_EleNoISO_Phi;

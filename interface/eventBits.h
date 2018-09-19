@@ -47,6 +47,13 @@ public:
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
   std::vector<const reco::GenParticle*> myGenLeptons;
+  std::vector<const reco::GenParticle*> genWRDaughters;
+  int nDaughters;
+  double MaxDR_genDaughter_CandJet;
+  double dR_Daughters;
+  int capturedBothDaughtersInSingleJet;
+  int pickedCorrectJet;
+
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_noISO;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs;

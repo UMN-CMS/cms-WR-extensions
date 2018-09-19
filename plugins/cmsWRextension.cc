@@ -222,7 +222,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if(m_isMC && m_doGen && !m_doFast) {
     genCounter(iEvent, myEvent);
     genCounter(iEvent, myRECOevent);
-    vertexDiff(myRECOevent);
+    std::cout << "nDaughters: " << myRECOevent.nDaughters << std::endl;
+//    vertexDiff(myRECOevent);
   }
    
   if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
@@ -818,8 +819,8 @@ bool cmsWRextension::preSelectReco_Fast(const edm::Event& iEvent, const edm::Eve
 //leading lepton with pT > 60 GeV
 //subleading lepton with pT > 53 GeV
 //at least two jets with pT > 40 GeV, consider only the leading and subleading in the following if more than two
-//all leptons and jets with |η| < 2.4
-//dilepton mass mll > 200 GeV: to suppress DY+jets contribution ∆R > 0.4 between all objects in the final state (leptons and jets) Mlljj > 600 GeV
+//all leptons and jets with |Î·| < 2.4
+//dilepton mass mll > 200 GeV: to suppress DY+jets contribution âR > 0.4 between all objects in the final state (leptons and jets) Mlljj > 600 GeV
 bool cmsWRextension::passWR2016Reco(const edm::Event& iEvent, eventBits& myEvent) {
   
   std::cout << "Checking if event passes WR2016" << std::endl;
@@ -1299,7 +1300,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
 //      pAddJet->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(iJet->pt(), iJet->eta());
 
       AddJets.push_back(pAddJet);
-      std::cout<<"AK8JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
+      std::cout<<"AK8JET CAND WITH PT,ETA,PHI,MASS: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<","<< iJet->userFloat("ak8PFJetsPuppiSoftDropMass") << std::endl;
     }
     if( jetPtJESUp > 200 ){
       baconhep::TAddJet* pAddJet_JECUp = new baconhep::TAddJet();
@@ -1362,6 +1363,54 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
   myEvent.myAddJetCandsHighPt_JECDown = AddJets_JECDown;
   myEvent.myAddJetCandsHighPt_JERUp = AddJets_JERUp;
   myEvent.myAddJetCandsHighPt_JERDown = AddJets_JERDown;
+  myEvent.ak8jetCands = AddJets.size();
+
+  double dPhi = 0.;
+  double dR   = 0.;
+  int nDaughterContainedPtLeadJet = 0;
+  int nDaughterContainedSubLeadJet = 0;
+  int nDaughterContained2ndSubLeadJet = 0;
+  int nDaughterContained3rdSubLeadJet = 0;
+  int capturedBothDaughtersInSingleJet = -1;
+  if(AddJets.size() > 0){
+    for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
+      dPhi=abs(AddJets[0]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
+      dR = sqrt((AddJets[0]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[0]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
+      if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+      if (dR<0.4)nDaughterContainedPtLeadJet++;
+    }
+    if(AddJets.size() > 1){
+      for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
+        dPhi=abs(AddJets[1]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
+	dR = sqrt((AddJets[1]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[1]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
+	if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+	if (dR<0.4)nDaughterContainedSubLeadJet++;
+      }
+    }
+    if(AddJets.size() > 2){
+      for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
+        dPhi=abs(AddJets[2]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
+        dR = sqrt((AddJets[2]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[2]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
+        if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+        if (dR<0.4)nDaughterContained2ndSubLeadJet++;
+      }
+    }
+    if(AddJets.size() > 3){
+      for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
+        dPhi=abs(AddJets[3]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
+        dR = sqrt((AddJets[3]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[3]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
+        if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+        if (dR<0.4)nDaughterContained3rdSubLeadJet++;
+      }
+    }
+  }
+  if((nDaughterContainedPtLeadJet==1 && nDaughterContainedSubLeadJet==1) ||(nDaughterContainedPtLeadJet==1 && nDaughterContained2ndSubLeadJet==1) || (nDaughterContainedSubLeadJet==1 && nDaughterContained2ndSubLeadJet==1) || (nDaughterContainedPtLeadJet==1 && nDaughterContained3rdSubLeadJet==1) || (nDaughterContainedSubLeadJet==1 && nDaughterContained3rdSubLeadJet==1) || (nDaughterContained2ndSubLeadJet==1 && nDaughterContained3rdSubLeadJet==1)){
+    capturedBothDaughtersInSingleJet=0;
+  }else if(nDaughterContainedPtLeadJet==2 || nDaughterContainedSubLeadJet==2 || nDaughterContained2ndSubLeadJet==2 || nDaughterContained3rdSubLeadJet==2){
+    capturedBothDaughtersInSingleJet=1;
+  }
+
+  myEvent.capturedBothDaughtersInSingleJet = capturedBothDaughtersInSingleJet;
 
   return true;
 }
@@ -1421,6 +1470,9 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   int flavor           = 0;
 
   std::vector<const reco::GenParticle*> genLeptons;
+  std::vector<const reco::GenParticle*> WRDaughters;
+
+  int GENnDaughters = 0;
 
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
     if(!iParticle->isHardProcess())   continue;
@@ -1437,7 +1489,26 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
     if(abs(iParticle->pdgId())  <= 4) nLightPartons++;
     if(abs(iParticle->pdgId())  == 5) nBs++;
     if(abs(iParticle->pdgId())  == 6) nTops++;
+
+    if(abs(iParticle->pdgId())  == 1 || abs(iParticle->pdgId())  == 2 || abs(iParticle->pdgId())  == 3 || abs(iParticle->pdgId())  == 4 || abs(iParticle->pdgId())  == 5 || abs(iParticle->pdgId())  == 6){
+      std::cout << "iParticle->mother()->pdgId(): " << iParticle->mother()->pdgId() << std::endl;
+      if(iParticle->mother()->pdgId() == 9900014 || iParticle->mother()->pdgId() == 9900012 || iParticle->mother()->pdgId() == 9900016){
+	WRDaughters.push_back(&(*iParticle));
+        GENnDaughters++;
+      }
+    }
   }
+
+  double dPhi = 0.;
+  double dR_Daughters = -1.0;
+  if (WRDaughters.size() > 1){
+    dPhi=abs(WRDaughters[0]->phi()-WRDaughters[1]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
+    dR_Daughters = sqrt((WRDaughters[0]->eta()-WRDaughters[1]->eta())*(WRDaughters[0]->eta()-WRDaughters[1]->eta()) + dPhi*dPhi);
+    if (dR_Daughters>ROOT::Math::Pi()) dR_Daughters-=2*ROOT::Math::Pi();
+    
+  }
+  myEvent.dR_Daughters = dR_Daughters;
+
   if ( genLeptons.size() > 0 ) { 
     std::sort( genLeptons.begin(), genLeptons.end(), ::wrTools::compareEtGenParticlePointer ); 
     myEvent.myGenLeptons = genLeptons;
@@ -1445,7 +1516,7 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
     double y =  myEvent.myGenLeptons[0]->vertex().y();
     double z =  myEvent.myGenLeptons[0]->vertex().z();
     
-    myEvent.genVtx->SetXYZ( x, y, z );
+//    myEvent.genVtx->SetXYZ( x, y, z );
   } 
   nLeptons = nMuons + nTaus + nElectrons;
   nPartons = nTops + nBs + nLightPartons;
@@ -1458,6 +1529,8 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   myEvent.mynTops            = nTops        ;
   myEvent.mynBs              = nBs          ;
   myEvent.mynPartons         = nPartons     ;
+  myEvent.genWRDaughters     = WRDaughters  ;
+  myEvent.nDaughters	     = GENnDaughters;
 
 //HERE IS THE CHARACTERIZATION DECODER TABLE
 
@@ -1734,9 +1807,42 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
     myRECOevent.selectedJetTau21 = (myRECOevent.myMuonJetPairs[0].first->tau2)/(myRECOevent.myMuonJetPairs[0].first->tau1);
   }
 
+  double MaxDR_genDaughter_CandJet = -1.0;
+  double dPhi = 0.;
+  int nDaughterInSelectedJet = 0;
+  double dR = 0.;
+  if(m_isMC){
+    for(int i = 0; i < int(myRECOevent.genWRDaughters.size()); i++){
+      std::cout << "test" << std::endl;
+      dPhi=abs(myRECOevent.myMuonJetPairs[0].first->phi-myRECOevent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
+      if(sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi) > MaxDR_genDaughter_CandJet){
+	MaxDR_genDaughter_CandJet = sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi);
+	if (MaxDR_genDaughter_CandJet>ROOT::Math::Pi()) MaxDR_genDaughter_CandJet-=2*ROOT::Math::Pi();
+      }
+      if(sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi) >ROOT::Math::Pi()){
+	dR = sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi) - 2*ROOT::Math::Pi();
+      }else{
+        dR = sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi);
+      }
+      if(dR < 0.4){
+	nDaughterInSelectedJet++;
+      }
+    }
+  }
   std::cout <<"RECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
 
+  int pickedCorrectJet = -1;
+  if(myRECOevent.capturedBothDaughtersInSingleJet==1){
+    if(nDaughterInSelectedJet==2){
+      pickedCorrectJet = 1;
+    }else{
+      pickedCorrectJet = 0;
+    }
+  }
+
+  myRECOevent.pickedCorrectJet = pickedCorrectJet;
   myRECOevent.myEventMass = myRECOevent.leadAK8JetMuonMassVal;
+  myRECOevent.MaxDR_genDaughter_CandJet = MaxDR_genDaughter_CandJet;
 
   return true;
 }
