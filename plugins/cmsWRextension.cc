@@ -685,10 +685,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   }
 
 
-  //if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
-  //    std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
-  //    return false;
-  //}
+  if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
+      std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+      return false;
+  }
 
 
 
