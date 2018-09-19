@@ -95,6 +95,7 @@ legend.SetBorderSize(0)
 #legend.AddEntry(firstPlot, ROOTs[0].split("/")[-1][:-5], "L")
 
 offset = 0
+currentMax = 0.0
 
 plotsHolder = []
 for ROOTfile in ROOTs:
@@ -102,6 +103,9 @@ for ROOTfile in ROOTs:
     newFile = ROOT.TFile.Open(ROOTfile, "read")
     plotsHolder.append(copy.deepcopy(newFile.Get(plotNameFull)))
     plotsHolder[-1].Draw("samee")
+    if ( plotsHolder[-1].GetMaximum() > currentMax ):
+        currentMax = plotsHolder[-1].GetMaximum()
+    plotsHolder[0].SetMaximum(1.1*currentMax)
     plotsHolder[-1].SetLineColor(colors[offset])
     legend.AddEntry(plotsHolder[-1], ROOTfile.split("/")[-1][:-5], "L")
     offset = offset + 1 
