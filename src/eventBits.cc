@@ -20,6 +20,8 @@ eventBits::eventBits() {
 
   PVertex = NULL;
 
+  daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
+
   count = 0;
 
   cutProgress = -1;

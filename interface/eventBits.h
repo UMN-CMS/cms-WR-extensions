@@ -91,6 +91,8 @@ public:
 
   math::XYZPoint*             genVtx;
 
+  math::XYZTLorentzVector     daughterClusterVector;
+
   int secondInDecayMuon;
 
   //EVENT VALUES
@@ -346,10 +348,15 @@ public:
 
   double dRmuon2;
 
-  double subleadMuon_selJetdPhi;
+  double subleadMuon_selJetdPhi_EleNonISO;
   double subleadMuon_selMuondPhi;
   double subleadMuon_selMuonMass;
   double subleadMuon_selMuonPt;
+  double subleadMuon_selElectronPhi_EleNonISO;
+  double subleadMuon_selElectronMass_EleNonISO;
+  double subleadMuon_selElectronPt_EleNonISO;
+
+  double subleadMuon_selJetdPhi;
   double subleadMuon_selElectronPhi;
   double subleadMuon_selElectronMass;
   double subleadMuon_selElectronPt;
