@@ -638,6 +638,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     }else{
       myRECOevent.selectedJetTau21 = (electronJetPairs[0].first->tau2)/(electronJetPairs[0].first->tau1);
     }
+    if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, false)){
+        std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+        return false;
+    }
 
   }
   if( electronJetPairs_noISO.size() > 0 ) {
@@ -682,13 +686,13 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     }else{
       myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
     }
+    if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true)){
+        std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+        return false;
+    }
   }
 
 
-  if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
-      std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
-      return false;
-  }
 
 
 
@@ -962,21 +966,34 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   if(myEvent.subleadMuon_selMuonMass < 200) return true;
   return false;
 }
-bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
   //CHECK IF WE HAVE A SUBLEADING MUON
   if(myEvent.mySubleadMuon == 0) return true;
 
   const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
-  const pat::Electron* selEl   = myEvent.myElectronCand;
+  const pat::Electron* selEl;
+  if (!nonISO)
+    selEl   = myEvent.myElectronCand;
+  else
+    selEl   = myEvent.myElectronCand_noISO;
   const baconhep::TAddJet*  selJet      = myEvent.myElectronJetPairs[0].first;
 
-  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
-  myEvent.subleadMuon_selElectronPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
-  myEvent.subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
-  myEvent.subleadMuon_selElectronPt   = (subleadMuon->p4() + selEl->p4()).pt();
+  if (!nonISO) {
+    myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+    myEvent.subleadMuon_selElectronPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
+    myEvent.subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+    myEvent.subleadMuon_selElectronPt   = (subleadMuon->p4() + selEl->p4()).pt();
+  } else {
+    myEvent.subleadMuon_selJetdPhi_EleNonISO      = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+    myEvent.subleadMuon_selElectronPhi_EleNonISO  = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
+    myEvent.subleadMuon_selElectronMass_EleNonISO = (subleadMuon->p4() + selEl->p4()).mass();
+    myEvent.subleadMuon_selElectronPt_EleNonISO   = (subleadMuon->p4() + selEl->p4()).pt();
+  }
+
   myEvent.subleadMuonEt           = subleadMuon->et();
 
-  if(myEvent.subleadMuon_selElectronMass < 200) return true;
+  if(nonISO && myEvent.subleadMuon_selElectronMass_EleNonISO < 200) return true;
+  if(!nonISO && myEvent.subleadMuon_selElectronMass < 200) return true;
   return false;
 }
 bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
