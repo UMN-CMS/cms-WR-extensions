@@ -189,7 +189,7 @@ public:
   double selElectron_noISO_endcap_innerLostHits   ; 
   double selElectron_noISO_endcap_dxy             ; 
 
-
+  double secondMuonWRjetdR;
 
 
   double parton1EtVal;

@@ -77,6 +77,8 @@ eventBits::eventBits() {
   dRparton1AK8jetVal = -10000.0;
   dRparton2AK8jetVal = -10000.0;
 
+  secondMuonWRjetdR = -100000.0;
+
   firstPartonJetEtHadronicVal = -10000.0;
   secondPartonJetEtHadronicVal = -10000.0;
   firstPartonJetEtEMVal = -10000.0;

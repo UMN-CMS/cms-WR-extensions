@@ -1461,6 +1461,21 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
 
   myEvent.capturedBothDaughtersInSingleJet = capturedBothDaughtersInSingleJet;
 
+  if (myEvent.genSecondMuon != 0 && myEvent.genWRDaughters.size() > 1) {
+    std::cout << "DR CALC" << std::endl;
+    double jetPhi = myEvent.daughterClusterVector.phi();
+    double muPhi  = myEvent.genSecondMuon->phi();
+    double jetEta = myEvent.daughterClusterVector.eta();
+    double muEta  = myEvent.genSecondMuon->eta();
+    double dPhi = 0.0;
+    double dR   = 0.0;
+    dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
+    dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
+    if ( dR > ROOT::Math::Pi() ) dR -= 2 * ROOT::Math::Pi();
+
+    myEvent.secondMuonWRjetdR = dR;
+  }
+
   return true;
 }
 double cmsWRextension::PUPPIweight(double puppipt, double puppieta){
