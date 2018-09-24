@@ -85,13 +85,14 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "Text file contain list of root files"
     print "Directory for input root files:"
     print "plot type REG (regular), PAB(PERCENT ABOVE), PBL (PERCENT BELOW)"
+    print "True = plot half samples with dotted lines --> input needs to be ordered correctly"
     print "=========="
     print "EXAMPLE:"
     print ""
     print "python scanPlotter.py analysis/eventsPassingExtensionRECO/selectedMuonPt /uscms/homes/a/aevans26/nobackup/plots/signalComparisons/ Signal5.txt /uscms_data/d3/mkrohn/WR/JetMassStudy/CMSSW_8_0_26_patch1/src/ExoAnalysis/cmsWRextensions/Output/JetGENMatching/ REG" 
     print ""
     exit(0)
-if len(sys.argv) != 6:
+if len(sys.argv) != 7:
     print "inputs not understood, try help/h"
     exit(1)
 
@@ -100,6 +101,7 @@ output = sys.argv[2]
 inputROOTlist = sys.argv[3]
 inputROOTdir = sys.argv[4]
 style        = sys.argv[5]
+lineStyle    = sys.argv[6]
 
 plotName = plotNameFull.split("/")[-1]
 
@@ -146,7 +148,7 @@ for ROOTfile in ROOTs:
     plotsHolder.append(copy.deepcopy(newFile.Get(plotNameFull)))
     plotsHolder[-1].SetLineColor(colors[offset])
     plotsHolder[-1].SetLineWidth(3)
-    if(i%2==0):
+    if(lineStyle == "True" and i%2==0):
         plotsHolder[-1].SetLineStyle(2)
     plotsHolder[-1].DrawNormalized("hist same")
     if ( plotsHolder[-1].GetMaximum() > currentMax ):
