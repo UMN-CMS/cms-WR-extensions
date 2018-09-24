@@ -30,7 +30,7 @@ ROOT.kBlue   ,
 #ROOT.kYellow ,        
 #ROOT.kMagenta,        
 ROOT.kCyan   ,       
-ROOT.kOrange ,          
+ROOT.kOrange+7 ,          
 #ROOT.kSpring ,          
 #ROOT.kTeal   ,         
 ROOT.kAzure  ,        
@@ -82,9 +82,7 @@ myFile = ROOT.TFile.Open(ROOTs[0], "read")
 
 c = ROOT.TCanvas("c","c",1000,1000)
 
-leg_y = 0.88 - (2+int(len(ROOTs)/2))*0.03
-print leg_y
-legend = ROOT.TLegend(0.19,leg_y,0.42,0.88)
+legend = ROOT.TLegend(0.52,0.58,0.88,0.88)
 legend.SetFillStyle(0)
 legend.SetBorderSize(0)
 
@@ -98,17 +96,22 @@ offset = 0
 currentMax = 0.0
 
 plotsHolder = []
+i = 1
 for ROOTfile in ROOTs:
     print "At point: "+ROOTfile.split("/")[-1][:-5]
     newFile = ROOT.TFile.Open(ROOTfile, "read")
     plotsHolder.append(copy.deepcopy(newFile.Get(plotNameFull)))
-    plotsHolder[-1].Draw("samee")
+    plotsHolder[-1].SetLineColor(colors[offset])
+    plotsHolder[-1].SetLineWidth(3)
+    if(i%2==0):
+        plotsHolder[-1].SetLineStyle(2)
+    plotsHolder[-1].DrawNormalized("hist same")
     if ( plotsHolder[-1].GetMaximum() > currentMax ):
         currentMax = plotsHolder[-1].GetMaximum()
     plotsHolder[0].SetMaximum(1.1*currentMax)
-    plotsHolder[-1].SetLineColor(colors[offset])
     legend.AddEntry(plotsHolder[-1], ROOTfile.split("/")[-1][:-5], "L")
     offset = offset + 1 
+    i = i + 1
     if (offset == len(colors)):
         offset = 0
     
