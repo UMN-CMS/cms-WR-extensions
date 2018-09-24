@@ -203,6 +203,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_subleadMuonPhi                =    m_histoFolder.make<TH1D>("subleadMuonPhi"          ,  "Sublead Muon Phi; Loose Muon #phi (rad);"              , 80, -4.0,  4.0);
 
     m_dRmuon2                      =    m_histoFolder.make<TH1D>("dRmuon2"                 ,   "Sublead Muon - 2nd Gen Muon delta R; deltaR;"         , 60, 0.0, 6.0);
+    m_secondMuonWRjetdR          =    m_histoFolder.make<TH1D>("secondMuonWRjetdR"     ,   "Sublead Muon - Gen WR decay quarks delta R; deltaR;"         , 60, 0.0, 6.0);
 
     m_MET                          =    m_histoFolder.make<TH1D>("MET"                 ,"MET;MET (GeV);# events",                       100, 0.0,2000); //THIS LINE WORKS
     m_MET_selJetdPhi               =    m_histoFolder.make<TH1D>("METselJetdPhi"      ,"MET Selected Jet dPhi; #phi (rad);",      80, 0.0 ,4.0);
@@ -513,6 +514,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_subleadMuonPhi          ->   Fill(event.subleadMuonPhi          ,weight); 
  
   m_dRmuon2                 ->   Fill(event.dRmuon2, weight);
+  m_secondMuonWRjetdR       ->   Fill(event.secondMuonWRjetdR, weight);
                                                                
   m_MET                    ->Fill(event.MET                    ,weight); 
   m_MET_selJetdPhi         ->Fill(event.MET_selJetdPhi         ,weight); 

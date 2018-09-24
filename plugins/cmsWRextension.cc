@@ -599,6 +599,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   }
   std::cout <<"check 1" << std::endl;
   if( electronJetPairs.size() > 0 ) {
+    std::cout << "PROCESSING ELECTRON JET PAIRS" << std::endl;
     myRECOevent.myElectronJetPairs = electronJetPairs;
     std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
     myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
@@ -640,9 +641,14 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     }else{
       myRECOevent.selectedJetTau21 = (electronJetPairs[0].first->tau2)/(electronJetPairs[0].first->tau1);
     }
+    if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, false)){
+        std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+        return false;
+    }
 
   }
   if( electronJetPairs_noISO.size() > 0 ) {
+    std::cout << "PROCESSING NONISO ELECTRON JET PAIRS" << std::endl;
     myRECOevent.myElectronJetPairs_noISO = electronJetPairs_noISO;
     std::sort(electronJetPairs_noISO.begin(),electronJetPairs_noISO.end(),::wrTools::comparePairMassPointerTAddJet);
     myRECOevent.selectedElectron_noISO_Pt  = electronJetPairs_noISO[0].second->pt();
@@ -684,12 +690,12 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     }else{
       myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
     }
+    if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true)){
+        std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+        return false;
+    }
   }
 
-/*  if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent)){
-      std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
-      return false;
-  }*/
 
 
 
@@ -963,21 +969,47 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   if(myEvent.subleadMuon_selMuonMass < 200) return true;
   return false;
 }
-bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
   //CHECK IF WE HAVE A SUBLEADING MUON
+  std::cout << "FSB ZMASS" << std::endl;
   if(myEvent.mySubleadMuon == 0) return true;
 
   const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
-  const pat::Electron* selEl   = myEvent.myElectronCand;
-  const baconhep::TAddJet*  selJet      = myEvent.myElectronJetPairs[0].first;
+  std::cout << "SUBLEAD MUON SET" << std::endl;
+  const pat::Electron* selEl;
+  const baconhep::TAddJet*  selJet;
+  std::cout << "SUBLEAD MUON SET" << std::endl;
 
-  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
-  myEvent.subleadMuon_selElectronPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
-  myEvent.subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
-  myEvent.subleadMuon_selElectronPt   = (subleadMuon->p4() + selEl->p4()).pt();
+  if (!nonISO) {
+    std::cout << "ISO ZMASS" << std::endl;
+    selEl   = myEvent.myElectronCand;
+    selJet  = myEvent.myElectronJetPairs[0].first;
+    if (selEl == 0)
+      std::cout << "CRAP!" << std::endl;
+    myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+    myEvent.subleadMuon_selElectronPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
+    myEvent.subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+    myEvent.subleadMuon_selElectronPt   = (subleadMuon->p4() + selEl->p4()).pt();
+  } else {
+    std::cout << "NONISO ZMASS" << std::endl;
+    selEl   = myEvent.myElectronCand_noISO;
+    selJet  = myEvent.myElectronJetPairs_noISO[0].first;
+    if (selEl == 0)
+      std::cout << "CRAP!" << std::endl;
+    myEvent.subleadMuon_selJetdPhi_EleNonISO      = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+    myEvent.subleadMuon_selElectronPhi_EleNonISO  = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
+    myEvent.subleadMuon_selElectronMass_EleNonISO = (subleadMuon->p4() + selEl->p4()).mass();
+    myEvent.subleadMuon_selElectronPt_EleNonISO   = (subleadMuon->p4() + selEl->p4()).pt();
+  }
+
   myEvent.subleadMuonEt           = subleadMuon->et();
 
-  if(myEvent.subleadMuon_selElectronMass < 200) return true;
+  if(nonISO)
+    if (myEvent.subleadMuon_selElectronMass_EleNonISO < 200)
+      return true;
+  if(!nonISO)
+    if (myEvent.subleadMuon_selElectronMass < 200) 
+      return true;
   return false;
 }
 bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
@@ -1415,6 +1447,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
       dR = sqrt((AddJets[0]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[0]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
       if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
       if (dR<0.4)nDaughterContainedPtLeadJet++;
+      myEvent.daughterClusterVector = myEvent.daughterClusterVector + myEvent.genWRDaughters[i]->p4();
     }
     if(AddJets.size() > 1){
       for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
@@ -1459,6 +1492,21 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
   }
   myEvent.JetContainingBothDaughters = JetContainingBothDaughters;
   myEvent.capturedBothDaughtersInSingleJet = capturedBothDaughtersInSingleJet;
+
+  if (myEvent.genSecondMuon != 0 && myEvent.genWRDaughters.size() > 1) {
+    std::cout << "DR CALC" << std::endl;
+    double jetPhi = myEvent.daughterClusterVector.phi();
+    double muPhi  = myEvent.genSecondMuon->phi();
+    double jetEta = myEvent.daughterClusterVector.eta();
+    double muEta  = myEvent.genSecondMuon->eta();
+    double dPhi = 0.0;
+    double dR   = 0.0;
+    dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
+    dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
+    if ( dR > ROOT::Math::Pi() ) dR -= 2 * ROOT::Math::Pi();
+
+    myEvent.secondMuonWRjetdR = dR;
+  }
 
   return true;
 }

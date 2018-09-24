@@ -20,6 +20,8 @@ eventBits::eventBits() {
 
   PVertex = NULL;
 
+  daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
+
   count = 0;
 
   cutProgress = -1;
@@ -74,6 +76,8 @@ eventBits::eventBits() {
   dRparton2jetVal = -10000.0;
   dRparton1AK8jetVal = -10000.0;
   dRparton2AK8jetVal = -10000.0;
+
+  secondMuonWRjetdR = -100000.0;
 
   firstPartonJetEtHadronicVal = -10000.0;
   secondPartonJetEtHadronicVal = -10000.0;

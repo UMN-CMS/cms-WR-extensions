@@ -37,7 +37,40 @@ ROOT.kAzure  ,
 ROOT.kViolet ,         
 ROOT.kPink       
 ]
+def PAB(histo):
+    nBins = histo.GetNbinsX()
+    histo.SetBinContent(0, 0.0) ## AT THIS POINT WE DON'T WANT TO DEAL WITH ANY JUNK IN THERE, WE DO WANT TO PRESERVER OVERFLOW THOUGH
+    histo.ComputeIntegral()
+    integral = 0.0 
+    lbi = 0.0
+    for ibin in range(1,nBins+2) :
+        integral = integral + histo.GetBinContent(ibin) 
 
+    for ibin in range(1,nBins+1) :
+        lbi = lbi + histo.GetBinContent(ibin)
+        newContent = ( integral - lbi ) / integral 
+        histo.SetBinContent(ibin, newContent)
+        histo.SetBinError(ibin, 0.0)
+
+    return histo
+
+def PBL(histo):
+    nBins = histo.GetNbinsX()
+    histo.SetBinContent(0, 0.0) ## AT THIS POINT WE DON'T WANT TO DEAL WITH ANY JUNK IN THERE, WE DO WANT TO PRESERVER OVERFLOW THOUGH
+    histo.ComputeIntegral()
+    integral = 0.0 
+    lbi = 0.0
+    for ibin in range(1,nBins+2) :
+        integral = integral + histo.GetBinContent(ibin) 
+
+    for ibin in range(nBins,0,-1) :
+        lbi = lbi + histo.GetBinContent(ibin)
+        newContent = ( integral - lbi ) / integral 
+        histo.SetBinContent(ibin, newContent)
+        histo.SetBinError(ibin, 0.0)
+
+    return histo
+    #for ibin in range(nBins,0,-1) :
 
 #############################################################################################
 #WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
@@ -51,13 +84,14 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "Directory of where to save plots"
     print "Text file contain list of root files"
     print "Directory for input root files:"
+    print "plot type REG (regular), PAB(PERCENT ABOVE), PBL (PERCENT BELOW)"
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python scanPlotter.py analysis/eventsPassingExtensionRECO/selectedMuonPt /uscms/homes/a/aevans26/nobackup/plots/signalComparisons/ Signal5.txt /uscms_data/d3/mkrohn/WR/JetMassStudy/CMSSW_8_0_26_patch1/src/ExoAnalysis/cmsWRextensions/Output/JetGENMatching/" 
+    print "python scanPlotter.py analysis/eventsPassingExtensionRECO/selectedMuonPt /uscms/homes/a/aevans26/nobackup/plots/signalComparisons/ Signal5.txt /uscms_data/d3/mkrohn/WR/JetMassStudy/CMSSW_8_0_26_patch1/src/ExoAnalysis/cmsWRextensions/Output/JetGENMatching/ REG" 
     print ""
     exit(0)
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     print "inputs not understood, try help/h"
     exit(1)
 
@@ -65,6 +99,7 @@ plotNameFull = sys.argv[1]
 output = sys.argv[2]
 inputROOTlist = sys.argv[3]
 inputROOTdir = sys.argv[4]
+style        = sys.argv[5]
 
 plotName = plotNameFull.split("/")[-1]
 
@@ -100,6 +135,14 @@ i = 1
 for ROOTfile in ROOTs:
     print "At point: "+ROOTfile.split("/")[-1][:-5]
     newFile = ROOT.TFile.Open(ROOTfile, "read")
+
+    if (style == "REG"):
+        plotsHolder.append(copy.deepcopy(newFile.Get(plotNameFull)))
+    elif (style == "PBL"):
+        plotsHolder.append(PBL(copy.deepcopy(newFile.Get(plotNameFull))))
+    elif (style == "PAB"):
+        plotsHolder.append(PAB(copy.deepcopy(newFile.Get(plotNameFull))))
+
     plotsHolder.append(copy.deepcopy(newFile.Get(plotNameFull)))
     plotsHolder[-1].SetLineColor(colors[offset])
     plotsHolder[-1].SetLineWidth(3)
