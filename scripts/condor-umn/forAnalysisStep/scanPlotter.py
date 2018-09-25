@@ -145,12 +145,14 @@ for ROOTfile in ROOTs:
     elif (style == "PAB"):
         plotsHolder.append(PAB(copy.deepcopy(newFile.Get(plotNameFull))))
 
-    plotsHolder.append(copy.deepcopy(newFile.Get(plotNameFull)))
     plotsHolder[-1].SetLineColor(colors[offset])
     plotsHolder[-1].SetLineWidth(3)
     if(lineStyle == "True" and i%2==0):
         plotsHolder[-1].SetLineStyle(2)
-    plotsHolder[-1].DrawNormalized("hist same")
+    if(style == "REG"):
+      plotsHolder[-1].DrawNormalized("hist same")
+    else:
+      plotsHolder[-1].Draw("hist same")
     if ( plotsHolder[-1].GetMaximum() > currentMax ):
         currentMax = plotsHolder[-1].GetMaximum()
     plotsHolder[0].SetMaximum(1.1*currentMax)
