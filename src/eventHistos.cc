@@ -168,12 +168,16 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedElectronEta =                 m_histoFolder.make<TH1D>("selectedElectronEta" ,"Selected Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );   
     m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Jet #eta (rad);"  ,30,-3.0,3.0 ); 
     m_selectedJetMass  =                 m_histoFolder.make<TH1D>("selectedJetMass"  ,"Selected Jet Mass; Jet softdrop mass (GeV);"  ,60,0.0, 2000.0 );
+    m_selectedJetPrunedMass  =                 m_histoFolder.make<TH1D>("selectedJetPrunedMass"  ,"Selected Jet Mass; Jet pruned mass (GeV);"  ,60,0.0, 2000.0 );
     m_selectedJetTau21  =                 m_histoFolder.make<TH1D>("selectedJetTau21"  ,"Selected Jet Tau21; Jet #tau_{21};"  ,30,0.0, 1.0 );
     m_selectedJetMaxDRGenDaughters  =                 m_histoFolder.make<TH1D>("selectedJetMaxDRGenDaughters"  ,"Selected Jet Max DR GenDaughters; Max #Delta R_{Selected Jet, WR Daughters}", 30, 0.0, 4.0);
     m_DrDaughters =                  m_histoFolder.make<TH1D>("DrDaughters" , "DR WR DAughters; #DeltaR W_{R} Daughters", 30, 0.0, 4.0);
     m_nWRDaughters=                  m_histoFolder.make<TH1D>("nWRDaughters" , "Number of WR Daughters; Number of W_{R} Daughters", 10, -0.5, 9.5);
     m_capturedBothDaughtersInSingleJet= m_histoFolder.make<TH1D>("capturedBothDaughtersInSingleJet", "Captured Both Daughters in Single Jet; W_{R} Daughters in Single Jet", 4, -1.5,2.5);
-    m_pickedCorrectJet =                m_histoFolder.make<TH1D>("pickedCorrectJet", "Picked Correct Jet; Select Jet Correct One; Selected Jet Contains both Daughters", 4, -1.5, 2.5);
+    m_pickedCorrectJet =                m_histoFolder.make<TH1D>("pickedCorrectJet", "Picked Correct Jet; Selected Jet Contains both Daughters", 4, -1.5, 2.5);
+    m_dPhiLeadMuonJetWithDaughters =   m_histoFolder.make<TH1D>("dPhiLeadMuonJetWithDaughters", "dPhi Lead Muon and Jet with WR Daughters; #Delta#phi (rad)", 30.,0,4.0);
+    m_selectedIncorrectJetMass =   m_histoFolder.make<TH1D>("selectedIncorrectJetMass", "Selected Incorrect Jet Mass; soft-drop mass (GeV)", 60,0.0, 2000.0 );
+    m_JetWithDaughtersMass =   m_histoFolder.make<TH1D>("JetWithDaughtersMass", "Jet With Daughters Mass; soft-drop mass (GeV)", 60,0.0, 2000.0 );
 
     m_selectedElectron_noISO_Pt  =      m_histoFolder.make<TH1D>("selectedElectron_noISO_Pt"   ,"Selected nonISO Electron pT; Electron p_{T} (GeV);"  ,40,0.0,2000 ); 
     m_selectedElectron_noISO_Eta =      m_histoFolder.make<TH1D>("selectedElectron_noISO_Eta"  ,"Selected nonISO Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );   
@@ -535,6 +539,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedElectronEta ->Fill(event.selectedElectronEta ,weight);   
   m_selectedJetEta  ->Fill(event.selectedJetEta  ,weight); 
   m_selectedJetMass->Fill(event.selectedJetMass  , weight);
+  m_selectedJetPrunedMass->Fill(event.selectedJetPrunedMass, weight);
   m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
   m_selectedJetMaxDRGenDaughters->Fill(event.MaxDR_genDaughter_CandJet, weight);
 
@@ -542,6 +547,9 @@ void eventHistos::fillReco(eventBits& event) {
   m_nWRDaughters->Fill(event.nDaughters, weight);
   m_capturedBothDaughtersInSingleJet->Fill(event.capturedBothDaughtersInSingleJet, weight);
   m_pickedCorrectJet->Fill(event.pickedCorrectJet, weight);
+  m_dPhiLeadMuonJetWithDaughters->Fill(event.dPhi_LeadMuonJetWithDaughters, weight);
+  m_selectedIncorrectJetMass->Fill(event.selectedIncorrectJetMass, weight);
+  m_JetWithDaughtersMass->Fill(event.JetWithDaughtersMass, weight);
 
   m_selectedElectron_noISO_Pt  ->Fill(event.selectedElectron_noISO_Pt  ,weight); 
   m_selectedElectron_noISO_Phi ->Fill(event.selectedElectron_noISO_Phi ,weight);  

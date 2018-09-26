@@ -48,11 +48,17 @@ public:
   std::vector<const reco::GenParticle*> myGenMuons;
   std::vector<const reco::GenParticle*> myGenLeptons;
   std::vector<const reco::GenParticle*> genWRDaughters;
+
+  //GEN jet studies
   int nDaughters;
   double MaxDR_genDaughter_CandJet;
   double dR_Daughters;
   int capturedBothDaughtersInSingleJet;
   int pickedCorrectJet;
+  double dPhi_LeadMuonJetWithDaughters;
+  double selectedIncorrectJetMass;
+  double JetWithDaughtersMass;
+  int JetContainingBothDaughters;
 
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_noISO;
@@ -310,6 +316,7 @@ public:
   double selectedJetPhi;
   double selectedJetEta;
   double selectedJetMass;
+  double selectedJetPrunedMass;
   double selectedJetTau21;
 
   double selectedJet_EleNoISO_Pt;
