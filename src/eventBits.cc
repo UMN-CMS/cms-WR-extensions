@@ -139,6 +139,8 @@ eventBits::eventBits() {
   selectedJetEta = -10000.0;
   selectedJetMass= -10000.0;
   selectedJetTau21= -10000.0;
+  selectedJetLSF3= -10000.0;
+  selectedJetMaxSubJetCSV= -10000.0;
 
   selectedElectron_noISO_Pt = -10000.0;
   selectedElectron_noISO_Phi = -10000.0;

@@ -133,6 +133,7 @@ class eventHistos {
   TH1D* m_leadSubleadingAK8JetsMuonsMass ;
   TH1D* m_leadSubleadingPartonsMuonsMass ;
   TH1D* m_leadAK8JetMuonMass;
+  TH1D* m_leadAK8JetDiMuonMass;
   TH1D* m_leadAK8JetElectronMass;
   TH1D* m_leadAK8JetElectronMass_noISO;
 
@@ -186,6 +187,8 @@ class eventHistos {
   TH1D* m_selectedJetPrunedMass;
   TH1D* m_selectedJetTau21;
   TH1D* m_selectedJetMaxDRGenDaughters;
+  TH1D* m_selectedJetLSF3;
+  TH1D* m_selectedJetMaxSubJetCSV;
 
   TH1D* m_DrDaughters;
   TH1D* m_nWRDaughters;
@@ -194,6 +197,8 @@ class eventHistos {
   TH1D* m_dPhiLeadMuonJetWithDaughters;
   TH1D* m_selectedIncorrectJetMass;
   TH1D* m_JetWithDaughtersMass;
+  TH1D* m_secondGENMuonRECOjetDR;
+  TH1D* m_secondRECOMuonRECOjetDR;
 
   TH1D* m_selectedJet_EleNoISO_Pt;
   TH1D* m_selectedJet_EleNoISO_Phi;

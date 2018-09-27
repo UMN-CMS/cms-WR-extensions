@@ -24,6 +24,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/egammaEffi.h"
 #include "ExoAnalysis/cmsWRextensions/interface/eventInfo.h"
 #include "ExoAnalysis/cmsWRextensions/interface/Muons.h"
+#include "ExoAnalysis/cmsWRextensions/interface/JetTools.h"
 #include "BaconAna/DataFormats/interface/BaconAnaDefs.hh"
 #include "BaconAna/DataFormats/interface/TAddJet.hh"
 
@@ -90,6 +91,10 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "TRandom3.h"
 #include <cmath>
 
+#include "fastjet/contrib/SoftDrop.hh"
+#include "fastjet/contrib/EnergyCorrelator.hh"
+#include <fastjet/JetDefinition.hh>
+
 //
 // constants, enums and typedefs
 //
@@ -108,6 +113,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
   m_AK8recoCHSJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoCHSJets"))),
   m_AK8recoPUPPIJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoPUPPIJets"))),
+  m_AK8recoPUPPISubJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("subJetName"))),
   m_offlineVerticesToken (consumes<std::vector<reco::Vertex>> (iConfig.getParameter<edm::InputTag>("vertices"))),
   m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),
   m_PUInfoToken (consumes< std::vector<PileupSummaryInfo>> (iConfig.getParameter<edm::InputTag>("edmPileupInfo"))),
@@ -1285,6 +1291,10 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
   iEvent.getByToken(m_AK8recoCHSJetsToken, recoCHSJetsAK8);
   assert(recoCHSJetsAK8.isValid());
 
+  edm::Handle<std::vector<pat::Jet>> recoSubJets;
+  iEvent.getByToken(m_AK8recoPUPPISubJetsToken, recoSubJets);
+  assert(recoSubJets.isValid());
+
   edm::Handle<double> rhoHandle;
   iEvent.getByToken(m_rhoLabel, rhoHandle);
   double rho = *(rhoHandle.product());
@@ -1312,6 +1322,57 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
 
   //COLLECT JetS INTO HIGHPT AND ALLPT WITHIN ACCEPTANCE
   for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK8->begin(); iJet != recoJetsAK8->end(); iJet++) {
+   const pat::Jet *subjet1=0, *subjet2=0, *subjet3=0, *subjet4=0;
+   double csv1=-2, csv2=-2, csv3=-2, csv4=-2;
+   for(std::vector<pat::Jet>::const_iterator iSubJet = recoSubJets->begin(); iSubJet != recoSubJets->end(); iSubJet++) {
+    if(reco::deltaR(iJet->eta(),iJet->phi(),iSubJet->eta(),iSubJet->phi())>0.8) continue;
+
+    std::cout << "iSubJet->pt(): " << iSubJet->pt() << std::endl;
+    if(!subjet1 || iSubJet->pt() > subjet1->pt()) {
+      subjet4 = subjet3;
+      csv4    = csv3;
+
+      subjet3 = subjet2;
+      csv3    = csv2;
+
+      subjet2 = subjet1;
+      csv2    = csv1;
+
+      subjet1 = &(*iSubJet);
+      csv1    = iSubJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    } else if(!subjet2 || iSubJet->pt() > subjet2->pt()) {
+      subjet4 = subjet3;
+      csv4    = csv3;
+
+      subjet3 = subjet2;
+      csv3    = csv2;
+
+      subjet2 = &(*iSubJet);
+      csv2    = iSubJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+
+    } else if(!subjet3 || iSubJet->pt() > subjet3->pt()) {
+      subjet4 = subjet3;
+      csv4    = csv3;
+
+      subjet3 = &(*iSubJet);
+      csv3    = iSubJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+
+    } else if(!subjet4 || iSubJet->pt() > subjet4->pt()) {
+      subjet4 = &(*iSubJet);
+      csv4    = iSubJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags");
+    }
+   }
+    std::cout << "csv1: " << csv1 << ", csv2: " << csv2 << ", csv3: " << csv3 << ", csv4: " << csv4 << std::endl;
+    std::cout << "Jet test1: " << iJet->bDiscriminator("pfCombinedInclusiveSecondaryVertexV2BJetTags") << std::endl;
+    //Finding maximum CSV
+    double maxCSV = -10;
+    if(csv1 > maxCSV) maxCSV=csv1;
+    if(csv2 > maxCSV) maxCSV=csv2;
+    if(csv3 > maxCSV) maxCSV=csv3;
+    if(csv4 > maxCSV) maxCSV=csv4;
+
+    std::cout<<"maxCSV: " << maxCSV << std::endl;
+
     std::cout<<"looping over jets"<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
     //GETS ALL THE RELEVANT JET ID QUANTITIES
     double NHF  =                iJet->neutralHadronEnergyFraction();
@@ -1372,6 +1433,28 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
    // if (MUF <= .05) continue;
     //JETS PASSING CUTS
 
+    //LSF Info
+    std::vector<reco::CandidatePtr> pfConstituents = iJet->getJetConstituents();
+    std::vector<fastjet::PseudoJet>   lClusterParticles;
+    for(unsigned int ic=0; ic<pfConstituents.size(); ic++) {
+      reco::CandidatePtr pfcand = pfConstituents[ic];
+      fastjet::PseudoJet   pPart(pfcand->px(),pfcand->py(),pfcand->pz(),pfcand->energy());
+      lClusterParticles.emplace_back(pPart);
+    }
+
+     std::sort(lClusterParticles.begin(),lClusterParticles.end(),JetTools::orderPseudoJet);
+
+    float lepCPt(-100), lepCEta(-100), lepCPhi(-100);
+    float lepCId(0);
+
+    if(JetTools::leptons((*iJet),3)> 0 && JetTools::leptons(*iJet,2)<0.8) {
+      lepCPt = JetTools::leptons(*iJet,3);
+      lepCEta = JetTools::leptons(*iJet,5);
+      lepCPhi = JetTools::leptons(*iJet,6);
+      lepCId = JetTools::leptons(*iJet,4);
+    }
+
+
     //JETS PASSING WITH VERY HIGH PT
     if( jetCorrPtSmear > 200 ){
       double minDR_CHS_PUPPI_Jets = 100.;
@@ -1399,6 +1482,35 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
       	pAddJet->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
       	pAddJet->PrunedMass = CHS_Mass;
 //      pAddJet->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(iJet->pt(), iJet->eta());
+
+        std::vector<fastjet::PseudoJet> vSubCInc; pAddJet->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
+        std::vector<fastjet::PseudoJet> vSubC_2;  pAddJet->lsfC_2 = JetTools::lsf(lClusterParticles, vSubC_2, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 2);
+        std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
+        std::vector<fastjet::PseudoJet> vSubC_4;  pAddJet->lsfC_4 = JetTools::lsf(lClusterParticles, vSubC_4, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 4);
+
+        if(vSubC_3.size() > 0) {
+          pAddJet->lsfC_3_sj1_pt = vSubC_3[0].pt();
+          pAddJet->lsfC_3_sj1_eta = vSubC_3[0].eta();
+          pAddJet->lsfC_3_sj1_phi = vSubC_3[0].phi();
+          pAddJet->lsfC_3_sj1_m = vSubC_3[0].m();
+        }
+        if(vSubC_3.size() > 1) {
+          pAddJet->lsfC_3_sj2_pt = vSubC_3[1].pt();
+          pAddJet->lsfC_3_sj2_eta = vSubC_3[1].eta();
+          pAddJet->lsfC_3_sj2_phi = vSubC_3[1].phi();
+          pAddJet->lsfC_3_sj2_m = vSubC_3[1].m();
+        }
+        if(vSubC_3.size() > 2) {
+          pAddJet->lsfC_3_sj3_pt = vSubC_3[2].pt();
+          pAddJet->lsfC_3_sj3_eta = vSubC_3[2].eta();
+          pAddJet->lsfC_3_sj3_phi = vSubC_3[2].phi();
+          pAddJet->lsfC_3_sj3_m = vSubC_3[2].m();
+        }
+
+        pAddJet->lmdCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2, 1);
+        pAddJet->lmdC_2 = JetTools::lsf(lClusterParticles, vSubC_2, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 2, 1);
+        pAddJet->lmdC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3, 1);
+        pAddJet->lmdC_4 = JetTools::lsf(lClusterParticles, vSubC_4, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 4, 1);
       
       	AddJets.push_back(pAddJet);
       	std::cout<<"AK8JET CAND WITH PT,ETA,PHI,MASS: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<","<< iJet->userFloat("ak8PFJetsPuppiSoftDropMass") << std::endl;
@@ -1946,6 +2058,8 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.selectedJetPhi  = myRECOevent.myMuonJetPairs[0].first->phi;
   myRECOevent.selectedJetEta  = myRECOevent.myMuonJetPairs[0].first->eta;
   myRECOevent.selectedJetMass = myRECOevent.myMuonJetPairs[0].first->SDmass;
+  myRECOevent.selectedJetLSF3 = myRECOevent.myMuonJetPairs[0].first->lsfC_3;
+  myRECOevent.selectedJetMaxSubJetCSV = myRECOevent.myMuonJetPairs[0].first->maxSubJetCSV;
   myRECOevent.selectedJetPrunedMass = myRECOevent.myMuonJetPairs[0].first->PrunedMass;
 
   if(myRECOevent.myMuonJetPairs[0].first->tau1==0){

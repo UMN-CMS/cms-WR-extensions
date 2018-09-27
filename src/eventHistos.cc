@@ -112,6 +112,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_leadSubleadingAK8JetsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingAK8JetsMuonsMass","Four Object Mass of the 2 leading AK8Jets and Muons;Mass (GeV);",80, 0.0,4000);
     m_leadSubleadingPartonsMuonsMass  = m_histoFolder.make<TH1D>("leadingSubleadingPartonsMuonsMass","Four Object Mass of the 2 leading Partons and Muons;Mass (GeV);",80, 0.0,4000);
     m_leadAK8JetMuonMass  =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetDiMuonMass  =           m_histoFolder.make<TH1D>("leadAK8JetDiMuonMass","3 Object Mass of the leading Jet and DiMuon;Mass (GeV);"                         ,60, 0.0,6000);
     m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                         ,60, 0.0,6000);
     m_leadAK8JetElectronMass_noISO  =     m_histoFolder.make<TH1D>("leadAK8JetElectronMass_noISO","2 Object Mass of the leading Jet and nonISO Electron;Mass (GeV);"            ,60, 0.0,6000);
 
@@ -171,6 +172,10 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedJetPrunedMass  =                 m_histoFolder.make<TH1D>("selectedJetPrunedMass"  ,"Selected Jet Mass; Jet pruned mass (GeV);"  ,60,0.0, 2000.0 );
     m_selectedJetTau21  =                 m_histoFolder.make<TH1D>("selectedJetTau21"  ,"Selected Jet Tau21; Jet #tau_{21};"  ,30,0.0, 1.0 );
     m_selectedJetMaxDRGenDaughters  =                 m_histoFolder.make<TH1D>("selectedJetMaxDRGenDaughters"  ,"Selected Jet Max DR GenDaughters; Max #Delta R_{Selected Jet, WR Daughters}", 30, 0.0, 4.0);
+    m_selectedJetLSF3   =                 m_histoFolder.make<TH1D>("selectedJetLSF3"   ,"Selected Jet LSF_{3}; Jet LSF_{3};"   ,40,0.0,1.0 );
+    m_selectedJetMaxSubJetCSV   =                 m_histoFolder.make<TH1D>("selectedJetMaxSubJetCSV"   ,"Selected Jet Max Subjet CSV; Max Subjet CSV;"   ,40,0.0,1.0 );
+
+
     m_DrDaughters =                  m_histoFolder.make<TH1D>("DrDaughters" , "DR WR DAughters; #DeltaR W_{R} Daughters", 30, 0.0, 4.0);
     m_nWRDaughters=                  m_histoFolder.make<TH1D>("nWRDaughters" , "Number of WR Daughters; Number of W_{R} Daughters", 10, -0.5, 9.5);
     m_capturedBothDaughtersInSingleJet= m_histoFolder.make<TH1D>("capturedBothDaughtersInSingleJet", "Captured Both Daughters in Single Jet; W_{R} Daughters in Single Jet", 4, -1.5,2.5);
@@ -178,6 +183,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_dPhiLeadMuonJetWithDaughters =   m_histoFolder.make<TH1D>("dPhiLeadMuonJetWithDaughters", "dPhi Lead Muon and Jet with WR Daughters; #Delta#phi (rad)", 30.,0,4.0);
     m_selectedIncorrectJetMass =   m_histoFolder.make<TH1D>("selectedIncorrectJetMass", "Selected Incorrect Jet Mass; soft-drop mass (GeV)", 60,0.0, 2000.0 );
     m_JetWithDaughtersMass =   m_histoFolder.make<TH1D>("JetWithDaughtersMass", "Jet With Daughters Mass; soft-drop mass (GeV)", 60,0.0, 2000.0 );
+    m_secondGENMuonRECOjetDR = m_histoFolder.make<TH1D>("secondGENMuonRECOjetDR", "Second GENMuon RECO Jet DR; #DeltaR Sub-lead GEN Muon RECO jet", 30, 0.0, 4.0);
+    m_secondRECOMuonRECOjetDR = m_histoFolder.make<TH1D>("secondRECOMuonRECOjetDR", "Second RECO Muon RECO Jet DR; #DeltaR Sub-lead RECO Muon RECO jet", 30, 0.0, 4.0);
 
     m_selectedElectron_noISO_Pt  =      m_histoFolder.make<TH1D>("selectedElectron_noISO_Pt"   ,"Selected nonISO Electron pT; Electron p_{T} (GeV);"  ,40,0.0,2000 ); 
     m_selectedElectron_noISO_Eta =      m_histoFolder.make<TH1D>("selectedElectron_noISO_Eta"  ,"Selected nonISO Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );   
@@ -496,6 +503,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, weight);
   m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, weight);
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
+  m_leadAK8JetDiMuonMass->Fill(event.leadAK8JetDiMuonMassVal, weight);
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
   m_leadAK8JetElectronMass_noISO->Fill(event.leadAK8JetElectronMassVal_noISO, weight);
   m_subleadMuon_selJetdPhi ->   Fill(event.subleadMuon_selJetdPhi ,weight); 
@@ -542,6 +550,8 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedJetPrunedMass->Fill(event.selectedJetPrunedMass, weight);
   m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
   m_selectedJetMaxDRGenDaughters->Fill(event.MaxDR_genDaughter_CandJet, weight);
+  m_selectedJetLSF3->Fill(event.selectedJetLSF3, weight);
+  m_selectedJetMaxSubJetCSV->Fill(event.selectedJetMaxSubJetCSV, weight);
 
   m_DrDaughters->Fill(event.dR_Daughters, weight);
   m_nWRDaughters->Fill(event.nDaughters, weight);
@@ -550,6 +560,8 @@ void eventHistos::fillReco(eventBits& event) {
   m_dPhiLeadMuonJetWithDaughters->Fill(event.dPhi_LeadMuonJetWithDaughters, weight);
   m_selectedIncorrectJetMass->Fill(event.selectedIncorrectJetMass, weight);
   m_JetWithDaughtersMass->Fill(event.JetWithDaughtersMass, weight);
+  m_secondGENMuonRECOjetDR->Fill(event.secondGENMuonRECOjetDR, weight);
+  m_secondRECOMuonRECOjetDR->Fill(event.secondRECOMuonRECOjetDR, weight);
 
   m_selectedElectron_noISO_Pt  ->Fill(event.selectedElectron_noISO_Pt  ,weight); 
   m_selectedElectron_noISO_Phi ->Fill(event.selectedElectron_noISO_Phi ,weight);  

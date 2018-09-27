@@ -187,6 +187,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_recoJetsToken;
       edm::EDGetToken m_AK8recoCHSJetsToken;
       edm::EDGetToken m_AK8recoPUPPIJetsToken;
+      edm::EDGetToken m_AK8recoPUPPISubJetsToken;
       edm::EDGetToken JECName;
       edm::EDGetToken m_offlineVerticesToken;
       edm::EDGetToken m_genEventInfoToken;

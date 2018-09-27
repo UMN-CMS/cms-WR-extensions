@@ -321,6 +321,8 @@ public:
   double selectedJetMass;
   double selectedJetPrunedMass;
   double selectedJetTau21;
+  double selectedJetLSF3;
+  double selectedJetMaxSubJetCSV;
 
   double selectedJet_EleNoISO_Pt;
   double selectedJet_EleNoISO_Phi;
