@@ -328,23 +328,34 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           if (myRECOevent.electronCands50  > 0)
             m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent, 1);
           if (!m_doFast) {
-            if (myRECOevent.electronCands100 > 0)
+            if (myRECOevent.electronCands100 > 0){
               m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent, 1);
-            if (myRECOevent.electronCands150 > 0)
+	    }
+            if (myRECOevent.electronCands150 > 0){
               m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent, 1);
-            if (myRECOevent.electronCands200 > 0)
-              if (ss) m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
-              else m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
-            if (myRECOevent.electronCands200_noISO > 0)
-              if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
-              else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
-            if (myRECOevent.electronCands50_noISO  > 0)
+	    }
+            if (myRECOevent.electronCands200 > 0){
+	      m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
+              if (ss){ m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
+	      }else{
+		 m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+	      }
+	    }
+            if (myRECOevent.electronCands200_noISO > 0){
+              if (ss_noISO){ m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
+	      }else{
+		 m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
+	      }
+	    }
+            if (myRECOevent.electronCands50_noISO  > 0){
               m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
+	    }
           }
         }
       }
-      if (myRECOevent.electronCands50 > 0 && !m_doFast)
+      if (myRECOevent.electronCands50 > 0 && !m_doFast){
         m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
+      }
     }
     std::cout << "DONE WITH FSB" << std::endl;
   }
@@ -1057,21 +1068,26 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
   if(flavorSideband==true) {
     myEvent.mySubleadMuon = allMuons.at(0);
-    if(myEvent.genSecondMuon != 0) 
+/*    if(myEvent.genSecondMuon != NULL) {
+      std::cout << "check 3" << std::endl;
       myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
+      std::cout << "check 4" << std::endl;
+    }*/
   }else{
   //IF WE HAVE ADDITION MUONS, WE SHOULD SEE WHICH IS THE LEADING MUON WHICH ISN'T THE MAIN CANDIDATE
     for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
       if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
         myEvent.mySubleadMuon = *iMuon;
-        if(myEvent.genSecondMuon != 0) 
+/*        if(myEvent.genSecondMuon != NULL) {
+          std::cout << "check 6" << std::endl;
           myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
+        }*/
         break;
       }
     }
   }
 
-  if(flavorSideband==false && myEvent.mySubleadMuon != 0){
+  if(flavorSideband==false && myEvent.mySubleadMuon != NULL){
     double muPhi  = myEvent.mySubleadMuon->phi();
     double muEta  = myEvent.mySubleadMuon->eta();
     double jetPhi = myEvent.selectedJetPhi;
@@ -1091,6 +1107,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     myEvent.leadAK8JetDiMuonMassVal = (JetVector + myEvent.myMuonJetPairs[0].second->p4() + myEvent.mySubleadMuon->p4()).mass();
 
   }
+  std::cout << "check 3" << std::endl;
 
   if(myEvent.mySubleadMuon == 0) return false;  //THIS SHOULD BE IMPOSSIBLE
 
@@ -1991,7 +2008,7 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.myEventMass = myRECOevent.leadAK8JetMuonMassVal;
   myRECOevent.MaxDR_genDaughter_CandJet = MaxDR_genDaughter_CandJet;
 
-  if(myRECOevent.genSecondMuon != 0){
+/*  if(myRECOevent.genSecondMuon != 0){
     double muPhi  = myRECOevent.genSecondMuon->phi();
     double muEta  = myRECOevent.genSecondMuon->eta();
     double jetPhi = myRECOevent.selectedJetPhi;
@@ -2001,7 +2018,7 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
     if ( dR > ROOT::Math::Pi() ) dR -= 2 * ROOT::Math::Pi();
 
     myRECOevent.secondGENMuonRECOjetDR = dR;
-  }
+  }*/
 
   return true;
 }
@@ -2340,6 +2357,7 @@ cmsWRextension::beginJob()
     m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 3, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 3, m_outputTag, 1);
+    m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 3, m_outputTag, 1);
   }
   if (m_doGen && !m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
@@ -2371,6 +2389,7 @@ cmsWRextension::beginJob()
     m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 2, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 2, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 2, m_outputTag, 1);
+    m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 2, m_outputTag, 1);
   }
   if (m_doReco && m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
