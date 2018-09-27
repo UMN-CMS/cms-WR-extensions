@@ -81,8 +81,8 @@ histoB = myFile.Get(plotNameFullB)
 histoC = myFile.Get(plotNameFullC)
 
 nBinsA = histoA.GetNbinsX()
-nBinsB = histoA.GetNbinsX()
-nBinsC = histoA.GetNbinsX()
+nBinsB = histoB.GetNbinsX()
+nBinsC = histoC.GetNbinsX()
 
 integralA = 0.0
 integralB = 0.0
@@ -92,14 +92,23 @@ if (nBinsA != nBinsB or nBinsA != nBinsC):
     print "incompatible histogram binning"
     exit(0)
 
+print plotNameFullA
+print plotNameFullB
+print plotNameFullC
 for ibin in range(1,nBinsA+1) :
+    print "Bin: "+str(ibin)
     integralA = integralA + histoA.GetBinContent(ibin) 
-for ibin in range(1,nBinsB+1) :
     integralB = integralB + histoB.GetBinContent(ibin) 
-for ibin in range(1,nBinsC+1) :
     integralC = integralC + histoC.GetBinContent(ibin) 
+    print "Integrals: "
+    print integralA
+    print integralB
+    print integralC
 
-if (integralA == 0 or integralB == 0 or integralC == 0):
+print integralA
+print integralB
+print integralC
+if (integralA == 0.0 or integralB == 0.0 or integralC == 0.0):
     print "histogram with 0 for integral... cannot compute"
     exit(0)
 

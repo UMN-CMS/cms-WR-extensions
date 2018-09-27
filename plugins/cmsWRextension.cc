@@ -333,21 +333,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	    }
             if (myRECOevent.electronCands150 > 0){
               m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent, 1);
-	    }
-            if (myRECOevent.electronCands200 > 0){
-	      m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
-              if (ss){ m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
-	      }else{
-		 m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
-	      }
-	    }
-            if (myRECOevent.electronCands200_noISO > 0){
-              if (ss_noISO){ m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
-	      }else{
-		 m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
-	      }
-	    }
-            if (myRECOevent.electronCands50_noISO  > 0){
+            if (myRECOevent.electronCands200 > 0) {
+              m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
+              if (ss) m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
+              else m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+            }
+            if (myRECOevent.electronCands200_noISO > 0) {
+              if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
+              else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
+            }
+            if (myRECOevent.electronCands50_noISO  > 0)
               m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
 	    }
           }
@@ -582,6 +577,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        std::cout << "FOUND CAND DIOBJECT WITH ISO ELE" << std::endl;
 
        electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+       myRECOevent.leadAK8JetElectronMassVal = eventMass;
     }
   }
   //NO ISO CHECKING
@@ -1068,20 +1064,19 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
   if(flavorSideband==true) {
     myEvent.mySubleadMuon = allMuons.at(0);
-/*    if(myEvent.genSecondMuon != NULL) {
-      std::cout << "check 3" << std::endl;
-      myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
-      std::cout << "check 4" << std::endl;
-    }*/
+    if (m_doGen) {
+      if(myEvent.genSecondMuon != 0) 
+        myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
+    }
   }else{
   //IF WE HAVE ADDITION MUONS, WE SHOULD SEE WHICH IS THE LEADING MUON WHICH ISN'T THE MAIN CANDIDATE
     for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
       if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
         myEvent.mySubleadMuon = *iMuon;
-/*        if(myEvent.genSecondMuon != NULL) {
-          std::cout << "check 6" << std::endl;
-          myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
-        }*/
+        if (m_doGen) {
+          if(myEvent.genSecondMuon != 0) 
+            myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
+        }
         break;
       }
     }
