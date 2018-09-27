@@ -59,6 +59,8 @@ public:
   double selectedIncorrectJetMass;
   double JetWithDaughtersMass;
   int JetContainingBothDaughters;
+  double secondGENMuonRECOjetDR;
+  double secondRECOMuonRECOjetDR;
 
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_noISO;
@@ -254,6 +256,7 @@ public:
   double leadSubleadingJetsMuonsMassVal;
   double leadSubleadingPartonsMuonsMassVal;
   double leadAK8JetMuonMassVal;
+  double leadAK8JetDiMuonMassVal;
   double leadAK8JetElectronMassVal;
   double leadAK8JetElectronMassVal_noISO;
 
