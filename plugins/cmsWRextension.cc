@@ -331,14 +331,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if (m_doTrig){
         if (passElectronTrig(iEvent, myRECOevent)){
           std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
-          if (myRECOevent.electronCands50  > 0)
+          if (myRECOevent.electronCands50  > 0){
             m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent, 1);
+	  }
           if (!m_doFast) {
             if (myRECOevent.electronCands100 > 0){
               m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent, 1);
 	    }
             if (myRECOevent.electronCands150 > 0){
               m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent, 1);
+	    }
             if (myRECOevent.electronCands200 > 0) {
               m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
               if (ss) m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
@@ -348,7 +350,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
               if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
               else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
             }
-            if (myRECOevent.electronCands50_noISO  > 0)
+            if (myRECOevent.electronCands50_noISO  > 0){
               m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
 	    }
           }
@@ -1488,32 +1490,35 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
         std::vector<fastjet::PseudoJet> vSubC_4;  pAddJet->lsfC_4 = JetTools::lsf(lClusterParticles, vSubC_4, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 4);
 
-        if(vSubC_3.size() > 0) {
-          pAddJet->lsfC_3_sj1_pt = vSubC_3[0].pt();
-          pAddJet->lsfC_3_sj1_eta = vSubC_3[0].eta();
-          pAddJet->lsfC_3_sj1_phi = vSubC_3[0].phi();
-          pAddJet->lsfC_3_sj1_m = vSubC_3[0].m();
-        }
-        if(vSubC_3.size() > 1) {
-          pAddJet->lsfC_3_sj2_pt = vSubC_3[1].pt();
-          pAddJet->lsfC_3_sj2_eta = vSubC_3[1].eta();
-          pAddJet->lsfC_3_sj2_phi = vSubC_3[1].phi();
-          pAddJet->lsfC_3_sj2_m = vSubC_3[1].m();
-        }
-        if(vSubC_3.size() > 2) {
-          pAddJet->lsfC_3_sj3_pt = vSubC_3[2].pt();
-          pAddJet->lsfC_3_sj3_eta = vSubC_3[2].eta();
-          pAddJet->lsfC_3_sj3_phi = vSubC_3[2].phi();
-          pAddJet->lsfC_3_sj3_m = vSubC_3[2].m();
-        }
+        if(pAddJet->lsfC_3 > 0.0){
 
-        pAddJet->lmdCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2, 1);
-        pAddJet->lmdC_2 = JetTools::lsf(lClusterParticles, vSubC_2, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 2, 1);
-        pAddJet->lmdC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3, 1);
-        pAddJet->lmdC_4 = JetTools::lsf(lClusterParticles, vSubC_4, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 4, 1);
+          if(vSubC_3.size() > 0) {
+            pAddJet->lsfC_3_sj1_pt = vSubC_3[0].pt();
+            pAddJet->lsfC_3_sj1_eta = vSubC_3[0].eta();
+            pAddJet->lsfC_3_sj1_phi = vSubC_3[0].phi();
+            pAddJet->lsfC_3_sj1_m = vSubC_3[0].m();
+          }
+          if(vSubC_3.size() > 1) {
+            pAddJet->lsfC_3_sj2_pt = vSubC_3[1].pt();
+            pAddJet->lsfC_3_sj2_eta = vSubC_3[1].eta();
+            pAddJet->lsfC_3_sj2_phi = vSubC_3[1].phi();
+            pAddJet->lsfC_3_sj2_m = vSubC_3[1].m();
+          }
+          if(vSubC_3.size() > 2) {
+            pAddJet->lsfC_3_sj3_pt = vSubC_3[2].pt();
+            pAddJet->lsfC_3_sj3_eta = vSubC_3[2].eta();
+            pAddJet->lsfC_3_sj3_phi = vSubC_3[2].phi();
+            pAddJet->lsfC_3_sj3_m = vSubC_3[2].m();
+          }
+
+          pAddJet->lmdCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2, 1);
+          pAddJet->lmdC_2 = JetTools::lsf(lClusterParticles, vSubC_2, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 2, 1);
+          pAddJet->lmdC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3, 1);
+          pAddJet->lmdC_4 = JetTools::lsf(lClusterParticles, vSubC_4, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 4, 1);
       
-      	AddJets.push_back(pAddJet);
-      	std::cout<<"AK8JET CAND WITH PT,ETA,PHI,MASS: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<","<< iJet->userFloat("ak8PFJetsPuppiSoftDropMass") << std::endl;
+          AddJets.push_back(pAddJet);
+      	  std::cout<<"AK8JET CAND WITH PT,ETA,PHI,MASS: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<","<< iJet->userFloat("ak8PFJetsPuppiSoftDropMass") << std::endl;
+        }
       }
     }
     if( jetPtJESUp > 200 ){
