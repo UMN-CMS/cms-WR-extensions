@@ -125,7 +125,7 @@ from ExoAnalysis.cmsWRextensions.tools import addHEEPV70ElesMiniAOD
 addHEEPV70ElesMiniAOD(process,useStdName=False)
 
 from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
-jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])  
+jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addSoftDropSubjets=True, addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])  
 
 process.options.allowUnscheduled = cms.untracked.bool(True)
 ##this is our example analysis module reading the results, you will have your own module
@@ -153,6 +153,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               recoJets = cms.InputTag("slimmedJets"),
                               AK8recoCHSJets = cms.InputTag("slimmedJetsAK8"),
                               AK8recoPUPPIJets = cms.InputTag("selectedPatJetsAK8PFPuppi"),
+                              subJetName         = cms.InputTag('selectedPatJetsAK8PFPuppiSoftDropPacked'),
 #			      AK8recoPUPPIJets = cms.InputTag("AK8PFJetsPuppi"),
           		      jettinessPUPPI  = cms.untracked.string("NjettinessAK8Puppi"),
 			      jecUncName  = (cms.untracked.string('AK8Puppi')),
