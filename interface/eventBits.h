@@ -152,6 +152,7 @@ public:
   double HEEP_SF_B_noISO      ;
   double egamma_SF_noISO      ;
 
+  double myGenLSF;
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
   double selElectron_barrel_dPhiIn          ; 
