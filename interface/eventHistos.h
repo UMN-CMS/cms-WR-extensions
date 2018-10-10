@@ -175,6 +175,7 @@ class eventHistos {
   TH1D* m_selectedElectronPt; 
   TH1D* m_selectedElectronPhi;
   TH1D* m_selectedElectronEta;
+  TH1D* m_selectedElectronEta_Weight1;
 
   TH1D* m_selectedElectron_noISO_Pt; 
   TH1D* m_selectedElectron_noISO_Phi;
@@ -231,6 +232,7 @@ class eventHistos {
   TH1D* m_subleadMuon_selMuondPhi;
   TH1D* m_subleadMuon_selMuonMass;
   TH1D* m_subleadMuon_selMuonZMass;
+  TH1D* m_subleadMuon_selMuonZMass_Weight1;
   TH1D* m_subleadMuon_selMuonPt;
 
   TH1D* m_dRmuon2;

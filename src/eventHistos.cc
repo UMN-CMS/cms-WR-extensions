@@ -166,7 +166,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedElectronPhi =                 m_histoFolder.make<TH1D>("selectedElectronPhi" ,"Selected Electron Phi; Electron #phi (rad);" ,30,-4.0,4.0 );  
     m_selectedJetPhi  =                 m_histoFolder.make<TH1D>("selectedJetPhi"  ,"Selected Jet Phi; Jet #phi (rad);"  ,30,-4.0,4.0 );   
     m_selectedMuonEta =                 m_histoFolder.make<TH1D>("selectedMuonEta" ,"Selected Muon Eta; High-p_{T} Muon #eta (rad);" ,30,-3.0,3.0 );   
-    m_selectedElectronEta =                 m_histoFolder.make<TH1D>("selectedElectronEta" ,"Selected Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );   
+    m_selectedElectronEta =                 m_histoFolder.make<TH1D>("selectedElectronEta" ,"Selected Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );
+    m_selectedElectronEta_Weight1 =                 m_histoFolder.make<TH1D>("selectedElectronEta_NoWeight" ,"Selected Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );   
     m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Jet #eta (rad);"  ,30,-3.0,3.0 ); 
     m_selectedJetMass  =                 m_histoFolder.make<TH1D>("selectedJetMass"  ,"Selected Jet Mass; Jet softdrop mass (GeV);"  ,60,0.0, 2000.0 );
     m_selectedJetPrunedMass  =                 m_histoFolder.make<TH1D>("selectedJetPrunedMass"  ,"Selected Jet Mass; Jet pruned mass (GeV);"  ,60,0.0, 2000.0 );
@@ -203,6 +204,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_subleadMuon_selMuondPhi  =    m_histoFolder.make<TH1D>("subleadMuonSelMuondPhi", "Sublead Muon Selected Muon dPhi; #phi (rad);" ,80,  0.0, 4.0);
     m_subleadMuon_selMuonMass  =    m_histoFolder.make<TH1D>("subleadMuonSelMuonMass", "Sublead Muon Selected Muon Mass; Mass (GeV);" ,100, 0.0,2000);
     m_subleadMuon_selMuonZMass =    m_histoFolder.make<TH1D>("subleadMuonSelMuonZMass","Sublead Muon Selected Muon Mass; Mass (GeV);" ,100, 0.0,200);
+    m_subleadMuon_selMuonZMass_Weight1 =    m_histoFolder.make<TH1D>("subleadMuonSelMuonZMass_NoWeight","Sublead Muon Selected Muon Mass; Mass (GeV);" ,100, 0.0,200);
     m_subleadMuon_selMuonPt    =    m_histoFolder.make<TH1D>("subleadMuonSelMuonPt"  , "Sublead Muon Selected Muon Pt; Pt (GeV);"   ,100, 0.0,2000);
 
     m_subleadMuonEt                 =    m_histoFolder.make<TH1D>("subleadMuonEt"           ,  "Sublead Muon Et; Et  (GeV);"              ,100,  0.0, 1000);
@@ -510,6 +512,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_subleadMuon_selMuondPhi-> Fill(event.subleadMuon_selMuondPhi,weight);
   m_subleadMuon_selMuonMass-> Fill(event.subleadMuon_selMuonMass,weight);
   m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selMuonMass,weight);
+  m_subleadMuon_selMuonZMass_Weight1->Fill(event.subleadMuon_selMuonMass,1.0);
   m_subleadMuon_selMuonPt  -> Fill(event.subleadMuon_selMuonPt  ,weight); 
 
   m_subleadMuon_selElectronPhi-> Fill(event.subleadMuon_selElectronPhi,weight);
@@ -545,6 +548,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,weight);   
   m_selectedMuonEta ->Fill(event.selectedMuonEta ,weight);   
   m_selectedElectronEta ->Fill(event.selectedElectronEta ,weight);   
+  m_selectedElectronEta_Weight1->Fill(event.selectedElectronEta, 1.0);
   m_selectedJetEta  ->Fill(event.selectedJetEta  ,weight); 
   m_selectedJetMass->Fill(event.selectedJetMass  , weight);
   m_selectedJetPrunedMass->Fill(event.selectedJetPrunedMass, weight);
