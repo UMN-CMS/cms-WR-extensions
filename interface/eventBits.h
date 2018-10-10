@@ -257,6 +257,7 @@ public:
   double leadSubleadingJetsMuonsMassVal;
   double leadSubleadingPartonsMuonsMassVal;
   double leadAK8JetMuonMassVal;
+  double leadAK8JetMuonMassValGEN;
   double leadAK8JetDiMuonMassVal;
   double leadAK8JetElectronMassVal;
   double leadAK8JetElectronMassVal_noISO;
@@ -283,6 +284,7 @@ public:
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
   double leadAK8JetMuonPtVal;
+  double leadAK8JetMuonPtValGEN;
   double leadAK8JetElectronPtVal;
   double leadAK8JetElectronPtVal_noISO;
 
@@ -290,10 +292,12 @@ public:
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
   double leadAK8JetMuonEtaVal;
+  double leadAK8JetMuonEtaValGEN;
   double leadAK8JetElectronEtaVal;
   double leadAK8JetElectronEtaVal_noISO;
 
   double leadAK8JetMuonPhiVal;
+  double leadAK8JetMuonPhiValGEN;
   double leadAK8JetElectronPhiVal;
   double leadAK8JetElectronPhiVal_noISO;
   double leadAK8JetMuonJetMuonEnergyFraction;

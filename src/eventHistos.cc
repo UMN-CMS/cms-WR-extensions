@@ -283,6 +283,9 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selElectron_noISO_endcap_trackIso          =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_trackIso"        ,";selected nonISO Electron endcap trackIso"        , 100, 0.0, 5); 
     m_selElectron_noISO_endcap_innerLostHits     =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_innerLostHits"   ,";selected nonISO Electron endcap innerLostHits"   ,   5, 0.0, 1); 
     m_selElectron_noISO_endcap_dxy               =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_dxy"             ,";selected nonISO Electron endcap dxy"             , 100, 0.0, .05); 
+//2D LSF PLOTS
+    m_genLSF_v_recoLSF                           =  m_histoFolder.make<TH2D>("genLSF_v_recoLSF"  , "genLSF vs recoLSF"         , 20, 0.0, 1.0, 20, 0.0, 1.0);
+    m_recoLSF_v_selJetPt                         =  m_histoFolder.make<TH2D>("recoLSF_v_selJetPt", "recoLSF vs selected Jet Pt", 20, 0.0, 2000, 20, 0.0, 1.0);
 
 
 //
@@ -406,7 +409,7 @@ void eventHistos::fillGen(eventBits& event) {
   std::cout << "FILLING 1.5"<<std::endl;
   m_firstPartonJetEt->Fill(event.firstPartonJetEtVal, weight);
   std::cout << "FILLING 1.6"<<std::endl;
-  m_secondPartonJetEt->Fill(event.secondPartonJetEtVal, weight);
+  m_secondPartonJetEt->Fill(event.secondPartonJetEtVal);
   std::cout << "FILLING 1.7"<<std::endl;
   m_firstPartonAK8JetEt->Fill(event.firstPartonAK8JetEtVal, weight);
   std::cout << "FILLING 1.8"<<std::endl;
@@ -522,7 +525,6 @@ void eventHistos::fillReco(eventBits& event) {
   m_subleadMuonEt           ->   Fill(event.subleadMuonEt           ,weight); 
   m_subleadMuonEta          ->   Fill(event.subleadMuonEta          ,weight); 
   m_subleadMuonPhi          ->   Fill(event.subleadMuonPhi          ,weight); 
- 
   m_dRmuon2                 ->   Fill(event.dRmuon2, weight);
   m_secondMuonWRjetdR       ->   Fill(event.secondMuonWRjetdR, weight);
 
@@ -555,6 +557,8 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
   m_selectedJetMaxDRGenDaughters->Fill(event.MaxDR_genDaughter_CandJet, weight);
   m_selectedJetLSF3->Fill(event.selectedJetLSF3, weight);
+  m_recoLSF_v_selJetPt  ->Fill(event.selectedJetPt,event.selectedJetLSF3, weight);
+  m_genLSF_v_recoLSF ->Fill(event.myGenLSF,event.selectedJetLSF3, weight);
   m_selectedJetMaxSubJetCSV->Fill(event.selectedJetMaxSubJetCSV, weight);
 
   m_DrDaughters->Fill(event.dR_Daughters, weight);

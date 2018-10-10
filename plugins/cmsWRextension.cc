@@ -232,12 +232,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
    
   if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
-    if(preSelectGen(iEvent, myEvent)) {
+    if(preSelectGen(iEvent, myRECOevent)) {
       std::cout << "analyzing wr2016" << std::endl;
-      pass2016 = passWR2016GEN(iEvent, myEvent);
-      if(pass2016) m_eventsPassingWR2016.fill(myEvent, 1);
+      pass2016 = passWR2016GEN(iEvent, myRECOevent);
+      if(pass2016) m_eventsPassingWR2016.fill(myRECOevent, 1);
       std::cout << "analyzing extension" << std::endl;
-      if(passExtensionGEN(iEvent, myEvent)) m_eventsPassingExtension.fill(myEvent, 1);
+      if(passExtensionGEN(iEvent, myRECOevent)) m_eventsPassingExtension.fill(myRECOevent, 1);
     }
   }
   bool muonTrigPass = true;
@@ -2077,14 +2077,14 @@ bool cmsWRextension::passExtensionGEN(const edm::Event& iEvent, eventBits& myEve
   Muon2included = ::wrTools::particleInGenJet(myEvent.myGenMuons[1], myEvent.myAK8GenJets[0]);
   
   if(Muon2included) { 
-    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
-    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
-    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
+    myEvent.leadAK8JetMuonMassValGEN = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
+    myEvent.leadAK8JetMuonPtValGEN   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaValGEN  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
   }
   else{
-    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
-    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
-    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
+    myEvent.leadAK8JetMuonMassValGEN = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
+    myEvent.leadAK8JetMuonPtValGEN   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaValGEN  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
   }
   return true;
 }
