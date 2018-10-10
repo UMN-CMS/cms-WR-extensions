@@ -18,6 +18,8 @@ eventBits::eventBits() {
   myElectronCand = NULL;
   myMuonCand = NULL;
 
+  genSecondMuon = NULL;
+
   PVertex = NULL;
 
   daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
@@ -78,6 +80,8 @@ eventBits::eventBits() {
   dRparton2AK8jetVal = -10000.0;
 
   secondMuonWRjetdR = -100000.0;
+
+  myGenLSF = -10000.0;
 
   firstPartonJetEtHadronicVal = -10000.0;
   secondPartonJetEtHadronicVal = -10000.0;

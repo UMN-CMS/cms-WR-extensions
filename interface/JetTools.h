@@ -104,6 +104,7 @@
       static void  energyRings(const pat::Jet &jet,std::vector<float> &chvec,std::vector<float> &emvec,std::vector<float> &nevec,std::vector<float> &muvec);
       static void  energyRings(const reco::PFJet &jet,std::vector<float> &chvec,std::vector<float> &emvec,std::vector<float> &nevec,std::vector<float> &muvec);
       static float leptons(const pat::Jet &jet,int iId);
+      static float leptons(const reco::GenJet &jet,int iId);
       static float leptons(const reco::PFJet &jet,int iId);
       static float ptD(const pat::Jet &jet);
       static float ptD(const reco::PFJet &jet);

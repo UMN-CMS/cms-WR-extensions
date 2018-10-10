@@ -339,6 +339,68 @@ void JetTools::energyRings(const reco::PFJet &jet,std::vector<float> &chvec,std:
   nevec = neEnergies;
   muvec = muEnergies;
 }
+float JetTools::leptons(const reco::GenJet &jet,int iId) {
+  TLorentzVector lVec; lVec.SetPtEtaPhiM(0.,0.,0.,0.);
+  double lPt(-1), lEta(-1), lPhi(-1), lId(-1);
+  double lPx(-1), lPy(-1), lPz(-1), lP(-1);
+  for(unsigned int ida=0; ida<jet.numberOfDaughters(); ida++) {
+    const reco::Candidate* pPart = jet.daughter(ida);
+    if(fabs(pPart->pdgId()) != 11 && fabs(pPart->pdgId()) != 13) continue;
+    if(pPart->pt() > lPt) { 
+      lPt = pPart->pt(); 
+      lEta = pPart->eta();
+      lPhi = pPart->phi();
+      lPx = pPart->px();
+      lPy = pPart->py();
+      lPz = pPart->pz();
+      lP = pPart->p();
+      lId = fabs(pPart->pdgId()); }
+    TLorentzVector pVec; pVec.SetPtEtaPhiM(pPart->pt(),pPart->eta(),pPart->phi(),pPart->mass());
+    lVec += pVec;
+  }
+  if(iId == 1) { 
+    TVector3 lProj(jet.px(),jet.py(),jet.pz());
+    return float(lVec.Perp(lProj));
+  }
+  if(iId == 2) {
+    float pDPhi = fabs(jet.phi()-lVec.Phi());
+    if(pDPhi > 2.*TMath::Pi()-pDPhi) pDPhi = 2.*TMath::Pi()-pDPhi;
+    float pDEta = fabs(jet.eta()-lVec.Eta());
+    return sqrt(pDPhi*pDPhi+pDEta*pDEta);
+  }
+  if(iId == 3) {
+    float lLPt = lPt;
+    return lLPt;
+  }
+  if(iId == 4) {
+    float lLId = lId;
+    return lLId;
+  }
+  if(iId == 5) {
+    float lLEta = lEta;
+    return lLEta;
+  }
+  if(iId == 6) {
+    float lLPhi = lPhi;
+    return lLPhi;
+  }
+  if(iId == 7){
+    float lepjetdr = reco::deltaR(jet.eta(),jet.phi(),lEta,lPhi);
+    return std::max(float(0.),lepjetdr);
+  }
+  if(iId == 8){
+    float softLepPtRel = ( jet.px()*lPx + jet.py()*lPy + jet.pz()*lPz ) / jet.p();
+    softLepPtRel = sqrt( lP*lP - softLepPtRel*softLepPtRel );
+    return std::max(float(0.),softLepPtRel);
+  }
+  if(iId == 9){
+    float softLepPtRelInv = ( jet.px()*lPx + jet.py()*lPy + jet.pz()*lPz ) / lP;
+    softLepPtRelInv = sqrt( jet.p()*jet.p() - softLepPtRelInv*softLepPtRelInv );
+    return std::max(float(0.),softLepPtRelInv);
+  }
+  float lFPt = lVec.Pt();
+  return lFPt;
+}
 float JetTools::leptons(const pat::Jet &jet,int iId) {
   TLorentzVector lVec; lVec.SetPtEtaPhiM(0.,0.,0.,0.);
   double lPt(-1), lEta(-1), lPhi(-1), lId(-1);
@@ -511,6 +573,7 @@ float JetTools::ptD(const reco::PFJet &jet) {
   }
   return (sumWeight > 0 ? sqrt(sumWeight)/sumPt : 0.);
 }
+//JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
 float JetTools::lsf(std::vector<fastjet::PseudoJet> iCParticles, std::vector<fastjet::PseudoJet> &ljets, 
 		    float ilPt, float ilEta, float ilPhi, int ilId, double dr, int nsj, int iId) {
   float lsf(-100),lmd(-100);

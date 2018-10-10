@@ -232,12 +232,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
    
   if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
-    if(preSelectGen(iEvent, myEvent)) {
+    if(preSelectGen(iEvent, myRECOevent)) {
       std::cout << "analyzing wr2016" << std::endl;
-      pass2016 = passWR2016GEN(iEvent, myEvent);
-      if(pass2016) m_eventsPassingWR2016.fill(myEvent, 1);
+      pass2016 = passWR2016GEN(iEvent, myRECOevent);
+      if(pass2016) m_eventsPassingWR2016.fill(myRECOevent, 1);
       std::cout << "analyzing extension" << std::endl;
-      if(passExtensionGEN(iEvent, myEvent)) m_eventsPassingExtension.fill(myEvent, 1);
+      if(passExtensionGEN(iEvent, myRECOevent)) m_eventsPassingExtension.fill(myRECOevent, 1);
     }
   }
   bool muonTrigPass = true;
@@ -1073,7 +1073,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
   if(flavorSideband==true) {
     myEvent.mySubleadMuon = allMuons.at(0);
     if (m_doGen) {
-      if(myEvent.genSecondMuon != 0) 
+      if(myEvent.genSecondMuon != NULL) 
         myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
     }
   }else{
@@ -1707,6 +1707,29 @@ double cmsWRextension::PUPPIweight(double puppipt, double puppieta){
   return totalWeight;
 
 }
+//float cmsWRextensions::genLSF(const edm::Event& iEvent, eventBits& myEvent)
+//{
+//  //LSF Info
+//  std::vector<reco::CandidatePtr> pfConstituents = iJet->getJetConstituents();
+//  std::vector<fastjet::PseudoJet>   lClusterParticles;
+//  for(unsigned int ic=0; ic<pfConstituents.size(); ic++) {
+//    reco::CandidatePtr pfcand = pfConstituents[ic];
+//    fastjet::PseudoJet   pPart(pfcand->px(),pfcand->py(),pfcand->pz(),pfcand->energy());
+//    lClusterParticles.emplace_back(pPart);
+//  }
+//  
+//  std::sort(lClusterParticles.begin(),lClusterParticles.end(),JetTools::orderPseudoJet);
+//  
+//  float lepCPt(-100), lepCEta(-100), lepCPhi(-100);
+//  float lepCId(0);
+//  lepCPt = JetTools::leptons(*iJet,3);
+//  lepCEta = JetTools::leptons(*iJet,5);
+//  lepCPhi = JetTools::leptons(*iJet,6);
+//  lepCId = JetTools::leptons(*iJet,4);
+//  std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
+//
+//
+//}
 bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 {
   edm::Handle<std::vector<reco::GenParticle>> genParticles;
@@ -1967,6 +1990,28 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
     float match2=sqrt(deltaR2(*iJet,*(myGenPartons[1])));
     if (match1<partonAK8JetMatchDR || match2<partonAK8JetMatchDR) {
       std::cout << "Pushing back ak8 jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
+
+      //LSF Info
+      std::vector<reco::CandidatePtr> pfConstituents = iJet->getJetConstituents();
+      std::vector<fastjet::PseudoJet>   lClusterParticles;
+      for(unsigned int ic=0; ic<pfConstituents.size(); ic++) {
+        reco::CandidatePtr pfcand = pfConstituents[ic];
+        fastjet::PseudoJet   pPart(pfcand->px(),pfcand->py(),pfcand->pz(),pfcand->energy());
+        lClusterParticles.emplace_back(pPart);
+      }
+      
+      std::sort(lClusterParticles.begin(),lClusterParticles.end(),JetTools::orderPseudoJet);
+      
+      float lepCPt(-100), lepCEta(-100), lepCPhi(-100);
+      float lepCId(0);
+      lepCPt = JetTools::leptons(*iJet,3);
+      lepCEta = JetTools::leptons(*iJet,5);
+      lepCPhi = JetTools::leptons(*iJet,6);
+      lepCId = JetTools::leptons(*iJet,4);
+      double genLSF;
+      std::vector<fastjet::PseudoJet> vSubC_3;
+      genLSF = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
+      myEvent.myGenLSF = genLSF;
       myAK8GenJets.push_back(&(*iJet));
     }
     if ((match1<partonAK8JetMatchDR && foundFirst<partonAK8JetMatchDR) || (match2<partonAK8JetMatchDR && foundSecond<partonAK8JetMatchDR)){
@@ -2032,14 +2077,14 @@ bool cmsWRextension::passExtensionGEN(const edm::Event& iEvent, eventBits& myEve
   Muon2included = ::wrTools::particleInGenJet(myEvent.myGenMuons[1], myEvent.myAK8GenJets[0]);
   
   if(Muon2included) { 
-    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
-    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
-    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
+    myEvent.leadAK8JetMuonMassValGEN = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
+    myEvent.leadAK8JetMuonPtValGEN   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaValGEN  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
   }
   else{
-    myEvent.leadAK8JetMuonMassVal = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
-    myEvent.leadAK8JetMuonPtVal   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
-    myEvent.leadAK8JetMuonEtaVal  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
+    myEvent.leadAK8JetMuonMassValGEN = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).mass();
+    myEvent.leadAK8JetMuonPtValGEN   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).pt();
+    myEvent.leadAK8JetMuonEtaValGEN  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4() + myEvent.myGenMuons[1]->p4()).eta();
   }
   return true;
 }
