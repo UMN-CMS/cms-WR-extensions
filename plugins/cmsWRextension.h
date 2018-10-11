@@ -170,6 +170,8 @@ class cmsWRextension : public edm::EDAnalyzer {
 
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_samesign;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_all;
