@@ -589,7 +589,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
 
        TLorentzVector* jetVec_temp = new TLorentzVector();
-       jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
 
        math::XYZTLorentzVector jetVec;
        jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
@@ -601,7 +601,6 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        std::cout << "FOUND CAND DIOBJECT WITH ISO ELE" << std::endl;
 
        electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
-       myRECOevent.leadAK8JetElectronMassVal = eventMass;
     }
   }
   //NO ISO CHECKING
@@ -613,7 +612,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand_noISO->phi())) < 2.0 ) continue;
 
        TLorentzVector* jetVec_temp = new TLorentzVector();
-       jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
 
        math::XYZTLorentzVector jetVec;
        jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
@@ -625,14 +624,21 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        std::cout << "FOUND CAND DIOBJECT WITH NON ISO ELE" << std::endl;
 
        electronJetPairs_noISO.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand_noISO ));
-       myRECOevent.leadAK8JetElectronMassVal_noISO = eventMass_noISO;
     }
   }
-  std::cout <<"check 1" << std::endl;
   if( electronJetPairs.size() > 0 ) {
     std::cout << "PROCESSING ELECTRON JET PAIRS" << std::endl;
     myRECOevent.myElectronJetPairs = electronJetPairs;
     std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
+
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiE( electronJetPairs[0].first->pT, electronJetPairs[0].first->eta, electronJetPairs[0].first->phi, electronJetPairs[0].first->E );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+
+    myRECOevent.leadAK8JetElectronMassVal = ( jetVec + electronJetPairs[0].second->p4() ).mass();
+
     myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
     myRECOevent.selectedElectronPhi = electronJetPairs[0].second->phi();
     myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
@@ -682,6 +688,15 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     std::cout << "PROCESSING NONISO ELECTRON JET PAIRS" << std::endl;
     myRECOevent.myElectronJetPairs_noISO = electronJetPairs_noISO;
     std::sort(electronJetPairs_noISO.begin(),electronJetPairs_noISO.end(),::wrTools::comparePairMassPointerTAddJet);
+
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiE( electronJetPairs_noISO[0].first->pT, electronJetPairs_noISO[0].first->eta, electronJetPairs_noISO[0].first->phi, electronJetPairs_noISO[0].first->E );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+
+    myRECOevent.leadAK8JetElectronMassVal_noISO = ( jetVec + electronJetPairs_noISO[0].second->p4() ).mass();
+
     myRECOevent.selectedElectron_noISO_Pt  = electronJetPairs_noISO[0].second->pt();
     myRECOevent.selectedElectron_noISO_Phi = electronJetPairs_noISO[0].second->phi();
     myRECOevent.selectedElectron_noISO_Eta = electronJetPairs_noISO[0].second->eta();
@@ -2530,6 +2545,8 @@ cmsWRextension::beginJob()
     //ABCD
     m_eventsPassingFlavorSidebandRECOelePt200_noISO.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO")), 3, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 3, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig")), 3, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig")), 3, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 3, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 3, m_outputTag, 1);
