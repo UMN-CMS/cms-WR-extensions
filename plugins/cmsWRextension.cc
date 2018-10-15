@@ -331,39 +331,36 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if (m_doTrig){
         if (passElectronTrig(iEvent, myRECOevent)){
           std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
-          if (myRECOevent.electronCands50  > 0){
-	    if (myRECOevent.leadAK8JetElectronMassVal < 0){
-		std::cout << "THIS EVENT IS WEIRD" << std::endl;
-	    }
+          if (passFSBbin(myRECOevent, true, 50)) {
             m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent, 1);
 	  }
           if (!m_doFast) {
-            if (myRECOevent.electronCands100 > 0){
+            if (passFSBbin(myRECOevent, true, 100)) {
               m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent, 1);
 	    }
-            if (myRECOevent.electronCands150 > 0){
+            if (passFSBbin(myRECOevent, true, 150)) {
               m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent, 1);
 	    }
-            if (myRECOevent.electronCands200 > 0) {
+            if (passFSBbin(myRECOevent, true, 200)) {
               m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
               if (ss) m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
               else m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
             }
-            if (myRECOevent.electronCands200_noISO > 0) {
+            if (passFSBbin(myRECOevent, false, 200)) {
               if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
               else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
             }
-            if (myRECOevent.electronCands50_noISO  > 0){
+            if (passFSBbin(myRECOevent, false, 50)) {
               m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
 	    }
           }
         }
       }
-      if (myRECOevent.electronCands200_noISO > 0) {
+      if (passFSBbin(myRECOevent, false, 200)) {
         if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.fill(myRECOevent, 1);
         else m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.fill(myRECOevent, 1);
       }
-      if (myRECOevent.electronCands50 > 0 && !m_doFast){
+      if (passFSBbin(myRECOevent, true, 50) && !m_doFast) {
         m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
       }
     }
@@ -371,6 +368,18 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
   m_allEvents.fill(myRECOevent, 1);
+}
+bool cmsWRextension::passFSBbin(eventBits& myEvent, bool ISO, int ptCut) {
+  //LOGIC IS REPEATED FOR ISO AND NONISO SELECTIONS
+  if (ISO) {
+    if (myEvent.myElectronJetPairs.size() < 1)  return false;  //NO PAIRS MEANS IT COULD NOT PASS
+    if (myEvent.selectedElectronPt >= ptCut) return true;
+  } else {
+    if (myEvent.myElectronJetPairs_noISO.size() < 1) return false;
+    if (myEvent.selectedElectron_noISO_Pt >= ptCut) return true;
+  }
+  std::cout << "WELCOME TO THE TWILIGHT ZONE" << std::endl;
+  return false;
 }
 bool cmsWRextension::sameSign(eventBits& myEvent, bool noISO) {
   if (noISO) {
