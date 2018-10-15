@@ -332,6 +332,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         if (passElectronTrig(iEvent, myRECOevent)){
           std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
           if (myRECOevent.electronCands50  > 0){
+	    if (myRECOevent.leadAK8JetElectronMassVal < 0){
+		std::cout << "THIS EVENT IS WEIRD" << std::endl;
+	    }
             m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent, 1);
 	  }
           if (!m_doFast) {
