@@ -285,9 +285,13 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selElectron_noISO_endcap_trackIso          =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_trackIso"        ,";selected nonISO Electron endcap trackIso"        , 100, 0.0, 5); 
     m_selElectron_noISO_endcap_innerLostHits     =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_innerLostHits"   ,";selected nonISO Electron endcap innerLostHits"   ,   5, 0.0, 1); 
     m_selElectron_noISO_endcap_dxy               =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_dxy"             ,";selected nonISO Electron endcap dxy"             , 100, 0.0, .05); 
+
+    m_dRlsfLep_subleadMuon                       =  m_histoFolder.make<TH1D>("dRlsfLep_subleadMuon" , ";delta R between lsf lepton and subleading Muon", 60, 0.0, 6.0); 
 //2D LSF PLOTS
     m_genLSF_v_recoLSF                           =  m_histoFolder.make<TH2D>("genLSF_v_recoLSF"  , "genLSF vs recoLSF"         , 20, 0.0, 1.0, 20, 0.0, 1.0);
     m_recoLSF_v_selJetPt                         =  m_histoFolder.make<TH2D>("recoLSF_v_selJetPt", "recoLSF vs selected Jet Pt", 20, 0.0, 2000, 20, 0.0, 1.0);
+    m_lsfLepDR_v_recoLSF                         =  m_histoFolder.make<TH2D>("lsfLepDR_v_recoLSF", "lsf lepton and subleadMuon dR vs recoLSF", 30, 0.0, 6.0, 20, 0.0, 1.0); 
+    m_lsfLepDR_v_selJetPt                        =  m_histoFolder.make<TH2D>("lsfLepDR_v_selJetPt","lsf lepton and subleadMuon dR vs selected Jet pT", 30, 0.0, 6.0, 20, 0.0, 2000); 
 
 
 //
@@ -564,6 +568,10 @@ void eventHistos::fillReco(eventBits& event) {
   m_recoLSF_v_selJetPt  ->Fill(event.selectedJetPt,event.selectedJetLSF3, weight);
   m_genLSF_v_recoLSF ->Fill(event.myGenLSF,event.selectedJetLSF3, weight);
   m_selectedJetMaxSubJetCSV->Fill(event.selectedJetMaxSubJetCSV, weight);
+
+  m_dRlsfLep_subleadMuon -> Fill(event.mydRlsfLep_subleadMuon, weight);
+  m_lsfLepDR_v_recoLSF   -> Fill(event.mydRlsfLep_subleadMuon, event.selectedJetLSF3, weight);
+  m_lsfLepDR_v_selJetPt  -> Fill(event.mydRlsfLep_subleadMuon, event.selectedJetPt, weight);
 
   m_DrDaughters->Fill(event.dR_Daughters, weight);
   m_nWRDaughters->Fill(event.nDaughters, weight);

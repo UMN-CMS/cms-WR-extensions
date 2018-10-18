@@ -105,8 +105,12 @@ class eventHistos {
   TH1D* m_secondMuonWRjetdR;
 
   TH1D* m_genLSF;
+  TH1D* m_dRlsfLep_subleadMuon;
   TH2D* m_recoLSF_v_selJetPt;
   TH2D* m_genLSF_v_recoLSF;
+  TH2D* m_lsfLepDR_v_recoLSF;
+  TH2D* m_lsfLepDR_v_selJetPt;
+
   TH1D* m_dRparton1parton2;
   TH1D* m_dRmuon1muon2;
   TH1D* m_dRparton1muon2;

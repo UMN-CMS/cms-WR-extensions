@@ -1011,6 +1011,12 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
   myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
   myEvent.subleadMuonEt           = subleadMuon->et();
+  myEvent.subleadMuonEta           = subleadMuon->eta();
+  myEvent.subleadMuonPhi           = subleadMuon->phi();
+
+  double dRlsfLep_subleadMuon = sqrt(( pow((myEvent.lsfLeptonEta - myEvent.subleadMuonEta), 2.0) + pow((myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi), 2.0) )); 
+  if (dRlsfLep_subleadMuon > ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
+  myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
 
   if(myEvent.subleadMuon_selMuonMass < 200) return true;
   return false;
@@ -1485,6 +1491,11 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
       lepCEta = JetTools::leptons(*iJet,5);
       lepCPhi = JetTools::leptons(*iJet,6);
       lepCId = JetTools::leptons(*iJet,4);
+
+      myEvent.lsfLeptonPt = lepCPt;
+      myEvent.lsfLeptonEta = lepCEta;
+      myEvent.lsfLeptonPhi = lepCPhi;
+    
     }
 
 
