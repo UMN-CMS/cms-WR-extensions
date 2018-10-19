@@ -105,9 +105,11 @@ for ibin in range(1,nBinsA+1) :
     print integralB
     print integralC
 
-print integralA
-print integralB
-print integralC
+print "underflow"
+print histoA.GetBinContent(0)
+print histoB.GetBinContent(0)
+print histoC.GetBinContent(0)
+
 if (integralA == 0.0 or integralB == 0.0 or integralC == 0.0):
     print "histogram with 0 for integral... cannot compute"
     exit(0)

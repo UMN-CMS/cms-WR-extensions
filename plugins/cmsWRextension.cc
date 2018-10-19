@@ -311,7 +311,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             }
           }
 //        }
-        if (m_isMC || m_flavorSideband) m_eventsPassingExtensionRECO.fill(myRECOevent, 1);
+        if ((m_isMC || m_flavorSideband) && !ZMASS && muonTrigPass) m_eventsPassingExtensionRECO.fill(myRECOevent, 1);
         //std::cout <<"rECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
         std::cout << "PASSED RECO EXTENSION, FILLING" << std::endl;
       }
@@ -1014,7 +1014,11 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuonEta           = subleadMuon->eta();
   myEvent.subleadMuonPhi           = subleadMuon->phi();
 
-  double dRlsfLep_subleadMuon = sqrt(( pow((myEvent.lsfLeptonEta - myEvent.subleadMuonEta), 2.0) + pow((myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi), 2.0) )); 
+  double dPhi = fabs(myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi);
+
+  if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+
+  double dRlsfLep_subleadMuon = sqrt(( pow((myEvent.lsfLeptonEta - myEvent.subleadMuonEta), 2.0) + pow( dPhi, 2.0) )); 
   if (dRlsfLep_subleadMuon > ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
   myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
 
