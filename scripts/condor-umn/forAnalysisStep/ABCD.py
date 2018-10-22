@@ -37,6 +37,14 @@ ROOT.kAzure  ,
 ROOT.kViolet ,         
 ROOT.kPink       
 ]
+
+def histFromStack(stack):
+    newHist = copy.deepcopy(stack.GetHists()[0])
+    newHist.Scale(0.0)
+    newHist.Merge(stack.GetHists())
+    return newHist
+
+
 #############################################################################################
 #WR_M-${WrMasses[$h]}_ToLNu_M-${NuMasses[$h]}_Analysis_MuMuJJ_000.root
 #SingleMuon_WR_M-2400_LNu_M-240.root
@@ -49,13 +57,15 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "Full name of plots including ROOT structure: A B C"
     print "Directory of where to save plot"
     print "Directory for input root file:"
+    print "Whether using stacks in separate files or hists in the same file as input"
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python ABCD.py analysis/eventsPassingFlavorSidebandRECOelePt200_noISO/leadAK8JetElectronMass_noISO analysis/eventsPassingFlavorSidebandRECOelePt200_noISO_samesign/leadAK8JetElectronMass_noISO analysis/eventsPassingFlavorSidebandRECOelePt200_samesign/leadAK8JetElectronMass /uscms/homes/a/aevans26/nobackup/plots/signalComparisons/ /uscms_data/d3/mkrohn/WR/JetMassStudy/CMSSW_8_0_26_patch1/src/ExoAnalysis/cmsWRextensions/Output/DR_JetMuon/WR_M-4000_ToLNu_M-400.root" 
+    print "python ABCD.py analysis/eventsPassingFlavorSidebandRECOelePt200_noISO/leadAK8JetElectronMass_noISO analysis/eventsPassingFlavorSidebandRECOelePt200_noISO_samesign/leadAK8JetElectronMass_noISO analysis/eventsPassingFlavorSidebandRECOelePt200_samesign/leadAK8JetElectronMass /uscms/homes/a/aevans26/nobackup/plots/signalComparisons/myPlot /uscms_data/d3/mkrohn/WR/JetMassStudy/CMSSW_8_0_26_patch1/src/ExoAnalysis/cmsWRextensions/Output/DR_JetMuon/WR_M-4000_ToLNu_M-400.root HIST" 
+    print "python ABCD.py analysis/eventsPassingFlavorSidebandRECOelePt200_noISO/leadAK8JetElectronMass_noISO analysis/eventsPassingFlavorSidebandRECOelePt200_noISO_samesign/leadAK8JetElectronMass_noISO analysis/eventsPassingFlavorSidebandRECOelePt200_samesign/leadAK8JetElectronMass /uscms/homes/a/aevans26/nobackup/plots/signalComparisons/myPlot /uscms_data/d3/mkrohn/WR/JetMassStudy/CMSSW_8_0_26_patch1/src/ExoAnalysis/cmsWRextensions/Output/ABCD_FSB/BackgroundStack/ STACK" 
     print ""
     exit(0)
-if len(sys.argv) != 6:
+if len(sys.argv) != 7:
     print len(sys.argv)
     print "inputs not understood, try help/h"
     exit(1)
@@ -63,22 +73,39 @@ if len(sys.argv) != 6:
 plotNameFullA = sys.argv[1]
 plotNameFullB = sys.argv[2]
 plotNameFullC = sys.argv[3]
+
 output = sys.argv[4]
-rootFile = sys.argv[5]
+rootFileOrPath = sys.argv[5]
+
+mode = sys.argv[6]
 
 plotNameA = plotNameFullA.split("/")[-1]
 plotNameB = plotNameFullB.split("/")[-1]
 plotNameC = plotNameFullC.split("/")[-1]
 
+print plotNameA
+print plotNameB
+print plotNameC
+
 c = ROOT.TCanvas("c","c",1000,1000)
 
-c.Divide(4)
+c.Divide(2,2)
 
-myFile = ROOT.TFile.Open(rootFile, "read")
+if (mode == "HIST"):
+    myFile = ROOT.TFile.Open(rootFileOrPath, "read")
+    
+    histoA = myFile.Get(plotNameFullA)
+    histoB = myFile.Get(plotNameFullB)
+    histoC = myFile.Get(plotNameFullC)
+    
+if (mode == "STACK"):
+    fileA = ROOT.TFile.Open(rootFileOrPath+"/"+plotNameFullA+".root", "read")
+    fileB = ROOT.TFile.Open(rootFileOrPath+"/"+plotNameFullB+".root", "read")
+    fileC = ROOT.TFile.Open(rootFileOrPath+"/"+plotNameFullC+".root", "read")
 
-histoA = myFile.Get(plotNameFullA)
-histoB = myFile.Get(plotNameFullB)
-histoC = myFile.Get(plotNameFullC)
+    histoA = histFromStack(fileA.Get(plotNameA)) 
+    histoB = histFromStack(fileB.Get(plotNameB)) 
+    histoC = histFromStack(fileC.Get(plotNameC)) 
 
 nBinsA = histoA.GetNbinsX()
 nBinsB = histoB.GetNbinsX()
@@ -131,4 +158,37 @@ for ibin in range(1,nBinsA+1):
     ratioHisto.SetBinContent(ibin, newBinVal)
     ratioHisto.SetBinError(ibin, newBinErr)
 
+#DRAW TIME
+maxA = histoA.GetMaximum()
+maxB = histoB.GetMaximum()
+maxC = histoC.GetMaximum()
+maxR = ratioHisto.GetMaximum()
 
+maxes = [maxA, maxB, maxC, maxR]
+maxes.sort()
+
+newMax = maxes[-1]*1.2
+
+
+c.cd(1)
+histoA.SetMaximum(newMax)
+histoA.SetLineColor(ROOT.kBlack)
+histoA.Draw("e")
+
+c.cd(2)
+histoB.SetMaximum(newMax)
+histoB.SetLineColor(ROOT.kBlack)
+histoB.Draw("e")
+
+c.cd(3)
+histoC.SetMaximum(newMax)
+histoC.SetLineColor(ROOT.kBlack)
+histoC.Draw("e")
+
+c.cd(4)
+ratioHisto.SetMaximum(newMax)
+ratioHisto.SetLineColor(ROOT.kBlack)
+ratioHisto.Draw("e")
+
+
+c.SaveAs(output+"_ABCD.png")
