@@ -55,7 +55,7 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v7')
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(500) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
@@ -171,7 +171,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
 			      electronFiltersToPass = cms.vstring(""),
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
-                              doGen = cms.untracked.bool(False),
+                              doGen = cms.untracked.bool(True),
                               doFast = cms.untracked.bool(options.doFast),
                               isMC = cms.untracked.bool(options.isMC),
 			      amcatnlo = cms.untracked.bool(options.ISmcatnlo),

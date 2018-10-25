@@ -38,6 +38,14 @@ ROOT.kViolet ,
 ROOT.kPink       
 ]
 
+QpartA = 0.84
+QpartB = 0.925
+QpartC = 0.24
+
+QpartAerr = 0.84
+QpartBerr = 0.925
+QpartCerr = 0.24
+
 def histFromStack(stack):
     newHist = copy.deepcopy(stack.GetHists()[0])
     newHist.Scale(0.0)
@@ -154,6 +162,7 @@ for ibin in range(1,nBinsA+1):
 
     newBinVal = ( histoB.GetBinContent(ibin) * histoC.GetBinContent(ibin) ) / histoA.GetBinContent(ibin)
     newBinErr = ( ( histoB.GetBinError(ibin) * ( histoC.GetBinContent(ibin) / histoA.GetBinContent(ibin) ) )**2.0 + ( histoC.GetBinError(ibin) * ( histoB.GetBinContent(ibin) / histoA.GetBinContent(ibin) ) )**2.0 + ( histoA.GetBinError(ibin) * ( ( histoB.GetBinContent(ibin) * histoC.GetBinContent(ibin) ) / ( histoA.GetBinContent(ibin) )**2.0 ) )**2.0 ) ** 0.5
+    
 
     ratioHisto.SetBinContent(ibin, newBinVal)
     ratioHisto.SetBinError(ibin, newBinErr)
@@ -190,5 +199,22 @@ ratioHisto.SetMaximum(newMax)
 ratioHisto.SetLineColor(ROOT.kBlack)
 ratioHisto.Draw("e")
 
+#c.cd(0)
+#c.Divide(1, 2)
+
 
 c.SaveAs(output+"_ABCD.png")
+ratioHisto.SaveAs(output+"_ABCD_D.root")
+ratioHisto.SaveAs(output+"_ABCD_D.png")
+
+histoA.Rebin(nBinsA)
+histoB.Rebin(nBinsB)
+histoC.Rebin(nBinsC)
+ratioHisto.Rebin(nBinsA)
+
+print "A,B,C:"
+print str(histoA.GetBinContent(1)) + "+-" + str(histoA.GetBinError(1))
+print str(histoB.GetBinContent(1)) + "+-" + str(histoB.GetBinError(1))
+print str(histoC.GetBinContent(1)) + "+-" + str(histoC.GetBinError(1))
+print "Estimates D:"
+print str(ratioHisto.GetBinContent(1)) + "+-" + str(ratioHisto.GetBinError(1))

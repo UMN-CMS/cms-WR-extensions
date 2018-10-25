@@ -1015,12 +1015,19 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuonPhi           = subleadMuon->phi();
 
   double dPhi = fabs(myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi);
-
   if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
 
   double dRlsfLep_subleadMuon = sqrt(( pow((myEvent.lsfLeptonEta - myEvent.subleadMuonEta), 2.0) + pow( dPhi, 2.0) )); 
-  if (dRlsfLep_subleadMuon > ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
+//  if (dRlsfLep_subleadMuon > 2*ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
   myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
+
+//  subleadMuon_selMuondR
+  dPhi = fabs(subleadMuon->phi() - myEvent.myMuonCand->phi());
+  if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+
+  double subleadMuon_selMuondR = sqrt(( pow((myEvent.subleadMuonEta - myEvent.myMuonCand->eta()), 2.0) + pow( dPhi, 2.0) )); 
+ // if (subleadMuon_selMuondR > 2*ROOT::Math::Pi()) subleadMuon_selMuondR -= 2*ROOT::Math::Pi();
+  myEvent.subleadMuon_selMuondR = subleadMuon_selMuondR;
 
   if(myEvent.subleadMuon_selMuonMass < 200) return true;
   return false;
@@ -2157,6 +2164,15 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.selectedJetLSF3 = myRECOevent.myMuonJetPairs[0].first->lsfC_3;
   myRECOevent.selectedJetMaxSubJetCSV = myRECOevent.myMuonJetPairs[0].first->maxSubJetCSV;
   myRECOevent.selectedJetPrunedMass = myRECOevent.myMuonJetPairs[0].first->PrunedMass;
+
+ // myRECOevent.secondGENMuon_selMuondR
+  if (myRECOevent.genSecondMuon != NULL) {
+    double dPhi = fabs(myRECOevent.genSecondMuon->phi() - myRECOevent.selectedMuonPhi);
+    if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+
+    double secondGENMuon_selMuondR = sqrt(( pow((myRECOevent.genSecondMuon->eta() - myRECOevent.selectedMuonEta), 2.0) + pow( dPhi, 2.0) )); 
+    myRECOevent.secondGENMuon_selMuondR = secondGENMuon_selMuondR;
+  }
 
   if(myRECOevent.myMuonJetPairs[0].first->tau1==0){
     myRECOevent.selectedJetTau21 = -9999.;

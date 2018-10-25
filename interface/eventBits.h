@@ -371,6 +371,9 @@ public:
 
   double dRmuon2;
 
+  double secondGENMuon_selMuondR;
+  double subleadMuon_selMuondR;
+
   double subleadMuon_selJetdPhi_EleNonISO;
   double subleadMuon_selMuondPhi;
   double subleadMuon_selMuonMass;

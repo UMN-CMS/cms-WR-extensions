@@ -46,7 +46,7 @@ def PAB(histo):
     for ibin in range(1,nBins+2) :
         integral = integral + histo.GetBinContent(ibin) 
 
-    for ibin in range(1,nBins+1) :
+    for ibin in range(0,nBins+1) :
         lbi = lbi + histo.GetBinContent(ibin)
         newContent = ( integral - lbi ) / integral 
         histo.SetBinContent(ibin, newContent)
