@@ -46,9 +46,12 @@ def PAB(histo):
     for ibin in range(1,nBins+2) :
         integral = integral + histo.GetBinContent(ibin) 
 
-    for ibin in range(1,nBins+1) :
+    for ibin in range(0,nBins+1) :
         lbi = lbi + histo.GetBinContent(ibin)
         newContent = ( integral - lbi ) / integral 
+	InvariantMass = ibin*100. - 100.
+	print "ibin: ", InvariantMass
+	print "PAB: ", newContent
         histo.SetBinContent(ibin, newContent)
         histo.SetBinError(ibin, 0.0)
 
@@ -134,6 +137,9 @@ currentMax = 0.0
 
 plotsHolder = []
 i = 1
+frame = ROOT.TH1F("frame","",1000,0,1)
+frame.SetMaximum(0.7)
+frame.Draw()
 for ROOTfile in ROOTs:
     print "At point: "+ROOTfile.split("/")[-1][:-5]
     newFile = ROOT.TFile.Open(ROOTfile, "read")
@@ -155,7 +161,9 @@ for ROOTfile in ROOTs:
       plotsHolder[-1].Draw("hist same")
     if ( plotsHolder[-1].GetMaximum() > currentMax ):
         currentMax = plotsHolder[-1].GetMaximum()
-    plotsHolder[0].SetMaximum(1.1*currentMax)
+#    plotsHolder[0].GetYaxis().SetRangeUser(0, 0.75)
+#    plotsHolder[0].SetMaximum(1.1*currentMax)
+    
     legend.AddEntry(plotsHolder[-1], ROOTfile.split("/")[-1][:-5], "L")
     offset = offset + 1 
     i = i + 1
