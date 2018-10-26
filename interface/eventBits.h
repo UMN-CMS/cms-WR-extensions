@@ -348,6 +348,8 @@ public:
   double selectedJetLSF3;
   double selectedJetMaxSubJetCSV;
 
+  double mydRlsfLep_subleadMuon;
+
   double selectedJet_EleNoISO_Pt;
   double selectedJet_EleNoISO_Phi;
   double selectedJet_EleNoISO_Eta;
@@ -382,7 +384,14 @@ public:
   double subleadMuonEta;
   double subleadMuonPhi;
 
+  double lsfLeptonPt;
+  double lsfLeptonEta;
+  double lsfLeptonPhi;
+
   double dRmuon2;
+
+  double secondGENMuon_selMuondR;
+  double subleadMuon_selMuondR;
 
   double subleadMuon_selJetdPhi_EleNonISO;
   double subleadMuon_selMuondPhi;

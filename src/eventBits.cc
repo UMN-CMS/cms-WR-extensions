@@ -53,6 +53,9 @@ eventBits::eventBits() {
 
   secondInDecayMuon = -10000.0;
 
+  mydRlsfLep_subleadMuon = -10000.0;
+
+
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
   muon1EtVal = -10000.0;
@@ -180,10 +183,17 @@ eventBits::eventBits() {
   subleadMuonEta = -10000.0;
   subleadMuonPhi = -10000.0;
 
+  lsfLeptonPt = -100000.0;
+  lsfLeptonEta = -100000.0;
+  lsfLeptonPhi = -100000.0;
+
   subleadMuon_selJetdPhi = -10000.0;
   subleadMuon_selMuondPhi = -10000.0;
   subleadMuon_selMuonMass = -10000.0;
   subleadMuon_selMuonPt = -10000.0;
+
+  subleadMuon_selMuondR = -10000.0;
+  secondGENMuon_selMuondR = -10000.0;
 
   subleadMuon_selElectronPhi = -10000.0;
   subleadMuon_selElectronMass = -10000.0;
