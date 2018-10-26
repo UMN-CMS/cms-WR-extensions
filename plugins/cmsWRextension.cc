@@ -202,9 +202,18 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   bool pass2016 = false;
   bool ZMASS = false;
+  bool ZMASS_JECUp = false;
+  bool ZMASS_JECDown = false;
+  bool ZMASS_JERUp = false;
+  bool ZMASS_JERDown = false;
+  bool ZMASS_FSB = false;
+  bool ZMASS_FSB_JECUp = false;
+  bool ZMASS_FSB_JECDown = false;
+  bool ZMASS_FSB_JERUp = false;
+  bool ZMASS_FSB_JERDown = false;
   bool addMuons = false;
 
-  setEventWeight(iEvent, myEvent, 1., 1.);
+  setEventWeight(iEvent, myEvent);
 
   if (!myEventInfo.PVselection(vertices)){
     return;
@@ -218,10 +227,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct;
     iEvent.getByToken(m_PUInfoToken,hPileupInfoProduct);
     assert(hPileupInfoProduct.isValid());
-    myRECOevent.puWeight = myEventInfo.PUweight(hPileupInfoProduct);
+    std::vector<float> puWeights;
+    puWeights = myEventInfo.PUweight(hPileupInfoProduct);
+    myRECOevent.puWeight = puWeights[0];
+    myRECOevent.puWeight_Up = puWeights[1];
+    myRECOevent.puWeight_Down = puWeights[2];
   }
 
-  setEventWeight(iEvent, myRECOevent, 1., 1.);
+  setEventWeight(iEvent, myRECOevent);
 
   myRECOevent.cutProgress = 0;
 
@@ -241,32 +254,147 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   bool muonTrigPass = true;
+  bool electronTrigPass = true;
   if ((m_doReco || !m_isMC) && m_doFast){
+    std::cout << "RUNNING CONDENSED ANALYSIS FOR HIGGS COMBINE" << std::endl;
     if(preSelectReco_Fast(iEvent, iSetup, myRECOevent)) {
       passExtensionRECO_Fast(iEvent, myRECOevent);
       if (m_doTrig){
         muonTrigPass = passMuonTrig(iEvent, myRECOevent);
       }
       addMuons = additionalMuons(iEvent, myRECOevent, false);
-      ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
-      double Muon_LooseID_Weight = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
-      double Muon_HighPtID_Weight = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
-      setEventWeight(iEvent, myRECOevent, Muon_LooseID_Weight, Muon_HighPtID_Weight);
+      if(myEvent.myMuonJetPairs.size() > 0){
+	ZMASS = subLeadingMuonZMass(iEvent, myRECOevent);
+      }
+      if(myEvent.myMuonJetPairs_JECUp.size() > 0){
+        ZMASS_JECUp = subLeadingMuonZMass_JECUp(iEvent, myRECOevent);
+      }
+      if(myEvent.myMuonJetPairs_JECDown.size() > 0){
+        ZMASS_JECDown = subLeadingMuonZMass_JECDown(iEvent, myRECOevent);
+      }
+      if(myEvent.myMuonJetPairs_JERUp.size() > 0){
+        ZMASS_JERUp = subLeadingMuonZMass_JERUp(iEvent, myRECOevent);
+      }
+      if(myEvent.myMuonJetPairs_JERDown.size() > 0){
+        ZMASS_JERDown = subLeadingMuonZMass_JERDown(iEvent, myRECOevent);
+      }
+      if(m_isMC && addMuons) {
+	std::vector<double> Muon_LooseID_Weights;
+        Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+        myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
+        myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
+        myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
+	std::vector<double> Muon_HighPtID_Weights;
+        Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
+	myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
+        myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
+        myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+        setEventWeight(iEvent, myRECOevent);
+      }
       //Fill histograms individually
       if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && addMuons && !ZMASS){
         m_eventsPassingExtensionRECO.fill(myRECOevent, 1.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 6.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 7.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 8.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 9.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 10.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 11.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons && !ZMASS){
+      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons && !ZMASS_JECUp){
         m_eventsPassingExtensionRECO.fill(myRECOevent, 2.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECDown.size() > 0 && muonTrigPass && addMuons && !ZMASS){
+      if(myRECOevent.myAddJetCandsHighPt_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECDown.size() > 0 && muonTrigPass && addMuons && !ZMASS_JECDown){
         m_eventsPassingExtensionRECO.fill(myRECOevent, 3.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERUp.size() > 0 && muonTrigPass && addMuons && !ZMASS){
+      if(myRECOevent.myAddJetCandsHighPt_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERUp.size() > 0 && muonTrigPass && addMuons && !ZMASS_JERUp){
         m_eventsPassingExtensionRECO.fill(myRECOevent, 4.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERDown.size() > 0 && muonTrigPass && addMuons && !ZMASS){
+      if(myRECOevent.myAddJetCandsHighPt_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERDown.size() > 0 && muonTrigPass && addMuons && !ZMASS_JERDown){
         m_eventsPassingExtensionRECO.fill(myRECOevent, 5.);
+      }
+      if(myRECOevent.myAddJetCandsHighPt_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERDown.size() > 0 && muonTrigPass && addMuons && ZMASS){
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 1);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 6.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 7.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 8.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 9.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 10.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 11.);
+      }
+      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons && ZMASS_JECUp){
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 2.);
+      }
+      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons && ZMASS_JECDown){
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 3.);
+      }
+      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons && ZMASS_JERUp){
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 4.);
+      }
+      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons && ZMASS_JERDown){
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 5.);
+      }
+    }
+
+    myRECOevent.FSBcutProgress = 0;
+    myRECOevent.FSBcutProgress++;
+
+    if(passFlavorSideband_Fast(iEvent, myRECOevent)) {
+      electronTrigPass = passElectronTrig(iEvent, myRECOevent);
+      if(myRECOevent.myElectronJetPairs.size() > 0){
+        ZMASS_FSB = subLeadingMuonZMass_FlavorSideband_Nominal(iEvent, myRECOevent);
+      }
+      if(myRECOevent.myElectronJetPairs_JECUp.size() > 0){
+        ZMASS_FSB_JECUp = subLeadingMuonZMass_FlavorSideband_JECUp(iEvent, myRECOevent);
+      }
+      if(myRECOevent.myElectronJetPairs_JECDown.size() > 0){
+        ZMASS_FSB_JECDown = subLeadingMuonZMass_FlavorSideband_JECDown(iEvent, myRECOevent);
+      }
+      if(myRECOevent.myElectronJetPairs_JERUp.size() > 0){
+        ZMASS_FSB_JERUp = subLeadingMuonZMass_FlavorSideband_JERUp(iEvent, myRECOevent);
+      }
+      if(myRECOevent.myElectronJetPairs_JERDown.size() > 0){
+        ZMASS_FSB_JERDown = subLeadingMuonZMass_FlavorSideband_JERDown(iEvent, myRECOevent);
+      }
+      if(m_isMC){
+        std::vector<double> Muon_LooseID_Weights;
+        Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+	std::cout << "check 1" << std::endl;
+        myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
+        myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
+        myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
+        std::cout << "check 2" << std::endl;
+        std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
+        std::cout << "check 3" << std::endl;
+        double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt);
+        std::cout << "check 4" << std::endl;
+        myRECOevent.HEEP_SF = HEEP_SF[0];
+	myRECOevent.HEEP_SF_Up = HEEP_SF[1];
+        myRECOevent.HEEP_SF_Down = HEEP_SF[2];
+	std::cout << "myRECOevent.HEEP_SF: " << myRECOevent.HEEP_SF << ", myRECOevent.HEEP_SF_Up: " << myRECOevent.HEEP_SF_Up << ", myRECOevent.HEEP_SF_Down: " << myRECOevent.HEEP_SF_Down << std::endl;
+        myRECOevent.egamma_SF = egamma_SF;
+        setEventWeight_FSB(iEvent, myRECOevent);
+      }
+      if(myRECOevent.myElectronJetPairs.size() > 0 && electronTrigPass && !ZMASS_FSB){
+	m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 6);
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 7);
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 10);
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 11);
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 12);
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 13);
+      }
+      if(myRECOevent.myElectronJetPairs_JECUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JECUp){
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 2);
+      }
+      if(myRECOevent.myElectronJetPairs_JECDown.size() > 0 && electronTrigPass && !ZMASS_FSB_JECDown){
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 3);
+      }
+      if(myRECOevent.myElectronJetPairs_JERUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JERUp){
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 4);
+      }
+      if(myRECOevent.myElectronJetPairs_JERDown.size() > 0 && electronTrigPass && !ZMASS_FSB_JERDown){
+        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 5);
       }
     }
   }
@@ -285,9 +413,17 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             m_eventsPassingExtensionRECO2016VETOSINGLEMUON.fill(myRECOevent, 1);
           }
           if(m_isMC && addMuons) {
-            double Muon_LooseID_Weight = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
-            double Muon_HighPtID_Weight = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
-            setEventWeight(iEvent, myRECOevent, Muon_LooseID_Weight, Muon_HighPtID_Weight);
+	    std::vector<double> Muon_LooseID_Weights;
+            Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+            myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
+            myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
+            myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
+            std::vector<double> Muon_HighPtID_Weights;
+            Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
+            myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
+            myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
+            myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+            setEventWeight(iEvent, myRECOevent);
           }
           if(addMuons && ZMASS && muonTrigPass) {
             std::cout<< "FILLING ZPeak Region" << std::endl;
@@ -421,7 +557,7 @@ void cmsWRextension::vertexDiff(eventBits& myEvent) {
   
 
 }
-void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight, double MuonHighPtIDWeight) {
+void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent) {
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
@@ -438,10 +574,10 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       myEvent.count = 1;
   }
 
-  myEvent.weight = myEvent.weight*MuonHighPtIDWeight*MuonLooseIDWeight;
+  myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight;
 
 }
-void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight) {
+void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent) {
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
@@ -458,10 +594,10 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
       myEvent.count = 1;
   }
 
-  myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*MuonLooseIDWeight;
+  myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight;
 
 }
-void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight) {
+void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent) {
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
@@ -478,7 +614,7 @@ void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBit
       myEvent.count = 1;
   }
 
-  myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*MuonLooseIDWeight;
+  myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight;
 
 }
 bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
@@ -562,6 +698,155 @@ bool cmsWRextension::passMuonTrig(const edm::Event& iEvent, eventBits& myRECOeve
   else myRECOevent.muonTrigger = 0.;
 
   return passTriggers;
+}
+bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits& myRECOevent) {
+
+  if( (myRECOevent.myAddJetCandsHighPt.size() < 1) && myRECOevent.myAddJetCandsHighPt_JECUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_JECDown.size() < 1 && myRECOevent.myAddJetCandsHighPt_JERUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_JERDown.size() < 1) {
+    return false;
+  }
+  myRECOevent.FSBcutProgress++;
+
+  additionalMuons(iEvent, myRECOevent, true);
+  if( myRECOevent.myMuonCands.size() < 1){
+    return false;
+  }
+  myRECOevent.FSBcutProgress++;
+
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_JECUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_JECDown;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_JERUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_JERDown;
+  if( myRECOevent.myElectronCandsHighPt200.size() > 0 ){
+    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
+       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+
+       TLorentzVector* jetVec_temp = new TLorentzVector();
+       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+
+       math::XYZTLorentzVector jetVec;
+       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+    }
+    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt_JECUp.begin(); iJet != myRECOevent.myAddJetCandsHighPt_JECUp.end(); iJet++) {
+       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+
+       TLorentzVector* jetVec_temp = new TLorentzVector();
+       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+
+       math::XYZTLorentzVector jetVec;
+       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       electronJetPairs_JECUp.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+    }
+    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt_JECDown.begin(); iJet != myRECOevent.myAddJetCandsHighPt_JECDown.end(); iJet++) {
+       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+
+       TLorentzVector* jetVec_temp = new TLorentzVector();
+       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+
+       math::XYZTLorentzVector jetVec;
+       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       electronJetPairs_JECDown.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+    }
+    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt_JERUp.begin(); iJet != myRECOevent.myAddJetCandsHighPt_JERUp.end(); iJet++) {
+       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+
+       TLorentzVector* jetVec_temp = new TLorentzVector();
+       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+
+       math::XYZTLorentzVector jetVec;
+       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       electronJetPairs_JERUp.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+    }
+    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt_JERDown.begin(); iJet != myRECOevent.myAddJetCandsHighPt_JERDown.end(); iJet++) {
+       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+
+       TLorentzVector* jetVec_temp = new TLorentzVector();
+       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+
+       math::XYZTLorentzVector jetVec;
+       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       electronJetPairs_JERDown.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+    }
+  }
+  std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
+  myRECOevent.myElectronJetPairs = electronJetPairs;
+
+  std::sort(electronJetPairs_JECUp.begin(),electronJetPairs_JECUp.end(),::wrTools::comparePairMassPointerTAddJet);
+  myRECOevent.myElectronJetPairs_JECUp = electronJetPairs_JECUp;
+
+  std::sort(electronJetPairs_JECDown.begin(),electronJetPairs_JECDown.end(),::wrTools::comparePairMassPointerTAddJet);
+  myRECOevent.myElectronJetPairs_JECDown = electronJetPairs_JECDown;
+
+  std::sort(electronJetPairs_JERUp.begin(),electronJetPairs_JERUp.end(),::wrTools::comparePairMassPointerTAddJet);
+  myRECOevent.myElectronJetPairs_JERUp = electronJetPairs_JERUp;
+
+  std::sort(electronJetPairs_JERDown.begin(),electronJetPairs_JERDown.end(),::wrTools::comparePairMassPointerTAddJet);
+  myRECOevent.myElectronJetPairs_JERDown = electronJetPairs_JERDown;
+
+  if(electronJetPairs.size() > 0){
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiE( electronJetPairs[0].first->pT, electronJetPairs[0].first->eta, electronJetPairs[0].first->phi, electronJetPairs[0].first->E );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+
+    myRECOevent.leadAK8JetElectronMassVal = ( jetVec + electronJetPairs[0].second->p4() ).mass();
+    myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
+    myRECOevent.selectedElectronEta = electronJetPairs[0].second->eta();
+  }
+
+  if(electronJetPairs_JECUp.size() > 0){
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiE( electronJetPairs_JECUp[0].first->pT, electronJetPairs_JECUp[0].first->eta, electronJetPairs_JECUp[0].first->phi, electronJetPairs_JECUp[0].first->E );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+
+    myRECOevent.leadAK8JetElectronMassVal_JECUp = ( jetVec + electronJetPairs_JECUp[0].second->p4() ).mass();
+    myRECOevent.selectedElectronPt  = electronJetPairs_JECUp[0].second->pt();
+    myRECOevent.selectedElectronEta = electronJetPairs_JECUp[0].second->eta();
+
+  }
+  if(electronJetPairs_JECDown.size() > 0){
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiE( electronJetPairs_JECDown[0].first->pT, electronJetPairs_JECDown[0].first->eta, electronJetPairs_JECDown[0].first->phi, electronJetPairs_JECDown[0].first->E );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+
+    myRECOevent.leadAK8JetElectronMassVal_JECDown = ( jetVec + electronJetPairs_JECDown[0].second->p4() ).mass();
+    myRECOevent.selectedElectronPt  = electronJetPairs_JECDown[0].second->pt();
+    myRECOevent.selectedElectronEta = electronJetPairs_JECDown[0].second->eta();
+
+  }
+  if(electronJetPairs_JERUp.size() > 0){
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiE( electronJetPairs_JERUp[0].first->pT, electronJetPairs_JERUp[0].first->eta, electronJetPairs_JERUp[0].first->phi, electronJetPairs_JERUp[0].first->E );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+
+    myRECOevent.leadAK8JetElectronMassVal_JERUp = ( jetVec + electronJetPairs_JERUp[0].second->p4() ).mass();
+   myRECOevent.selectedElectronPt  = electronJetPairs_JERUp[0].second->pt();
+   myRECOevent.selectedElectronEta = electronJetPairs_JERUp[0].second->eta();
+
+  }
+  if(electronJetPairs_JERDown.size() > 0){
+    TLorentzVector* jetVec_temp = new TLorentzVector();
+    jetVec_temp->SetPtEtaPhiE( electronJetPairs_JERDown[0].first->pT, electronJetPairs_JERDown[0].first->eta, electronJetPairs_JERDown[0].first->phi, electronJetPairs_JERDown[0].first->E );
+
+    math::XYZTLorentzVector jetVec;
+    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+
+    myRECOevent.leadAK8JetElectronMassVal_JERDown = ( jetVec + electronJetPairs_JERDown[0].second->p4() ).mass();
+    myRECOevent.selectedElectronPt  = electronJetPairs_JERDown[0].second->pt();
+    myRECOevent.selectedElectronEta = electronJetPairs_JERDown[0].second->eta();
+
+  }
+
+  return true;
+
 }
 bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myRECOevent) {
 
@@ -746,25 +1031,28 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
 
 
   if(m_isMC && electronJetPairs.size() > 0) {
-    double Muon_LooseID_Weight = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
-    myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weight;
+    std::vector<double> Muon_LooseID_Weights;
+    Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+    myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
+    myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
+    myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
     if (electronJetPairs.size() > 0) { 
-      double HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
+      std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
       double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt);
-      if (fabs(myRECOevent.selectedElectronEta) > 1.6) myRECOevent.HEEP_SF_E = HEEP_SF;
-      if (fabs(myRECOevent.selectedElectronEta) < 1.4) myRECOevent.HEEP_SF_B = HEEP_SF;
-      myRECOevent.HEEP_SF = HEEP_SF;
+      if (fabs(myRECOevent.selectedElectronEta) > 1.6) myRECOevent.HEEP_SF_E = HEEP_SF[0];
+      if (fabs(myRECOevent.selectedElectronEta) < 1.4) myRECOevent.HEEP_SF_B = HEEP_SF[0];
+      myRECOevent.HEEP_SF = HEEP_SF[0];
       myRECOevent.egamma_SF = egamma_SF;
-      setEventWeight_FSB(iEvent, myRECOevent, Muon_LooseID_Weight);
+      setEventWeight_FSB(iEvent, myRECOevent);
     }
     if (electronJetPairs_noISO.size() > 0) { 
-      double HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectron_noISO_Eta);
+      std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectron_noISO_Eta);
       double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand_noISO->superCluster()->eta(), myRECOevent.selectedElectron_noISO_Pt);
-      if (fabs(myRECOevent.selectedElectron_noISO_Eta) > 1.6) myRECOevent.HEEP_SF_E_noISO = HEEP_SF;
-      if (fabs(myRECOevent.selectedElectron_noISO_Eta) < 1.4) myRECOevent.HEEP_SF_B_noISO = HEEP_SF;
-      myRECOevent.HEEP_SF_noISO = HEEP_SF;
+      if (fabs(myRECOevent.selectedElectron_noISO_Eta) > 1.6) myRECOevent.HEEP_SF_E_noISO = HEEP_SF[0];
+      if (fabs(myRECOevent.selectedElectron_noISO_Eta) < 1.4) myRECOevent.HEEP_SF_B_noISO = HEEP_SF[0];
+      myRECOevent.HEEP_SF_noISO = HEEP_SF[0];
       myRECOevent.egamma_SF_noISO = egamma_SF;
-      setEventWeight_FSB_noISO(iEvent, myRECOevent, Muon_LooseID_Weight);
+      setEventWeight_FSB_noISO(iEvent, myRECOevent);
     }
   }
 
@@ -839,12 +1127,14 @@ bool cmsWRextension::preSelectReco_Fast(const edm::Event& iEvent, const edm::Eve
   //BUILD PAIRS OF AK8 JETS WITH THE LEAD MUON
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>> muonJetPairs;
   for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
+    std::cout << "Nominal: (*iJet)->phi: " << (*iJet)->phi << std::endl;
     if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myMuonCand->phi())) < 2.0 ) continue;
     muonJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myMuonCand ));
 
   }
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>> muonJetPairs_JECUp;
   for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt_JECUp.begin(); iJet != myRECOevent.myAddJetCandsHighPt_JECUp.end(); iJet++) {
+    std::cout << "JECUp: (*iJet)->phi: " << (*iJet)->phi << std::endl;
     if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myMuonCand->phi())) < 2.0 ) continue;
     muonJetPairs_JECUp.push_back(std::make_pair( (*iJet) , myRECOevent.myMuonCand ));
 
@@ -876,6 +1166,10 @@ bool cmsWRextension::preSelectReco_Fast(const edm::Event& iEvent, const edm::Eve
   myRECOevent.cutProgress++;
   std::cout<<muonJetPairs.size()<<" Pairing CANDIDATES Selected from "<<myRECOevent.myAddJetCandsHighPt.size()<<" jets"<<std::endl;
   myRECOevent.myMuonJetPairs = muonJetPairs;
+  myRECOevent.myMuonJetPairs_JECUp = muonJetPairs_JECUp;
+  myRECOevent.myMuonJetPairs_JECDown = muonJetPairs_JECDown;
+  myRECOevent.myMuonJetPairs_JERUp = muonJetPairs_JERUp;
+  myRECOevent.myMuonJetPairs_JERDown = muonJetPairs_JERDown;  
 
   return true;
 }
@@ -1015,6 +1309,161 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   if(myEvent.subleadMuon_selMuonMass < 200) return true;
   return false;
 }
+bool cmsWRextension::subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent) {
+  if(myEvent.mySubleadMuon == 0) return false;
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Muon* selMuon     = myEvent.myMuonCand;
+  const baconhep::TAddJet*  selJet      = myEvent.myMuonJetPairs_JECUp[0].first;
+
+  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+  myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
+  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
+  myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
+  myEvent.subleadMuonEt           = subleadMuon->et();
+
+  if(myEvent.subleadMuon_selMuonMass < 200) return true;
+  return false;
+}
+bool cmsWRextension::subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventBits& myEvent) {
+  if(myEvent.mySubleadMuon == 0) return false;
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Muon* selMuon     = myEvent.myMuonCand;
+  const baconhep::TAddJet*  selJet      = myEvent.myMuonJetPairs_JECDown[0].first;
+
+  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+  myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
+  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
+  myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
+  myEvent.subleadMuonEt           = subleadMuon->et();
+
+  if(myEvent.subleadMuon_selMuonMass < 200) return true;
+  return false;
+}
+bool cmsWRextension::subLeadingMuonZMass_JERUp(const edm::Event& iEvent, eventBits& myEvent) {
+  if(myEvent.mySubleadMuon == 0) return false;
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Muon* selMuon     = myEvent.myMuonCand;
+  const baconhep::TAddJet*  selJet      = myEvent.myMuonJetPairs_JERUp[0].first;
+
+  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+  myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
+  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
+  myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
+  myEvent.subleadMuonEt           = subleadMuon->et();
+
+  if(myEvent.subleadMuon_selMuonMass < 200) return true;
+  return false;
+}
+bool cmsWRextension::subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventBits& myEvent) {
+  if(myEvent.mySubleadMuon == 0) return false;
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Muon* selMuon     = myEvent.myMuonCand;
+  const baconhep::TAddJet*  selJet      = myEvent.myMuonJetPairs_JERDown[0].first;
+
+  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+  myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
+  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
+  myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
+  myEvent.subleadMuonEt           = subleadMuon->et();
+
+  if(myEvent.subleadMuon_selMuonMass < 200) return true;
+  return false;
+}
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent) {
+  if(myEvent.mySubleadMuon == 0) return false;
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Electron* selEl;
+
+  selEl   = myEvent.myElectronCand;
+
+  double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+
+  if(subleadMuon_selElectronMass < 200){
+    return false;
+  }else{
+    return true;
+  }
+}
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event& iEvent, eventBits& myEvent) {
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Electron* selEl;
+
+  selEl   = myEvent.myElectronCand;
+
+  double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+
+  if(subleadMuon_selElectronMass < 200){
+    return true;
+  }else{
+    return true;
+  }
+}
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECUp(const edm::Event& iEvent, eventBits& myEvent) {
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Electron* selEl;
+
+  selEl   = myEvent.myElectronCand;
+
+  double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+
+  if(subleadMuon_selElectronMass < 200){
+    return true;
+  }else{
+    return true;
+  }
+}
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECDown(const edm::Event& iEvent, eventBits& myEvent) {
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Electron* selEl;
+
+  selEl   = myEvent.myElectronCand;
+
+  double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+
+  if(subleadMuon_selElectronMass < 200){
+    return true;
+  }else{
+    return true;
+  }
+}
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERUp(const edm::Event& iEvent, eventBits& myEvent) {
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Electron* selEl;
+
+  selEl   = myEvent.myElectronCand;
+
+  double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+
+  if(subleadMuon_selElectronMass < 200){
+    return true;
+  }else{
+    return true;
+  }
+}
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERDown(const edm::Event& iEvent, eventBits& myEvent) {
+
+  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+  const pat::Electron* selEl;
+
+  selEl   = myEvent.myElectronCand;
+
+  double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+
+  if(subleadMuon_selElectronMass < 200){
+    return true;
+  }else{
+    return true;
+  }
+}
 bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
   //CHECK IF WE HAVE A SUBLEADING MUON
   std::cout << "FSB ZMASS" << std::endl;
@@ -1113,7 +1562,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
       if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
         myEvent.mySubleadMuon = *iMuon;
         if (m_doGen) {
-          if(myEvent.genSecondMuon != 0) 
+          if(myEvent.genSecondMuon != NULL) 
             myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
         }
         break;
@@ -1121,7 +1570,8 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     }
   }
 
-  if(flavorSideband==false && myEvent.mySubleadMuon != NULL){
+//Study of 3-object invariant mass
+/*  if(flavorSideband==false && myEvent.mySubleadMuon != NULL){
     double muPhi  = myEvent.mySubleadMuon->phi();
     double muEta  = myEvent.mySubleadMuon->eta();
     double jetPhi = myEvent.selectedJetPhi;
@@ -1140,8 +1590,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
     myEvent.leadAK8JetDiMuonMassVal = (JetVector + myEvent.myMuonJetPairs[0].second->p4() + myEvent.mySubleadMuon->p4()).mass();
 
-  }
-  std::cout << "check 3" << std::endl;
+  }*/
 
   if(myEvent.mySubleadMuon == 0) return false;  //THIS SHOULD BE IMPOSSIBLE
 
@@ -1480,7 +1929,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
     float lepCPt(-100), lepCEta(-100), lepCPhi(-100);
     float lepCId(0);
 
-    if(JetTools::leptons((*iJet),3)> 0 && JetTools::leptons(*iJet,2)<0.8) {
+    if(JetTools::leptons((*iJet),3)> 0 && JetTools::leptons(*iJet,7)<0.8) {
       lepCPt = JetTools::leptons(*iJet,3);
       lepCEta = JetTools::leptons(*iJet,5);
       lepCPhi = JetTools::leptons(*iJet,6);
@@ -1521,7 +1970,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
         std::vector<fastjet::PseudoJet> vSubC_4;  pAddJet->lsfC_4 = JetTools::lsf(lClusterParticles, vSubC_4, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 4);
 
-        if(pAddJet->lsfC_3 > 0.0){
+        if(pAddJet->lsfC_3 > 0.7){
 
           if(vSubC_3.size() > 0) {
             pAddJet->lsfC_3_sj1_pt = vSubC_3[0].pt();
@@ -1563,7 +2012,21 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
         pAddJet_JECUp->eta = iJet->eta();
         pAddJet_JECUp->phi = iJet->phi();
         pAddJet_JECUp->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        AddJets_JECUp.push_back(pAddJet_JECUp);
+
+        std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JECUp->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
+        std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JECUp->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
+
+        if(pAddJet_JECUp->lsfC_3 > 0.7){
+
+          if(vSubC_3.size() > 0) {
+            pAddJet_JECUp->lsfC_3_sj1_pt = vSubC_3[0].pt();
+            pAddJet_JECUp->lsfC_3_sj1_eta = vSubC_3[0].eta();
+            pAddJet_JECUp->lsfC_3_sj1_phi = vSubC_3[0].phi();
+            pAddJet_JECUp->lsfC_3_sj1_m = vSubC_3[0].m();
+          }
+
+          AddJets_JECUp.push_back(pAddJet_JECUp);
+	}
       }
     }
 
@@ -1578,7 +2041,21 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
         pAddJet_JECDown->eta = iJet->eta();
         pAddJet_JECDown->phi = iJet->phi();
         pAddJet_JECDown->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        AddJets_JECDown.push_back(pAddJet_JECDown);
+
+        std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JECDown->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
+        std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JECDown->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
+
+        if(pAddJet_JECDown->lsfC_3 > 0.7){
+
+          if(vSubC_3.size() > 0) {
+            pAddJet_JECDown->lsfC_3_sj1_pt = vSubC_3[0].pt();
+            pAddJet_JECDown->lsfC_3_sj1_eta = vSubC_3[0].eta();
+            pAddJet_JECDown->lsfC_3_sj1_phi = vSubC_3[0].phi();
+            pAddJet_JECDown->lsfC_3_sj1_m = vSubC_3[0].m();
+          }
+
+          AddJets_JECDown.push_back(pAddJet_JECDown);
+        }
       }
     }
     if( jetPtJERUp > 200 ){
@@ -1592,7 +2069,21 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
         pAddJet_JERUp->eta = iJet->eta();
         pAddJet_JERUp->phi = iJet->phi();
         pAddJet_JERUp->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        AddJets_JERUp.push_back(pAddJet_JERUp);
+
+        std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JERUp->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
+        std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JERUp->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
+
+        if(pAddJet_JERUp->lsfC_3 > 0.7){
+
+          if(vSubC_3.size() > 0) {
+            pAddJet_JERUp->lsfC_3_sj1_pt = vSubC_3[0].pt();
+            pAddJet_JERUp->lsfC_3_sj1_eta = vSubC_3[0].eta();
+            pAddJet_JERUp->lsfC_3_sj1_phi = vSubC_3[0].phi();
+            pAddJet_JERUp->lsfC_3_sj1_m = vSubC_3[0].m();
+          }
+
+          AddJets_JERUp.push_back(pAddJet_JERUp);
+        }
       }
     }
     if( jetPtJERDown > 200 ){
@@ -1606,7 +2097,21 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
         pAddJet_JERDown->eta = iJet->eta();
         pAddJet_JERDown->phi = iJet->phi();
         pAddJet_JERDown->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        AddJets_JERDown.push_back(pAddJet_JERDown);
+
+        std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JERDown->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
+        std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JERDown->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
+
+        if(pAddJet_JERDown->lsfC_3 > 0.7){
+
+          if(vSubC_3.size() > 0) {
+            pAddJet_JERDown->lsfC_3_sj1_pt = vSubC_3[0].pt();
+            pAddJet_JERDown->lsfC_3_sj1_eta = vSubC_3[0].eta();
+            pAddJet_JERDown->lsfC_3_sj1_phi = vSubC_3[0].phi();
+            pAddJet_JERDown->lsfC_3_sj1_m = vSubC_3[0].m();
+          }
+
+          AddJets_JERDown.push_back(pAddJet_JERDown);
+        }
       }
     }
   } 
@@ -2213,130 +2718,148 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   return true;
 }
 void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits& myRECOevent) {
-  std::sort(myRECOevent.myMuonJetPairs.begin(),myRECOevent.myMuonJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
-  TLorentzVector *JetVector_temp = new TLorentzVector();
-  JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->SDmass);
+  if(myRECOevent.myMuonJetPairs.size() > 0){
+  	std::sort(myRECOevent.myMuonJetPairs.begin(),myRECOevent.myMuonJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
+  	TLorentzVector *JetVector_temp = new TLorentzVector();
+  	JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->SDmass);
 
-  math::XYZTLorentzVector JetVector;
-  JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	math::XYZTLorentzVector JetVector;
+  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
 
-  myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).mass();
-  myRECOevent.leadAK8JetMuonPtVal   = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).pt();
-  myRECOevent.leadAK8JetMuonEtaVal  = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).eta();
-  myRECOevent.leadAK8JetMuonPhiVal  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs[0].first->phi, myRECOevent.myMuonJetPairs[0].second->phi())));
-  myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs[0].second->pt();
-  myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs[0].second->phi();
-  myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs[0].second->eta();
-  myRECOevent.selectedJetPt   = myRECOevent.myMuonJetPairs[0].first->pT;
-  myRECOevent.selectedJetPhi  = myRECOevent.myMuonJetPairs[0].first->phi;
-  myRECOevent.selectedJetEta  = myRECOevent.myMuonJetPairs[0].first->eta;
-  myRECOevent.selectedJetMass = myRECOevent.myMuonJetPairs[0].first->SDmass;
+  	myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonPtVal   = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).pt();
+  	myRECOevent.leadAK8JetMuonEtaVal  = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).eta();
+  	myRECOevent.leadAK8JetMuonPhiVal  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs[0].first->phi, myRECOevent.myMuonJetPairs[0].second->phi())));
+  	myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs[0].second->pt();
+  	myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs[0].second->phi();
+  	myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs[0].second->eta();
+  	myRECOevent.selectedJetPt   = myRECOevent.myMuonJetPairs[0].first->pT;
+  	myRECOevent.selectedJetPhi  = myRECOevent.myMuonJetPairs[0].first->phi;
+  	myRECOevent.selectedJetEta  = myRECOevent.myMuonJetPairs[0].first->eta;
+  	myRECOevent.selectedJetMass = myRECOevent.myMuonJetPairs[0].first->SDmass;
 
-  if(myRECOevent.myMuonJetPairs[0].first->tau1==0){
-    myRECOevent.selectedJetTau21 = -9999.;
-  }else{
-    myRECOevent.selectedJetTau21 = (myRECOevent.myMuonJetPairs[0].first->tau2)/(myRECOevent.myMuonJetPairs[0].first->tau1);
+  	if(myRECOevent.myMuonJetPairs[0].first->tau1==0){
+    	  myRECOevent.selectedJetTau21 = -9999.;
+  	}else{
+    	  myRECOevent.selectedJetTau21 = (myRECOevent.myMuonJetPairs[0].first->tau2)/(myRECOevent.myMuonJetPairs[0].first->tau1);
+  	}
+
+  	std::cout <<"RECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
+
+  	myRECOevent.myEventMass = myRECOevent.leadAK8JetMuonMassVal;
   }
 
-  std::cout <<"RECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
+  if(myRECOevent.myMuonJetPairs_JECUp.size() > 0){
+        TLorentzVector *JetVector_temp = new TLorentzVector();
+  	JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JECUp[0].first->pT,myRECOevent.myMuonJetPairs_JECUp[0].first->eta,myRECOevent.myMuonJetPairs_JECUp[0].first->phi,myRECOevent.myMuonJetPairs_JECUp[0].first->SDmass);
 
-  myRECOevent.myEventMass = myRECOevent.leadAK8JetMuonMassVal;
+        math::XYZTLorentzVector JetVector;
+  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
 
-  JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JECUp[0].first->pT,myRECOevent.myMuonJetPairs_JECUp[0].first->eta,myRECOevent.myMuonJetPairs_JECUp[0].first->phi,myRECOevent.myMuonJetPairs_JECUp[0].first->SDmass);
+  	myRECOevent.leadAK8JetMuonMassVal_JECUp = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonPtVal_JECUp   = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).pt();
+  	myRECOevent.leadAK8JetMuonEtaVal_JECUp  = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).eta();
+  	myRECOevent.leadAK8JetMuonPhiVal_JECUp  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JECUp[0].first->phi, myRECOevent.myMuonJetPairs_JECUp[0].second->phi())));
+  	myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JECUp[0].second->pt();
+  	myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JECUp[0].second->phi();
+  	myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JECUp[0].second->eta();
+  	myRECOevent.selectedJetPt_JECUp   = myRECOevent.myMuonJetPairs_JECUp[0].first->pT;
+  	myRECOevent.selectedJetPhi_JECUp  = myRECOevent.myMuonJetPairs_JECUp[0].first->phi;
+  	myRECOevent.selectedJetEta_JECUp  = myRECOevent.myMuonJetPairs_JECUp[0].first->eta;
+  	myRECOevent.selectedJetMass_JECUp = myRECOevent.myMuonJetPairs_JECUp[0].first->SDmass;
 
-  JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	if(myRECOevent.myMuonJetPairs_JECUp[0].first->tau1==0){
+    	  myRECOevent.selectedJetTau21_JECUp = -9999.;
+  	}else{
+    	  myRECOevent.selectedJetTau21_JECUp = (myRECOevent.myMuonJetPairs_JECUp[0].first->tau2)/(myRECOevent.myMuonJetPairs_JECUp[0].first->tau1);
+  	}
 
-  myRECOevent.leadAK8JetMuonMassVal_JECUp = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).mass();
-  myRECOevent.leadAK8JetMuonPtVal_JECUp   = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).pt();
-  myRECOevent.leadAK8JetMuonEtaVal_JECUp  = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).eta();
-  myRECOevent.leadAK8JetMuonPhiVal_JECUp  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JECUp[0].first->phi, myRECOevent.myMuonJetPairs_JECUp[0].second->phi())));
-  myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JECUp[0].second->pt();
-  myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JECUp[0].second->phi();
-  myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JECUp[0].second->eta();
-  myRECOevent.selectedJetPt_JECUp   = myRECOevent.myMuonJetPairs_JECUp[0].first->pT;
-  myRECOevent.selectedJetPhi_JECUp  = myRECOevent.myMuonJetPairs_JECUp[0].first->phi;
-  myRECOevent.selectedJetEta_JECUp  = myRECOevent.myMuonJetPairs_JECUp[0].first->eta;
-  myRECOevent.selectedJetMass_JECUp = myRECOevent.myMuonJetPairs_JECUp[0].first->SDmass;
-
-  if(myRECOevent.myMuonJetPairs_JECUp[0].first->tau1==0){
-    myRECOevent.selectedJetTau21_JECUp = -9999.;
-  }else{
-    myRECOevent.selectedJetTau21_JECUp = (myRECOevent.myMuonJetPairs_JECUp[0].first->tau2)/(myRECOevent.myMuonJetPairs_JECUp[0].first->tau1);
+  	myRECOevent.myEventMass_JECUp = myRECOevent.leadAK8JetMuonMassVal_JECUp;
   }
 
+  if(myRECOevent.myMuonJetPairs_JECDown.size() > 0){
+        TLorentzVector *JetVector_temp = new TLorentzVector();
+  	JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JECDown[0].first->pT,myRECOevent.myMuonJetPairs_JECDown[0].first->eta,myRECOevent.myMuonJetPairs_JECDown[0].first->phi,myRECOevent.myMuonJetPairs_JECDown[0].first->SDmass);
 
-  myRECOevent.myEventMass_JECUp = myRECOevent.leadAK8JetMuonMassVal_JECUp;
+        math::XYZTLorentzVector JetVector;
+  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
 
-  JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JECDown[0].first->pT,myRECOevent.myMuonJetPairs_JECDown[0].first->eta,myRECOevent.myMuonJetPairs_JECDown[0].first->phi,myRECOevent.myMuonJetPairs_JECDown[0].first->SDmass);
+  	myRECOevent.leadAK8JetMuonMassVal_JECDown = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonPtVal_JECDown   = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).pt();
+  	myRECOevent.leadAK8JetMuonEtaVal_JECDown  = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).eta();
+  	myRECOevent.leadAK8JetMuonPhiVal_JECDown  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JECDown[0].first->phi, myRECOevent.myMuonJetPairs_JECDown[0].second->phi())));
+  	myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JECDown[0].second->pt();
+  	myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JECDown[0].second->phi();
+  	myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JECDown[0].second->eta();
+  	myRECOevent.selectedJetPt_JECDown   = myRECOevent.myMuonJetPairs_JECDown[0].first->pT;
+  	myRECOevent.selectedJetPhi_JECDown  = myRECOevent.myMuonJetPairs_JECDown[0].first->phi;
+  	myRECOevent.selectedJetEta_JECDown  = myRECOevent.myMuonJetPairs_JECDown[0].first->eta;
+  	myRECOevent.selectedJetMass_JECDown = myRECOevent.myMuonJetPairs_JECDown[0].first->SDmass;
 
-  JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	if(myRECOevent.myMuonJetPairs_JECDown[0].first->tau1==0){
+    	  myRECOevent.selectedJetTau21_JECDown = -9999.;
+  	}else{
+    	  myRECOevent.selectedJetTau21_JECDown = (myRECOevent.myMuonJetPairs_JECDown[0].first->tau2)/(myRECOevent.myMuonJetPairs_JECDown[0].first->tau1);
+  	}
 
-  myRECOevent.leadAK8JetMuonMassVal_JECDown = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).mass();
-  myRECOevent.leadAK8JetMuonPtVal_JECDown   = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).pt();
-  myRECOevent.leadAK8JetMuonEtaVal_JECDown  = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).eta();
-  myRECOevent.leadAK8JetMuonPhiVal_JECDown  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JECDown[0].first->phi, myRECOevent.myMuonJetPairs_JECDown[0].second->phi())));
-  myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JECDown[0].second->pt();
-  myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JECDown[0].second->phi();
-  myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JECDown[0].second->eta();
-  myRECOevent.selectedJetPt_JECDown   = myRECOevent.myMuonJetPairs_JECDown[0].first->pT;
-  myRECOevent.selectedJetPhi_JECDown  = myRECOevent.myMuonJetPairs_JECDown[0].first->phi;
-  myRECOevent.selectedJetEta_JECDown  = myRECOevent.myMuonJetPairs_JECDown[0].first->eta;
-  myRECOevent.selectedJetMass_JECDown = myRECOevent.myMuonJetPairs_JECDown[0].first->SDmass;
-
-  if(myRECOevent.myMuonJetPairs_JECDown[0].first->tau1==0){
-    myRECOevent.selectedJetTau21_JECDown = -9999.;
-  }else{
-    myRECOevent.selectedJetTau21_JECDown = (myRECOevent.myMuonJetPairs_JECDown[0].first->tau2)/(myRECOevent.myMuonJetPairs_JECDown[0].first->tau1);
+  	myRECOevent.myEventMass_JECDown = myRECOevent.leadAK8JetMuonMassVal_JECDown;
   }
 
-  myRECOevent.myEventMass_JECDown = myRECOevent.leadAK8JetMuonMassVal_JECDown;
+  if(myRECOevent.myMuonJetPairs_JERUp.size() > 0){
+        TLorentzVector *JetVector_temp = new TLorentzVector();
+  	JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JERUp[0].first->pT,myRECOevent.myMuonJetPairs_JERUp[0].first->eta,myRECOevent.myMuonJetPairs_JERUp[0].first->phi,myRECOevent.myMuonJetPairs_JERUp[0].first->SDmass);
 
-  JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JERUp[0].first->pT,myRECOevent.myMuonJetPairs_JERUp[0].first->eta,myRECOevent.myMuonJetPairs_JERUp[0].first->phi,myRECOevent.myMuonJetPairs_JERUp[0].first->SDmass);
+        math::XYZTLorentzVector JetVector;
+  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
 
-  JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	myRECOevent.leadAK8JetMuonMassVal_JERUp = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonPtVal_JERUp   = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).pt();
+  	myRECOevent.leadAK8JetMuonEtaVal_JERUp  = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).eta();
+  	myRECOevent.leadAK8JetMuonPhiVal_JERUp  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JERUp[0].first->phi, myRECOevent.myMuonJetPairs_JERUp[0].second->phi())));
+  	myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JERUp[0].second->pt();
+  	myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JERUp[0].second->phi();
+  	myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JERUp[0].second->eta();
+  	myRECOevent.selectedJetPt_JERUp   = myRECOevent.myMuonJetPairs_JERUp[0].first->pT;
+  	myRECOevent.selectedJetPhi_JERUp  = myRECOevent.myMuonJetPairs_JERUp[0].first->phi;
+  	myRECOevent.selectedJetEta_JERUp  = myRECOevent.myMuonJetPairs_JERUp[0].first->eta;
+  	myRECOevent.selectedJetMass_JERUp = myRECOevent.myMuonJetPairs_JERUp[0].first->SDmass;
 
-  myRECOevent.leadAK8JetMuonMassVal_JERUp = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).mass();
-  myRECOevent.leadAK8JetMuonPtVal_JERUp   = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).pt();
-  myRECOevent.leadAK8JetMuonEtaVal_JERUp  = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).eta();
-  myRECOevent.leadAK8JetMuonPhiVal_JERUp  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JERUp[0].first->phi, myRECOevent.myMuonJetPairs_JERUp[0].second->phi())));
-  myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JERUp[0].second->pt();
-  myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JERUp[0].second->phi();
-  myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JERUp[0].second->eta();
-  myRECOevent.selectedJetPt_JERUp   = myRECOevent.myMuonJetPairs_JERUp[0].first->pT;
-  myRECOevent.selectedJetPhi_JERUp  = myRECOevent.myMuonJetPairs_JERUp[0].first->phi;
-  myRECOevent.selectedJetEta_JERUp  = myRECOevent.myMuonJetPairs_JERUp[0].first->eta;
-  myRECOevent.selectedJetMass_JERUp = myRECOevent.myMuonJetPairs_JERUp[0].first->SDmass;
+  	if(myRECOevent.myMuonJetPairs_JERUp[0].first->tau1==0){
+    	  myRECOevent.selectedJetTau21_JERUp = -9999.;
+  	}else{
+    	  myRECOevent.selectedJetTau21_JERUp = (myRECOevent.myMuonJetPairs_JERUp[0].first->tau2)/(myRECOevent.myMuonJetPairs_JERUp[0].first->tau1);
+  	}
 
-  if(myRECOevent.myMuonJetPairs_JERUp[0].first->tau1==0){
-    myRECOevent.selectedJetTau21_JERUp = -9999.;
-  }else{
-    myRECOevent.selectedJetTau21_JERUp = (myRECOevent.myMuonJetPairs_JERUp[0].first->tau2)/(myRECOevent.myMuonJetPairs_JERUp[0].first->tau1);
+  	myRECOevent.myEventMass_JERUp = myRECOevent.leadAK8JetMuonMassVal_JERUp;
   }
 
-  myRECOevent.myEventMass_JERUp = myRECOevent.leadAK8JetMuonMassVal_JERUp;
+  if(myRECOevent.myMuonJetPairs_JERDown.size() > 0){
+        TLorentzVector *JetVector_temp = new TLorentzVector();
+  	JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JERDown[0].first->pT,myRECOevent.myMuonJetPairs_JERDown[0].first->eta,myRECOevent.myMuonJetPairs_JERDown[0].first->phi,myRECOevent.myMuonJetPairs_JERDown[0].first->SDmass);
 
-  JetVector_temp->SetPtEtaPhiM(myRECOevent.myMuonJetPairs_JERDown[0].first->pT,myRECOevent.myMuonJetPairs_JERDown[0].first->eta,myRECOevent.myMuonJetPairs_JERDown[0].first->phi,myRECOevent.myMuonJetPairs_JERDown[0].first->SDmass);
-  JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+        math::XYZTLorentzVector JetVector;
+  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
 
-  myRECOevent.leadAK8JetMuonMassVal_JERDown = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).mass();
-  myRECOevent.leadAK8JetMuonPtVal_JERDown   = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).pt();
-  myRECOevent.leadAK8JetMuonEtaVal_JERDown  = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).eta();
-  myRECOevent.leadAK8JetMuonPhiVal_JERDown  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JERDown[0].first->phi, myRECOevent.myMuonJetPairs_JERDown[0].second->phi())));
-  myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JERDown[0].second->pt();
-  myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JERDown[0].second->phi();
-  myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JERDown[0].second->eta();
-  myRECOevent.selectedJetPt_JERDown   = myRECOevent.myMuonJetPairs_JERDown[0].first->pT;
-  myRECOevent.selectedJetPhi_JERDown  = myRECOevent.myMuonJetPairs_JERDown[0].first->phi;
-  myRECOevent.selectedJetEta_JERDown  = myRECOevent.myMuonJetPairs_JERDown[0].first->eta;
-  myRECOevent.selectedJetMass_JERDown = myRECOevent.myMuonJetPairs_JERDown[0].first->SDmass;
+  	myRECOevent.leadAK8JetMuonMassVal_JERDown = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonPtVal_JERDown   = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).pt();
+  	myRECOevent.leadAK8JetMuonEtaVal_JERDown  = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).eta();
+  	myRECOevent.leadAK8JetMuonPhiVal_JERDown  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JERDown[0].first->phi, myRECOevent.myMuonJetPairs_JERDown[0].second->phi())));
+  	myRECOevent.selectedMuonPt  = myRECOevent.myMuonJetPairs_JERDown[0].second->pt();
+  	myRECOevent.selectedMuonPhi = myRECOevent.myMuonJetPairs_JERDown[0].second->phi();
+  	myRECOevent.selectedMuonEta = myRECOevent.myMuonJetPairs_JERDown[0].second->eta();
+  	myRECOevent.selectedJetPt_JERDown   = myRECOevent.myMuonJetPairs_JERDown[0].first->pT;
+  	myRECOevent.selectedJetPhi_JERDown  = myRECOevent.myMuonJetPairs_JERDown[0].first->phi;
+  	myRECOevent.selectedJetEta_JERDown  = myRECOevent.myMuonJetPairs_JERDown[0].first->eta;
+  	myRECOevent.selectedJetMass_JERDown = myRECOevent.myMuonJetPairs_JERDown[0].first->SDmass;
 
-  if(myRECOevent.myMuonJetPairs_JERDown[0].first->tau1==0){
-    myRECOevent.selectedJetTau21_JERDown = -9999.;
-  }else{
-    myRECOevent.selectedJetTau21_JERDown = (myRECOevent.myMuonJetPairs_JERDown[0].first->tau2)/(myRECOevent.myMuonJetPairs_JERDown[0].first->tau1);
+  	if(myRECOevent.myMuonJetPairs_JERDown[0].first->tau1==0){
+    	  myRECOevent.selectedJetTau21_JERDown = -9999.;
+  	}else{
+          myRECOevent.selectedJetTau21_JERDown = (myRECOevent.myMuonJetPairs_JERDown[0].first->tau2)/(myRECOevent.myMuonJetPairs_JERDown[0].first->tau1);
+  	}
+
+  	myRECOevent.myEventMass_JERDown = myRECOevent.leadAK8JetMuonMassVal_JERDown;
   }
-
-  myRECOevent.myEventMass_JERDown = myRECOevent.leadAK8JetMuonMassVal_JERDown;
 
 }
 bool cmsWRextension::metCuts(const edm::Event& iEvent, eventBits& myEvent) {
@@ -2591,7 +3114,7 @@ cmsWRextension::beginJob()
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 5, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 5, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 5, m_outputTag, false);
-    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  5, m_outputTag, true);
+    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt200")),  5, m_outputTag, true);
   }
 }
 

@@ -40,7 +40,14 @@ class eventHistos {
   void fillCombine_JECDown(eventBits& event);
   void fillCombine_JERUp(eventBits& event);
   void fillCombine_JERDown(eventBits& event);
-
+  void fillCombine_PUUp(eventBits& event);
+  void fillCombine_PUDown(eventBits& event);
+  void fillCombine_MuHPtUp(eventBits& event);
+  void fillCombine_MuHPtDown(eventBits& event);
+  void fillCombine_MuLUp(eventBits& event);
+  void fillCombine_MuLDown(eventBits& event);
+  void fillCombine_HEEPUp(eventBits& event);
+  void fillCombine_HEEPDown(eventBits& event);
  
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
@@ -140,11 +147,35 @@ class eventHistos {
   TH1D* m_leadAK8JetElectronMass;
   TH1D* m_leadAK8JetElectronMass_noISO;
 
+  TH1D* m_leadAK8JetElectronMass_JECUp;
+  TH1D* m_leadAK8JetElectronMass_JECDown;
+
+  TH1D* m_leadAK8JetElectronMass_JERUp;
+  TH1D* m_leadAK8JetElectronMass_JERDown;
+
+  TH1D* m_leadAK8JetElectronMass_PUUp;
+  TH1D* m_leadAK8JetElectronMass_PUDown;
+
+  TH1D* m_leadAK8JetElectronMass_MuLUp;
+  TH1D* m_leadAK8JetElectronMass_MuLDown;
+
+  TH1D* m_leadAK8JetElectronMass_HEEPUp;
+  TH1D* m_leadAK8JetElectronMass_HEEPDown;
+
   TH1D* m_leadAK8JetMuonMass_JECUp;
   TH1D* m_leadAK8JetMuonMass_JECDown;
 
   TH1D* m_leadAK8JetMuonMass_JERUp;
   TH1D* m_leadAK8JetMuonMass_JERDown;
+
+  TH1D* m_leadAK8JetMuonMass_PUUp;
+  TH1D* m_leadAK8JetMuonMass_PUDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuHPtUp;
+  TH1D* m_leadAK8JetMuonMass_MuHPtDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuLUp;
+  TH1D* m_leadAK8JetMuonMass_MuLDown;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;

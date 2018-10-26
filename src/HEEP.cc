@@ -34,17 +34,25 @@ void HEEP::Initialize() {
   }
 }
 
-double HEEP::ScaleFactor(double ElectronEta) {
+std::vector<double> HEEP::ScaleFactor(double ElectronEta) {
 
   double scaleFactor = 0.;
+  double scaleFactor_Up = 0.;
+  double scaleFactor_Down = 0.;
 
   for(int i=0; i<HEEPsf->GetN(); i++){
      if((eta[i] - etaElow[i]) < ElectronEta && ElectronEta < (eta[i] + etaEhigh[i])){
 	scaleFactor = sf[i];
+	scaleFactor_Up = sf[i] + sfEhigh[i];
+	scaleFactor_Down = sf[i] - sfElow[i];
 	break;
      }
   }
+  std::vector<double> HEEPweights;
+  HEEPweights.push_back(scaleFactor);
+  HEEPweights.push_back(scaleFactor_Up);
+  HEEPweights.push_back(scaleFactor_Down);
 
-  return scaleFactor;
+  return HEEPweights;
 }
 

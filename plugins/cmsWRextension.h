@@ -129,6 +129,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passExtensionRECO(const edm::Event&, eventBits&);
       void passExtensionRECO_Fast(const edm::Event&, eventBits&);
       bool passFlavorSideband(const edm::Event&, eventBits&);
+      bool passFlavorSideband_Fast(const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
       bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
@@ -136,7 +137,16 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_JERUp(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_FlavorSideband_JECUp(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_FlavorSideband_JECDown(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_FlavorSideband_JERUp(const edm::Event& iEvent, eventBits& myEvent);
+      bool subLeadingMuonZMass_FlavorSideband_JERDown(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO);
       bool passFSBbin(eventBits& myEvent, bool ISO, int ptCut);
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
@@ -146,9 +156,9 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool sameSign(eventBits& myEvent, bool noISO);
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
-      void setEventWeight(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight, double MuonHighPtIDWeight);
-      void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight);
-      void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent, double MuonLooseIDWeight);
+      void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
+      void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent);
+      void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent);
       double PUPPIweight(double puppipt, double puppieta);
       void loadCMSSWPath();
       // ----------member data ---------------------------

@@ -25,7 +25,7 @@ class HEEP {
   public:
   HEEP();
   void Initialize();
-  double ScaleFactor(double ElectronEta);
+  std::vector<double> ScaleFactor(double ElectronEta);
 
 
 

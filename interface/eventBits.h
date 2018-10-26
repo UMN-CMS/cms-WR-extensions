@@ -31,7 +31,6 @@ public:
   double FSBweight_noISO;
   double FSBweight_E_noISO;
   double FSBweight_B_noISO;
-  double Muon_LooseID_Weight;
 
   std::string outputTag;  //LABELLING THE DATA
 
@@ -63,6 +62,10 @@ public:
   double secondRECOMuonRECOjetDR;
 
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_JECUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_JECDown;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_JERUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_JERDown;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_noISO;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_JECUp;
@@ -141,8 +144,20 @@ public:
   int	 nPUmean	;
 
   float  puWeight	;
+  float  puWeight_Up    ;
+  float  puWeight_Down  ;
+
+  double Muon_HighPtID_Weight;
+  double Muon_HighPtID_WeightUp;
+  double Muon_HighPtID_WeightDown;
+
+  double Muon_LooseID_Weight;
+  double Muon_LooseID_WeightUp;
+  double Muon_LooseID_WeightDown;
 
   double HEEP_SF        ;
+  double HEEP_SF_Up     ;
+  double HEEP_SF_Down   ;
   double HEEP_SF_E      ;
   double HEEP_SF_B      ;
   double egamma_SF      ;
@@ -260,6 +275,10 @@ public:
   double leadAK8JetMuonMassValGEN;
   double leadAK8JetDiMuonMassVal;
   double leadAK8JetElectronMassVal;
+  double leadAK8JetElectronMassVal_JECUp;
+  double leadAK8JetElectronMassVal_JECDown;
+  double leadAK8JetElectronMassVal_JERUp;
+  double leadAK8JetElectronMassVal_JERDown;
   double leadAK8JetElectronMassVal_noISO;
 
   double leadAK8JetMuonMassVal_JECUp;

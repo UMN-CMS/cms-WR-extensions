@@ -45,7 +45,7 @@ Muons::Muons () {
   Muon_HighPT_eff->Add(Muon_HighPT_BCDEF, lumi_BCDEF/lumi_total);
 }
 
-double Muons::MuonLooseIDweight(double MuonPt, double MuonEta) {
+std::vector<double> Muons::MuonLooseIDweight(double MuonPt, double MuonEta) {
 
   double muPtForId = 0.;
   double muEtaForId = 0.;
@@ -73,10 +73,15 @@ double Muons::MuonLooseIDweight(double MuonPt, double MuonEta) {
   std::cout << "muidweightUp: " << muidweightUp << std::endl;
   std::cout << "muidweightDown: " << muidweightDown << std::endl;
 
-  return muidweight;
+  std::vector<double> muWeights;
+  muWeights.push_back(muidweight);
+  muWeights.push_back(muidweightUp);
+  muWeights.push_back(muidweightDown);
+
+  return muWeights;
 }
 
-double Muons::MuonHighPTIDweight(double MuonPt, double MuonEta) {
+std::vector<double> Muons::MuonHighPTIDweight(double MuonPt, double MuonEta) {
 
   double muPtForId = 0.;
   double muEtaForId = 0.;
@@ -100,5 +105,10 @@ double Muons::MuonHighPTIDweight(double MuonPt, double MuonEta) {
   muidweightUp = muidweight + Muon_HighPT_eff->GetBinError(Muon_HighPT_eff->FindBin(muEtaForId, muPtForId));
   muidweightDown = muidweight - Muon_HighPT_eff->GetBinError(Muon_HighPT_eff->FindBin(muEtaForId, muPtForId));
 
-  return muidweight;
+  std::vector<double> muWeights;
+  muWeights.push_back(muidweight);
+  muWeights.push_back(muidweightUp);
+  muWeights.push_back(muidweightDown);
+
+  return muWeights;
 }

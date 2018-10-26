@@ -70,7 +70,7 @@ bool eventInfo::PVselection(edm::Handle<std::vector<reco::Vertex>> vertices) {
   return isPV;
 }
 
-float eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct){
+std::vector<float> eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct){
 
   const std::vector<PileupSummaryInfo> *inPUInfos = hPileupInfoProduct.product();
   for (std::vector<PileupSummaryInfo>::const_iterator itPUInfo = inPUInfos->begin(); itPUInfo!=inPUInfos->end(); ++itPUInfo) {
@@ -89,10 +89,10 @@ float eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupI
   float lNPVW = Float_t(fPUWeightHist->GetBinContent(fPUWeightHist->FindBin(nPUmean)));
   puweight_up = fPUWeightHist_up->GetBinContent(fPUWeightHist_up->FindBin(nPUmean));
   puweight_down = fPUWeightHist_down->GetBinContent(fPUWeightHist_down->FindBin(nPUmean));
-  if(nPUmean > 50){
-    lNPVW = Float_t(fPUWeightHist->GetBinContent(fPUWeightHist->FindBin(50)));
-    puweight_up = fPUWeightHist_up->GetBinContent(fPUWeightHist_up->FindBin(50));
-    puweight_down = fPUWeightHist_down->GetBinContent(fPUWeightHist_down->FindBin(50));
+  if(nPUmean > 49){
+    lNPVW = Float_t(fPUWeightHist->GetBinContent(fPUWeightHist->FindBin(49)));
+    puweight_up = fPUWeightHist_up->GetBinContent(fPUWeightHist_up->FindBin(49));
+    puweight_down = fPUWeightHist_down->GetBinContent(fPUWeightHist_down->FindBin(49));
   }
   if(nPUmean <  1){
     lNPVW = Float_t(fPUWeightHist->GetBinContent(fPUWeightHist->FindBin(0)));
@@ -103,6 +103,11 @@ float eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupI
   std::cout << "puweight_up: " << puweight_up << std::endl;
   std::cout << "puweight_down: " << puweight_down << std::endl;
 
-  return lNPVW;
+  std::vector<float> puWeights;
+  puWeights.push_back(lNPVW);
+  puWeights.push_back(puweight_up);
+  puWeights.push_back(puweight_down);
+
+  return puWeights;
 
 }

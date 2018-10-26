@@ -30,8 +30,20 @@ eventBits::eventBits() {
   FSBcutProgress = -1;
 
   puWeight = -10000.0;
+  puWeight_Up = -10000.0;
+  puWeight_Down = -10000.0;
+
+  Muon_HighPtID_Weight = -10000.0;
+  Muon_HighPtID_WeightUp = -10000.0;
+  Muon_HighPtID_WeightDown = -10000.0;
+
+  Muon_LooseID_Weight = -10000.0;
+  Muon_LooseID_WeightUp = -10000.0;
+  Muon_LooseID_WeightDown = -10000.0;
 
   HEEP_SF  = -10000.0;
+  HEEP_SF_Up  = -10000.0;
+  HEEP_SF_Down  = -10000.0;
   HEEP_SF_E  = -10000.0;
   HEEP_SF_B  = -10000.0;
 
@@ -111,10 +123,18 @@ eventBits::eventBits() {
   leadSubleadingAK8JetsMuonsEtaVal = -10000.0;
 
   leadAK8JetMuonMassVal = -10000.0;
+  leadAK8JetMuonMassVal_JECUp = -10000.0;
+  leadAK8JetMuonMassVal_JECDown = -10000.0;
+  leadAK8JetMuonMassVal_JERUp = -10000.0;
+  leadAK8JetMuonMassVal_JERDown = -10000.0;
   leadAK8JetMuonPtVal = -10000.0;
   leadAK8JetMuonEtaVal = -10000.0;
 
   leadAK8JetElectronMassVal = -10000.0;
+  leadAK8JetElectronMassVal_JECUp = -10000.0;
+  leadAK8JetElectronMassVal_JECDown = -10000.0;
+  leadAK8JetElectronMassVal_JERUp = -10000.0;
+  leadAK8JetElectronMassVal_JERDown = -10000.0;
   leadAK8JetElectronPtVal = -10000.0;
   leadAK8JetElectronEtaVal = -10000.0;
 
@@ -258,8 +278,20 @@ void eventBits::clear() {
   FSBcutProgress = 0;
 
   puWeight = 0.0;
+  puWeight_Up = 0.0;
+  puWeight_Down = 0.0;
+
+  Muon_HighPtID_Weight = 0.0;
+  Muon_HighPtID_WeightUp = 0.0;
+  Muon_HighPtID_WeightDown = 0.0;
+
+  Muon_LooseID_Weight = 0.0;
+  Muon_LooseID_WeightUp = 0.0;
+  Muon_LooseID_WeightDown = 0.0;
 
   HEEP_SF = 0.0;
+  HEEP_SF_Up = 0.0;
+  HEEP_SF_Down = 0.0;
   HEEP_SF_E  = 0.0;
   HEEP_SF_B  = 0.0;
 
@@ -327,10 +359,18 @@ void eventBits::clear() {
   leadSubleadingAK8JetsMuonsEtaVal = 0.0;
 
   leadAK8JetMuonMassVal = 0.0;
+  leadAK8JetMuonMassVal_JECDown = 0.0;
+  leadAK8JetMuonMassVal_JECUp = 0.0;
+  leadAK8JetMuonMassVal_JERDown = 0.0;
+  leadAK8JetMuonMassVal_JERUp = 0.0;
   leadAK8JetMuonPtVal = 0.0;
   leadAK8JetMuonEtaVal = 0.0;
 
   leadAK8JetElectronMassVal = 0.0;
+  leadAK8JetElectronMassVal_JECUp = 0.0;
+  leadAK8JetElectronMassVal_JECDown = 0.0;
+  leadAK8JetElectronMassVal_JERUp = 0.0;
+  leadAK8JetElectronMassVal_JERDown = 0.0;
   leadAK8JetElectronPtVal = 0.0;
   leadAK8JetElectronEtaVal = 0.0;
 

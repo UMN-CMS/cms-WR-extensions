@@ -17,8 +17,8 @@
 class Muons {
   public:
   Muons();
-  double MuonLooseIDweight(double MuonPt, double MuonEta);
-  double MuonHighPTIDweight(double MuonPt, double MuonEta);
+  std::vector<double> MuonLooseIDweight(double MuonPt, double MuonEta);
+  std::vector<double> MuonHighPTIDweight(double MuonPt, double MuonEta);
 
   double muidweight;
   double muidweightUp;
