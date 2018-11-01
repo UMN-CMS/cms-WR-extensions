@@ -357,18 +357,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if(myRECOevent.myElectronJetPairs_JERDown.size() > 0){
         ZMASS_FSB_JERDown = subLeadingMuonZMass_FlavorSideband_JERDown(iEvent, myRECOevent);
       }
-      if(m_isMC){
+      if(m_isMC && (myRECOevent.myElectronJetPairs.size() > 0 || myRECOevent.myElectronJetPairs_JECUp.size() > 0 || myRECOevent.myElectronJetPairs_JECDown.size() > 0 || myRECOevent.myElectronJetPairs_JERUp.size() > 0 || myRECOevent.myElectronJetPairs_JERDown.size() > 0)){
         std::vector<double> Muon_LooseID_Weights;
         Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
-	std::cout << "check 1" << std::endl;
         myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
         myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
         myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
-        std::cout << "check 2" << std::endl;
         std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.selectedElectronEta);
-        std::cout << "check 3" << std::endl;
         double egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt);
-        std::cout << "check 4" << std::endl;
         myRECOevent.HEEP_SF = HEEP_SF[0];
 	myRECOevent.HEEP_SF_Up = HEEP_SF[1];
         myRECOevent.HEEP_SF_Down = HEEP_SF[2];
