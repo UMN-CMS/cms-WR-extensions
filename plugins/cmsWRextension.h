@@ -134,10 +134,12 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
       bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
+      bool resolvedJetSelection(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myEvent);
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion);
       bool additionalMuons_noISO(const edm::Event& iEvent, eventBits& myEvent, bool);
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool resolvedMuonSelection(const edm::Event&, eventBits&);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
       bool subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
       bool subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
@@ -200,6 +202,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_highElectronToken;
       edm::EDGetToken m_regMuonToken;
       edm::EDGetToken m_recoJetsToken;
+      edm::EDGetToken m_AK4recoCHSJetsToken;
       edm::EDGetToken m_AK8recoCHSJetsToken;
       edm::EDGetToken m_AK8recoPUPPIJetsToken;
       edm::EDGetToken m_AK8recoPUPPISubJetsToken;

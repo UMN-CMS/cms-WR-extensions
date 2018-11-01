@@ -36,6 +36,11 @@ namespace wrTools {
     if ( (pair1.first->p4() + pair1.second->p4()).mass() > (pair2.first->p4() + pair2.second->p4()).mass() )  return true;
     return false;
   }
+  double dR(double eta1, double eta2, double phi1, double phi2) {
+   double deta = eta1 - eta2;
+   double dphi = std::abs(phi1-phi2); if (dphi>ROOT::Math::Pi()) dphi-=ROOT::Math::Pi();  
+   return deta*deta + dphi*dphi;
+  }
   bool comparePairMassPointerTAddJet(std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair1, std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair2) {
     TLorentzVector *JetVector1_temp = new TLorentzVector();
     JetVector1_temp->SetPtEtaPhiM(pair1.first->pT,pair1.first->eta,pair1.first->phi,pair1.first->SDmass);

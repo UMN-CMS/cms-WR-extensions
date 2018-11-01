@@ -81,6 +81,7 @@ public:
 
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
+  std::vector<const pat::Jet*>      myResCandJets;
   std::vector<const pat::Electron*> myElectronCandsHighPt200;
   std::vector<const pat::Electron*> myElectronCandsHighPt150;
   std::vector<const pat::Electron*> myElectronCandsHighPt100;
@@ -88,6 +89,7 @@ public:
   std::vector<const pat::Electron*> myElectronCandsHighPt50_noISO;
   std::vector<const pat::Electron*> myElectronCandsHighPt200_noISO;
   std::vector<const pat::Muon*>     myMuonCandsHighPt;
+  std::vector<const pat::Muon*>     resolvedANAMuons;
   std::vector<const pat::Muon*>     myMuonCands;
   const pat::MET*                   myMET;
 
@@ -131,6 +133,7 @@ public:
   double myVertexDiffLon;
 
   int    muonCands;
+  int    NresolvedANAMuonCands;
   int    electronCands50;
   int    electronCands100;
   int    electronCands150;
