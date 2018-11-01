@@ -58,3 +58,7 @@ for dataset in datasets:
         ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*.root"
     print ahaddCommand
     subprocess.call(ahaddCommand, shell=True)   
+print "CHECKING FOR EXT DATASETS"
+for line in os.listdir(datasetsROOToutputDir):
+    if "ext" in line:
+        print line

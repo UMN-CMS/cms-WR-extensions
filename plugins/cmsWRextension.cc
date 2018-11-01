@@ -111,6 +111,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_highElectronToken (consumes<std::vector<pat::Electron>> (iConfig.getParameter<edm::InputTag>("highElectrons"))),
   m_regMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("regMuons"))),
   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
+  m_AK4recoCHSJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK4recoCHSJets"))),
   m_AK8recoCHSJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoCHSJets"))),
   m_AK8recoPUPPIJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoPUPPIJets"))),
   m_AK8recoPUPPISubJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("subJetName"))),
@@ -1651,7 +1652,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
            vidResult->getCutResultByIndex(cutnrs::HEEPV70::ETA          )  == true && 
            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DETAINSEED   )  == true &&   
            vidResult->getCutResultByIndex(cutnrs::HEEPV70::DPHIIN       )  == true &&    
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA)  == true &&       
+           vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA)  == false &&       
            vidResult->getCutResultByIndex(cutnrs::HEEPV70::E2X5OVER5X5  )  == true &&   
            vidResult->getCutResultByIndex(cutnrs::HEEPV70::HADEM        )  == true &&     
            vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO       )  == false &&  //MUST FAIL TRACK ISOLATION 
@@ -1734,6 +1735,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
 bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout<<"STARTING MUON SELECTION"<<std::endl;
   std::vector<const pat::Muon*> highPTMuons;
+  std::vector<const pat::Muon*> resolvedANAMuons;
 
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
   if(m_doTrig) {
@@ -1761,10 +1763,16 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
      
       highPTMuons.push_back(&(*iMuon));
     }
+    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
+      std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
+     
+      resolvedANAMuons.push_back(&(*iMuon));
+    }
 
   }
 
   myEvent.muonCands = highPTMuons.size();
+  myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
   //COLLECT MUONS INTO HIGHPT AND ALLPT WITHIN ACCEPTANCE
   if (myEvent.muonCands > 1) {
     
@@ -1777,6 +1785,48 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
     //We select the lead muon in the event
     myEvent.myMuonCand = highPTMuons[0];
   }
+  if (myEvent.NresolvedANAMuonCands > 1) {
+    std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
+    myEvent.resolvedANAMuons = resolvedANAMuons;
+  }
+  return true;
+
+}
+bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myEvent) {
+  std::cout << "STARTING JET SELECTION FOR RESOLVED ANALYSIS" << std::endl;
+  edm::Handle<std::vector<pat::Jet>> recoJetsAK4;
+  iEvent.getByToken(m_AK4recoCHSJetsToken, recoJetsAK4);
+  assert(recoJetsAK4.isValid());
+  std::vector<const pat::Jet*> resCandJets;
+  for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK4->begin(); iJet != recoJetsAK4->end(); iJet++) {
+    if ( iJet->pt() < 40 ) continue;
+    if ( fabs(iJet->eta()) > 2.4) continue;
+
+    double NHF  =                iJet->neutralHadronEnergyFraction();
+    double NEMF =                iJet->neutralEmEnergyFraction();
+    double CHF  =                iJet->chargedHadronEnergyFraction();
+    double CEMF =                iJet->chargedEmEnergyFraction();
+    double NumConst =            iJet->chargedMultiplicity()+iJet->neutralMultiplicity();
+    double CHM      =            iJet->chargedMultiplicity(); 
+    //APPLYING TIGHT QUALITY CUTS
+    if (NHF > .9) continue;
+    if (NEMF > .9) continue;
+    if (NumConst <= 1) continue;
+    //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
+    if (CHF == 0) continue;
+    if (CHM == 0) continue;
+    if (CEMF > .99) continue;
+    resCandJets.push_back(&(*iJet));
+  }
+  //ONLY THE FIRST TWO JETS ARE CONSIDERED
+  if (resCandJets.size() < 2) {
+    return false;
+  } else {
+    std::sort(resCandJets.begin(), resCandJets.end(), ::wrTools::compareEtCandidatePointer);
+    double dR_pair = ::wrTools::dR(resCandJets[0]->eta(),resCandJets[1]->eta(),resCandJets[0]->phi(),resCandJets[1]->phi());
+    if (dR_pair > 0.4) return false;
+  }
+  myEvent.myResCandJets = resCandJets;
   return true;
 
 }
@@ -2904,12 +2954,6 @@ bool cmsWRextension::metCuts(const edm::Event& iEvent, eventBits& myEvent) {
 //  return false;
 //}
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
-
- // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
-  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenJets.size() < 2) {
-    std::cout << "EVENT FAILS WR2016, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" jets"<< std::endl;
-    return false;
-  }
 
   std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
 

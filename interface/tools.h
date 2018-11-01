@@ -34,6 +34,7 @@ namespace wrTools {
  bool comparePairMassPointer(std::pair< const reco::Candidate*, const reco::Candidate* > pair1, std::pair< const reco::Candidate*, const reco::Candidate* > pair2);
  bool comparePairMassPointerTAddJet(std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair1, std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair2);
  bool compareLvPairMassPointer(std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair1, std::pair< const reco::Candidate*, const math::XYZTLorentzVector* > pair2);
+ double dR(double eta1, double eta2, double phi1, double phi2);
  int characterizeEvent(std::vector<const reco::GenParticle*> myGenParticles);
  std::vector<const pat::TriggerObjectStandAlone*> getMatchedObjs(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const float maxDeltaR=0.1);
  bool checkFilters(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const std::vector<std::string>& filterNames,const float maxDeltaR=0.1);
