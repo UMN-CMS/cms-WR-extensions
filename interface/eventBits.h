@@ -73,6 +73,12 @@ public:
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_JERUp;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_JERDown;
 
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_noLSF;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_noLSF_JECUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_noLSF_JECDown;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_noLSF_JERUp;
+  std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>>     myMuonJetPairs_noLSF_JERDown;
+
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
   std::vector<const pat::Jet*>      myResCandJets;
@@ -92,6 +98,12 @@ public:
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JECDown;
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JERUp;
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JERDown;
+
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF_JECUp;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF_JECDown;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF_JERUp;
+  std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF_JERDown;
 
   const pat::Electron*              myElectronCand;
   const pat::Electron*              myElectronCand_noISO;
@@ -275,6 +287,7 @@ public:
   double leadSubleadingJetsMuonsMassVal;
   double leadSubleadingPartonsMuonsMassVal;
   double leadAK8JetMuonMassVal;
+  double leadAK8JetMuonMassVal_noLSF;
   double leadAK8JetMuonMassValGEN;
   double leadAK8JetDiMuonMassVal;
   double leadAK8JetElectronMassVal;
@@ -286,6 +299,8 @@ public:
 
   double leadAK8JetMuonMassVal_JECUp;
   double leadAK8JetMuonMassVal_JECDown;
+  double leadAK8JetMuonMassVal_noLSF_JECUp;
+  double leadAK8JetMuonMassVal_noLSF_JECDown;
   double leadAK8JetMuonPtVal_JECUp;
   double leadAK8JetMuonPtVal_JECDown;
   double leadAK8JetMuonEtaVal_JECUp;
@@ -295,6 +310,8 @@ public:
 
   double leadAK8JetMuonMassVal_JERUp;
   double leadAK8JetMuonMassVal_JERDown;
+  double leadAK8JetMuonMassVal_noLSF_JERUp;
+  double leadAK8JetMuonMassVal_noLSF_JERDown;
   double leadAK8JetMuonPtVal_JERUp;
   double leadAK8JetMuonPtVal_JERDown;
   double leadAK8JetMuonEtaVal_JERUp;

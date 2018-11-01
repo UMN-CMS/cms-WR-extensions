@@ -150,6 +150,7 @@ class eventHistos {
   TH1D* m_leadSubleadingAK8JetsMuonsMass ;
   TH1D* m_leadSubleadingPartonsMuonsMass ;
   TH1D* m_leadAK8JetMuonMass;
+  TH1D* m_leadAK8JetMuonMass_noLSF;
   TH1D* m_leadAK8JetDiMuonMass;
   TH1D* m_leadAK8JetElectronMass;
   TH1D* m_leadAK8JetElectronMass_noISO;
@@ -171,18 +172,28 @@ class eventHistos {
 
   TH1D* m_leadAK8JetMuonMass_JECUp;
   TH1D* m_leadAK8JetMuonMass_JECDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_JECUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_JECDown;
 
   TH1D* m_leadAK8JetMuonMass_JERUp;
   TH1D* m_leadAK8JetMuonMass_JERDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_JERUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_JERDown;
 
   TH1D* m_leadAK8JetMuonMass_PUUp;
   TH1D* m_leadAK8JetMuonMass_PUDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_PUUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_PUDown;
 
   TH1D* m_leadAK8JetMuonMass_MuHPtUp;
   TH1D* m_leadAK8JetMuonMass_MuHPtDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuHPtUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuHPtDown;
 
   TH1D* m_leadAK8JetMuonMass_MuLUp;
   TH1D* m_leadAK8JetMuonMass_MuLDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuLUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuLDown;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;
