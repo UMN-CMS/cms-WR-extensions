@@ -1804,7 +1804,7 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   return true;
 
 }
-bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myEvent) {
+bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "STARTING JET SELECTION FOR RESOLVED ANALYSIS" << std::endl;
   edm::Handle<std::vector<pat::Jet>> recoJetsAK4;
   iEvent.getByToken(m_AK4recoCHSJetsToken, recoJetsAK4);
@@ -2966,7 +2966,30 @@ bool cmsWRextension::metCuts(const edm::Event& iEvent, eventBits& myEvent) {
 //  return false;
 //}
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
-return false;
+  resolvedJetSelection(iEvent, myEvent);
+  resolvedMuonSelection(iEvent, myEvent);
+
+  const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
+  const pat::Muon* mu2 =  myEvent.resolvedANAMuons[1];
+  const pat::Jet*  jet1 = myEvent.myResCandJets[0];
+  const pat::Jet*  jet2 = myEvent.myResCandJets[1];
+  //CHECK DR ASSOCIATIONS
+  double dR_pair12 = ::wrTools::dR(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi());
+  double dR_pair21 = ::wrTools::dR(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi());
+  double dR_pair22 = ::wrTools::dR(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi());
+  double dR_pair11 = ::wrTools::dR(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi());
+
+  if (dR_pair12 < 0.4) return false;
+  if (dR_pair21 < 0.4) return false;
+  if (dR_pair22 < 0.4) return false;
+  if (dR_pair11 < 0.4) return false;
+    
+  //CHECK 4 OBJECT MASS
+  double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
+
+  if (resMass < 600) return false;
+
+  return true;
 
 }
 
