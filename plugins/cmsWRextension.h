@@ -137,6 +137,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool);
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool resolvedMuonSelection(const edm::Event&, eventBits&);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventBits& myEvent);

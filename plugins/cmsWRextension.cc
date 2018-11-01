@@ -1610,6 +1610,33 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
   return true;
 }
+bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {
+  std::vector<const pat::Muon*> resolvedANAMuons;
+  edm::Handle<std::vector<pat::Muon>> highMuons;
+  iEvent.getByToken(m_highMuonToken, highMuons);
+
+  for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
+    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
+      std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
+     
+      resolvedANAMuons.push_back(&(*iMuon));
+    }
+  }
+  myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
+  std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
+  if (resolvedANAMuons[0]->pt() <= 60) return false;
+  if (myEvent.NresolvedANAMuonCands < 2) {
+    return false;
+  } else {
+    std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
+    double dR_pair = ::wrTools::dR(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi());
+    if (dR_pair < 0.4) return false;
+    
+    myEvent.resolvedANAMuons = resolvedANAMuons;
+  }
+   
+  return true;
+}
 
 bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEvent) {  //Flavor sideband
   std::cout<<"STARTING ELECTRON SELECTION"<<std::endl;
@@ -1731,7 +1758,6 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
 bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout<<"STARTING MUON SELECTION"<<std::endl;
   std::vector<const pat::Muon*> highPTMuons;
-  std::vector<const pat::Muon*> resolvedANAMuons;
 
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
   if(m_doTrig) {
@@ -1742,7 +1768,7 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   std::cout << "Muon Handle" << std::endl;
   edm::Handle<std::vector<pat::Muon>> highMuons;
   iEvent.getByToken(m_highMuonToken, highMuons);
-  std::cout << "Vertex Handle" << std::endl;
+//  std::cout << "Vertex Handle" << std::endl;
 
 //  edm::Handle<std::vector<reco::Vertex>> vertices;
 //  iEvent.getByToken(m_offlineVerticesToken, vertices);
@@ -1759,16 +1785,10 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
      
       highPTMuons.push_back(&(*iMuon));
     }
-    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
-      std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
-     
-      resolvedANAMuons.push_back(&(*iMuon));
-    }
 
   }
 
   myEvent.muonCands = highPTMuons.size();
-  myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
   //COLLECT MUONS INTO HIGHPT AND ALLPT WITHIN ACCEPTANCE
   if (myEvent.muonCands > 1) {
     
@@ -1780,10 +1800,6 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
     myEvent.myMuonCandsHighPt = highPTMuons;
     //We select the lead muon in the event
     myEvent.myMuonCand = highPTMuons[0];
-  }
-  if (myEvent.NresolvedANAMuonCands > 1) {
-    std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
-    myEvent.resolvedANAMuons = resolvedANAMuons;
   }
   return true;
 
@@ -1820,7 +1836,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, const edm::E
   } else {
     std::sort(resCandJets.begin(), resCandJets.end(), ::wrTools::compareEtCandidatePointer);
     double dR_pair = ::wrTools::dR(resCandJets[0]->eta(),resCandJets[1]->eta(),resCandJets[0]->phi(),resCandJets[1]->phi());
-    if (dR_pair > 0.4) return false;
+    if (dR_pair < 0.4) return false;
   }
   myEvent.myResCandJets = resCandJets;
   return true;
@@ -2950,71 +2966,8 @@ bool cmsWRextension::metCuts(const edm::Event& iEvent, eventBits& myEvent) {
 //  return false;
 //}
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
+return false;
 
-  std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
-
-  std::vector<const reco::GenJet*> mySelectedJets;
-  std::vector<const reco::GenParticle*> myPreSelectedMuons;
-  std::vector<const reco::GenParticle*> mySelectedMuons;
-
-  bool foundpair=false;
-  for (std::vector<const reco::GenJet*>::iterator iJet = myEvent.myGenJets.begin(); iJet != myEvent.myGenJets.end(); iJet++) {
-    if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
-    for (std::vector<const reco::GenJet*>::iterator iJet2 = iJet+1; iJet2 != myEvent.myGenJets.end(); iJet2++) {
-      if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
-      if (sqrt(deltaR2(*(*iJet),*(*iJet2)))<0.4) continue;
-      foundpair=true;
-      mySelectedJets.push_back((*iJet));
-      mySelectedJets.push_back((*iJet2));
-      break;
-    }
-    if (foundpair) break;
-  } 
-  if (!foundpair){
-    std::cout << "Event fails WR2016, no Jet pair is found" << std::endl;
-    return false;
-  }
-  if (mySelectedJets.size()!=2){
-    std::cout << "ERROR, BUG ON WR2016 NUMBER OF JETS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
-    return false;
-  }
-
-  for (std::vector<const reco::GenParticle*>::iterator iMuon = myEvent.myGenMuons.begin(); iMuon != myEvent.myGenMuons.end(); iMuon++) {
-    if ((*iMuon)->et()<53 || fabs((*iMuon)->eta())>2.4) continue;
-    if (sqrt(deltaR2(*(*iMuon),*mySelectedJets[0]))<0.4) continue;
-    if (sqrt(deltaR2(*(*iMuon),*mySelectedJets[1]))<0.4) continue;
-    myPreSelectedMuons.push_back((*iMuon));
-  }
-  if (myPreSelectedMuons.size()<2){
-    std::cout << "Event fails WR2016, was unable to get 2 muons." << std::endl;
-    return false;
-  }
-  foundpair=false;
-  for (std::vector<const reco::GenParticle*>::iterator iMuon = myPreSelectedMuons.begin(); iMuon != myPreSelectedMuons.end(); iMuon++) {
-    if ((*iMuon)->et()<60) continue;
-     for (std::vector<const reco::GenParticle*>::iterator iMuon2 = iMuon+1; iMuon2 != myPreSelectedMuons.end(); iMuon2++) {
-      if (sqrt(deltaR2(*(*iMuon),*(*iMuon2)))<0.4) continue;
-      foundpair=true;
-      mySelectedMuons.push_back((*iMuon));
-      mySelectedMuons.push_back((*iMuon2));
-      break;
-    }
-    if (foundpair) break;
-  }
-  if (!foundpair){
-    std::cout << "Event fails WR2016, not Muon pair is found" << std::endl;
-    return false;
-  }
-  if (mySelectedMuons.size()!=2){
-    std::cout << "ERROR, BUG ON WR2016 NUMBER OF MUONS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
-    return false;
-  }
-
-  myEvent.leadSubleadingJetsMuonsMassVal = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).mass();
-  myEvent.leadSubleadingJetsMuonsPtVal   = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).pt();
-  myEvent.leadSubleadingJetsMuonsEtaVal  = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).eta();
-  
-  return true;
 }
 
 bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent) {
