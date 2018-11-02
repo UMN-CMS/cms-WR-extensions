@@ -1114,7 +1114,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     }else{
       myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
     }
-    additionalMuons_noISO(iEvent, myRECOevent, true);
+    additionalMuons(iEvent, myRECOevent, true, false, 0);
     if( myRECOevent.myMuonCands.size() < 1){
       std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
       return false;
@@ -1724,59 +1724,6 @@ bool cmsWRextension::METcuts(const edm::Event& iEvent, eventBits& myEvent) {
   return true;
 }
 //CHECK ADDITIONAL MUONS
-bool cmsWRextension::additionalMuons_noISO(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband) {
-  std::cout << "Round-up of the rag-tag muons" << std::endl;
-  edm::Handle<std::vector<pat::Muon>> regMuons;
-  iEvent.getByToken(m_regMuonToken, regMuons);
-  std::vector<const pat::Muon*> allMuons;
-
-  for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
-    if ( iMuon->pt() < 10 || fabs(iMuon->eta()) > 2.4) continue;
-    if ( ! iMuon->isLooseMuon() ) continue;  //Loose MuonID
-    
-    allMuons.push_back(&(*iMuon));
-  }
-  myEvent.muons10 = allMuons.size();
-  if (myEvent.muons10 > 1) {
-    std::sort(allMuons.begin(),allMuons.end(),::wrTools::compareEtCandidatePointer);
-  }
-  if (myEvent.muons10 > 0) {
-    myEvent.myMuonCands = allMuons;
-  }
-  if(myEvent.muons10 < 1) return false; 
-
-  if(flavorSideband==true) {
-    myEvent.mySubleadMuon = allMuons.at(0);
-    if (m_doGen) {
-      if(myEvent.genSecondMuon != NULL)
-        myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
-    }
-  }else{
-    for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
-      if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
-        myEvent.mySubleadMuon = *iMuon;
-        double muPhi  = myEvent.mySubleadMuon->phi();
-        double muEta  = myEvent.mySubleadMuon->eta();
-        double jetPhi = myEvent.myMuonJetPairs[0].first->phi;
-        double jetEta = myEvent.myMuonJetPairs[0].first->eta;
-        double dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-        double dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
-        if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
-
-        myEvent.secondRECOMuonRECOjetDR = dR;
-        if (m_doGen) {
-          if(myEvent.genSecondMuon != NULL)
-            myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
-        }
-        break;
-      }
-    }
-  }
-  if(myEvent.mySubleadMuon == 0) return false;  //THIS SHOULD BE IMPOSSIBLE
-
-  return true;
-}
-
 bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion) {
   std::cout << "Round-up of the rag-tag muons" << std::endl;
   edm::Handle<std::vector<pat::Muon>> regMuons;
@@ -1790,29 +1737,6 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     if(flavorSideband==true){
       double muPhi  = iMuon->phi();
       double muEta  = iMuon->eta();
-      double jetPhi = 0.;
-      double jetEta = 0.;
-      if(JetCorrectionRegion == 0){
-        jetPhi = myEvent.myElectronJetPairs[0].first->phi;
-        jetEta = myEvent.myElectronJetPairs[0].first->eta;
-      }else if(JetCorrectionRegion == 1){
-        jetPhi = myEvent.myElectronJetPairs_JECUp[0].first->phi;
-        jetEta = myEvent.myElectronJetPairs_JECUp[0].first->eta;
-      }else if(JetCorrectionRegion == 2){
-        jetPhi = myEvent.myElectronJetPairs_JECDown[0].first->phi;
-        jetEta = myEvent.myElectronJetPairs_JECDown[0].first->eta;
-      }else if(JetCorrectionRegion == 3){
-        jetPhi = myEvent.myElectronJetPairs_JERUp[0].first->phi;
-        jetEta = myEvent.myElectronJetPairs_JERUp[0].first->eta;
-      }else if(JetCorrectionRegion == 4){
-        jetPhi = myEvent.myElectronJetPairs_JERDown[0].first->phi;
-        jetEta = myEvent.myElectronJetPairs_JERDown[0].first->eta;
-      }
-      double dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-      double dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
-      if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
-
-//      if(abs(dR) > 0.8) continue;
     }else{
       if(ZPeak==true){
 	std::cout << "checking muon-jet dR in ZPeak" << std::endl;
