@@ -258,6 +258,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if(passExtensionGEN(iEvent, myRECOevent)) m_eventsPassingExtension.fill(myRECOevent, 1);
     }
   }
+  if (!m_doFast) {
+    if (passWR2016RECO(iEvent , myRECOevent)) {
+      m_eventsPassingWR2016RECO.fill(myRECOevent, 1);
+    }
+  }
   bool muonTrigPass = true;
   bool electronTrigPass = true;
   if ((m_doReco || !m_isMC) && m_doFast){
