@@ -1894,17 +1894,17 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
     }
   }
   myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
+  if (myEvent.NresolvedANAMuonCands < 2) return false;
+
   std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
+
   if (resolvedANAMuons[0]->pt() <= 60) return false;
-  if (myEvent.NresolvedANAMuonCands < 2) {
-    return false;
-  } else {
-    std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
-    double dR_pair = ::wrTools::dR(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi());
-    if (dR_pair < 0.4) return false;
-    
-    myEvent.resolvedANAMuons = resolvedANAMuons;
-  }
+
+  std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
+  double dR_pair = ::wrTools::dR(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi());
+  if (dR_pair < 0.4) return false;
+  
+  myEvent.resolvedANAMuons = resolvedANAMuons;
    
   return true;
 }
@@ -3316,8 +3316,8 @@ bool cmsWRextension::metCuts(const edm::Event& iEvent, eventBits& myEvent) {
 //  return false;
 //}
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
-  resolvedJetSelection(iEvent, myEvent);
-  resolvedMuonSelection(iEvent, myEvent);
+  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
+  if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
 
   const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
   const pat::Muon* mu2 =  myEvent.resolvedANAMuons[1];
