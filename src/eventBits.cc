@@ -55,6 +55,10 @@ eventBits::eventBits() {
 
   mydRlsfLep_subleadMuon = -10000.0;
 
+  resJetDR           = -10000.0; 
+  resolvedRECOmass   = -10000.0; 
+  resSubleadMuJet1dR = -10000.0; 
+  resSubleadMuJet2dR = -10000.0;  
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;

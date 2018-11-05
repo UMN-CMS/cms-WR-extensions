@@ -183,6 +183,13 @@ public:
   double egamma_SF_noISO      ;
 
   double myGenLSF;
+
+  //RESOLVED ANA   
+  double resJetDR;
+  double resolvedRECOmass;
+  double resSubleadMuJet1dR;
+  double resSubleadMuJet2dR;
+
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
   double selElectron_barrel_dPhiIn          ; 

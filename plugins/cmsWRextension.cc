@@ -2108,6 +2108,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     std::sort(resCandJets.begin(), resCandJets.end(), ::wrTools::compareEtCandidatePointer);
     double dR_pair = ::wrTools::dR(resCandJets[0]->eta(),resCandJets[1]->eta(),resCandJets[0]->phi(),resCandJets[1]->phi());
     if (dR_pair < 0.4) return false;
+    myEvent.resJetDR = dR_pair;
   }
   myEvent.myResCandJets = resCandJets;
   return true;
@@ -3338,6 +3339,11 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
   double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
 
   if (resMass < 600) return false;
+
+  myEvent.resolvedRECOmass = resMass; 
+
+  myEvent.resSubleadMuJet1dR = dR_pair21;
+  myEvent.resSubleadMuJet2dR = dR_pair22;
 
   return true;
 
