@@ -60,7 +60,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 process.source = cms.Source ("PoolSource",
 	  fileNames = cms.untracked.vstring (options.inputFiles),
-	  skipEvents = cms.untracked.uint32(30000)
+#	  skipEvents = cms.untracked.uint32(30000)
 )
 
 process.options = cms.untracked.PSet(
