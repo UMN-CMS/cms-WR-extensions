@@ -168,6 +168,10 @@ parser.add_option("-p", "--previousJSON json", dest="prevJsonFile",
                   help="previous lumiSummary.json from crab",
                   metavar="PREVJSON")
 
+parser.add_option("-f", "--doFast", dest="doFast",
+                  help="Run condensed analysis for HiggsCombine",
+                  metavar="DOFAST")
+
 (options, args) = parser.parse_args()
 
 # validate options
@@ -328,6 +332,15 @@ with open(localInputListFile, 'r') as f:
       datasetName=datasetName+'_ext'+extN
       config.Data.outputDatasetTag='WR_ext'+extN
     #NOT CURRENTLY USED IN WR ANALYSIS
+    if options.doFast is not None:
+	if options.doFast: 
+		print "Running condensed analysis"
+		if isData:
+			config.JobType.pyCfgParams = ['doFast=True','isMC=False']
+		else if isAMCATNLO:
+			config.JobType.pyCfgParams = ['doFast=True','ISmcatnlo=True']
+		else:
+			config.JobType.pyCfgParams = ['doFast=True']
     if 'backup' in dataset:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
