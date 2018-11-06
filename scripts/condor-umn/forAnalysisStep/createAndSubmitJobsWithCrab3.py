@@ -337,7 +337,7 @@ with open(localInputListFile, 'r') as f:
 		print "Running condensed analysis"
 		if isData:
 			config.JobType.pyCfgParams = ['doFast=True','isMC=False']
-		else if isAMCATNLO:
+		elif isAMCATNLO:
 			config.JobType.pyCfgParams = ['doFast=True','ISmcatnlo=True']
 		else:
 			config.JobType.pyCfgParams = ['doFast=True']
