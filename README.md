@@ -75,12 +75,21 @@ NOTE: CERN box is in a different eos from the cms project space.
 These can be then viewed here:
 https://cernbox.cern.ch/index.php/apps/files/?dir=/&
 
----SOON DEPRECATED IN FAVOR OF CERNBOX----
-REPO For Keeping Plots Organized:
+Steps for running Combine:
 
-https://gitlab.cern.ch/mkrohn/BoostedWR
+1.Set doFast to true. This can be done by setting -f True for the createAndSubmitJobsWithCrab3.py script.
 
--To clone: 
+2.Make the workspaces:
 ```
-git clone ssh://git@gitlab.cern.ch:7999/mkrohn/BoostedWR.git
+python makeWorkspaces.py ../../../samples/allSamples_temp.txt ../../../Output/doFast/ ../../../Output/doFast/Workspace/
+```
+
+3.Make the datacards:
+```
+python makeCardsMuMuJJ.py ../../../Output/doFast/Workspace/
+```
+
+4.Combine cards and run limits:
+```
+./runLimits.sh
 ```
