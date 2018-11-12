@@ -334,39 +334,40 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
 //THIS FLAVOR IS FOR THE STREAMLINED ANALYSIS.  IT ONLY CONTAINS PLOTS NECESSARY FOR THE FINAL ANALYSIS
   }else if (m_flavor == 5){
-    m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_JECUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JECUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_JECDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JECDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_JERUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JERUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_JERDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JERDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_PUUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_PUUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_PUDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_PUDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_MuHPtUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuHPtUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_MuHPtDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuHPtDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_MuLUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuLUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_MuLDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuLDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_JECUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JECUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_JECDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JECDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_JERUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JERUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_JERDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JERDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_PUUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_PUUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_PUDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_PUDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_MuHPtUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuHPtUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_MuHPtDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuHPtDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_MuLUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuLUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetMuonMass_noLSF_MuLDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuLDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,120, 0.0,6000);
-    m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_JECUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JECUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_JECDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JECDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_JERUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JERUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_JERDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JERDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_PUUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_PUUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_PUDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_PUDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_MuLUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_MuLUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_MuLDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_MuLDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_HEEPUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_HEEPUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
-    m_leadAK8JetElectronMass_HEEPDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_HEEPDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,120, 0.0,6000);
+    m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
+    m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_JECUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JECUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_JECDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JECDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_JERUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JERUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_JERDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JERDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_PUUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_PUUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_PUDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_PUDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_MuHPtUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuHPtUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_MuHPtDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuHPtDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_MuLUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuLUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_MuLDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_MuLDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_JECUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JECUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_JECDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JECDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_JERUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JERUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_JERDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_JERDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_PUUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_PUUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_PUDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_PUDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_MuHPtUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuHPtUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_MuHPtDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuHPtDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_MuLUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuLUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetMuonMass_noLSF_MuLDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_noLSF_MuLDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,60, 0.0,6000);
+    m_leadAK8JetElectronMass  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_JECUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JECUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_JECDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JECDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_JERUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JERUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_JERDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_JERDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_PUUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_PUUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_PUDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_PUDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_MuLUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_MuLUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_MuLDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_MuLDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_HEEPUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_HEEPUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
+    m_leadAK8JetElectronMass_HEEPDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_HEEPDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,60, 0.0,6000);
   }
 }
 void eventHistos::fill(eventBits& event, int systematicRegion) {
@@ -386,6 +387,7 @@ void eventHistos::fill(eventBits& event, int systematicRegion) {
   } else if (m_flavor == 4) {
     fillWeight(event);
   } else if (m_flavor == 5){
+    fillWeight(event);
     if (systematicRegion == 1){
       fillCombine_Nominal(event);
     }else if(systematicRegion == 2){
@@ -569,6 +571,8 @@ void eventHistos::fillReco(eventBits& event) {
   else
     weight = event.weight;
 
+  std::cout << "event.weight: " << event.weight << std::endl;
+  std::cout << "event.leadAK8JetMuonMassVal: " << event.leadAK8JetMuonMassVal << std::endl;
   m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, weight);
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, weight);
   m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, weight);
@@ -755,6 +759,8 @@ void eventHistos::fillCombine_Nominal(eventBits& event) {
   else
     weight = event.weight;
 
+  std::cout << "doFast event.weight : " << event.weight << std::endl;
+  std::cout << "doFast event.leadAK8JetMuonMassVal: " << event.leadAK8JetMuonMassVal << std::endl;
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
   m_leadAK8JetMuonMass_noLSF->Fill(event.leadAK8JetMuonMassVal_noLSF, weight);
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
