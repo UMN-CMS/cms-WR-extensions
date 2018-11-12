@@ -40,8 +40,13 @@ std::vector<double> HEEP::ScaleFactor(double ElectronEta) {
   double scaleFactor_Up = 0.;
   double scaleFactor_Down = 0.;
 
+  std::cout << "ElectronEta: " << ElectronEta << std::endl;
   for(int i=0; i<HEEPsf->GetN(); i++){
+     std::cout << "i: " << i << std::endl;
+     std::cout << "(eta[i] - etaElow[i]): " << (eta[i] - etaElow[i]) << std::endl;
+     std::cout << "(eta[i] + etaEhigh[i]): " << (eta[i] + etaEhigh[i]) << std::endl;
      if((eta[i] - etaElow[i]) < ElectronEta && ElectronEta < (eta[i] + etaEhigh[i])){
+	std::cout << "MADE IT" << std::endl;
 	scaleFactor = sf[i];
 	scaleFactor_Up = sf[i] + sfEhigh[i];
 	scaleFactor_Down = sf[i] - sfElow[i];

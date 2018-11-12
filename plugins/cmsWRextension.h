@@ -140,10 +140,11 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedMuonSelection(const edm::Event&, eventBits&);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
-      bool subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
-      bool subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
-      bool subLeadingMuonZMass_JERUp(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
-      bool subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
+      int subLeadingMuonZMass_Nominal(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
+      int subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
+      int subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
+      int subLeadingMuonZMass_JERUp(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
+      int subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
       bool subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass_FlavorSideband_JECUp(const edm::Event& iEvent, eventBits& myEvent);
