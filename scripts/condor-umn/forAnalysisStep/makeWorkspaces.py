@@ -185,9 +185,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     histoDict['WJets'].Write()
     histoDict['DY'].Write()
     histoDict['QCD'].Write()
-    if Blind == "False":
-	print "Including SR data"
-	histoDict['data_obs'].Write()
+    histoDict['data_obs'].Write()
     for syst in systs:
 	histoDict['TT_%sUp'%(syst)].Write()
         histoDict['TT_%sDown'%(syst)].Write()
