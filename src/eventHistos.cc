@@ -290,6 +290,22 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selElectron_noISO_endcap_dxy               =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_dxy"             ,";selected nonISO Electron endcap dxy"             , 100, 0.0, .05); 
 
     m_dRlsfLep_subleadMuon                       =  m_histoFolder.make<TH1D>("dRlsfLep_subleadMuon" , ";delta R between lsf lepton and subleading Muon", 100, 0.0, 1.0); 
+  //RESOLVED ANA   
+    m_resJetDR                = m_histoFolder.make<TH1D>("resJetDR"             ,";resolved jets deltaR", 80, 0.0, 8.0);
+    m_resolvedRECOmass        = m_histoFolder.make<TH1D>("resolvedRECOmass"     ,";resolved RECO 4-object mass", 60, 0.0, 6000);
+    m_resolvedGENmass         = m_histoFolder.make<TH1D>("resolvedGENmass"      ,";resolved GEN 4-object mass" , 60, 0.0, 6000);
+
+    m_resSubleadMuJet1dR      = m_histoFolder.make<TH1D>("resSubleadMuJet1dR"   ,";resolved sublead muon lead jet dR"     , 80, 0.0, 8.0);
+    m_resSubleadMuJet2dR      = m_histoFolder.make<TH1D>("resSubleadMuJet2dR"   ,";resolved sublead muon sublead jet dR"  , 80, 0.0, 8.0);
+    m_resLeadMuJet1dR         = m_histoFolder.make<TH1D>("resLeadMuJet1dR"      ,";resolved lead muon lead jet dR"        , 80, 0.0, 8.0);
+    m_resLeadMuJet2dR         = m_histoFolder.make<TH1D>("resLeadMuJet2dR"      ,";resolved lead muon sublead jet dR"     , 80, 0.0, 8.0);
+                                                                               
+    m_resSubleadMuParton1dR   = m_histoFolder.make<TH1D>("resSubleadMuParton1dR",";resolved second muon lead parton dR"   , 80, 0.0, 8.0);
+    m_resSubleadMuParton2dR   = m_histoFolder.make<TH1D>("resSubleadMuParton2dR",";resolved second muon sublead parton dR", 80, 0.0, 8.0);
+    m_resLeadMuParton2dR      = m_histoFolder.make<TH1D>("resLeadMuParton1dR"   ,";resolved first muon lead parton dR"    , 80, 0.0, 8.0);
+    m_resLeadMuParton2dR      = m_histoFolder.make<TH1D>("resLeadMuParton2dR"   ,";resolved first muon sublead parton dR" , 80, 0.0, 8.0);
+
+
 //2D LSF PLOTS
     m_genLSF_v_recoLSF                           =  m_histoFolder.make<TH2D>("genLSF_v_recoLSF"  , "genLSF vs recoLSF"         , 20, 0.0, 1.0, 20, 0.0, 1.0);
     m_recoLSF_v_selJetPt                         =  m_histoFolder.make<TH2D>("recoLSF_v_selJetPt", "recoLSF vs selected Jet Pt", 20, 0.0, 2000, 20, 0.0, 1.0);

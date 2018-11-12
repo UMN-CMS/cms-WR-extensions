@@ -249,8 +249,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       vertexDiff(myRECOevent);
   }
    
-  if (m_doGen && m_isMC && !m_flavorSideband && !m_doFast) {
+  if (m_doGen && m_isMC && !m_doFast) {
     if(preSelectGen(iEvent, myRECOevent)) {
+      genJetAnalyzer(iEvent, myRECOevent);
       std::cout << "analyzing wr2016" << std::endl;
       pass2016 = passWR2016GEN(iEvent, myRECOevent);
       if(pass2016) m_eventsPassingWR2016.fill(myRECOevent, 1);
@@ -2748,48 +2749,57 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 {
   
-  float partonJetMatchDR = .4;
-  float partonAK8JetMatchDR = .8;
- 
   edm::Handle<std::vector<reco::GenParticle>> genParticles;
   iEvent.getByToken(m_genParticleToken, genParticles);
 
-  edm::Handle<std::vector<reco::GenJet>> genJets;
-  iEvent.getByToken(m_genJetsToken, genJets);
-
-  edm::Handle<std::vector<reco::GenJet>> AK8GenJets;
-  iEvent.getByToken(m_AK8genJetsToken, AK8GenJets);
-
-  std::vector<const reco::GenJet*> myGenJets;
-  std::vector<const reco::GenJet*> myAK8GenJets;
   std::vector<const reco::GenParticle*> myGenPartons;
   std::vector<const reco::GenParticle*> myGenMuons;
-
-
-
 
   std::vector<const reco::GenParticle*> myGenParticles;
 
 
   //LOOP OVER GEN PARTICLES
+  //9900024 WR 9900014 NRu 9900012 NRe 9900016 NRt
   for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
-    if(iParticle->isHardProcess() && iParticle->status() != 21) myGenParticles.push_back(&(*iParticle));
-    if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
-    if(iParticle->mother()) { if(::wrTools::particleIsFromABS(&(*iParticle),24)) continue; }//no W-SM mothered particles
-    if((iParticle->isHardProcess() && iParticle->status() == 22) && abs(iParticle->pdgId()) == 6) myGenPartons.push_back(&(*iParticle)); //KEEP TOPS, NOT Qs FROM TOPS
-    if((iParticle->isHardProcess() && iParticle->status() == 23) && (iParticle->pdgId() <= 6) && (iParticle->pdgId() >= -6) && !(::wrTools::particleIsFromABS(&(*iParticle),6))) myGenPartons.push_back(&(*iParticle));
-    if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
+//    if(iParti
+//    if(iParticle->isHardProcess() && iParticle->status() != 21) myGenParticles.push_back(&(*iParticle));
+//    if(iParticle->isHardProcess()) std::cout << "Particle of type: "<<iParticle->pdgId() <<" isHardProcess and has status: "<<iParticle->status()<<std::endl;
+//    if(iParticle->mother()) { if(::wrTools::particleIsFromABS(&(*iParticle),24)) continue; }//no W-SM mothered particles
+//    if((iParticle->isHardProcess() && iParticle->status() == 22) && abs(iParticle->pdgId()) == 6) myGenPartons.push_back(&(*iParticle)); //KEEP TOPS, NOT Qs FROM TOPS
+//    if((iParticle->isHardProcess() && iParticle->status() == 23) && (iParticle->pdgId() <= 6) && (iParticle->pdgId() >= -6) && !(::wrTools::particleIsFromABS(&(*iParticle),6))) myGenPartons.push_back(&(*iParticle));
+//    if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
+    if( ! iParticle->isHardProcess() ) continue;  //ONLY HARD PROCESS AND NOT INCOMING
+    if( iParticle->status() == 21 )    continue;
+    
+    if( iParticle->mother() ) {
+      if ( abs(iParticle->mother()->pdgId()) == 9900024) {
+        std::cout << "WR DAUGHTERS: "<<iParticle->pdgId()<<std::endl;
+        if ( abs(iParticle->pdgId()) == 13 ) { //it's the first muon
+          myEvent.firstMuon = &(*(iParticle));
+          myGenMuons.push_back(&(*(iParticle)));
+        }
+      }
+      if ( abs(iParticle->mother()->pdgId() == 9900012) || abs(iParticle->mother()->pdgId() == 9900014) || abs(iParticle->mother()->pdgId() == 9900016)) {
+        if ( abs(iParticle->pdgId()) == 13 ) {
+          std::cout << "SECOND MUON" << std::endl;
+          myEvent.secondMuon = &(*(iParticle)); 
+          myGenMuons.push_back(&(*(iParticle)));
+        }
+        if ( abs(iParticle->pdgId()) <= 6 ) { //it's a quark
+          std::cout << "VIRTUAL WR DAUGHTERS: QUARKS"<<std::endl;
+          myGenPartons.push_back(&(*(iParticle)));
+        }
+      }
+      
+    }
   }
   //GET THE CHARACTERIZATION INTEGER
-  ::wrTools::characterizeEvent(myGenParticles);
+//////////////////  ::wrTools::characterizeEvent(myGenParticles);
 
   //CHECK THAT THE EVENT MAKES SENSE
-  if (myGenPartons.size() < 2 || myGenMuons.size() < 2) {
-    std::cout << "ERROR! SKIPPING EVENT, DID NOT FIND AT LEAST 2 PARTONS OR 2 MUONS"<< std::endl;
-    return false;
-  }
   if (myGenPartons.size() != 2 || myGenMuons.size() != 2) {
-    std::cout << "ERROR! Found more than 2 partons ("<<myGenPartons.size()<<") or muons("<<myGenMuons.size()<<")."<< std::endl;
+    std::cout << "EVENT NOT UNDERSTOOD! # of partons: "<<myGenPartons.size()<<" # of muons: "<<myGenMuons.size()<< std::endl;
+    return false;
   }
 
   //SORT GEN MUONS AND PARTONS BY ET
@@ -2804,45 +2814,65 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
   myEvent.parton2PhiVal = myGenPartons[1]->phi();
 
   //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
-  int index = 0;
-  for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-    if(::wrTools::particleIsFromABS((*iMuon),9900014)){
-      if (myEvent.secondInDecayMuon>=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
-      myEvent.secondInDecayMuon = index;
-    }
-    index++;
-  }
+//  int index = 0;
+//  for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
+//    if(::wrTools::particleIsFromABS((*iMuon),9900014)){
+//      if (myEvent.secondInDecayMuon>=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
+//      myEvent.secondInDecayMuon = index;
+//    }
+//    index++;
+//  }
+//
+//  if (myEvent.secondInDecayMuon!=1){
+//    std::cout<<"Highest ET muon, is not first in decay"<<std::endl;
+//    if (myEvent.secondInDecayMuon==0) std::swap(myGenMuons[0],myGenMuons[1]);
+//    else std::cout<<"myEvent.secondInDecayMuon is "<<myEvent.secondInDecayMuon<<". I don't know what to do"<<std::endl;
+//  }
 
-  if (myEvent.secondInDecayMuon!=1){
-    std::cout<<"Highest ET muon, is not first in decay"<<std::endl;
-    if (myEvent.secondInDecayMuon==0) std::swap(myGenMuons[0],myGenMuons[1]);
-    else std::cout<<"myEvent.secondInDecayMuon is "<<myEvent.secondInDecayMuon<<". I don't know what to do"<<std::endl;
-  }
-
-  myEvent.muon1EtVal = myGenMuons[0]->et();
-  myEvent.muon1EtaVal = myGenMuons[0]->eta();
-  myEvent.muon1PhiVal = myGenMuons[0]->phi();
-  myEvent.muon2EtVal = myGenMuons[1]->et();
-  myEvent.muon2EtaVal = myGenMuons[1]->eta();
-  myEvent.muon2PhiVal = myGenMuons[1]->phi();
+  myEvent.muon1EtVal  = myEvent.firstMuon->et();
+  myEvent.muon1EtaVal = myEvent.firstMuon->eta();
+  myEvent.muon1PhiVal = myEvent.firstMuon->phi();
+  myEvent.muon2EtVal  = myEvent.secondMuon->et();
+  myEvent.muon2EtaVal = myEvent.secondMuon->eta();
+  myEvent.muon2PhiVal = myEvent.secondMuon->phi();
 
   myEvent.dRparton1parton2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenPartons[1])));
-  myEvent.dRmuon1muon2Val   = sqrt(deltaR2(*(myGenMuons[0]),*(myGenMuons[1])));
-  myEvent.dRparton1muon1Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenMuons[0])));
-  myEvent.dRparton1muon2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenMuons[1])));
-  myEvent.dRparton2muon1Val = sqrt(deltaR2(*(myGenPartons[1]),*(myGenMuons[0])));
-  myEvent.dRparton2muon2Val = sqrt(deltaR2(*(myGenPartons[1]),*(myGenMuons[1]))); 
-  
-  //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
-  if(!myEvent.passesGenCuts()) {
-    std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
-    return false;
-  }
- 
+  myEvent.dRmuon1muon2Val     = sqrt(deltaR2(*(myGenMuons[0]),*(myGenMuons[1])));
+  myEvent.dRparton1muon1Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.firstMuon)));
+  myEvent.dRparton1muon2Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.secondMuon)));
+  myEvent.dRparton2muon1Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.firstMuon)));
+  myEvent.dRparton2muon2Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.secondMuon))); 
+
+  myEvent.myGenPartons = myGenPartons;
+  myEvent.myGenMuons = myGenMuons;
+
+  return true;
+}  
+//  //NOW WE'LL CHECK IF IT PASSES SOME BASIC GEN LEVEL CUTS
+//  if(!myEvent.passesGenCuts()) {
+//    std::cout << "ERROR! SKIPPING EVENT, LEADING PARTONS AND MUONS NOT OVER 20 GEV"<< std::endl;
+//    return false;
+//  }
+bool cmsWRextension::genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent) {
   //NOW THAT THE GEN MUONS AND PARTONS ARE SORTED OUT, WE'LL MATCH A GENJET TO EACH PARTON
   //FIRST WE'LL GET THE GENJETS THAT HAVE AT LEAST 10 GEV ET
+  
+  if (myEvent.myGenPartons.size() < 2) {
+    std::cout << "UH OH CAN'T ANALYZE JETS, NEVER FOUND PARTONS" << std::endl;
+    return false;
+  }
+  edm::Handle<std::vector<reco::GenJet>> genJets;
+  iEvent.getByToken(m_genJetsToken, genJets);
+
+  edm::Handle<std::vector<reco::GenJet>> AK8GenJets;
+  iEvent.getByToken(m_AK8genJetsToken, AK8GenJets);
+
+  std::vector<const reco::GenJet*> myGenJets;
+  std::vector<const reco::GenJet*> myAK8GenJets;
 
   //HERE WE COMPARE OUR EVENTS
+  float partonJetMatchDR = .4;
+  float partonAK8JetMatchDR = .8;
   double foundFirst = partonJetMatchDR;
   double foundSecond = partonJetMatchDR;
   const reco::GenJet* firstPartonGenJet=0; 
@@ -2852,8 +2882,8 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
   for (std::vector<reco::GenJet>::const_iterator iJet = genJets->begin(); iJet != genJets->end(); iJet++) {
     if (iJet->et()<20.0) continue;
-    float match1=sqrt(deltaR2(*iJet,*(myGenPartons[0])));
-    float match2=sqrt(deltaR2(*iJet,*(myGenPartons[1])));
+    float match1=sqrt(deltaR2(*iJet,*(myEvent.myGenPartons[0])));
+    float match2=sqrt(deltaR2(*iJet,*(myEvent.myGenPartons[1])));
     if (match1<partonJetMatchDR || match2<partonJetMatchDR){
       std::cout << "Pushing back jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
       myGenJets.push_back(&(*iJet));
@@ -2900,8 +2930,8 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
   foundSecond = partonAK8JetMatchDR;
   for (std::vector<reco::GenJet>::const_iterator iJet = AK8GenJets->begin(); iJet != AK8GenJets->end(); iJet++) {
     if (iJet->et()<20.0) continue;
-    float match1=sqrt(deltaR2(*iJet,*(myGenPartons[0])));
-    float match2=sqrt(deltaR2(*iJet,*(myGenPartons[1])));
+    float match1=sqrt(deltaR2(*iJet,*(myEvent.myGenPartons[0])));
+    float match2=sqrt(deltaR2(*iJet,*(myEvent.myGenPartons[1])));
     if (match1<partonAK8JetMatchDR || match2<partonAK8JetMatchDR) {
       std::cout << "Pushing back ak8 jet with et: "<<iJet->et()  <<" eta: "<<iJet->eta()<<" phi: "<<iJet->phi()<< " match1: "<<match1<<" match2: "<<match2 <<  std::endl;
 
@@ -2970,8 +3000,6 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
   myEvent.myGenJets = myGenJets;
   myEvent.myAK8GenJets = myAK8GenJets;
-  myEvent.myGenPartons = myGenPartons;
-  myEvent.myGenMuons = myGenMuons;
   
   
   return true;
@@ -3345,6 +3373,9 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
   myEvent.resSubleadMuJet1dR = dR_pair21;
   myEvent.resSubleadMuJet2dR = dR_pair22;
 
+  myEvent.resLeadMuJet1dR = dR_pair11;
+  myEvent.resLeadMuJet2dR = dR_pair12;
+
   return true;
 
 }
@@ -3352,74 +3383,38 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
 bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent) {
 
  // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
-  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenJets.size() < 2) {
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenPartons.size() < 2) {
     std::cout << "EVENT FAILS WR2016, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" jets"<< std::endl;
     return false;
   }
+  const reco::GenParticle* mu1 =  myEvent.firstMuon;
+  const reco::GenParticle* mu2 =  myEvent.secondMuon;
+  const reco::GenParticle*  jet1 = myEvent.myGenPartons[0];
+  const reco::GenParticle*  jet2 = myEvent.myGenPartons[1];
+  //CHECK DR ASSOCIATIONS
+  double dR_pair12 = ::wrTools::dR(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi());
+  double dR_pair21 = ::wrTools::dR(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi());
+  double dR_pair22 = ::wrTools::dR(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi());
+  double dR_pair11 = ::wrTools::dR(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi());
 
-  std::sort(myEvent.myGenJets.begin(),myEvent.myGenJets.end(),::wrTools::compareEtJetPointer);
+  if (dR_pair12 < 0.4) return false;
+  if (dR_pair21 < 0.4) return false;
+  if (dR_pair22 < 0.4) return false;
+  if (dR_pair11 < 0.4) return false;
+    
+  //CHECK 4 OBJECT MASS
+  double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
 
-  std::vector<const reco::GenJet*> mySelectedJets;
-  std::vector<const reco::GenParticle*> myPreSelectedMuons;
-  std::vector<const reco::GenParticle*> mySelectedMuons;
+  if (resMass < 600) return false;
 
-  bool foundpair=false;
-  for (std::vector<const reco::GenJet*>::iterator iJet = myEvent.myGenJets.begin(); iJet != myEvent.myGenJets.end(); iJet++) {
-    if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
-    for (std::vector<const reco::GenJet*>::iterator iJet2 = iJet+1; iJet2 != myEvent.myGenJets.end(); iJet2++) {
-      if ((*iJet)->et()<40.0 || fabs((*iJet)->eta())>2.4) continue;
-      if (sqrt(deltaR2(*(*iJet),*(*iJet2)))<0.4) continue;
-      foundpair=true;
-      mySelectedJets.push_back((*iJet));
-      mySelectedJets.push_back((*iJet2));
-      break;
-    }
-    if (foundpair) break;
-  }
-  if (!foundpair){
-    std::cout << "Event fails WR2016, not Jet pair is found" << std::endl;
-    return false;
-  }
-  if (mySelectedJets.size()!=2){
-    std::cout << "ERROR, BUG ON WR2016 NUMBER OF JETS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
-    return false;
-  }
+  myEvent.resolvedGENmass = resMass; 
 
-  for (std::vector<const reco::GenParticle*>::iterator iMuon = myEvent.myGenMuons.begin(); iMuon != myEvent.myGenMuons.end(); iMuon++) {
-    if ((*iMuon)->et()<53 || fabs((*iMuon)->eta())>2.4) continue;
-    if (sqrt(deltaR2(*(*iMuon),*mySelectedJets[0]))<0.4) continue;
-    if (sqrt(deltaR2(*(*iMuon),*mySelectedJets[1]))<0.4) continue;
-    myPreSelectedMuons.push_back((*iMuon));
-  }
-  if (myPreSelectedMuons.size()<2){
-    std::cout << "Event fails WR2016, was unable to get 2 muons." << std::endl;
-    return false;
-  }
-  foundpair=false;
-  for (std::vector<const reco::GenParticle*>::iterator iMuon = myPreSelectedMuons.begin(); iMuon != myPreSelectedMuons.end(); iMuon++) {
-    if ((*iMuon)->et()<60) continue;
-     for (std::vector<const reco::GenParticle*>::iterator iMuon2 = iMuon+1; iMuon2 != myPreSelectedMuons.end(); iMuon2++) {
-      if (sqrt(deltaR2(*(*iMuon),*(*iMuon2)))<0.4) continue;
-      foundpair=true;
-      mySelectedMuons.push_back((*iMuon));
-      mySelectedMuons.push_back((*iMuon2));
-      break;
-    }
-    if (foundpair) break;
-  }
-  if (!foundpair){
-    std::cout << "Event fails WR2016, not Muon pair is found" << std::endl;
-    return false;
-  }
-  if (mySelectedMuons.size()!=2){
-    std::cout << "ERROR, BUG ON WR2016 NUMBER OF MUONS. I SHOULDN'T BE ABLE TO GET THIS ERROR" << std::endl;
-    return false;
-  }
+  myEvent.resSubleadMuParton1dR = dR_pair21;
+  myEvent.resSubleadMuParton2dR = dR_pair22;
 
-  myEvent.leadSubleadingJetsMuonsMassVal = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).mass();
-  myEvent.leadSubleadingJetsMuonsPtVal   = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).pt();
-  myEvent.leadSubleadingJetsMuonsEtaVal  = (mySelectedJets[0]->p4() + mySelectedJets[1]->p4() + mySelectedMuons[0]->p4() + mySelectedMuons[1]->p4()).eta();
-  
+  myEvent.resLeadMuParton1dR = dR_pair11;
+  myEvent.resLeadMuParton2dR = dR_pair12;
+
   return true;
 }
 void cmsWRextension::loadCMSSWPath() {

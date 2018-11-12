@@ -20,6 +20,9 @@ eventBits::eventBits() {
 
   genSecondMuon = NULL;
 
+  firstMuon = NULL;
+  secondMuon = NULL;
+
   PVertex = NULL;
 
   daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
@@ -57,8 +60,16 @@ eventBits::eventBits() {
 
   resJetDR           = -10000.0; 
   resolvedRECOmass   = -10000.0; 
+  resolvedGENmass   = -10000.0; 
   resSubleadMuJet1dR = -10000.0; 
   resSubleadMuJet2dR = -10000.0;  
+  resLeadMuJet1dR = -10000.0; 
+  resLeadMuJet2dR = -10000.0;  
+
+  resSubleadMuParton1dR = -10000.0; 
+  resSubleadMuParton2dR = -10000.0;  
+  resLeadMuParton1dR = -10000.0; 
+  resLeadMuParton2dR = -10000.0;  
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;

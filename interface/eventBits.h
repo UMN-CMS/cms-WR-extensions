@@ -110,6 +110,9 @@ public:
   const pat::Muon*                  myMuonCand;
   const pat::Muon*                  mySubleadMuon;
 
+  const reco::GenParticle*          firstMuon;
+  const reco::GenParticle*          secondMuon;
+
   const reco::GenParticle*          genSecondMuon;
 
   const reco::Vertex*               PVertex;
@@ -187,8 +190,16 @@ public:
   //RESOLVED ANA   
   double resJetDR;
   double resolvedRECOmass;
+  double resolvedGENmass;
   double resSubleadMuJet1dR;
   double resSubleadMuJet2dR;
+  double resLeadMuJet1dR;
+  double resLeadMuJet2dR;
+
+  double resSubleadMuParton1dR;
+  double resSubleadMuParton2dR;
+  double resLeadMuParton1dR;
+  double resLeadMuParton2dR;
 
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
