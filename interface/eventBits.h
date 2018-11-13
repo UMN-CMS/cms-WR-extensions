@@ -32,6 +32,8 @@ public:
   double FSBweight_E_noISO;
   double FSBweight_B_noISO;
 
+  bool isMC;
+
   std::string outputTag;  //LABELLING THE DATA
 
   //DOES THIS EVENT COUNT AS AN EVENT OR A NEGATIVE EVENT?
