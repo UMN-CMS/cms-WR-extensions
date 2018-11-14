@@ -608,12 +608,35 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if (passFSBbin(myRECOevent, true, 50) && !m_doFast) {
         m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
       }
+      //ABCD BIN DEFINITION
+      if (passFSBbin(myRECOevent, false, 200)) {
+        bool ABorCD = passABCD(myRECOevent, true); //SIGMAIETAIETA
+        bool ACorBD = passABCD(myRECOevent, false); //TRACKISO
+        if (!ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_A.fill(myRECOevent, 1); 
+        if ( ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_B.fill(myRECOevent, 1); 
+        if (!ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_C.fill(myRECOevent, 1); 
+        if ( ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_D.fill(myRECOevent, 1); 
+      }
     }
     std::cout << "DONE WITH FSB" << std::endl;
   }
   std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
   m_allEvents.fill(myRECOevent, 1);
 }
+// A B
+// C D
+// DON'T CALL THIS UNLESS YOU PASS THE NOISO ELECTRON EVENT SELECTION
+bool cmsWRextension::passABCD(eventBits& myEvent, bool AvB /*versus AvC */) {
+  const vid::CutFlowResult* vidResult =  myEvent.myElectronCand_noISO->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+  
+  if(AvB) { 
+    return vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA);
+  }
+  if(!AvB) {
+    return vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO);
+  }
+  return false;            
+}                                                                               
 bool cmsWRextension::passFSBbin(eventBits& myEvent, bool ISO, int ptCut) {
   //LOGIC IS REPEATED FOR ISO AND NONISO SELECTIONS
   if (ISO) {
@@ -625,7 +648,7 @@ bool cmsWRextension::passFSBbin(eventBits& myEvent, bool ISO, int ptCut) {
     if (myEvent.myElectronJetPairs_noISO.size() < 1) return false;
     if (myEvent.selectedElectron_noISO_Pt >= ptCut) return true;
   }
-  std::cout << "WELCOME TO THE TWILIGHT ZONE" << std::endl;
+  //std::cout << "WELCOME TO THE TWILIGHT ZONE" << std::endl;
   return false;
 }
 bool cmsWRextension::sameSign(eventBits& myEvent, bool noISO) {
@@ -2025,20 +2048,19 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
     const bool heepIDVID = vidResult->cutFlowPassed();
 
     //MUST PASS ALL BUT ISO
-    if (!heepIDVID) {
-      if ( vidResult->getCutResultByIndex(cutnrs::HEEPV70::ET           )  == true && 
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::ETA          )  == true && 
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::DETAINSEED   )  == true &&   
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::DPHIIN       )  == true &&    
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA)  == false &&       
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::E2X5OVER5X5  )  == true &&   
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::HADEM        )  == true &&     
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO       )  == false &&  //MUST FAIL TRACK ISOLATION 
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   )  == true &&     
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          )  == true &&  
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&  
-           vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true     
-        ) {
+    if ( vidResult->getCutResultByIndex(cutnrs::HEEPV70::ET           )  == true && 
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::ETA          )  == true && 
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::DETAINSEED   )  == true &&   
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::DPHIIN       )  == true &&    
+        // vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA)  == false && we don't require ISO, we select for it later       
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::E2X5OVER5X5  )  == true &&   
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::HADEM        )  == true &&     
+        // vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO       )  == false &&  //MUST FAIL TRACK ISOLATION 
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   )  == true &&     
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          )  == true &&  
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&  
+         vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true     
+    ) {
         if (iElec->pt() < 50) {
           myEvent.nAdditionalHEEP_noISO++;    
         }
@@ -2048,8 +2070,8 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
         if (iElec->pt() >= 50){
           highPTelectrons50_noISO.push_back(&(*iElec));
         }
-      } 
-    } else {
+    }
+    if (heepIDVID) {
       //PHASE SPACE CUTS
       std::cout << "Electron pT: " << iElec->pt() << std::endl;
       if( iElec->pt() < 50){
@@ -2866,8 +2888,9 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
       if ( abs(iParticle->mother()->pdgId() == 9900012) || abs(iParticle->mother()->pdgId() == 9900014) || abs(iParticle->mother()->pdgId() == 9900016)) {
         if ( abs(iParticle->pdgId()) == 13 ) {
           std::cout << "SECOND MUON" << std::endl;
-          myEvent.secondMuon = &(*(iParticle)); 
-          myGenMuons.push_back(&(*(iParticle)));
+          const reco::GenParticle* secondMu = ::wrTools::evolveParticle(&(*(iParticle)));
+          myEvent.secondMuon = secondMu; 
+          myGenMuons.push_back(secondMu);
         }
         if ( abs(iParticle->pdgId()) <= 6 ) { //it's a quark
           std::cout << "VIRTUAL WR DAUGHTERS: QUARKS"<<std::endl;
@@ -3555,6 +3578,11 @@ cmsWRextension::beginJob()
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 3, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 3, m_outputTag, 1);
+
+    m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 3, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 3, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 3, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
   }
   if (m_doGen && !m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
@@ -3589,6 +3617,11 @@ cmsWRextension::beginJob()
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 2, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 2, m_outputTag, 1);
     m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 2, m_outputTag, 1);
+
+    m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 2, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 2, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 2, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
   }
   if (m_doReco && m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;

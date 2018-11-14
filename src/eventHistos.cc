@@ -302,7 +302,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
                                                                                
     m_resSubleadMuParton1dR   = m_histoFolder.make<TH1D>("resSubleadMuParton1dR",";resolved second muon lead parton dR"   , 80, 0.0, 8.0);
     m_resSubleadMuParton2dR   = m_histoFolder.make<TH1D>("resSubleadMuParton2dR",";resolved second muon sublead parton dR", 80, 0.0, 8.0);
-    m_resLeadMuParton2dR      = m_histoFolder.make<TH1D>("resLeadMuParton1dR"   ,";resolved first muon lead parton dR"    , 80, 0.0, 8.0);
+    m_resLeadMuParton1dR      = m_histoFolder.make<TH1D>("resLeadMuParton1dR"   ,";resolved first muon lead parton dR"    , 80, 0.0, 8.0);
     m_resLeadMuParton2dR      = m_histoFolder.make<TH1D>("resLeadMuParton2dR"   ,";resolved first muon sublead parton dR" , 80, 0.0, 8.0);
 
 
@@ -554,12 +554,11 @@ void eventHistos::fillGen(eventBits& event) {
   std::cout << "FILLING 9"<<std::endl;
 
 
-
-
-
-
-
-
+  m_resolvedGENmass      ->Fill(event.resolvedGENmass      , weight);
+  m_resSubleadMuParton1dR->Fill(event.resSubleadMuParton1dR, weight);
+  m_resSubleadMuParton2dR->Fill(event.resSubleadMuParton2dR, weight);
+  m_resLeadMuParton1dR   ->Fill(event.resLeadMuParton1dR   , weight);
+  m_resLeadMuParton2dR   ->Fill(event.resLeadMuParton2dR   , weight);
 
 
 
