@@ -115,6 +115,10 @@ if (mode == "STACK"):
     histoB = histFromStack(fileB.Get(plotNameB)) 
     histoC = histFromStack(fileC.Get(plotNameC)) 
 
+histoA.Sumw2()
+histoB.Sumw2()
+histoC.Sumw2()
+
 nBinsA = histoA.GetNbinsX()
 nBinsB = histoB.GetNbinsX()
 nBinsC = histoC.GetNbinsX()
@@ -135,6 +139,17 @@ for ibin in range(1,nBinsA+1) :
     integralA = integralA + histoA.GetBinContent(ibin) 
     integralB = integralB + histoB.GetBinContent(ibin) 
     integralC = integralC + histoC.GetBinContent(ibin) 
+    "ErrDiff:"
+    errSqrA = abs (histoA.GetBinContent(ibin) ) ** 0.5
+    errA = histoA.GetBinError(ibin)
+    if ( errA != errSqrA ): print "Sqrt: "+str(errSqrA)+" vs Err: "+str(errA)
+    errSqrB = abs (histoB.GetBinContent(ibin) ) ** 0.5
+    errB = histoB.GetBinError(ibin)
+    if ( errB != errSqrB ): print "Sqrt: "+str(errSqrB)+" vs Err: "+str(errB)
+    errSqrC = abs (histoC.GetBinContent(ibin) ) ** 0.5
+    errC = histoC.GetBinError(ibin)
+    if ( errC != errSqrC ): print "Sqrt: "+str(errSqrC)+" vs Err: "+str(errC)
+
     print "Integrals: "
     print integralA
     print integralB
@@ -154,6 +169,7 @@ if (integralA == 0.0 or integralB == 0.0 or integralC == 0.0):
 ratioHisto = copy.deepcopy(histoA)
 ratioHisto.Scale(0.0)
 
+ratioHisto.Sumw2()
 
 for ibin in range(1,nBinsA+1):  
     if histoA.GetBinContent(ibin) == 0:
@@ -162,6 +178,7 @@ for ibin in range(1,nBinsA+1):
 
     newBinVal = ( histoB.GetBinContent(ibin) * histoC.GetBinContent(ibin) ) / histoA.GetBinContent(ibin)
     newBinErr = ( ( histoB.GetBinError(ibin) * ( histoC.GetBinContent(ibin) / histoA.GetBinContent(ibin) ) )**2.0 + ( histoC.GetBinError(ibin) * ( histoB.GetBinContent(ibin) / histoA.GetBinContent(ibin) ) )**2.0 + ( histoA.GetBinError(ibin) * ( ( histoB.GetBinContent(ibin) * histoC.GetBinContent(ibin) ) / ( histoA.GetBinContent(ibin) )**2.0 ) )**2.0 ) ** 0.5
+    print str(histoB.GetBinContent(ibin))+"+-"+str(histoB.GetBinError(ibin))+" * "+str(histoC.GetBinContent(ibin))+"+-"+str(histoC.GetBinError(ibin))+" / "+str(histoA.GetBinContent(ibin))+"+-"+str(histoA.GetBinError(ibin))+" = "+str(newBinVal)+"+-"+str(newBinErr)
     
 
     ratioHisto.SetBinContent(ibin, newBinVal)
@@ -207,6 +224,10 @@ c.SaveAs(output+"_ABCD.png")
 ratioHisto.SaveAs(output+"_ABCD_D.root")
 ratioHisto.SaveAs(output+"_ABCD_D.png")
 
+print histoA.Integral()
+print histoB.Integral()
+print histoC.Integral()
+print ratioHisto.Integral()
 histoA.Rebin(nBinsA)
 histoB.Rebin(nBinsB)
 histoC.Rebin(nBinsC)
@@ -216,5 +237,10 @@ print "A,B,C:"
 print str(histoA.GetBinContent(1)) + "+-" + str(histoA.GetBinError(1))
 print str(histoB.GetBinContent(1)) + "+-" + str(histoB.GetBinError(1))
 print str(histoC.GetBinContent(1)) + "+-" + str(histoC.GetBinError(1))
-print "Estimates D:"
+print "Estimates D per bin:"
 print str(ratioHisto.GetBinContent(1)) + "+-" + str(ratioHisto.GetBinError(1))
+dScale = ( histoB.GetBinContent(1) * histoC.GetBinContent(1) ) / histoA.GetBinContent(1)
+dErr = ( ( histoB.GetBinError(1) * ( histoC.GetBinContent(1) / histoA.GetBinContent(1) ) )**2.0 + ( histoC.GetBinError(1) * ( histoB.GetBinContent(1) / histoA.GetBinContent(1) ) )**2.0 + ( histoA.GetBinError(1) * ( ( histoB.GetBinContent(1) * histoC.GetBinContent(1) ) / ( histoA.GetBinContent(1) )**2.0 ) )**2.0 ) ** 0.5
+print "Estimate D integral:"
+print str(dScale) + "+-" + str(dErr)
+
