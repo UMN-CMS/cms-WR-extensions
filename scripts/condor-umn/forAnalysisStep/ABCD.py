@@ -216,11 +216,11 @@ for ibin in range(1,nBinsA+1):
     ratioHisto.SetBinContent(ibin, newBinVal)
     ratioHisto.SetBinError(ibin, newBinErr)
 
- THIS IS MATHEMATICALLY DIFFERENT
-ratioHisto = copy.deepcopy(histoB)
-
-ratioHisto.Multiply(histoC)
-ratioHisto.Divide(histoA)
+#THIS IS MATHEMATICALLY DIFFERENT
+#ratioHisto = copy.deepcopy(histoB)
+#
+#ratioHisto.Multiply(histoC)
+#ratioHisto.Divide(histoA)
 
 
 #DRAW TIME

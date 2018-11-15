@@ -592,10 +592,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
               else m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
             }
             if (passFSBbin(myRECOevent, false, 200)) {
+	      std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt200_noISO" << std::endl;
               if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
               else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
             }
             if (passFSBbin(myRECOevent, false, 50)) {
+	      std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt50_noISO" << std::endl;
               m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
 	    }
           }
@@ -1565,7 +1567,7 @@ int cmsWRextension::subLeadingMuonZMass_Nominal(const edm::Event& iEvent, eventB
 
   if(myEvent.subleadMuon_selMuonMass < 100 && myEvent.subleadMuon_selMuonMass > 80){ 
     return 1;
-  }else if(myEvent.subleadMuon_selMuonMass > 200){
+  }else if(myEvent.subleadMuon_selMuonMass > 200 && myEvent.subleadMuon_selMuonMass > 50){
     return 2;
   }else{
     return 0;
@@ -1591,7 +1593,7 @@ int cmsWRextension::subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBit
 
   if(myEvent.subleadMuon_selMuonMass < 100 && myEvent.subleadMuon_selMuonMass > 80){
     return 1;
-  }else if(myEvent.subleadMuon_selMuonMass > 200){
+  }else if(myEvent.subleadMuon_selMuonMass > 200 && myEvent.subleadMuon_selMuonMass > 50){
     return 2;
   }else{
     return 0;
@@ -1617,7 +1619,7 @@ int cmsWRextension::subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventB
 
   if(myEvent.subleadMuon_selMuonMass < 100 && myEvent.subleadMuon_selMuonMass > 80){
     return 1;
-  }else if(myEvent.subleadMuon_selMuonMass > 200){
+  }else if(myEvent.subleadMuon_selMuonMass > 200 && myEvent.subleadMuon_selMuonMass > 50){
     return 2;
   }else{
     return 0;
@@ -1643,7 +1645,7 @@ int cmsWRextension::subLeadingMuonZMass_JERUp(const edm::Event& iEvent, eventBit
 
   if(myEvent.subleadMuon_selMuonMass < 100 && myEvent.subleadMuon_selMuonMass > 80){
     return 1;
-  }else if(myEvent.subleadMuon_selMuonMass > 200){
+  }else if(myEvent.subleadMuon_selMuonMass > 200 && myEvent.subleadMuon_selMuonMass > 50){
     return 2;
   }else{
     return 0;
@@ -1669,7 +1671,7 @@ int cmsWRextension::subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventB
 
   if(myEvent.subleadMuon_selMuonMass < 100 && myEvent.subleadMuon_selMuonMass > 80){
     return 1;
-  }else if(myEvent.subleadMuon_selMuonMass > 200){
+  }else if(myEvent.subleadMuon_selMuonMass > 200 && myEvent.subleadMuon_selMuonMass > 50){
     return 2;
   }else{
     return 0;
@@ -1685,7 +1687,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200){
+  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
     return false;
   }else{
     return true;
@@ -1700,7 +1702,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200){
+  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
     return true;
   }else{
     return false;
@@ -1715,7 +1717,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECUp(const edm::Event& 
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200){
+  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
     return true;
   }else{
     return false;
@@ -1730,7 +1732,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECDown(const edm::Event
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200){
+  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
     return true;
   }else{
     return false;
@@ -1745,7 +1747,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERUp(const edm::Event& 
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200){
+  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
     return true;
   }else{
     return false;
@@ -1760,7 +1762,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERDown(const edm::Event
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200){
+  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
     return true;
   }else{
     return false;
@@ -1802,10 +1804,10 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent
   myEvent.subleadMuonEt           = subleadMuon->et();
 
   if(nonISO)
-    if (myEvent.subleadMuon_selElectronMass_EleNonISO < 200)
+    if (myEvent.subleadMuon_selElectronMass_EleNonISO < 200 && myEvent.subleadMuon_selMuonMass > 50)
       return true;
   if(!nonISO)
-    if (myEvent.subleadMuon_selElectronMass < 200) 
+    if (myEvent.subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50) 
       return true;
   return false;
 }
