@@ -266,5 +266,5 @@ ratioHisto.SaveAs(output+"_ABCD_D.png")
 #DOUBLE CHECKING
 ratioHisto.Rebin(nBinsA)
 
-print "Estimate D integral: "
+print "Estimate D integral: NOTE: uncertainty here is unreliable as the ratioHisto does not contain the bin entry weights of the original distributions"
 print str(ratioHisto.GetBinContent(1))+"+-"+str(ratioHisto.GetBinError(1))
