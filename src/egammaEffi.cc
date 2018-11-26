@@ -25,9 +25,11 @@ void egammaEffi::Initialize() {
   
 }
 
-double egammaEffi::ScaleFactor(double ElectronEta, double ElectronPt) {
+std::vector<double> egammaEffi::ScaleFactor(double ElectronEta, double ElectronPt) {
 
   double scaleFactor = 0.;
+  double scaleFactor_Up = 0;
+  double scaleFactor_Down = 0.;
 
   int etaBin = -1;
   int ptBin = -1;
@@ -36,19 +38,35 @@ double egammaEffi::ScaleFactor(double ElectronEta, double ElectronPt) {
     ElectronPt = 499;
   }
 
+  std::vector<double> egammaWeights;
+
   etaBin = m_egamma_sf->GetXaxis()->FindBin(ElectronEta);
   ptBin = m_egamma_sf->GetYaxis()->FindBin(ElectronPt);
 
   if(etaBin == 0 || ptBin == 0) {
     std::cout << "egammaEffi::ScaleFactor : WARNING PT OR ETA IN UNDERFLOW : ETA : "<<etaBin<<" : PT : "<<ptBin << std::endl;
-    return scaleFactor;
+    egammaWeights.push_back(scaleFactor);
+    egammaWeights.push_back(scaleFactor_Up);
+    egammaWeights.push_back(scaleFactor_Down);
+    return egammaWeights;
   }
   if(etaBin == (m_nEtaBins+1) || ptBin == (m_nEtaBins+1) ){
     std::cout << "egammaEffi::ScaleFactor : WARNING PT OR ETA IN OVERFLOW  : ETA : "<<etaBin<<" : PT : "<<ptBin << std::endl;
-    return scaleFactor;
+    egammaWeights.push_back(scaleFactor);
+    egammaWeights.push_back(scaleFactor_Up);
+    egammaWeights.push_back(scaleFactor_Down);
+    return egammaWeights;
   }
-  
-  return m_egamma_sf->GetBinContent(etaBin, ptBin);
+
+  scaleFactor = m_egamma_sf->GetBinContent(etaBin, ptBin);
+  scaleFactor_Up = m_egamma_sf->GetBinContent(etaBin, ptBin) + m_egamma_sf->GetBinError(etaBin, ptBin);
+  scaleFactor_Down = m_egamma_sf->GetBinContent(etaBin, ptBin) - m_egamma_sf->GetBinError(etaBin, ptBin);
+
+
+  egammaWeights.push_back(scaleFactor);
+  egammaWeights.push_back(scaleFactor_Up);
+  egammaWeights.push_back(scaleFactor_Down);
+  return egammaWeights;
 
 }
 

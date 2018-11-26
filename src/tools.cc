@@ -88,6 +88,32 @@ namespace wrTools {
 
     return false;
   }
+  //TAKES AN INITIAL GEN PARTICLE AND EVOLVES IT TO A STATUS OVER 50
+  const reco::GenParticle* evolveParticle(const reco::GenParticle* ip) {
+    bool updated = true;
+    const reco::GenParticle* fp = ip;
+    while (fp->status() < 50 && fp->numberOfDaughters() > 0 && updated) {
+      bool FoundDaughter = false;
+      updated = false;
+      for (size_t iii = 0; iii < fp->numberOfDaughters(); iii++) {
+        if (fp->daughter(iii)->pdgId() == fp->pdgId()) {
+          fp = dynamic_cast<const reco::GenParticle*> (fp->daughter(iii));
+          FoundDaughter = true;
+          updated = true;
+        }
+      }
+      if (!FoundDaughter) {
+        std::cout << "Okay we didn't find the daughter the pdgid of the orginal is " << fp->pdgId() << std::endl;
+        for (size_t iii = 0; iii < fp->numberOfDaughters(); iii++) {
+          std::cout << "daughter number " << iii << " pdgid is " << fp->daughter(iii)->pdgId() << std::endl;
+        }
+        return NULL;
+      }
+    }
+    return fp; 
+
+
+  }
   int characterizeEvent(std::vector<const reco::GenParticle*> myGenParticles) {
     
 

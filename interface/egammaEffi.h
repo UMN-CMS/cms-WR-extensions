@@ -25,7 +25,7 @@ class egammaEffi {
   public:
   egammaEffi();
   void Initialize();
-  double ScaleFactor(double ElectronEta, double ElectronPt);
+  std::vector<double> ScaleFactor(double ElectronEta, double ElectronPt);
 
 
 

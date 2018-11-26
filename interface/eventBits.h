@@ -111,6 +111,10 @@ public:
   const pat::Electron*              myElectronCand_noISO;
   const pat::Muon*                  myMuonCand;
   const pat::Muon*                  mySubleadMuon;
+  const pat::Muon*                  my2ndHighPtMuonCand;
+
+  const reco::GenParticle*          firstMuon;
+  const reco::GenParticle*          secondMuon;
 
   const reco::GenParticle*          genSecondMuon;
 
@@ -153,6 +157,7 @@ public:
   int    mynPartons     ;
   int	 nAdditionalHEEP;
   int	 nAdditionalHEEP_noISO;
+  int    nHighPtMuonsOutsideJet;
 
   int    myEventFlavor  ;
 
@@ -178,6 +183,8 @@ public:
   double HEEP_SF_E      ;
   double HEEP_SF_B      ;
   double egamma_SF      ;
+  double egamma_SF_Up   ;
+  double egamma_SF_Down ;
 
   double HEEP_SF_noISO        ;
   double HEEP_SF_E_noISO      ;
@@ -185,6 +192,21 @@ public:
   double egamma_SF_noISO      ;
 
   double myGenLSF;
+
+  //RESOLVED ANA   
+  double resJetDR;
+  double resolvedRECOmass;
+  double resolvedGENmass;
+  double resSubleadMuJet1dR;
+  double resSubleadMuJet2dR;
+  double resLeadMuJet1dR;
+  double resLeadMuJet2dR;
+
+  double resSubleadMuParton1dR;
+  double resSubleadMuParton2dR;
+  double resLeadMuParton1dR;
+  double resLeadMuParton2dR;
+
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
   double selElectron_barrel_dPhiIn          ; 
@@ -337,6 +359,7 @@ public:
   double leadAK8JetElectronEtaVal;
   double leadAK8JetElectronEtaVal_noISO;
 
+  double leadAK8JetMuonDR;
   double leadAK8JetMuonPhiVal;
   double leadAK8JetMuonPhiValGEN;
   double leadAK8JetElectronPhiVal;
@@ -360,6 +383,10 @@ public:
   double selectedMuonPhi;
   double selectedMuonEta;
 
+  double secondHighPtMuonPt;
+  double secondHighPtMuonPhi;
+  double secondHighPtMuonEta;
+  double selectedJetSecondHighPtMuonDR;
 
   double selectedJetPt;
   double selectedJetPhi;
@@ -402,6 +429,7 @@ public:
   double selectedJetMass_JERDown;
   double selectedJetTau21_JERDown;
 
+  double subleadMuonPt;
   double subleadMuonEt;
   double subleadMuonEta;
   double subleadMuonPhi;

@@ -17,8 +17,12 @@ eventBits::eventBits() {
   mySubleadMuon = NULL;
   myElectronCand = NULL;
   myMuonCand = NULL;
+  my2ndHighPtMuonCand = NULL;
 
   genSecondMuon = NULL;
+
+  firstMuon = NULL;
+  secondMuon = NULL;
 
   PVertex = NULL;
 
@@ -55,6 +59,18 @@ eventBits::eventBits() {
 
   mydRlsfLep_subleadMuon = -10000.0;
 
+  resJetDR           = -10000.0; 
+  resolvedRECOmass   = -10000.0; 
+  resolvedGENmass   = -10000.0; 
+  resSubleadMuJet1dR = -10000.0; 
+  resSubleadMuJet2dR = -10000.0;  
+  resLeadMuJet1dR = -10000.0; 
+  resLeadMuJet2dR = -10000.0;  
+
+  resSubleadMuParton1dR = -10000.0; 
+  resSubleadMuParton2dR = -10000.0;  
+  resLeadMuParton1dR = -10000.0; 
+  resLeadMuParton2dR = -10000.0;  
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
@@ -157,6 +173,11 @@ eventBits::eventBits() {
   selectedMuonPhi = -10000.0;
   selectedMuonEta = -10000.0;
 
+  secondHighPtMuonPt = -10000.0;
+  secondHighPtMuonPhi = -10000.0;
+  secondHighPtMuonEta = -10000.0;
+  selectedJetSecondHighPtMuonDR = -10000.0;
+
   selectedElectronPt = -10000.0;
   selectedElectronPhi = -10000.0;
   selectedElectronEta = -10000.0;
@@ -179,6 +200,7 @@ eventBits::eventBits() {
   selectedJet_EleNoISO_Mass= -10000.0;
   selectedJet_EleNoISO_Tau21= -10000.0;
 
+  subleadMuonPt = -10000.0;
   subleadMuonEt = -10000.0;
   subleadMuonEta = -10000.0;
   subleadMuonPhi = -10000.0;
@@ -212,6 +234,7 @@ eventBits::eventBits() {
   mynBs              = -1;
   mynPartons         = -1;
   nAdditionalHEEP    = -1;
+  nHighPtMuonsOutsideJet = -1;
 
   myEventFlavor      = -1;
 

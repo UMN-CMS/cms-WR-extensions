@@ -76,6 +76,7 @@ class eventHistos {
   TH1D* m_nPartons     ;
   TH1D* m_nAdditionalHEEP;
   TH1D* m_nAdditionalHEEP_noISO;
+  TH1D* m_nHighPtMuonsOutsideJet;
 
   TH1D* m_eventFlavor       ;
 
@@ -209,6 +210,7 @@ class eventHistos {
   TH1D* m_leadAK8JetElectronEta;
   TH1D* m_leadAK8JetElectronEta_noISO;
 
+  TH1D* m_leadAK8JetMuonDR;
   TH1D* m_leadAK8JetMuonPhi;
   TH1D* m_leadAK8JetElectronPhi;
   TH1D* m_leadAK8JetElectronPhi_noISO;
@@ -223,6 +225,11 @@ class eventHistos {
   TH1D* m_selectedMuonPt; 
   TH1D* m_selectedMuonPhi;
   TH1D* m_selectedMuonEta;
+
+  TH1D* m_secondHighPtMuonPt;
+  TH1D* m_secondHighPtMuonPhi;
+  TH1D* m_secondHighPtMuonEta;
+  TH1D* m_selectedJetSecondHighPtMuonDR;
 
   TH1D* m_selectedElectronPt; 
   TH1D* m_selectedElectronPhi;
@@ -259,6 +266,7 @@ class eventHistos {
   TH1D* m_selectedJet_EleNoISO_Mass;
   TH1D* m_selectedJet_EleNoISO_Tau21;
 
+  TH1D* m_subleadMuonPt;
   TH1D* m_subleadMuonEt;
   TH1D* m_subleadMuonEta;
   TH1D* m_subleadMuonPhi;
@@ -288,7 +296,20 @@ class eventHistos {
   TH1D* m_subleadMuon_selMuonPt;
 
   TH1D* m_dRmuon2;
+  //RESOLVED ANA   
+  TH1D* m_resJetDR;
+  TH1D* m_resolvedRECOmass;
+  TH1D* m_resolvedGENmass;
+  TH1D* m_resSubleadMuJet1dR;
+  TH1D* m_resSubleadMuJet2dR;
+  TH1D* m_resLeadMuJet1dR;
+  TH1D* m_resLeadMuJet2dR;
 
+  TH1D* m_resSubleadMuParton1dR;
+  TH1D* m_resSubleadMuParton2dR;
+  TH1D* m_resLeadMuParton1dR;
+  TH1D* m_resLeadMuParton2dR;
+//
   TH1D* m_MET;
   TH1D* m_MET_selJetdPhi;
   TH1D* m_MET_selElectrondPhi;

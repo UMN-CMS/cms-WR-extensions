@@ -135,7 +135,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
       bool resolvedJetSelection(const edm::Event& iEvent, eventBits& myEvent);
-      bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion);
+      bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
+      bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion, bool ISO);
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedMuonSelection(const edm::Event&, eventBits&);
@@ -153,6 +154,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool subLeadingMuonZMass_FlavorSideband_JERDown(const edm::Event& iEvent, eventBits& myEvent);
       bool subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO);
       bool passFSBbin(eventBits& myEvent, bool ISO, int ptCut);
+      bool passABCD(eventBits& myEvent, bool AvB /*versus AvC */);
       bool METselection(const edm::Event& iEvent, eventBits& myEvent);
       bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
       bool metCuts(const edm::Event& iEvent, eventBits& myEvent);
@@ -190,6 +192,11 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_samesign;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_all;
+
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_A;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_B;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_C;
+      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_D;
 
       HEEP myHEEP;
       egammaEffi myEgammaEffi;
