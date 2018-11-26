@@ -544,7 +544,6 @@ void eventHistos::fillGen(eventBits& event) {
   //m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal, weight);
 
 
-
   m_resolvedGENmass      ->Fill(event.resolvedGENmass      , weight);
   m_resSubleadMuParton1dR->Fill(event.resSubleadMuParton1dR, weight);
   m_resSubleadMuParton2dR->Fill(event.resSubleadMuParton2dR, weight);

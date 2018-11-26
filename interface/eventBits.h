@@ -116,6 +116,9 @@ public:
   const reco::GenParticle*          firstMuon;
   const reco::GenParticle*          secondMuon;
 
+  const reco::GenParticle*          firstMuon;
+  const reco::GenParticle*          secondMuon;
+
   const reco::GenParticle*          genSecondMuon;
 
   const reco::Vertex*               PVertex;
