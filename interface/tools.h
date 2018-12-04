@@ -13,6 +13,7 @@
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/PatCandidates/interface/TriggerObjectStandAlone.h"
 #include "BaconAna/DataFormats/interface/TAddJet.hh"
+#include "DataFormats/PatCandidates/interface/VIDCutFlowResult.h"
 #include "TLorentzVector.h"
 #include "TRandom3.h"
 #include "TMath.h"
@@ -39,6 +40,7 @@ namespace wrTools {
  int characterizeEvent(std::vector<const reco::GenParticle*> myGenParticles);
  std::vector<const pat::TriggerObjectStandAlone*> getMatchedObjs(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const float maxDeltaR=0.1);
  bool checkFilters(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const std::vector<std::string>& filterNames,const float maxDeltaR=0.1);
+ void printCutFlowResult(vid::CutFlowResult &cutflow);
 
 
 
