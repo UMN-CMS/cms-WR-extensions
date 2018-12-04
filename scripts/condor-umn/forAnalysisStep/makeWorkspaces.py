@@ -8,11 +8,14 @@ import sets
 import collections
 import math
 import tdrstyle
-
+import array
 
 def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, Blind, weights):
 
     histoDict = {}
+
+    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 6000]
+    binBoundariesArray = array.array('d', binBoundaries)
 
     for sample in sampleNames:
 	print "sample: ", sample
@@ -22,153 +25,169 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 
 	if sample == 'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8':
 	    
-	    histoDict['TT'] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
-	    histoDict['TT'].SetDirectory(0)
-	    histoDict['TT'].SetName('TT')
+            temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+	    histoDict['TT'] = temp.Rebin(14, 'TT', binBoundariesArray)
+            histoDict['TT'].SetDirectory(0)
 	    histoDict['TT'].Scale(weights[sample])
 
 	    for syst in systs:
-		histoDict['TT_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
-		histoDict['TT_%sUp'%(syst)].SetDirectory(0)
-		histoDict['TT_%sUp'%(syst)].SetName('TT_%sUp'%(syst))
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		histoDict['TT_%sUp'%(syst)] = temp.Rebin(14, 'TT_%sUp'%(syst), binBoundariesArray)
+                histoDict['TT_%sUp'%(syst)].SetDirectory(0)
 		histoDict['TT_%sUp'%(syst)].Scale(weights[sample])
-        	histoDict['TT_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+        	temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+                histoDict['TT_%sDown'%(syst)] = temp.Rebin(14, 'TT_%sDown'%(syst), binBoundariesArray)
 		histoDict['TT_%sDown'%(syst)].SetDirectory(0)
-        	histoDict['TT_%sDown'%(syst)].SetName('TT_%sDown'%(syst))
 		histoDict['TT_%sDown'%(syst)].Scale(weights[sample])
 
 	elif sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
 
 	    if sample == 'WW_TuneCUETP8M1_13TeV-pythia8':
-		histoDict['DiBoson'] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		histoDict['DiBoson'] = temp.Rebin(14, 'DiBoson', binBoundariesArray)
 		histoDict['DiBoson'].SetDirectory(0)
-		histoDict['DiBoson'].SetName('DiBoson')
             	histoDict['DiBoson'].Scale(weights[sample])
 		for syst in systs:
-		    histoDict['DiBoson_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		    histoDict['DiBoson_%sUp'%(syst)] = temp.Rebin(14, 'DiBoson_%sUp'%(syst), binBoundariesArray)
 	            histoDict['DiBoson_%sUp'%(syst)].SetDirectory(0)
-	            histoDict['DiBoson_%sUp'%(syst)].SetName('DiBoson_%sUp'%(syst))
 	            histoDict['DiBoson_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['DiBoson_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+		    histoDict['DiBoson_%sDown'%(syst)] = temp.Rebin(14, 'DiBoson_%sDown'%(syst), binBoundariesArray)
                     histoDict['DiBoson_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['DiBoson_%sDown'%(syst)].SetName('DiBoson_%sDown'%(syst))
                     histoDict['DiBoson_%sDown'%(syst)].Scale(weights[sample])
 
 	    else:
-		histoDict['DiBoson'].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass').Rebin(14, 'DiBoson_temp', binBoundariesArray)
+		histoDict['DiBoson'].Add(temp,weights[sample])
 		for syst in systs:
-		    histoDict['DiBoson_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)),weights[sample])
-                    histoDict['DiBoson_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)).Rebin(14, 'DiBoson_temp', binBoundariesArray)
+		    histoDict['DiBoson_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(14, 'DiBoson_temp', binBoundariesArray)
+                    histoDict['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
 	elif sample == 'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8' or sample == 'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin' or sample == 'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin' or sample == 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4' or sample == 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4':
 	    if sample == 'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8':
-		histoDict['ST'] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		histoDict['ST'] = temp.Rebin(14, 'ST', binBoundariesArray)
                 histoDict['ST'].SetDirectory(0)
-                histoDict['ST'].SetName('ST')
                 histoDict['ST'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['ST_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		    histoDict['ST_%sUp'%(syst)] = temp.Rebin(14, 'ST_%sUp'%(syst), binBoundariesArray)
                     histoDict['ST_%sUp'%(syst)].SetDirectory(0)
                     histoDict['ST_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['ST_%sUp'%(syst)].SetName('ST_%sUp'%(syst))
-                    histoDict['ST_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+		    histoDict['ST_%sDown'%(syst)] = temp.Rebin(14, 'ST_%sDown'%(syst), binBoundariesArray)
                     histoDict['ST_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['ST_%sDown'%(syst)].SetName('ST_%sDown'%(syst))
                     histoDict['ST_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['ST'].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass').Rebin(14, 'ST_temp', binBoundariesArray)
+                histoDict['ST'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['ST_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)),weights[sample])
-                    histoDict['ST_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)).Rebin(14, 'ST_temp', binBoundariesArray)
+                    histoDict['ST_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(14, 'ST_temp', binBoundariesArray)
+                    histoDict['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WJets' in sample:
             if sample == 'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':
-                histoDict['WJets'] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		temp =  tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		histoDict['WJets'] = temp.Rebin(14, 'WJets', binBoundariesArray)
                 histoDict['WJets'].SetDirectory(0)
-                histoDict['WJets'].SetName('WJets')
                 histoDict['WJets'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['WJets_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		    histoDict['WJets_%sUp'%(syst)] = temp.Rebin(14, 'WJets_%sUp'%(syst), binBoundariesArray)
                     histoDict['WJets_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['WJets_%sUp'%(syst)].SetName('WJets_%sUp'%(syst))
                     histoDict['WJets_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['WJets_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+		    histoDict['WJets_%sDown'%(syst)] = temp.Rebin(14, 'WJets_%sDown'%(syst), binBoundariesArray)
                     histoDict['WJets_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['WJets_%sDown'%(syst)].SetName('WJets_%sDown'%(syst))
                     histoDict['WJets_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['WJets'].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass').Rebin(14, 'WJets_temp', binBoundariesArray)
+                histoDict['WJets'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['WJets_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)),weights[sample])
-                    histoDict['WJets_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)).Rebin(14, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(14, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'DY' in sample:
             if sample == 'DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':
-                histoDict['DY'] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		histoDict['DY'] = temp.Rebin(14, 'DY', binBoundariesArray)
                 histoDict['DY'].SetDirectory(0)
-                histoDict['DY'].SetName('DY')
                 histoDict['DY'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['DY_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		    histoDict['DY_%sUp'%(syst)] = temp.Rebin(14, 'DY_%sUp'%(syst), binBoundariesArray)
                     histoDict['DY_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['DY_%sUp'%(syst)].SetName('DY_%sUp'%(syst))
                     histoDict['DY_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['DY_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+		    histoDict['DY_%sDown'%(syst)] = temp.Rebin(14, 'DY_%sDown'%(syst), binBoundariesArray)
                     histoDict['DY_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['DY_%sDown'%(syst)].SetName('DY_%sDown'%(syst))
                     histoDict['DY_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['DY'].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass').Rebin(14, 'DY_temp', binBoundariesArray)
+                histoDict['DY'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['DY_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)),weights[sample])
-                    histoDict['DY_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)).Rebin(14, 'DY_temp', binBoundariesArray)
+                    histoDict['DY_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(14, 'DY_temp', binBoundariesArray)
+                    histoDict['DY_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'QCD' in sample:
             if sample == 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
-                histoDict['QCD'] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		histoDict['QCD'] = temp.Rebin(14, 'QCD', binBoundariesArray)
                 histoDict['QCD'].SetDirectory(0)
-                histoDict['QCD'].SetName('QCD')
                 histoDict['QCD'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['QCD_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		    histoDict['QCD_%sUp'%(syst)] = temp.Rebin(14, 'QCD_%sUp'%(syst), binBoundariesArray)
                     histoDict['QCD_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sUp'%(syst)].SetName('QCD_%sUp'%(syst))
                     histoDict['QCD_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['QCD_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+		    histoDict['QCD_%sDown'%(syst)] = temp.Rebin(14, 'QCD_%sDown'%(syst), binBoundariesArray)
                     histoDict['QCD_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sDown'%(syst)].SetName('QCD_%sDown'%(syst))
                     histoDict['QCD_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['QCD'].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass').Rebin(14, 'QCD_temp', binBoundariesArray)
+                histoDict['QCD'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['QCD_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)),weights[sample])
-                    histoDict['QCD_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst)).Rebin(14, 'QCD_temp', binBoundariesArray)
+                    histoDict['QCD_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(14, 'QCD_temp', binBoundariesArray)
+                    histoDict['QCD_%sDown'%(syst)].Add(temp,weights[sample])
 
 	elif 'WR' in sample:
 	    wrMass = sample.split('_')[1][2:]
 	    nuMass = sample.split('_')[3][2:]
-            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+            temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+	    histoDict['WR_%s_NR_%s'%(wrMass,nuMass)] = temp.Rebin(14, 'WR_%s_NR_%s'%(wrMass,nuMass), binBoundariesArray)
             histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].SetDirectory(0)
-            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].SetName('WR_%s_NR_%s'%(wrMass,nuMass))
             histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].Scale(weights[sample])
 
             for syst in systs:
-                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sUp'%(syst))
+		histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(14, 'WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetName('WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst))
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weights[sample])
-                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass_%sDown'%(syst))
+		histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(14, 'WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetName('WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst))
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
         elif 'SingleMuon' in sample:
             if sample == 'SingleMuon--Run2016B-03Feb2017_ver2-v2':
-                histoDict['data_obs'] = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass')
+		histoDict['data_obs'] = temp.Rebin(14, 'data_obs', binBoundariesArray)
                 histoDict['data_obs'].SetDirectory(0)
-                histoDict['data_obs'].SetName('data_obs')
             else:
-                histoDict['data_obs'].Add(tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass'))
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO/leadAK8JetMuonMass').Rebin(14, 'data_obs_temp', binBoundariesArray)
+                histoDict['data_obs'].Add(temp)
 
 	tfile.Close()
 
@@ -214,6 +233,10 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 
     histoDict = {}
 
+    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 6000]
+#    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1150, 1500, 6000]
+    binBoundariesArray = array.array('d', binBoundaries)
+
     for sample in sampleNames:
         print "sample: ", sample
         tfile = r.TFile.Open(samplesLocation+sample+'.root')
@@ -222,153 +245,169 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 
         if sample == 'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8':
 
-            histoDict['TT'] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+            temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+	    histoDict['TT'] = temp.Rebin(14, 'TT', binBoundariesArray)
             histoDict['TT'].SetDirectory(0)
-            histoDict['TT'].SetName('TT')
             histoDict['TT'].Scale(weights[sample])
 
             for syst in systs:
-                histoDict['TT_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+		histoDict['TT_%sUp'%(syst)] = temp.Rebin(14, 'TT_%sUp'%(syst), binBoundariesArray)
                 histoDict['TT_%sUp'%(syst)].SetDirectory(0)
-                histoDict['TT_%sUp'%(syst)].SetName('TT_%sUp'%(syst))
                 histoDict['TT_%sUp'%(syst)].Scale(weights[sample])
-                histoDict['TT_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                histoDict['TT_%sDown'%(syst)] = temp.Rebin(14, 'TT_%sDown'%(syst), binBoundariesArray)
                 histoDict['TT_%sDown'%(syst)].SetDirectory(0)
-                histoDict['TT_%sDown'%(syst)].SetName('TT_%sDown'%(syst))
                 histoDict['TT_%sDown'%(syst)].Scale(weights[sample])
 
         elif sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
 
             if sample == 'WW_TuneCUETP8M1_13TeV-pythia8':
-                histoDict['DiBoson'] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+		histoDict['DiBoson'] = temp.Rebin(14, 'DiBoson', binBoundariesArray)
                 histoDict['DiBoson'].SetDirectory(0)
-                histoDict['DiBoson'].SetName('DiBoson')
                 histoDict['DiBoson'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['DiBoson_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+		    histoDict['DiBoson_%sUp'%(syst)] = temp.Rebin(14, 'DiBoson_%sUp'%(syst), binBoundariesArray)
                     histoDict['DiBoson_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['DiBoson_%sUp'%(syst)].SetName('DiBoson_%sUp'%(syst))
                     histoDict['DiBoson_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['DiBoson_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+		    histoDict['DiBoson_%sDown'%(syst)] = temp.Rebin(14, 'DiBoson_%sDown'%(syst), binBoundariesArray)
                     histoDict['DiBoson_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['DiBoson_%sDown'%(syst)].SetName('DiBoson_%sDown'%(syst))
                     histoDict['DiBoson_%sDown'%(syst)].Scale(weights[sample])
 
             else:
-                histoDict['DiBoson'].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF').Rebin(14, 'DiBoson_temp', binBoundariesArray)
+                histoDict['DiBoson'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['DiBoson_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)),weights[sample])
-                    histoDict['DiBoson_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)).Rebin(14, 'DiBoson_temp', binBoundariesArray)
+                    histoDict['DiBoson_%sUp'%(syst)].Add(temp,weights[sample])	
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(14, 'DiBoson_temp', binBoundariesArray)
+                    histoDict['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif sample == 'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8' or sample == 'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin' or sample == 'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin' or sample == 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4' or sample == 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4':
             if sample == 'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8':
-                histoDict['ST'] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                histoDict['ST'] = temp.Rebin(14, 'ST', binBoundariesArray)
                 histoDict['ST'].SetDirectory(0)
-                histoDict['ST'].SetName('ST')
                 histoDict['ST'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['ST_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    histoDict['ST_%sUp'%(syst)] = temp.Rebin(14, 'ST_%sUp'%(syst), binBoundariesArray)
                     histoDict['ST_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['ST_%sUp'%(syst)].SetName('ST_%sUp'%(syst))
                     histoDict['ST_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['ST_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+		    histoDict['ST_%sDown'%(syst)] = temp.Rebin(14, 'ST_%sDown'%(syst), binBoundariesArray)
                     histoDict['ST_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['ST_%sDown'%(syst)].SetName('ST_%sDown'%(syst))
                     histoDict['ST_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['ST'].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF').Rebin(14, 'ST_temp', binBoundariesArray)
+                histoDict['ST'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['ST_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)),weights[sample])
-                    histoDict['ST_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)).Rebin(14, 'ST_temp', binBoundariesArray)
+                    histoDict['ST_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(14, 'ST_temp', binBoundariesArray)
+                    histoDict['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WJets' in sample:
             if sample == 'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':
-                histoDict['WJets'] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                histoDict['WJets'] = temp.Rebin(14, 'WJets', binBoundariesArray)
                 histoDict['WJets'].SetDirectory(0)
-                histoDict['WJets'].SetName('WJets')
                 histoDict['WJets'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['WJets_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    histoDict['WJets_%sUp'%(syst)] = temp.Rebin(14, 'WJets_%sUp'%(syst), binBoundariesArray)
                     histoDict['WJets_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['WJets_%sUp'%(syst)].SetName('WJets_%sUp'%(syst))
                     histoDict['WJets_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['WJets_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    histoDict['WJets_%sDown'%(syst)] = temp.Rebin(14, 'WJets_%sDown'%(syst), binBoundariesArray)
                     histoDict['WJets_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['WJets_%sDown'%(syst)].SetName('WJets_%sDown'%(syst))
                     histoDict['WJets_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['WJets'].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF'),weights[sample])
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF').Rebin(14, 'WJets_temp', binBoundariesArray)
+		histoDict['WJets'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['WJets_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)),weights[sample])
-                    histoDict['WJets_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)).Rebin(14, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(14, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'DY' in sample:
             if sample == 'DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':
-                histoDict['DY'] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                histoDict['DY'] = temp.Rebin(14, 'DY', binBoundariesArray)
                 histoDict['DY'].SetDirectory(0)
-                histoDict['DY'].SetName('DY')
                 histoDict['DY'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['DY_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    histoDict['DY_%sUp'%(syst)] = temp.Rebin(14, 'DY_%sUp'%(syst), binBoundariesArray)
                     histoDict['DY_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['DY_%sUp'%(syst)].SetName('DY_%sUp'%(syst))
                     histoDict['DY_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['DY_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    histoDict['DY_%sDown'%(syst)] = temp.Rebin(14, 'DY_%sDown'%(syst), binBoundariesArray)
                     histoDict['DY_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['DY_%sDown'%(syst)].SetName('DY_%sDown'%(syst))
                     histoDict['DY_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['DY'].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF').Rebin(14, 'DY_temp', binBoundariesArray)
+                histoDict['DY'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['DY_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)),weights[sample])
-                    histoDict['DY_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)).Rebin(14, 'DY_temp', binBoundariesArray)
+                    histoDict['DY_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(14, 'DY_temp', binBoundariesArray)
+                    histoDict['DY_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'QCD' in sample:
             if sample == 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
-                histoDict['QCD'] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                histoDict['QCD'] = temp.Rebin(14, 'QCD', binBoundariesArray)
                 histoDict['QCD'].SetDirectory(0)
-                histoDict['QCD'].SetName('QCD')
                 histoDict['QCD'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['QCD_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                    histoDict['QCD_%sUp'%(syst)] = temp.Rebin(14, 'QCD_%sUp'%(syst), binBoundariesArray)
                     histoDict['QCD_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sUp'%(syst)].SetName('QCD_%sUp'%(syst))
                     histoDict['QCD_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['QCD_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                    histoDict['QCD_%sDown'%(syst)] = temp.Rebin(14, 'QCD_%sDown'%(syst), binBoundariesArray)
                     histoDict['QCD_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sDown'%(syst)].SetName('QCD_%sDown'%(syst))
                     histoDict['QCD_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['QCD'].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF').Rebin(14, 'QCD_temp', binBoundariesArray)
+                histoDict['QCD'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['QCD_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)),weights[sample])
-                    histoDict['QCD_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst)).Rebin(14, 'QCD_temp', binBoundariesArray)
+                    histoDict['QCD_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(14, 'QCD_temp', binBoundariesArray)
+                    histoDict['QCD_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WR' in sample:
             wrMass = sample.split('_')[1][2:]
             nuMass = sample.split('_')[3][2:]
-            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+            temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)] = temp.Rebin(14, 'WR_%s_NR_%s'%(wrMass,nuMass), binBoundariesArray)	    
             histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].SetDirectory(0)
-            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].SetName('WR_%s_NR_%s'%(wrMass,nuMass))
             histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].Scale(weights[sample])
 
             for syst in systs:
-                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
+                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(14, 'WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst), binBoundariesArray)		
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetName('WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst))
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weights[sample])
-                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
+                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(14, 'WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetName('WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst))
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
 	elif 'SingleMuon' in sample:
             if sample == 'SingleMuon--Run2016B-03Feb2017_ver2-v2':
-                histoDict['data_obs'] = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF')
+                histoDict['data_obs'] = temp.Rebin(14, 'data_obs', binBoundariesArray)
                 histoDict['data_obs'].SetDirectory(0)
-                histoDict['data_obs'].SetName('data_obs')
             else:
-                histoDict['data_obs'].Add(tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF'))
+		temp = tfile.Get('analysis/eventsPassingExtensionRECO2016VETOZMASS/leadAK8JetMuonMass_noLSF').Rebin(14, 'data_obs_temp', binBoundariesArray)
+                histoDict['data_obs'].Add(temp)
 
         tfile.Close()
 
@@ -411,7 +450,12 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
     outputWorkspace.Close()
 
 def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
+
     histoDict = {}
+
+    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 6000]
+#    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1150, 1500, 6000]
+    binBoundariesArray = array.array('d', binBoundaries)
 
     for sample in sampleNames:
         print "sample: ", sample
@@ -421,154 +465,169 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
 
         if sample == 'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8':
 
-            histoDict['TT'] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+            temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+            histoDict['TT'] = temp.Rebin(14, 'TT', binBoundariesArray)
             histoDict['TT'].SetDirectory(0)
-            histoDict['TT'].SetName('TT')
             histoDict['TT'].Scale(weights[sample])
 
             for syst in systs:
-                histoDict['TT_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                histoDict['TT_%sUp'%(syst)] = temp.Rebin(14, 'TT_%sUp'%(syst), binBoundariesArray)
                 histoDict['TT_%sUp'%(syst)].SetDirectory(0)
-                histoDict['TT_%sUp'%(syst)].SetName('TT_%sUp'%(syst))
                 histoDict['TT_%sUp'%(syst)].Scale(weights[sample])
-                histoDict['TT_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                histoDict['TT_%sDown'%(syst)] = temp.Rebin(14, 'TT_%sDown'%(syst), binBoundariesArray)
                 histoDict['TT_%sDown'%(syst)].SetDirectory(0)
-                histoDict['TT_%sDown'%(syst)].SetName('TT_%sDown'%(syst))
                 histoDict['TT_%sDown'%(syst)].Scale(weights[sample])
 
         elif sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
 
             if sample == 'WW_TuneCUETP8M1_13TeV-pythia8':
-                histoDict['DiBoson'] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                histoDict['DiBoson'] = temp.Rebin(14, 'DiBoson', binBoundariesArray)
                 histoDict['DiBoson'].SetDirectory(0)
-                histoDict['DiBoson'].SetName('DiBoson')
                 histoDict['DiBoson'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['DiBoson_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    histoDict['DiBoson_%sUp'%(syst)] = temp.Rebin(14, 'DiBoson_%sUp'%(syst), binBoundariesArray)
                     histoDict['DiBoson_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['DiBoson_%sUp'%(syst)].SetName('DiBoson_%sUp'%(syst))
                     histoDict['DiBoson_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['DiBoson_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    histoDict['DiBoson_%sDown'%(syst)] = temp.Rebin(14, 'DiBoson_%sDown'%(syst), binBoundariesArray)
                     histoDict['DiBoson_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['DiBoson_%sDown'%(syst)].SetName('DiBoson_%sDown'%(syst))
                     histoDict['DiBoson_%sDown'%(syst)].Scale(weights[sample])
 
             else:
-                histoDict['DiBoson'].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass').Rebin(14, 'DiBoson_temp', binBoundariesArray)
+                histoDict['DiBoson'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['DiBoson_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)),weights[sample])
-                    histoDict['DiBoson_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)).Rebin(14, 'DiBoson_temp', binBoundariesArray)
+                    histoDict['DiBoson_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(14, 'DiBoson_temp', binBoundariesArray)
+                    histoDict['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif sample == 'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8' or sample == 'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin' or sample == 'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin' or sample == 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4' or sample == 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4':
             if sample == 'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8':
-                histoDict['ST'] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                histoDict['ST'] = temp.Rebin(14, 'ST', binBoundariesArray)
                 histoDict['ST'].SetDirectory(0)
-                histoDict['ST'].SetName('ST')
                 histoDict['ST'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['ST_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    histoDict['ST_%sUp'%(syst)] = temp.Rebin(14, 'ST_%sUp'%(syst), binBoundariesArray)
                     histoDict['ST_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['ST_%sUp'%(syst)].SetName('ST_%sUp'%(syst))
                     histoDict['ST_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['ST_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    histoDict['ST_%sDown'%(syst)] = temp.Rebin(14, 'ST_%sDown'%(syst), binBoundariesArray)
                     histoDict['ST_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['ST_%sDown'%(syst)].SetName('ST_%sDown'%(syst))
                     histoDict['ST_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['ST'].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass').Rebin(14, 'ST_temp', binBoundariesArray)
+                histoDict['ST'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['ST_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)),weights[sample])
-                    histoDict['ST_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)).Rebin(14, 'ST_temp', binBoundariesArray)
+                    histoDict['ST_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(14, 'ST_temp', binBoundariesArray)
+                    histoDict['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WJets' in sample:
             if sample == 'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':
-                histoDict['WJets'] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+		temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                histoDict['WJets'] = temp.Rebin(14, 'WJets', binBoundariesArray)
                 histoDict['WJets'].SetDirectory(0)
-                histoDict['WJets'].SetName('WJets')
                 histoDict['WJets'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['WJets_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    histoDict['WJets_%sUp'%(syst)] = temp.Rebin(14, 'WJets_%sUp'%(syst), binBoundariesArray)
                     histoDict['WJets_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['WJets_%sUp'%(syst)].SetName('WJets_%sUp'%(syst))
                     histoDict['WJets_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['WJets_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    histoDict['WJets_%sDown'%(syst)] = temp.Rebin(14, 'WJets_%sDown'%(syst), binBoundariesArray)
                     histoDict['WJets_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['WJets_%sDown'%(syst)].SetName('WJets_%sDown'%(syst))
                     histoDict['WJets_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['WJets'].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass').Rebin(14, 'WJets_temp', binBoundariesArray)
+                histoDict['WJets'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['WJets_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)),weights[sample])
-                    histoDict['WJets_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)).Rebin(14, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(14, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'DY' in sample:
             if sample == 'DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8':
-                histoDict['DY'] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                histoDict['DY'] = temp.Rebin(14, 'DY', binBoundariesArray)
                 histoDict['DY'].SetDirectory(0)
-                histoDict['DY'].SetName('DY')
                 histoDict['DY'].Scale(weights[sample])
                 for syst in systs:
-                    histoDict['DY_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    histoDict['DY_%sUp'%(syst)] = temp.Rebin(14, 'DY_%sUp'%(syst), binBoundariesArray)
                     histoDict['DY_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['DY_%sUp'%(syst)].SetName('DY_%sUp'%(syst))
                     histoDict['DY_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['DY_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    histoDict['DY_%sDown'%(syst)] = temp.Rebin(14, 'DY_%sDown'%(syst), binBoundariesArray)
                     histoDict['DY_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['DY_%sDown'%(syst)].SetName('DY_%sDown'%(syst))
                     histoDict['DY_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['DY'].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass').Rebin(14, 'DY_temp', binBoundariesArray)
+                histoDict['DY'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['DY_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)),weights[sample])
-                    histoDict['DY_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)).Rebin(14, 'DY_temp', binBoundariesArray)
+                    histoDict['DY_%sUp'%(syst)].Add(temp,weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(14, 'DY_temp', binBoundariesArray)
+                    histoDict['DY_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'QCD' in sample:
             if sample == 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
-                histoDict['QCD'] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                histoDict['QCD'] = temp.Rebin(14, 'QCD', binBoundariesArray)
                 histoDict['QCD'].SetDirectory(0)
-                histoDict['QCD'].SetName('QCD')
                 histoDict['QCD'].Scale(weights[sample])
                 for syst in systs:
-		    print "syst: ", syst
-                    histoDict['QCD_%sUp'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                    histoDict['QCD_%sUp'%(syst)] = temp.Rebin(14, 'QCD_%sUp'%(syst), binBoundariesArray)
                     histoDict['QCD_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sUp'%(syst)].SetName('QCD_%sUp'%(syst))
                     histoDict['QCD_%sUp'%(syst)].Scale(weights[sample])
-                    histoDict['QCD_%sDown'%(syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                    histoDict['QCD_%sDown'%(syst)] = temp.Rebin(14, 'QCD_%sDown'%(syst), binBoundariesArray)
                     histoDict['QCD_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sDown'%(syst)].SetName('QCD_%sDown'%(syst))
                     histoDict['QCD_%sDown'%(syst)].Scale(weights[sample])
             else:
-                histoDict['QCD'].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass'),weights[sample])
+		temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass').Rebin(14, 'QCD_temp', binBoundariesArray)
+                histoDict['QCD'].Add(temp,weights[sample])
                 for syst in systs:
-                    histoDict['QCD_%sUp'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)),weights[sample])
-                    histoDict['QCD_%sDown'%(syst)].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)),weights[sample])
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst)).Rebin(14, 'QCD_temp', binBoundariesArray)
+                    histoDict['QCD_%sUp'%(syst)].Add(temp,weights[sample])	
+		    temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(14, 'QCD_temp', binBoundariesArray)
+                    histoDict['QCD_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WR' in sample:
             wrMass = sample.split('_')[1][2:]
             nuMass = sample.split('_')[3][2:]
-            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+            temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)] = temp.Rebin(14, 'WR_%s_NR_%s'%(wrMass,nuMass), binBoundariesArray)
             histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].SetDirectory(0)
-            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].SetName('WR_%s_NR_%s'%(wrMass,nuMass))
             histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].Scale(weights[sample])
 
             for syst in systs:
-                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sUp'%(syst))
+                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(14, 'WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetName('WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst))
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weights[sample])
-                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass_%sDown'%(syst))
+                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(14, 'WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetName('WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst))
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
         elif 'SingleElectron' in sample:
             if sample == 'SingleElectron--Run2016B-03Feb2017_ver2-v2':
-                histoDict['data_obs'] = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass')
+                histoDict['data_obs'] = temp.Rebin(14, 'data_obs', binBoundariesArray)
                 histoDict['data_obs'].SetDirectory(0)
-                histoDict['data_obs'].SetName('data_obs')
             else:
-                histoDict['data_obs'].Add(tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass'))
+		temp = tfile.Get('analysis/eventsPassingFlavorSidebandRECOelePt200/leadAK8JetElectronMass').Rebin(14, 'data_obs_temp', binBoundariesArray)
+                histoDict['data_obs'].Add(temp)
 
         tfile.Close()
 
