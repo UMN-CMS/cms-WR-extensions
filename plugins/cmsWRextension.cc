@@ -109,6 +109,8 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_highMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("highMuons"))),
   m_highElectronToken (consumes<std::vector<pat::Electron>> (iConfig.getParameter<edm::InputTag>("highElectrons"))),
+  m_electronToken2 (consumes<std::vector<pat::Electron> > (iConfig.getParameter<edm::InputTag>("electrons2"))),
+  m_eleIdFullInfoMapToken (consumes<edm::ValueMap<vid::CutFlowResult>> (iConfig.getParameter<edm::InputTag>("eleFullInfoMap"))),
   m_regMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("regMuons"))),
   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
   m_AK4recoCHSJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK4recoCHSJets"))),
@@ -1205,6 +1207,7 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, const edm::EventSet
   muonSelection(iEvent, myRECOevent);
   electronSelection(iEvent, myRECOevent);
   jetSelection(iEvent, iSetup, myRECOevent);
+  additionalElectrons(iEvent, myRECOevent, true, true, 0);
 
 
   if( myRECOevent.myAddJetCandsHighPt.size() < 1 && myRECOevent.myAddJetCandsHighPt_noLSF.size() < 1) {
@@ -2022,6 +2025,50 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     else return false;
   }
 
+  return true;
+}
+//CHECK ADDITIONAL ELECTRONS
+//   0                                              MinPtCut_0    0        769.976297        1
+//   1                              GsfEleSCEtaMultiRangeCut_0    0        0.783060          1
+//   2                                   GsfEleDEtaInSeedCut_0    0        0.000538          1
+//   3                                       GsfEleDPhiInCut_0    0        0.001986          1
+//   4                         GsfEleFull5x5SigmaIEtaIEtaCut_0    0        0.008978          1
+//   5                               GsfEleHadronicOverEMCut_0    0        0.053140          1
+//   6                        GsfEleEInverseMinusPInverseCut_0    0        0.000155          1
+//   7                                 GsfEleEffAreaPFIsoCut_0    0        0.738612          0
+//   8                               GsfEleConversionVetoCut_0    0        1.000000          1
+//   9                                  GsfEleMissingHitsCut_0    0        1.000000          1
+
+bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion) {
+  std::cout << "Sorting non-lead electrons within and without selected jet" << std::endl;
+  const baconhep::TAddJet* selJet =  myEvent.myElectronJetPairs[0].first;
+
+  edm::Handle<edm::View<std::vector<pat::Electron>> > electrons;
+  iEvent.getByToken(m_electronToken2, electrons);
+
+  edm::Handle<edm::ValueMap<vid::CutFlowResult> > ele_id_cutflow_data;
+  iEvent.getByToken(m_eleIdFullInfoMapToken,ele_id_cutflow_data);
+
+  std::cout << ele_id_cutflow_data->size() << std::endl;
+  std::cout << electrons->size() << std::endl;
+//  for(std::vector<pat::Electron>::const_iterator iElec = electrons->begin(); iElec != electrons->end(); iElec++) {
+//    if()
+//  }
+  for (size_t i = 0; i < electrons->size(); ++i){
+    const auto el = electrons->ptrAt(i);
+
+//    std::cout << electrons[i] << std::endl;
+//    if (electrons->at(i).pt() < 150) continue;
+    
+    vid::CutFlowResult fullCutFlowData = (*ele_id_cutflow_data)[el];
+    //vid::CutFlowResult maskedCutFlowData = fullCutFlowData.getCutFlowResultMasking(cutIndexToMask); //we want all but ISO
+    ::wrTools::printCutFlowResult(fullCutFlowData);
+  
+    
+
+
+
+  }
   return true;
 }
 bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {

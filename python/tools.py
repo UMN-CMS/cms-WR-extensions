@@ -15,6 +15,7 @@ def setupVIDForHEEPV70(process,useMiniAOD=True):
 
     # define which IDs we want to produce
     my_id_modules = ['RecoEgamma.ElectronIdentification.Identification.heepElectronID_HEEPV70_cff']
+    my_id_modules.append('RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff')
                    #add them to the VID producer
     for idmod in my_id_modules:
         setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)

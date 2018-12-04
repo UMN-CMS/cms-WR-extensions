@@ -88,6 +88,22 @@ namespace wrTools {
 
     return false;
   }
+  void printCutFlowResult(vid::CutFlowResult &cutflow){
+    
+    printf("    CutFlow name= %s    decision is %d\n", 
+       cutflow.cutFlowName().c_str(),
+       (int) cutflow.cutFlowPassed());
+    int ncuts = cutflow.cutFlowSize();
+    printf(" Index                               cut name              isMasked    value-cut-upon     pass?\n");
+    for(int icut = 0; icut<ncuts; icut++){
+      printf("  %2d      %50s    %d        %f          %d\n", icut,
+         cutflow.getNameAtIndex(icut).c_str(),
+         (int)cutflow.isCutMasked(icut),
+         cutflow.getValueCutUpon(icut),
+         (int)cutflow.getCutResultByIndex(icut));
+    }
+      
+  }
   //TAKES AN INITIAL GEN PARTICLE AND EVOLVES IT TO A STATUS OVER 50
   const reco::GenParticle* evolveParticle(const reco::GenParticle* ip) {
     bool updated = true;

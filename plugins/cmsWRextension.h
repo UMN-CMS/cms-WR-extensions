@@ -138,6 +138,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion, bool ISO);
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedMuonSelection(const edm::Event&, eventBits&);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
@@ -207,6 +208,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_AK8genJetsToken;
       edm::EDGetToken m_highMuonToken;
       edm::EDGetToken m_highElectronToken;
+      edm::EDGetToken m_electronToken2;
+      edm::EDGetToken m_eleIdFullInfoMapToken;
       edm::EDGetToken m_regMuonToken;
       edm::EDGetToken m_recoJetsToken;
       edm::EDGetToken m_AK4recoCHSJetsToken;

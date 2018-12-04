@@ -55,17 +55,18 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '80X_mcRun2_asymptotic_2016_Tra
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_2016SeptRepro_v7')
 
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
 	  fileNames = cms.untracked.vstring (options.inputFiles),
-#	  skipEvents = cms.untracked.uint32(91300)
+#	  skipEvents = cms.untracked.uint32(30000)
 )
 
 process.options = cms.untracked.PSet(
     SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
+process.options.allowUnscheduled = cms.untracked.bool(False)
 
 process.TFileService = cms.Service("TFileService", 
                         fileName = cms.string(options.outputFile)
@@ -150,7 +151,9 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               genParticles = cms.InputTag("prunedGenParticles"),
                               highMuons = cms.InputTag("tuneIDMuons"),
                               highElectrons = cms.InputTag("heepElectrons"),
-                            #  eleFullInfoMap = cms.InputTag(),
+                              electrons2 = cms.InputTag("selectedElectrons"),
+                       #       electrons2 = cms.InputTag("heepElectrons"),
+                              eleFullInfoMap = cms.InputTag("egmGsfElectronIDs:cutBasedElectronID-Summer16-80X-V1-loose"),
                               regMuons = cms.InputTag("removeBadAndCloneGlobalMuons"),
                               recoJets = cms.InputTag("slimmedJets"),
                               AK4recoCHSJets = cms.InputTag("slimmedJets"),
@@ -198,6 +201,20 @@ process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService
 process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
 process.load('ExoAnalysis.cmsWRextensions.calibratedPatElectronsRun2_cfi')
 
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
+# turn on VID producer, indicate data format  to be
+# DataFormat.AOD or DataFormat.MiniAOD, as appropriate 
+
+#switchOnVIDElectronIdProducer(process, DataFormat.MiniAOD)
+
+
+# define which IDs we want to produce
+my_id_modules = []
+my_id_modules.append('RecoEgamma.ElectronIdentification.Identification.cutBasedElectronID_Summer16_80X_V1_cff')
+
+#add them to the VID producer
+#for idmod in my_id_modules:
+#    setupAllVIDIdsInModule(process,idmod,setupVIDElectronSelection)
 
 # Path and EndPath definitions
 #process.EGMRegression = cms.Path(process.regressionApplication)
@@ -214,6 +231,7 @@ process.selectedElectrons = cms.EDFilter("PATElectronSelector",
     src = cms.InputTag("calibratedPatElectrons"),
     cut = cms.string("pt>5 && abs(eta)")
 )
+#process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
 process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
 #process.electronIDValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
 process.heepIDVarValueMaps.elesMiniAOD  = 'selectedElectrons'
@@ -223,7 +241,11 @@ process.heepElectrons.src = cms.InputTag('selectedElectrons')
 
 process.load('FWCore.Modules.printContent_cfi')
 
-process.totalPath = cms.Path(process.EGMsequence * process.selectedElectrons * process.heepSequence * process.muonSelectionSeq * process.analysis)
+process.totalPath = cms.Path(#process.egmGsfElectronIDSequence * 
+                                  process.EGMsequence * process.selectedElectrons * process.heepSequence
+                                                                             * process.muonSelectionSeq * process.analysis)
+
+#process.totalPath = cms.Path(process.EGMsequence * process.selectedElectrons * process.heepSequence * process.muonSelectionSeq * process.analysis)
 
 #process.printContent
 #print process.dumpPython()
