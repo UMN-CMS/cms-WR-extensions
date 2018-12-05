@@ -2043,24 +2043,23 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
   std::cout << "Sorting non-lead electrons within and without selected jet" << std::endl;
   const baconhep::TAddJet* selJet =  myEvent.myElectronJetPairs[0].first;
 
-  edm::Handle<edm::View<std::vector<pat::Electron>> > electrons;
+  edm::Handle<std::vector<pat::Electron>> electrons;
   iEvent.getByToken(m_electronToken2, electrons);
+  const pat::ElectronCollection *eleCol = electrons.product();
+
 
   edm::Handle<edm::ValueMap<vid::CutFlowResult> > ele_id_cutflow_data;
   iEvent.getByToken(m_eleIdFullInfoMapToken,ele_id_cutflow_data);
 
   std::cout << ele_id_cutflow_data->size() << std::endl;
   std::cout << electrons->size() << std::endl;
-//  for(std::vector<pat::Electron>::const_iterator iElec = electrons->begin(); iElec != electrons->end(); iElec++) {
-//    if()
-//  }
-  for (size_t i = 0; i < electrons->size(); ++i){
-    const auto el = electrons->ptrAt(i);
+  for(std::vector<pat::Electron>::const_iterator iElec = eleCol->begin(); iElec != eleCol->end(); iElec++) {
+    edm::RefToBase<reco::GsfElectron> eleBaseRef( edm::Ref<pat::ElectronCollection>(electrons, iElec - eleCol->begin()) );
 
-//    std::cout << electrons[i] << std::endl;
-//    if (electrons->at(i).pt() < 150) continue;
-    
-    vid::CutFlowResult fullCutFlowData = (*ele_id_cutflow_data)[el];
+    std::cout << "iElec->pt(): " << iElec->pt() << std::endl;
+    if(iElec->pt() < 150) continue;    
+
+    vid::CutFlowResult fullCutFlowData = (*ele_id_cutflow_data)[eleBaseRef];
     //vid::CutFlowResult maskedCutFlowData = fullCutFlowData.getCutFlowResultMasking(cutIndexToMask); //we want all but ISO
     ::wrTools::printCutFlowResult(fullCutFlowData);
   
