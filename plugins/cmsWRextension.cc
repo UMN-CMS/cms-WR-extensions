@@ -2041,12 +2041,16 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
 bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion) {
   std::cout << "Sorting non-lead electrons within and without selected jet" << std::endl;
+  if (myEvent.myElectronJetPairs.size() < 1) return false;
+
   const baconhep::TAddJet* selJet =  myEvent.myElectronJetPairs[0].first;
+  const pat::Electron* selElec    =  myEvent.myElectronJetPairs[0].second;
 
   edm::Handle<std::vector<pat::Electron>> electrons;
   iEvent.getByToken(m_electronToken2, electrons);
   const pat::ElectronCollection *eleCol = electrons.product();
 
+  std::vector<const pat::Electron*> secondElectronCands;
 
   edm::Handle<edm::ValueMap<vid::CutFlowResult> > ele_id_cutflow_data;
   iEvent.getByToken(m_eleIdFullInfoMapToken,ele_id_cutflow_data);
@@ -2058,16 +2062,27 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
 
     std::cout << "iElec->pt(): " << iElec->pt() << std::endl;
     if(iElec->pt() < 150) continue;    
+    if(fabs(iElec->eta()) > 2.4) continue;
 
     vid::CutFlowResult fullCutFlowData = (*ele_id_cutflow_data)[eleBaseRef];
-    //vid::CutFlowResult maskedCutFlowData = fullCutFlowData.getCutFlowResultMasking(cutIndexToMask); //we want all but ISO
-    ::wrTools::printCutFlowResult(fullCutFlowData);
+    vid::CutFlowResult maskedCutFlowData = fullCutFlowData.getCutFlowResultMasking(7); //we want all but ISO
+    ::wrTools::printCutFlowResult(maskedCutFlowData);
   
-    
+    if (! maskedCutFlowData.cutFlowPassed()) continue;   
 
-
-
+    if (::wrTools::dR(selJet->eta, selElec->eta(), selJet->phi, selElec->phi()) < 0.8 ) {  //within jet 
+      std::cout << "found second electron cand" << std::endl;
+      secondElectronCands.push_back(&(*(iElec))); 
+    }
   }
+  myEvent.nSecondElectronCands = secondElectronCands.size();
+
+  if (secondElectronCands.size() < 1) return false;
+  std::sort(secondElectronCands.begin(), secondElectronCands.end(), ::wrTools::compareEtCandidatePointer);
+  myEvent.secondElectronCand = secondElectronCands[0];
+  myEvent.secondElecJetDR = ::wrTools::dR(selJet->eta, secondElectronCands[0]->eta(), selJet->phi, secondElectronCands[0]->phi());
+  myEvent.secondElecPt = secondElectronCands[0]->pt();
+  
   return true;
 }
 bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {

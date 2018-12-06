@@ -24,6 +24,8 @@ eventBits::eventBits() {
   firstMuon = NULL;
   secondMuon = NULL;
 
+  secondElectronCand = NULL;
+
   PVertex = NULL;
 
   daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
@@ -32,6 +34,8 @@ eventBits::eventBits() {
 
   cutProgress = -1;
   FSBcutProgress = -1;
+
+  nSecondElectronCands = -10000.0;
 
   puWeight = -10000.0;
   puWeight_Up = -10000.0;
@@ -98,6 +102,9 @@ eventBits::eventBits() {
   secondPartonJetPhiVal = -10000.0;
   firstPartonAK8JetPhiVal = -10000.0;
   secondPartonAK8JetPhiVal = -10000.0;
+ 
+  secondElecJetDR = -10000.0;
+  secondElecPt    = -10000.0;
 
   dRparton1parton2Val = -10000.0;
   dRmuon1muon2Val = -10000.0;

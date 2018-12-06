@@ -113,6 +113,8 @@ public:
   const pat::Muon*                  mySubleadMuon;
   const pat::Muon*                  my2ndHighPtMuonCand;
 
+  const pat::Electron*              secondElectronCand;
+
   const reco::GenParticle*          firstMuon;
   const reco::GenParticle*          secondMuon;
 
@@ -158,6 +160,8 @@ public:
   int	 nAdditionalHEEP;
   int	 nAdditionalHEEP_noISO;
   int    nHighPtMuonsOutsideJet;
+
+  int    nSecondElectronCands;
 
   int    myEventFlavor  ;
 
@@ -398,6 +402,9 @@ public:
   double selectedJetMaxSubJetCSV;
 
   double mydRlsfLep_subleadMuon;
+
+  double secondElecJetDR;
+  double secondElecPt;
 
   double selectedJet_EleNoISO_Pt;
   double selectedJet_EleNoISO_Phi;

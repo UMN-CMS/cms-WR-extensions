@@ -78,6 +78,11 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_firstPartonAK8JetPhi   =          m_histoFolder.make<TH1D>("firstPartonAK8JetPhi", "AK8Jet 1 Phi;Phi (rad);",              80, -4.0, 4.0);        
     m_secondPartonAK8JetPhi  =          m_histoFolder.make<TH1D>("secondPartonAK8JetPhi", "AK8Jet 1 Phi;Phi (rad);",             80, -4.0, 4.0);           
 
+    m_nSecondElectronCands  =           m_histoFolder.make<TH1D>("nSecondElectronCands", "number of second electron cands"      , 5, -0.5, 4.5);
+    m_secondElecJetDR       =           m_histoFolder.make<TH1D>("secondElecJetDR"     , "selected jet second electron cand dR" , 50, 0.0, 1.0);
+    m_secondElecPt          =           m_histoFolder.make<TH1D>("m_secondElecPt"      , "second electron cand pt"              , 50, 0.0, 2000.0);
+
+
     m_dRparton1parton2 =                m_histoFolder.make<TH1D>("dRparton1parton2", "deltaR between partons;delta R;",                       120, 0.0, 12.0);
     m_dRmuon1muon2 =                    m_histoFolder.make<TH1D>("dRmuon1muon2", "deltaR between muons;delta R;",                             120, 0.0, 12.0);
     m_dRparton1muon2 =                  m_histoFolder.make<TH1D>("dRparton1muon2", "deltaR between parton1 and muon2;delta R;",               120, 0.0, 12.0);
@@ -594,6 +599,10 @@ void eventHistos::fillReco(eventBits& event) {
   m_subleadMuonPhi          ->   Fill(event.subleadMuonPhi          ,weight); 
   m_dRmuon2                 ->   Fill(event.dRmuon2, weight);
   m_secondMuonWRjetdR       ->   Fill(event.secondMuonWRjetdR, weight);
+
+  m_nSecondElectronCands   -> Fill(event.nSecondElectronCands, weight);
+  m_secondElecJetDR        -> Fill(event.secondElecJetDR     , weight);
+  m_secondElecPt           -> Fill(event.secondElecPt        , weight);
 
   m_genLSF                  ->   Fill(event.myGenLSF, weight);
                                                                
