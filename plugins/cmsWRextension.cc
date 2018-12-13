@@ -192,47 +192,52 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 {
   std::cout << "Beginning event analysis:" << std::endl;
 
+  //Get vertex collection
   edm::Handle<std::vector<reco::Vertex>> vertices;
   iEvent.getByToken(m_offlineVerticesToken, vertices);
   if(!vertices.isValid()) {
     throw cms::Exception("Vertex collection not valid!");
   }
 
-
-  eventBits myEvent;
+  //we'll use this to carry our event info around
   eventBits myRECOevent;
-
-  myEvent.outputTag = m_outputTag;
+  //tag to label events with
   myRECOevent.outputTag = m_outputTag;
+  //booleans to check for 4 different selections
+  bool passResRECO = false;
+  bool passResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 
-  bool pass2016 = false;
+  bool passBoostRECO = false;
+  bool passBoostGEN = false; //this tracks with our current analysis effort
+  //this bool is true if the event passes the Mmumu Zmass region cut
   bool ZMASS = false;
+
+  //these are for the JEC/JER toy regions
   int ZMASS_Nom = 0;
   int ZMASS_JECUp = 0;
   int ZMASS_JECDown = 0;
   int ZMASS_JERUp = 0;
   int ZMASS_JERDown = 0;
+  //the ZMASS region is re-evaluated for the e-mu case
   bool ZMASS_FSB = false;
   bool ZMASS_FSB_JECUp = false;
   bool ZMASS_FSB_JECDown = false;
   bool ZMASS_FSB_JERUp = false;
   bool ZMASS_FSB_JERDown = false;
+  //this bool is true if the event has additional muons (more than the lead muon)
   bool addMuons = false;
+  //these are for the JEC/JER toy regions
   bool addMuons_JECUp = false;
   bool addMuons_JECDown = false;
   bool addMuons_JERUp = false;
   bool addMuons_JERDown = false;
-
-  setEventWeight(iEvent, myEvent);
 
   if (!myEventInfo.PVselection(vertices)){
     return;
   }
 
   myRECOevent.nVtx = myEventInfo.nVtx;
-
   myRECOevent.PVertex = myEventInfo.PVertex;
-
   myRECOevent.isMC = m_isMC;
 
   if(m_isMC){
@@ -246,33 +251,35 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.puWeight_Down = puWeights[2];
   }
 
+  // this goes through the logic descend the proper eventweight depending on source (data/mc type)
   setEventWeight(iEvent, myRECOevent);
 
+  //here we start tracking our progress through the main cuts 
   myRECOevent.cutProgress = 0;
 
-  if(m_isMC && m_doGen && !m_doFast) {
-//    genCounter(iEvent, myEvent);
-    if (genCounter(iEvent, myRECOevent))
-      vertexDiff(myRECOevent);
-  }
-   
-  if (m_doGen && m_isMC && !m_doFast) {
-    if(preSelectGen(iEvent, myRECOevent)) {
-      genJetAnalyzer(iEvent, myRECOevent);
-      std::cout << "analyzing wr2016" << std::endl;
-      pass2016 = passWR2016GEN(iEvent, myRECOevent);
-      if(pass2016) m_eventsPassingWR2016.fill(myRECOevent, 1);
-      std::cout << "analyzing extension" << std::endl;
-      if(passExtensionGEN(iEvent, myRECOevent)) m_eventsPassingExtension.fill(myRECOevent, 1);
-    }
-  }
   if (!m_doFast) {
-    if (passWR2016RECO(iEvent , myRECOevent)) {
+    if(m_isMC && m_doGen) {
+      if (genCounter(iEvent, myRECOevent))
+        vertexDiff(myRECOevent);
+      if(preSelectGen(iEvent, myRECOevent)) {
+        genJetAnalyzer(iEvent, myRECOevent);
+        std::cout << "analyzing wr2016 GEN" << std::endl;
+        passResGEN = passWR2016GEN(iEvent, myRECOevent);
+        if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
+        std::cout << "analyzing extension GEN" << std::endl;
+        passBoostGEN = passExtensionGEN(iEvent, myRECOevent);
+        if(passBoostGEN) m_eventsPassingExtension.fill(myRECOevent, 1);
+      }
+    }
+    passResRECO = passWR2016RECO(iEvent , myRECOevent);
+    if (passResRECO) {
       m_eventsPassingWR2016RECO.fill(myRECOevent, 1);
     }
   }
   bool muonTrigPass = true;
   bool electronTrigPass = true;
+
+
   if ((m_doReco || !m_isMC) && m_doFast){
     std::cout << "RUNNING CONDENSED ANALYSIS FOR HIGGS COMBINE" << std::endl;
     if(preSelectReco_Fast(iEvent, iSetup, myRECOevent)) {
