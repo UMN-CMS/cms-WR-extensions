@@ -156,9 +156,6 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO);
       bool passFSBbin(eventBits& myEvent, bool ISO, int ptCut);
       bool passABCD(eventBits& myEvent, bool AvB /*versus AvC */);
-      bool METselection(const edm::Event& iEvent, eventBits& myEvent);
-      bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
-      bool metCuts(const edm::Event& iEvent, eventBits& myEvent);
       void vertexDiff(eventBits& myEvent);
       bool sameSign(eventBits& myEvent, bool noISO);
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
