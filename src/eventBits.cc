@@ -14,6 +14,11 @@ eventBits::eventBits() {
   nPU = -1;
   nPUmean = -1;
 
+  //CUTFLOW BOOLS
+  passPreSelectGen = false;
+  passResGen       = false;
+  passGenCounter   = false;
+
   mySubleadMuon = NULL;
   myElectronCand = NULL;
   myMuonCand = NULL;

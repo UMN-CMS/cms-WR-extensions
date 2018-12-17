@@ -209,6 +209,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   bool passBoostRECO = false;
   bool passBoostGEN = false; //this tracks with our current analysis effort
+  //various pass/fail bits
+  bool passGenCounter = false;
+  bool passPreSelectGen = false;
   //trigger pass info
   bool muonTrigPass = true;
   bool electronTrigPass = true;
@@ -262,17 +265,19 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   if (!m_doFast) {
     if(m_isMC && m_doGen) {
-      if (genCounter(iEvent, myRECOevent))
-        vertexDiff(myRECOevent);
-      if(preSelectGen(iEvent, myRECOevent)) {
-        genJetAnalyzer(iEvent, myRECOevent);
-        std::cout << "analyzing wr2016 GEN" << std::endl;
-        passResGEN = passWR2016GEN(iEvent, myRECOevent);
-        if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
-        std::cout << "analyzing extension GEN" << std::endl;
-        passBoostGEN = passExtensionGEN(iEvent, myRECOevent);
-        if(passBoostGEN) m_eventsPassingExtension.fill(myRECOevent, 1);
-      }
+      
+      passGenCounter = genCounter(iEvent, myRECOevent);
+      myRECOevent.passGenCounter = passGenCounter;
+      vertexDiff(myRECOevent);
+      passPreSelectGen = preSelectGen(iEvent, myRECOevent); 
+      myRECOevent.passPreSelectGen = passPreSelectGen;
+      genJetAnalyzer(iEvent, myRECOevent);
+      std::cout << "analyzing wr2016 GEN" << std::endl;
+      passResGEN = passWR2016GEN(iEvent, myRECOevent);
+      std::cout << "analyzing extension GEN" << std::endl;
+      passBoostGEN = passExtensionGEN(iEvent, myRECOevent);
+      if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
+      if(passBoostGEN) m_eventsPassingExtension.fill(myRECOevent, 1);
     }
     passResRECO = passWR2016RECO(iEvent , myRECOevent);
     if (passResRECO) {
