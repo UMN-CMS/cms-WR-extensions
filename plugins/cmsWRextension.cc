@@ -1933,7 +1933,6 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
 bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion) {
   std::cout << "Sorting non-lead electrons within and without selected jet" << std::endl;
-  if (myEvent.myElectronJetPairs == NULL) { return false; }
   if (myEvent.myElectronJetPairs.size() < 1) return false;
 
   const baconhep::TAddJet* selJet =  myEvent.myElectronJetPairs[0].first;
@@ -2216,10 +2215,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 }
 bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myEvent) {
    
-  if (genWRDaughters == NULL || \
-      daughterClusterVector == NULL || \
-      genSecondMuon == NULL)
-     { return false; }
+  if (genSecondMuon == NULL) { return false; }
 
   std::cout<<"STARTING JET SELECTION"<<std::endl;
   edm::Handle<std::vector<pat::Jet>> recoJetsAK8;
