@@ -117,7 +117,6 @@ class cmsWRextension : public edm::EDAnalyzer {
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       // ----------member functions---------------------
-      void selectMuons(const edm::Event&, eventBits&);
       bool preSelectGen (const edm::Event&, eventBits&);
       bool preSelectReco (const edm::Event&, const edm::EventSetup&, eventBits&);
       bool preSelectReco_Fast (const edm::Event&, const edm::EventSetup&, eventBits&);
@@ -132,7 +131,6 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passFlavorSideband(const edm::Event&, eventBits&);
       bool passFlavorSideband_Fast(const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
-      bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
       bool resolvedJetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
