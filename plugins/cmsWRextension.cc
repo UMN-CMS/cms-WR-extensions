@@ -2215,7 +2215,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 }
 bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myEvent) {
    
-  if (genSecondMuon == NULL) { return false; }
+  if (myEvent.genSecondMuon == NULL) { return false; }
 
   std::cout<<"STARTING JET SELECTION"<<std::endl;
   edm::Handle<std::vector<pat::Jet>> recoJetsAK8;

@@ -24,16 +24,6 @@ eventBits::eventBits() {
   myMuonCand = NULL;
   my2ndHighPtMuonCand = NULL;
 
-  myElectronCandsHighPt200 = NULL;
-  myElectronCandsHighPt150 = NULL;
-  myElectronCandsHighPt100 = NULL;
-  myElectronCandsHighPt50 = NULL;
-  myElectronCandsHighPt50_noISO = NULL;
-  myElectronCandsHighPt200_noISO = NULL;
-  myMuonCandsHighPt = NULL;
-  resolvedANAMuons = NULL;
-  myMuonCands = NULL;
-
   genSecondMuon = NULL;
 
   firstMuon = NULL;
