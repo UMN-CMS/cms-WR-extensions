@@ -41,6 +41,11 @@ public:
 
   //BASIC FUNCTIONS
   bool passesGenCuts();
+ 
+  //CUTFLOW BOOLS
+  bool passPreSelectGen;
+  bool passResGen;
+  bool passGenCounter;
 
   //EVENT COLLECTIONS
   std::vector<const reco::GenJet*> myGenJets;
