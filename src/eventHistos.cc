@@ -317,7 +317,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_resLeadMuParton1dR      = m_histoFolder.make<TH1D>("resLeadMuParton1dR"   ,";resolved first muon lead parton dR"    , 80, 0.0, 8.0);
     m_resLeadMuParton2dR      = m_histoFolder.make<TH1D>("resLeadMuParton2dR"   ,";resolved first muon sublead parton dR" , 80, 0.0, 8.0);
 
-
+    m_resMLL                  = m_histoFolder.make<TH1D>("resMLL"               ,";resolved lepton-lepton mass"           , 100, 0.0, 2000);
+    m_resolvedSubleadMuPt     = m_histoFolder.make<TH1D>("resolvedSubleadMuPt"  ,";resolved Sublead Muon Pt"              , 100, 0.0, 1000);
 //2D LSF PLOTS
     m_genLSF_v_recoLSF                           =  m_histoFolder.make<TH2D>("genLSF_v_recoLSF"  , "genLSF vs recoLSF"         , 20, 0.0, 1.0, 20, 0.0, 1.0);
     m_recoLSF_v_selJetPt                         =  m_histoFolder.make<TH2D>("recoLSF_v_selJetPt", "recoLSF vs selected Jet Pt", 20, 0.0, 2000, 20, 0.0, 1.0);
@@ -554,6 +555,9 @@ void eventHistos::fillGen(eventBits& event) {
   m_resSubleadMuParton2dR->Fill(event.resSubleadMuParton2dR, weight);
   m_resLeadMuParton1dR   ->Fill(event.resLeadMuParton1dR   , weight);
   m_resLeadMuParton2dR   ->Fill(event.resLeadMuParton2dR   , weight);
+ 
+  m_resMLL               ->Fill(event.resMLL               , weight);
+  m_resolvedSubleadMuPt  ->Fill(event.resolvedSubleadMuPt  , weight);
 
 
 

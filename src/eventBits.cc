@@ -62,7 +62,7 @@ eventBits::eventBits() {
   secondInDecayMuon = -10000.0;
 
   mydRlsfLep_subleadMuon = -10000.0;
-
+  //RES ANALYSIS
   resJetDR           = -10000.0; 
   resolvedRECOmass   = -10000.0; 
   resolvedGENmass   = -10000.0; 
@@ -75,6 +75,9 @@ eventBits::eventBits() {
   resSubleadMuParton2dR = -10000.0;  
   resLeadMuParton1dR = -10000.0; 
   resLeadMuParton2dR = -10000.0;  
+
+  resMLL             = -10000.0;
+  resolvedSubleadMuPt= -10000.0;
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;

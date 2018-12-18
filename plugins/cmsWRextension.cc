@@ -2086,13 +2086,16 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
   return true;
 }
 bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout << "RES LEPTON SELECTION" << std::endl;
   std::vector<const pat::Muon*> resolvedANAMuons;
   edm::Handle<std::vector<pat::Muon>> highMuons;
   iEvent.getByToken(m_highMuonToken, highMuons);
 
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
-    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
-      std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
+    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 10) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {    //korea
+//    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 32) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {  //middle
+//   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {      //2017
+      std::cout<<"RES LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
       resolvedANAMuons.push_back(&(*iMuon));
     }
@@ -2102,13 +2105,16 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
 
   std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
 
+  //if (resolvedANAMuons[0]->pt() <= 52) return false;  //korea
   if (resolvedANAMuons[0]->pt() <= 60) return false;
 
-  std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
   double dR_pair = ::wrTools::dR(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi());
   if (dR_pair < 0.4) return false;
   
   myEvent.resolvedANAMuons = resolvedANAMuons;
+
+
+  myEvent.resolvedSubleadMuPt = resolvedANAMuons[1]->pt();
    
   return true;
 }
@@ -2297,16 +2303,19 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     double CHF  =                iJet->chargedHadronEnergyFraction();
     double CEMF =                iJet->chargedEmEnergyFraction();
     double NumConst =            iJet->chargedMultiplicity()+iJet->neutralMultiplicity();
+    double MUF      =            iJet->muonEnergyFraction();
     double CHM      =            iJet->chargedMultiplicity(); 
     //APPLYING TIGHT QUALITY CUTS
     if (NHF > .9) continue;
     if (NEMF > .9) continue;
     if (NumConst <= 1) continue;
+    if (MUF >= .8) continue;
     //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
     if (CHF == 0) continue;
     if (CHM == 0) continue;
-    if (CEMF > .99) continue;
+    if (CEMF > .90) continue;
     resCandJets.push_back(&(*iJet));
+    std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
   }
   //ONLY THE FIRST TWO JETS ARE CONSIDERED
   if (resCandJets.size() < 2) {
@@ -3571,28 +3580,46 @@ bool cmsWRextension::metCuts(const edm::Event& iEvent, eventBits& myEvent) {
 //  return false;
 //}
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout << "RES SELECTION CALL" << std::endl;
   if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
+  std::cout << "RES LEPTON SELECTION CALL" << std::endl;
   if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
+  std::cout << "RES OBJECT SELECTIONS PASSED" << std::endl;
 
   const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
   const pat::Muon* mu2 =  myEvent.resolvedANAMuons[1];
   const pat::Jet*  jet1 = myEvent.myResCandJets[0];
   const pat::Jet*  jet2 = myEvent.myResCandJets[1];
+
+  //MLL
+  double mll = (mu1->p4()+mu2->p4()).mass();
+  myEvent.resMLL = mll;
+//  if (mll < 200) return false;  // 2017
+  if (mll < 150) return false;// korea
+//  if (mll < 175) return false;// middle
+  std::cout << "RES MLL PASSED" << std::endl;
+
   //CHECK DR ASSOCIATIONS
   double dR_pair12 = ::wrTools::dR(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi());
+  std::cout << "RES 12" << dR_pair12<< std::endl;
   double dR_pair21 = ::wrTools::dR(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi());
+  std::cout << "RES 21" << dR_pair21<< std::endl;
   double dR_pair22 = ::wrTools::dR(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi());
+  std::cout << "RES 22" << dR_pair22<< std::endl;
   double dR_pair11 = ::wrTools::dR(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi());
+  std::cout << "RES 11" << dR_pair11<< std::endl;
 
   if (dR_pair12 < 0.4) return false;
   if (dR_pair21 < 0.4) return false;
   if (dR_pair22 < 0.4) return false;
   if (dR_pair11 < 0.4) return false;
+  std::cout << "RES FOUR OBJECT SEPARATION PASSED" << std::endl;
     
   //CHECK 4 OBJECT MASS
   double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
 
   if (resMass < 600) return false;
+  std::cout << "RES FOUR MASS PASSED" << std::endl;
 
   myEvent.resolvedRECOmass = resMass; 
 
@@ -3601,6 +3628,7 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
 
   myEvent.resLeadMuJet1dR = dR_pair11;
   myEvent.resLeadMuJet2dR = dR_pair12;
+
 
   return true;
 

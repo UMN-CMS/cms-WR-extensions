@@ -211,6 +211,9 @@ public:
   double resLeadMuParton1dR;
   double resLeadMuParton2dR;
 
+  double resMLL;
+  double resolvedSubleadMuPt;
+
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
   double selElectron_barrel_dPhiIn          ; 

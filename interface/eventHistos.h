@@ -313,6 +313,8 @@ class eventHistos {
   TH1D* m_resSubleadMuParton2dR;
   TH1D* m_resLeadMuParton1dR;
   TH1D* m_resLeadMuParton2dR;
+  TH1D* m_resMLL;
+  TH1D* m_resolvedSubleadMuPt;
 //
   TH1D* m_MET;
   TH1D* m_MET_selJetdPhi;
