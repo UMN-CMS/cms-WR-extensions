@@ -1984,9 +1984,9 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
   iEvent.getByToken(m_highMuonToken, highMuons);
 
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
-    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 10) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {    //korea
+//    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 10) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {    //korea
 //    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 32) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {  //middle
-//   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {      //2017
+   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {      //2017
       std::cout<<"RES LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
       resolvedANAMuons.push_back(&(*iMuon));
@@ -2186,6 +2186,15 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
   iEvent.getByToken(m_AK4recoCHSJetsToken, recoJetsAK4);
   assert(recoJetsAK4.isValid());
   std::vector<const pat::Jet*> resCandJets;
+
+  if (myEvent.resolvedANAMuons.size() < 2) {
+    std::cout << "NOT ENOUGH MUONS, EXITING RESOLVED JET SELECTION" << std::endl;
+    return false;
+  }
+  const pat::Muon* mu1 = myEvent.resolvedANAMuons[0];
+  const pat::Muon* mu2 = myEvent.resolvedANAMuons[1];
+
+
   for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK4->begin(); iJet != recoJetsAK4->end(); iJet++) {
     if ( iJet->pt() < 40 ) continue;
     if ( fabs(iJet->eta()) > 2.4) continue;
@@ -2206,6 +2215,10 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     if (CHF == 0) continue;
     if (CHM == 0) continue;
     if (CEMF > .90) continue;
+ 
+    //CHECK THAT IT DOESN'T OVERLAP A MUON
+    if (::wrTools::dR(iJet->eta(),mu1->eta(),iJet->phi(),mu1->phi()) <= 0.05) continue;
+    if (::wrTools::dR(iJet->eta(),mu2->eta(),iJet->phi(),mu2->phi()) <= 0.05) continue;
     resCandJets.push_back(&(*iJet));
     std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
   }
@@ -3470,9 +3483,10 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 }
 bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES SELECTION CALL" << std::endl;
-  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
   std::cout << "RES LEPTON SELECTION CALL" << std::endl;
   if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
+  std::cout << "RES JET SELECTION CALL" << std::endl;
+  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
   std::cout << "RES OBJECT SELECTIONS PASSED" << std::endl;
 
   const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
@@ -3483,8 +3497,8 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
   //MLL
   double mll = (mu1->p4()+mu2->p4()).mass();
   myEvent.resMLL = mll;
-//  if (mll < 200) return false;  // 2017
-  if (mll < 150) return false;// korea
+  if (mll < 200) return false;  // 2017
+//  if (mll < 150) return false;// korea
 //  if (mll < 175) return false;// middle
   std::cout << "RES MLL PASSED" << std::endl;
 
