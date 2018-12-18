@@ -2880,8 +2880,6 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
   std::vector<const reco::GenParticle*> myGenParticles;
 
-  if (myEvent.firstMuon == NULL || myEvent.secondMuon == NULL) { return false; }
-
   //LOOP OVER GEN PARTICLES
   //9900024 WR 9900014 NRu 9900012 NRe 9900016 NRt
   for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
