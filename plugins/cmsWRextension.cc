@@ -237,6 +237,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool addMuons_JECDown = false;
   bool addMuons_JERUp = false;
   bool addMuons_JERDown = false;
+  if (m_doTrig){
+    muonTrigPass = passMuonTrig(iEvent, myRECOevent);
+  }
 
   if (!myEventInfo.PVselection(vertices)){
     return;
@@ -280,16 +283,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if(passBoostGEN) m_eventsPassingExtension.fill(myRECOevent, 1);
     }
     passResRECO = passWR2016RECO(iEvent , myRECOevent);
-    if (passResRECO) {
+    if (passResRECO && muonTrigPass) {
       m_eventsPassingWR2016RECO.fill(myRECOevent, 1);
     }
     if (m_doReco || !m_isMC) {
       std::cout<<"running preselection reco"<<std::endl;
       if(preSelectReco(iEvent, iSetup, myRECOevent)) {
 
-        if (m_doTrig){
-          muonTrigPass = passMuonTrig(iEvent, myRECOevent);
-        }
         myRECOevent.cutProgress++;
         if(myRECOevent.myMuonJetPairs.size() > 0){
           if(passExtensionRECO(iEvent, myRECOevent)) {
@@ -1962,7 +1962,7 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
   
     if (! maskedCutFlowData.cutFlowPassed()) continue;   
 
-    if (::wrTools::dR(selJet->eta, selElec->eta(), selJet->phi, selElec->phi()) < 0.8 ) {  //within jet 
+    if (sqrt(::wrTools::dR2(selJet->eta, selElec->eta(), selJet->phi, selElec->phi())) < 0.8 ) {  //within jet 
       std::cout << "found second electron cand" << std::endl;
       secondElectronCands.push_back(&(*(iElec))); 
     }
@@ -1972,7 +1972,7 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
   if (secondElectronCands.size() < 1) return false;
   std::sort(secondElectronCands.begin(), secondElectronCands.end(), ::wrTools::compareEtCandidatePointer);
   myEvent.secondElectronCand = secondElectronCands[0];
-  myEvent.secondElecJetDR = ::wrTools::dR(selJet->eta, secondElectronCands[0]->eta(), selJet->phi, secondElectronCands[0]->phi());
+  myEvent.secondElecJetDR = sqrt(::wrTools::dR2(selJet->eta, secondElectronCands[0]->eta(), selJet->phi, secondElectronCands[0]->phi()));
   myEvent.secondElecPt = secondElectronCands[0]->pt();
   
   return true;
@@ -1986,7 +1986,7 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
 //    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 10) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {    //korea
 //    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 32) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {  //middle
-   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {      //2017
+   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
       std::cout<<"RES LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
       resolvedANAMuons.push_back(&(*iMuon));
@@ -2000,7 +2000,7 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
   //if (resolvedANAMuons[0]->pt() <= 52) return false;  //korea
   if (resolvedANAMuons[0]->pt() <= 60) return false;
 
-  double dR_pair = ::wrTools::dR(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi());
+  double dR_pair = sqrt(::wrTools::dR2(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi()));
   if (dR_pair < 0.4) return false;
   
   myEvent.resolvedANAMuons = resolvedANAMuons;
@@ -2217,8 +2217,8 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     if (CEMF > .90) continue;
  
     //CHECK THAT IT DOESN'T OVERLAP A MUON
-    if (::wrTools::dR(iJet->eta(),mu1->eta(),iJet->phi(),mu1->phi()) <= 0.05) continue;
-    if (::wrTools::dR(iJet->eta(),mu2->eta(),iJet->phi(),mu2->phi()) <= 0.05) continue;
+    if (sqrt(::wrTools::dR2(iJet->eta(),mu1->eta(),iJet->phi(),mu1->phi())) <= 0.05) continue;
+    if (sqrt(::wrTools::dR2(iJet->eta(),mu2->eta(),iJet->phi(),mu2->phi())) <= 0.05) continue;
     resCandJets.push_back(&(*iJet));
     std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
   }
@@ -2227,7 +2227,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     return false;
   } else {
     std::sort(resCandJets.begin(), resCandJets.end(), ::wrTools::compareEtCandidatePointer);
-    double dR_pair = ::wrTools::dR(resCandJets[0]->eta(),resCandJets[1]->eta(),resCandJets[0]->phi(),resCandJets[1]->phi());
+    double dR_pair = sqrt(::wrTools::dR2(resCandJets[0]->eta(),resCandJets[1]->eta(),resCandJets[0]->phi(),resCandJets[1]->phi()));
     if (dR_pair < 0.4) return false;
     myEvent.resJetDR = dR_pair;
   }
@@ -3503,13 +3503,13 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
   std::cout << "RES MLL PASSED" << std::endl;
 
   //CHECK DR ASSOCIATIONS
-  double dR_pair12 = ::wrTools::dR(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi());
+  double dR_pair12 = sqrt(::wrTools::dR2(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi()));
   std::cout << "RES 12" << dR_pair12<< std::endl;
-  double dR_pair21 = ::wrTools::dR(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi());
+  double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi()));
   std::cout << "RES 21" << dR_pair21<< std::endl;
-  double dR_pair22 = ::wrTools::dR(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi());
+  double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi()));
   std::cout << "RES 22" << dR_pair22<< std::endl;
-  double dR_pair11 = ::wrTools::dR(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi());
+  double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi()));
   std::cout << "RES 11" << dR_pair11<< std::endl;
 
   if (dR_pair12 < 0.4) return false;
@@ -3549,10 +3549,10 @@ bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent)
   const reco::GenParticle*  jet1 = myEvent.myGenPartons[0];
   const reco::GenParticle*  jet2 = myEvent.myGenPartons[1];
   //CHECK DR ASSOCIATIONS
-  double dR_pair12 = ::wrTools::dR(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi());
-  double dR_pair21 = ::wrTools::dR(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi());
-  double dR_pair22 = ::wrTools::dR(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi());
-  double dR_pair11 = ::wrTools::dR(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi());
+  double dR_pair12 = sqrt(::wrTools::dR2(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi()));
+  double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi()));
+  double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi()));
+  double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi()));
 
   if (dR_pair12 < 0.4) return false;
   if (dR_pair21 < 0.4) return false;
