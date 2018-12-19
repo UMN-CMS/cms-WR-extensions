@@ -166,7 +166,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
-      eventHistos m_eventsPassingExtension;
+      eventHistos m_eventsPassingExtensionGEN;
       eventHistos m_eventsPassingExtensionRECO;
       eventHistos m_eventsPassingExtensionRECO2016VETO;
       eventHistos m_eventsPassingExtensionRECO2016VETO_noTrig;
@@ -175,6 +175,12 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
       eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
       eventHistos m_eventsPassingWR2016RECO;
+
+      eventHistos m_eventsFailResFailBoostRECO;
+      eventHistos m_eventsPassResPassBoostRECO;
+      eventHistos m_eventsPassResFailBoostRECO;
+      eventHistos m_eventsFailResPassBoostRECO;
+
       eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt150;

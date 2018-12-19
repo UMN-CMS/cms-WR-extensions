@@ -280,12 +280,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       std::cout << "analyzing extension GEN" << std::endl;
       passBoostGEN = passExtensionGEN(iEvent, myRECOevent);
       if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
-      if(passBoostGEN) m_eventsPassingExtension.fill(myRECOevent, 1);
+      if(passBoostGEN) m_eventsPassingExtensionGEN.fill(myRECOevent, 1);
     }
     passResRECO = passWR2016RECO(iEvent , myRECOevent);
-    if (passResRECO && muonTrigPass) {
-      m_eventsPassingWR2016RECO.fill(myRECOevent, 1);
-    }
     if (m_doReco || !m_isMC) {
       std::cout<<"running preselection reco"<<std::endl;
       if(preSelectReco(iEvent, iSetup, myRECOevent)) {
@@ -316,6 +313,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
                   myRECOevent.cutProgress++;
           	if(myRECOevent.nHighPtMuonsOutsideJet == 1){
                     myRECOevent.cutProgress++;
+                    passBoostRECO = true;             
                     std::cout << "myRECOevent.weight: " << myRECOevent.weight << std::endl;
                     m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent, 1);
           	}
@@ -420,6 +418,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       std::cout << "DONE WITH FSB" << std::endl;
     }
   }
+  //FILL STUFF
+  passResRECO = (passResRECO && muonTrigPass);
+  if (!passResRECO && !passBoostRECO)    m_eventsFailResFailBoostRECO.fill(myRECOevent, 1);
+  if ( passResRECO &&  passBoostRECO)    m_eventsPassResPassBoostRECO.fill(myRECOevent, 1);
+  if ( passResRECO && !passBoostRECO)    m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
+  if (!passResRECO &&  passBoostRECO)    m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
+
   //THIS PART OF THE CODE RUNS THE ANALYSIS IN FAST MODE.  THE GOAL HERE IS TO PRODUCE ALL THE NECESSARY INFORMATION FOR HIGGS COMBINE
 
   if ((m_doReco || !m_isMC) && m_doFast){
@@ -3592,10 +3597,16 @@ cmsWRextension::beginJob()
     m_allEvents.book((fs->mkdir("allEvents")), 3, m_outputTag, 0);
     m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3, m_outputTag, 0);
     m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 3, m_outputTag, 0);
-    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 3, m_outputTag, 0);
+    m_eventsPassingExtensionGEN.book((fs->mkdir("eventsPassingExtensionGEN")), 3, m_outputTag, 0);
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 3, m_outputTag, 0);
     m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 3, m_outputTag, 0);
     m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 3, m_outputTag, 0);
+
+    m_eventsFailResFailBoostRECO.book((fs->mkdir("eventsFailResFailBoostRECO")), 3, m_outputTag, 0);
+    m_eventsPassResPassBoostRECO.book((fs->mkdir("eventsPassResPassBoostRECO")), 3, m_outputTag, 0);
+    m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")), 3, m_outputTag, 0);
+    m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")), 3, m_outputTag, 0);
+
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag, 0);
@@ -3624,7 +3635,7 @@ cmsWRextension::beginJob()
   //flavor 1
     m_allEvents.book((fs->mkdir("allEvents")), 1, m_outputTag, 0);
     m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1, m_outputTag, 0);
-    m_eventsPassingExtension.book((fs->mkdir("eventsPassingExtension")), 1, m_outputTag, 0);
+    m_eventsPassingExtensionGEN.book((fs->mkdir("eventsPassingExtensionGEN")), 1, m_outputTag, 0);
 
   }
   if (!m_doGen && m_doReco && !m_doFast) {
@@ -3635,6 +3646,12 @@ cmsWRextension::beginJob()
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 2, m_outputTag, 0);
     m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 2, m_outputTag, 0);
     m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 2, m_outputTag, 0);
+
+    m_eventsFailResFailBoostRECO.book((fs->mkdir("eventsFailResFailBoostRECO")), 2, m_outputTag, 0);
+    m_eventsPassResPassBoostRECO.book((fs->mkdir("eventsPassResPassBoostRECO")), 2, m_outputTag, 0);
+    m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")), 2, m_outputTag, 0);
+    m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")), 2, m_outputTag, 0);
+
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag, 0);
