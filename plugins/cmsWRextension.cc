@@ -1010,18 +1010,17 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_noISO;
   std::cout << "CHECKING FOR ELEC CANDS" << std::endl;
   std::cout << "myRECOevent.myElectronCandsHighPt50.size(): " << myRECOevent.myElectronCandsHighPt50.size() << std::endl;
+  TLorentzVector jetVec_temp = TLorentzVector();
   if( myRECOevent.myElectronCandsHighPt50.size() > 0 ){
-    
 
     //BUILD PAIRS OF AK8 JETS WITH THE LEAD ELECTRON
     for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
        if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
 
-       TLorentzVector* jetVec_temp = new TLorentzVector();
-       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+       jetVec_temp.SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
 
        math::XYZTLorentzVector jetVec;
-       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
  
        double eventMass = ( jetVec + myRECOevent.myElectronCand->p4() ).mass();
 
@@ -1040,11 +1039,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        std::cout << "LOOPING THROUGH DIOBJECT CANDS" << std::endl;
        if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand_noISO->phi())) < 2.0 ) continue;
 
-       TLorentzVector* jetVec_temp = new TLorentzVector();
-       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+       jetVec_temp.SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
 
        math::XYZTLorentzVector jetVec;
-       jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+       jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
  
        double eventMass_noISO = ( jetVec + myRECOevent.myElectronCand_noISO->p4() ).mass();
 
@@ -1066,11 +1064,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     myRECOevent.myElectronJetPairs = electronJetPairs;
     std::sort(electronJetPairs.begin(),electronJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
 
-    TLorentzVector* jetVec_temp = new TLorentzVector();
-    jetVec_temp->SetPtEtaPhiE( electronJetPairs[0].first->pT, electronJetPairs[0].first->eta, electronJetPairs[0].first->phi, electronJetPairs[0].first->E );
+    jetVec_temp.SetPtEtaPhiE( electronJetPairs[0].first->pT, electronJetPairs[0].first->eta, electronJetPairs[0].first->phi, electronJetPairs[0].first->E );
 
     math::XYZTLorentzVector jetVec;
-    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+    jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
 
     myRECOevent.leadAK8JetElectronMassVal = ( jetVec + electronJetPairs[0].second->p4() ).mass();
 
@@ -1130,11 +1127,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     myRECOevent.myElectronJetPairs_noISO = electronJetPairs_noISO;
     std::sort(electronJetPairs_noISO.begin(),electronJetPairs_noISO.end(),::wrTools::comparePairMassPointerTAddJet);
 
-    TLorentzVector* jetVec_temp = new TLorentzVector();
-    jetVec_temp->SetPtEtaPhiE( electronJetPairs_noISO[0].first->pT, electronJetPairs_noISO[0].first->eta, electronJetPairs_noISO[0].first->phi, electronJetPairs_noISO[0].first->E );
+    jetVec_temp.SetPtEtaPhiE( electronJetPairs_noISO[0].first->pT, electronJetPairs_noISO[0].first->eta, electronJetPairs_noISO[0].first->phi, electronJetPairs_noISO[0].first->E );
 
     math::XYZTLorentzVector jetVec;
-    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+    jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
 
     myRECOevent.leadAK8JetElectronMassVal_noISO = ( jetVec + electronJetPairs_noISO[0].second->p4() ).mass();
 
@@ -1240,16 +1236,16 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, const edm::EventSet
   myRECOevent.cutProgress++;
   //BUILD PAIRS OF AK8 JETS WITH THE LEAD MUON
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>> muonJetPairs;
+  TLorentzVector jetVec_temp = TLorentzVector();
   for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
     //if( ((*iJet)->p4() + (*iMuon)->p4()).mass() < 400) continue;
     //if (sqrt(deltaR2(*(*iJet),*(*iMuon)))<2.0) continue;
     if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myMuonCand->phi())) < 2.0 ) continue;
 
-    TLorentzVector* jetVec_temp = new TLorentzVector();
-    jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+    jetVec_temp.SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
 
     math::XYZTLorentzVector jetVec;
-    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+    jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
  
     double eventMass = ( jetVec + myRECOevent.myMuonCand->p4() ).mass();
 
@@ -1263,11 +1259,10 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, const edm::EventSet
   for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt_noLSF.begin(); iJet != myRECOevent.myAddJetCandsHighPt_noLSF.end(); iJet++) {
     if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myMuonCand->phi())) < 2.0 ) continue;
 
-    TLorentzVector* jetVec_temp = new TLorentzVector();
-    jetVec_temp->SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
+    jetVec_temp.SetPtEtaPhiM( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->SDmass );
 
     math::XYZTLorentzVector jetVec;
-    jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
+    jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
 
     double eventMass = ( jetVec + myRECOevent.myMuonCand->p4() ).mass();
 
@@ -3157,11 +3152,11 @@ bool cmsWRextension::passExtensionGEN(const edm::Event& iEvent, eventBits& myEve
 bool cmsWRextension::passExtensionRECO_ZPeak(const edm::Event& iEvent, eventBits& myRECOevent) {
 
   std::sort(myRECOevent.myMuonJetPairs_noLSF.begin(),myRECOevent.myMuonJetPairs_noLSF.end(),::wrTools::comparePairMassPointerTAddJet);
-  TLorentzVector *JetVector_temp = new TLorentzVector();
-  JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF[0].first->pT,myRECOevent.myMuonJetPairs_noLSF[0].first->eta,myRECOevent.myMuonJetPairs_noLSF[0].first->phi,myRECOevent.myMuonJetPairs_noLSF[0].first->E);
+  TLorentzVector JetVector_temp = TLorentzVector();
+  JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF[0].first->pT,myRECOevent.myMuonJetPairs_noLSF[0].first->eta,myRECOevent.myMuonJetPairs_noLSF[0].first->phi,myRECOevent.myMuonJetPairs_noLSF[0].first->E);
 
   math::XYZTLorentzVector JetVector;
-  JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
   myRECOevent.leadAK8JetMuonMassVal_noLSF = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()).mass();
 
@@ -3170,11 +3165,11 @@ bool cmsWRextension::passExtensionRECO_ZPeak(const edm::Event& iEvent, eventBits
 bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRECOevent) { //LOOP OVE. JET MUON PAIRS AND TAKE THE HIGHEST MASS ONE
 
   std::sort(myRECOevent.myMuonJetPairs.begin(),myRECOevent.myMuonJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
-  TLorentzVector *JetVector_temp = new TLorentzVector();
-  JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->E);
+  TLorentzVector JetVector_temp = TLorentzVector();
+  JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->E);
 
   math::XYZTLorentzVector JetVector;
-  JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
   myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).mass();
   myRECOevent.leadAK8JetMuonPtVal   = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).pt();
@@ -3288,13 +3283,14 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   return true;
 }
 void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits& myRECOevent) {
+
+  TLorentzVector JetVector_temp = TLorentzVector();
   if(myRECOevent.myMuonJetPairs.size() > 0){
   	std::sort(myRECOevent.myMuonJetPairs.begin(),myRECOevent.myMuonJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
-  	TLorentzVector *JetVector_temp = new TLorentzVector();
-  	JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->E);
+  	JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->E);
 
   	math::XYZTLorentzVector JetVector;
-  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
   	myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).mass();
   	myRECOevent.leadAK8JetMuonPtVal   = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).pt();
@@ -3320,11 +3316,10 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   }
 
   if(myRECOevent.myMuonJetPairs_JECUp.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-  	JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JECUp[0].first->pT,myRECOevent.myMuonJetPairs_JECUp[0].first->eta,myRECOevent.myMuonJetPairs_JECUp[0].first->phi,myRECOevent.myMuonJetPairs_JECUp[0].first->E);
+  	JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JECUp[0].first->pT,myRECOevent.myMuonJetPairs_JECUp[0].first->eta,myRECOevent.myMuonJetPairs_JECUp[0].first->phi,myRECOevent.myMuonJetPairs_JECUp[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
   	myRECOevent.leadAK8JetMuonMassVal_JECUp = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JECUp   = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).pt();
@@ -3348,11 +3343,10 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   }
 
   if(myRECOevent.myMuonJetPairs_JECDown.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-  	JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JECDown[0].first->pT,myRECOevent.myMuonJetPairs_JECDown[0].first->eta,myRECOevent.myMuonJetPairs_JECDown[0].first->phi,myRECOevent.myMuonJetPairs_JECDown[0].first->E);
+  	JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JECDown[0].first->pT,myRECOevent.myMuonJetPairs_JECDown[0].first->eta,myRECOevent.myMuonJetPairs_JECDown[0].first->phi,myRECOevent.myMuonJetPairs_JECDown[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
   	myRECOevent.leadAK8JetMuonMassVal_JECDown = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JECDown   = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).pt();
@@ -3376,11 +3370,10 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   }
 
   if(myRECOevent.myMuonJetPairs_JERUp.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-  	JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JERUp[0].first->pT,myRECOevent.myMuonJetPairs_JERUp[0].first->eta,myRECOevent.myMuonJetPairs_JERUp[0].first->phi,myRECOevent.myMuonJetPairs_JERUp[0].first->E);
+  	JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JERUp[0].first->pT,myRECOevent.myMuonJetPairs_JERUp[0].first->eta,myRECOevent.myMuonJetPairs_JERUp[0].first->phi,myRECOevent.myMuonJetPairs_JERUp[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
   	myRECOevent.leadAK8JetMuonMassVal_JERUp = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JERUp   = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).pt();
@@ -3404,11 +3397,10 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   }
 
   if(myRECOevent.myMuonJetPairs_JERDown.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-  	JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JERDown[0].first->pT,myRECOevent.myMuonJetPairs_JERDown[0].first->eta,myRECOevent.myMuonJetPairs_JERDown[0].first->phi,myRECOevent.myMuonJetPairs_JERDown[0].first->E);
+  	JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_JERDown[0].first->pT,myRECOevent.myMuonJetPairs_JERDown[0].first->eta,myRECOevent.myMuonJetPairs_JERDown[0].first->phi,myRECOevent.myMuonJetPairs_JERDown[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-  	JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+  	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
   	myRECOevent.leadAK8JetMuonMassVal_JERDown = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JERDown   = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).pt();
@@ -3433,47 +3425,42 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   if(myRECOevent.myMuonJetPairs_noLSF.size() > 0){
         std::sort(myRECOevent.myMuonJetPairs_noLSF.begin(),myRECOevent.myMuonJetPairs_noLSF.end(),::wrTools::comparePairMassPointerTAddJet);
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-        JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF[0].first->pT,myRECOevent.myMuonJetPairs_noLSF[0].first->eta,myRECOevent.myMuonJetPairs_noLSF[0].first->phi,myRECOevent.myMuonJetPairs_noLSF[0].first->E);
+        JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF[0].first->pT,myRECOevent.myMuonJetPairs_noLSF[0].first->eta,myRECOevent.myMuonJetPairs_noLSF[0].first->phi,myRECOevent.myMuonJetPairs_noLSF[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-        JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+        JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
         myRECOevent.leadAK8JetMuonMassVal_noLSF = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()).mass();
   }
   if(myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-        JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->E);
+        JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-        JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+        JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
         myRECOevent.leadAK8JetMuonMassVal_noLSF_JECUp = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JECUp[0].second->p4()).mass();
   }
   if(myRECOevent.myMuonJetPairs_noLSF_JECDown.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-        JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->E);
+        JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-        JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+        JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
         myRECOevent.leadAK8JetMuonMassVal_noLSF_JECDown = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JECDown[0].second->p4()).mass();
   }
   if(myRECOevent.myMuonJetPairs_noLSF_JERUp.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-        JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->E);
+        JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-        JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+        JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
         myRECOevent.leadAK8JetMuonMassVal_noLSF_JERUp = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JERUp[0].second->p4()).mass();
 }
   if(myRECOevent.myMuonJetPairs_noLSF_JERDown.size() > 0){
-        TLorentzVector *JetVector_temp = new TLorentzVector();
-        JetVector_temp->SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->E);
+        JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->E);
 
         math::XYZTLorentzVector JetVector;
-        JetVector.SetXYZT(JetVector_temp->X(),JetVector_temp->Y(),JetVector_temp->Z(),JetVector_temp->T());
+        JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
         myRECOevent.leadAK8JetMuonMassVal_noLSF_JERDown = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JERDown[0].second->p4()).mass();
   }
