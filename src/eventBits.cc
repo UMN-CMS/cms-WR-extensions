@@ -29,6 +29,9 @@ eventBits::eventBits() {
   firstMuon = NULL;
   secondMuon = NULL;
 
+  NR = NULL;
+  WR = NULL;
+
   secondElectronCand = NULL;
 
   PVertex = NULL;

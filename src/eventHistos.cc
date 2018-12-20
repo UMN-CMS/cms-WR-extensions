@@ -548,8 +548,12 @@ void eventHistos::fillGen(eventBits& event) {
   //m_leadSubleadingPartonsMuonsEta->Fill(event.leadSubleadingPartonsMuonsEtaVal, weight);
   //m_leadSubleadingAK8JetsMuonsEta->Fill(event.leadSubleadingAK8JetsMuonsEtaVal, weight);
   //m_leadAK8JetMuonEta->Fill(event.leadAK8JetMuonEtaVal, weight);
-
-
+  m_resJetDR             ->Fill(event.resJetDR             , weight); 
+  m_resSubleadMuJet1dR   ->Fill(event.resSubleadMuJet1dR   , weight);
+  m_resSubleadMuJet2dR   ->Fill(event.resSubleadMuJet2dR   , weight);
+  m_resLeadMuJet1dR      ->Fill(event.resLeadMuJet1dR      , weight); 
+  m_resLeadMuJet1dR      ->Fill(event.resLeadMuJet1dR      , weight); 
+  m_resolvedRECOmass     ->Fill(event.resolvedRECOmass     , weight); 
   m_resolvedGENmass      ->Fill(event.resolvedGENmass      , weight);
   m_resSubleadMuParton1dR->Fill(event.resSubleadMuParton1dR, weight);
   m_resSubleadMuParton2dR->Fill(event.resSubleadMuParton2dR, weight);
