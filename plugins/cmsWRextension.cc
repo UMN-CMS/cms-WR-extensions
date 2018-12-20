@@ -2905,23 +2905,27 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
         std::cout << "WR DAUGHTERS: "<<iParticle->pdgId()<<std::endl;
         if ( abs(iParticle->pdgId()) == 13 ) { //it's the first muon
           std::cout << "FIRST MUON" << std::endl;
-          const reco::GenParticle* firstMuon = ::wrTools::evolveParticle(&(*(iParticle)));
+          //const reco::GenParticle* firstMuon = ::wrTools::evolveParticle(&(*(iParticle)));
+          const reco::GenParticle* firstMuon = &(*(iParticle));
           myEvent.firstMuon = firstMuon;
           myGenMuons.push_back(firstMuon);
         }
       }
       if ( abs(iParticle->mother()->pdgId() == 9900012) || abs(iParticle->mother()->pdgId() == 9900014) || abs(iParticle->mother()->pdgId() == 9900016)) {
+        std::cout << "NR CAND" << std::endl;
         const reco::Candidate* NR = iParticle->mother();
         myEvent.NR = NR;
         if ( abs(iParticle->pdgId()) == 13 ) {
           std::cout << "SECOND MUON" << std::endl;
-          const reco::GenParticle* secondMu = ::wrTools::evolveParticle(&(*(iParticle)));
+     //     const reco::GenParticle* secondMu = ::wrTools::evolveParticle(&(*(iParticle)));
+          const reco::GenParticle* secondMu = &(*(iParticle));
           myEvent.secondMuon = secondMu; 
           myGenMuons.push_back(secondMu);
         }
         if ( abs(iParticle->pdgId()) <= 5 ) { //it's a quark
           std::cout << "VIRTUAL WR DAUGHTERS: QUARKS"<<std::endl;
-          const reco::GenParticle* parton = ::wrTools::evolveParticle(&(*(iParticle)));
+//          const reco::GenParticle* parton = ::wrTools::evolveParticle(&(*(iParticle)));
+          const reco::GenParticle* parton = &(*(iParticle));
           myGenPartons.push_back(parton);
         }
         if ( abs(iParticle->pdgId()) == 6 ) {
