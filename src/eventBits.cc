@@ -14,6 +14,11 @@ eventBits::eventBits() {
   nPU = -1;
   nPUmean = -1;
 
+  //CUTFLOW BOOLS
+  passPreSelectGen = false;
+  passResGen       = false;
+  passGenCounter   = false;
+
   mySubleadMuon = NULL;
   myElectronCand = NULL;
   myMuonCand = NULL;
@@ -24,6 +29,11 @@ eventBits::eventBits() {
   firstMuon = NULL;
   secondMuon = NULL;
 
+  NR = NULL;
+  WR = NULL;
+
+  secondElectronCand = NULL;
+
   PVertex = NULL;
 
   daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
@@ -32,6 +42,8 @@ eventBits::eventBits() {
 
   cutProgress = -1;
   FSBcutProgress = -1;
+
+  nSecondElectronCands = -10000.0;
 
   puWeight = -10000.0;
   puWeight_Up = -10000.0;
@@ -58,7 +70,7 @@ eventBits::eventBits() {
   secondInDecayMuon = -10000.0;
 
   mydRlsfLep_subleadMuon = -10000.0;
-
+  //RES ANALYSIS
   resJetDR           = -10000.0; 
   resolvedRECOmass   = -10000.0; 
   resolvedGENmass   = -10000.0; 
@@ -71,6 +83,9 @@ eventBits::eventBits() {
   resSubleadMuParton2dR = -10000.0;  
   resLeadMuParton1dR = -10000.0; 
   resLeadMuParton2dR = -10000.0;  
+
+  resMLL             = -10000.0;
+  resolvedSubleadMuPt= -10000.0;
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
@@ -98,6 +113,9 @@ eventBits::eventBits() {
   secondPartonJetPhiVal = -10000.0;
   firstPartonAK8JetPhiVal = -10000.0;
   secondPartonAK8JetPhiVal = -10000.0;
+ 
+  secondElecJetDR = -10000.0;
+  secondElecPt    = -10000.0;
 
   dRparton1parton2Val = -10000.0;
   dRmuon1muon2Val = -10000.0;

@@ -78,6 +78,10 @@ class eventHistos {
   TH1D* m_nAdditionalHEEP_noISO;
   TH1D* m_nHighPtMuonsOutsideJet;
 
+  TH1D* m_nSecondElectronCands;
+  TH1D* m_secondElecJetDR;
+  TH1D* m_secondElecPt;
+
   TH1D* m_eventFlavor       ;
 
   TH1D* m_cutProgress;
@@ -310,6 +314,8 @@ class eventHistos {
   TH1D* m_resSubleadMuParton2dR;
   TH1D* m_resLeadMuParton1dR;
   TH1D* m_resLeadMuParton2dR;
+  TH1D* m_resMLL;
+  TH1D* m_resolvedSubleadMuPt;
 //
   TH1D* m_MET;
   TH1D* m_MET_selJetdPhi;

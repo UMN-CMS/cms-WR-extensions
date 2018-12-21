@@ -117,7 +117,6 @@ class cmsWRextension : public edm::EDAnalyzer {
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
       // ----------member functions---------------------
-      void selectMuons(const edm::Event&, eventBits&);
       bool preSelectGen (const edm::Event&, eventBits&);
       bool preSelectReco (const edm::Event&, const edm::EventSetup&, eventBits&);
       bool preSelectReco_Fast (const edm::Event&, const edm::EventSetup&, eventBits&);
@@ -132,7 +131,6 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passFlavorSideband(const edm::Event&, eventBits&);
       bool passFlavorSideband_Fast(const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
-      bool passWR2016Reco(const edm::Event&, eventBits&);
       bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
       bool resolvedJetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
@@ -156,9 +154,6 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO);
       bool passFSBbin(eventBits& myEvent, bool ISO, int ptCut);
       bool passABCD(eventBits& myEvent, bool AvB /*versus AvC */);
-      bool METselection(const edm::Event& iEvent, eventBits& myEvent);
-      bool METcuts(const edm::Event& iEvent, eventBits& myEvent);
-      bool metCuts(const edm::Event& iEvent, eventBits& myEvent);
       void vertexDiff(eventBits& myEvent);
       bool sameSign(eventBits& myEvent, bool noISO);
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
@@ -171,7 +166,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       // ----------member data ---------------------------
       eventHistos m_allEvents;
       eventHistos m_eventsPassingWR2016;
-      eventHistos m_eventsPassingExtension;
+      eventHistos m_eventsPassingExtensionGEN;
       eventHistos m_eventsPassingExtensionRECO;
       eventHistos m_eventsPassingExtensionRECO2016VETO;
       eventHistos m_eventsPassingExtensionRECO2016VETO_noTrig;
@@ -180,6 +175,17 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
       eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
       eventHistos m_eventsPassingWR2016RECO;
+
+      eventHistos m_eventsFailResFailBoostRECO;
+      eventHistos m_eventsPassResPassBoostRECO;
+      eventHistos m_eventsPassResFailBoostRECO;
+      eventHistos m_eventsFailResPassBoostRECO;
+
+      eventHistos m_eventsFailResFailBoostGEN;
+      eventHistos m_eventsPassResPassBoostGEN;
+      eventHistos m_eventsPassResFailBoostGEN;
+      eventHistos m_eventsFailResPassBoostGEN;
+
       eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt150;

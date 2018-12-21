@@ -41,6 +41,11 @@ public:
 
   //BASIC FUNCTIONS
   bool passesGenCuts();
+ 
+  //CUTFLOW BOOLS
+  bool passPreSelectGen;
+  bool passResGen;
+  bool passGenCounter;
 
   //EVENT COLLECTIONS
   std::vector<const reco::GenJet*> myGenJets;
@@ -113,8 +118,13 @@ public:
   const pat::Muon*                  mySubleadMuon;
   const pat::Muon*                  my2ndHighPtMuonCand;
 
+  const pat::Electron*              secondElectronCand;
+
   const reco::GenParticle*          firstMuon;
   const reco::GenParticle*          secondMuon;
+
+  const reco::Candidate*            NR;
+  const reco::Candidate*            WR;
 
   const reco::GenParticle*          genSecondMuon;
 
@@ -163,6 +173,8 @@ public:
   int    nHighPtMuonsOutsideJet_JERUp;
   int    nHighPtMuonsOutsideJet_JERDown;
 
+  int    nSecondElectronCands;
+
   int    myEventFlavor  ;
 
   int	 nVtx		;
@@ -210,6 +222,9 @@ public:
   double resSubleadMuParton2dR;
   double resLeadMuParton1dR;
   double resLeadMuParton2dR;
+
+  double resMLL;
+  double resolvedSubleadMuPt;
 
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
@@ -402,6 +417,9 @@ public:
   double selectedJetMaxSubJetCSV;
 
   double mydRlsfLep_subleadMuon;
+
+  double secondElecJetDR;
+  double secondElecPt;
 
   double selectedJet_EleNoISO_Pt;
   double selectedJet_EleNoISO_Phi;
