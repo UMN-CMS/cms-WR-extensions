@@ -52,7 +52,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_eventFlavor    = m_histoFolder.make<TH1D>("eventFlavor"       , "; Event Flavor; # Events with flavor"       ,                                                       10, -.5, 9.5);
 
 
-    m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       10, -.5, 9.5);
+    m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_FSBcutProgress    = m_histoFolder.make<TH1D>("FSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
     
     m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et;Et (GeV); ",                         80, 0.0, 4000);
@@ -157,6 +157,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_nElectronCands200_noISO =                   m_histoFolder.make<TH1D>("nElectronCands200_noISO", ";#  Non Isolated Electrons Pt > 200;",                                        10, -.5, 9.5);
     m_nMuons10 =                        m_histoFolder.make<TH1D>("nMuons10", ";#  Muons above 10 GeV;",                                                       10, -.5, 9.5);
     m_nAK8Jets40 =                      m_histoFolder.make<TH1D>("nAK8Jets40", ";#  AK8Jets above 40 GeV;",                                                       10, -.5, 9.5);
+    m_nCandidateJets =                      m_histoFolder.make<TH1D>("nCandidateJets", ";#  AK8Jets;",                                  10, -.5, 9.5);
     m_nAdditionalHEEP =                    m_histoFolder.make<TH1D>("nAdditionalHEEP", ";#  Electrons passing HEEP;",                                            10, -.5, 9.5);
     m_nAdditionalHEEP_noISO =             m_histoFolder.make<TH1D>("nAdditionalHEEP_noISO", ";#  Electrons passing HEEP (non ISO);",                           10, -.5, 9.5);
     m_nHighPtMuonsOutsideJet =                    m_histoFolder.make<TH1D>("nHighPtMuonsOutsideJet", ";#  Muons passing High pT ID;",                                            10, -.5, 9.5);
@@ -681,6 +682,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_nAdditionalHEEP_noISO->Fill(event.nAdditionalHEEP_noISO, weight);
   m_nHighPtMuonsOutsideJet->Fill(event.nHighPtMuonsOutsideJet, weight);
   m_nAK8Jets40->Fill(event.ak8jets40, weight);
+  m_nCandidateJets->Fill(event.myAddJetCandsHighPt_noLSF.size(), weight);
   m_leadAK8JetMuonDR->Fill(event.leadAK8JetMuonDR,weight);
   m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, weight);
   m_leadAK8JetElectronPhi->Fill(event.leadAK8JetElectronPhiVal, weight);

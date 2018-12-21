@@ -116,9 +116,6 @@ public:
   const reco::GenParticle*          firstMuon;
   const reco::GenParticle*          secondMuon;
 
-  const reco::GenParticle*          firstMuon;
-  const reco::GenParticle*          secondMuon;
-
   const reco::GenParticle*          genSecondMuon;
 
   const reco::Vertex*               PVertex;
@@ -161,6 +158,10 @@ public:
   int	 nAdditionalHEEP;
   int	 nAdditionalHEEP_noISO;
   int    nHighPtMuonsOutsideJet;
+  int    nHighPtMuonsOutsideJet_JECUp;
+  int    nHighPtMuonsOutsideJet_JECDown;
+  int    nHighPtMuonsOutsideJet_JERUp;
+  int    nHighPtMuonsOutsideJet_JERDown;
 
   int    myEventFlavor  ;
 
