@@ -66,6 +66,8 @@ class eventHistos {
   TH1D* m_FSBfinalEventWeight_E_noISO;
   TH1D* m_FSBfinalEventWeight_B_noISO;
 
+  TH1D* m_neutrinoDecays;
+
   TH1D* m_nLeptons     ;
   TH1D* m_nMuons       ;
   TH1D* m_nTaus        ;

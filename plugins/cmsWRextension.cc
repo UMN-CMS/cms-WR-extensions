@@ -723,6 +723,7 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
       if(!m_amcatnlo) {
         myEvent.weight = eventInfo->weight()*myEvent.puWeight;
+        std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
         myEvent.count = 1;
       }
       else {
@@ -2881,6 +2882,8 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 
   std::vector<const reco::GenParticle*> myGenParticles;
 
+  myEvent.neutrinoDecays = 0;
+
   //LOOP OVER GEN PARTICLES
   //9900024 WR 9900014 NRu 9900012 NRe 9900016 NRt
   for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
@@ -2911,6 +2914,10 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
       }
       if ( abs(iParticle->pdgId()) == 9900012 || abs(iParticle->pdgId()) == 9900014 || abs(iParticle->pdgId()) == 9900016) {
         std::cout << "NR CAND: " << iParticle->pdgId() << " WITH MOTHER: " << iParticle->mother()->pdgId() << std::endl;
+        if ( abs(iParticle->mother()->pdgId()) == 9900012 || abs(iParticle->mother()->pdgId()) == 9900014 || abs(iParticle->mother()->pdgId()) == 9900016) {
+          std::cout << "NEUTRINO DECAY EVENT" << std::endl;
+          myEvent.neutrinoDecays = 1;
+        }
       }
       if ( abs(iParticle->mother()->pdgId()) == 9900012 || abs(iParticle->mother()->pdgId()) == 9900014 || abs(iParticle->mother()->pdgId()) == 9900016) {
         const reco::Candidate* NR = iParticle->mother();

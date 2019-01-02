@@ -132,6 +132,8 @@ eventBits::eventBits() {
 
   myGenLSF = -10000.0;
 
+  neutrinoDecays = -10000.0;
+
   firstPartonJetEtHadronicVal = -10000.0;
   secondPartonJetEtHadronicVal = -10000.0;
   firstPartonJetEtEMVal = -10000.0;

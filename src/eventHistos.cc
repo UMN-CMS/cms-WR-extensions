@@ -38,7 +38,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     std::cout << "HERE WE CONSTRUCT THE PLOTS" << std::endl;
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
 
-
+    m_neutrinoDecays = m_histoFolder.make<TH1D>("neutrinoDecays", "; # neutrino decays to neutrino",                                                       2, -.5, 1.5);
 
     m_nLeptons       = m_histoFolder.make<TH1D>("nLeptons"     , "; # Leptons; Events per #"     ,                                                       10, -.5, 9.5);
     m_nMuons         = m_histoFolder.make<TH1D>("nMuons"       , "; # Muons; Events per #"       ,                                                       10, -.5, 9.5);
@@ -477,6 +477,8 @@ void eventHistos::fillGen(eventBits& event) {
     weight = event.weight;
 
   std::cout << "Filling Event plots" << std::endl;
+  m_neutrinoDecays ->Fill(event.neutrinoDecays , weight) ;
+  std::cout << "FILLING NEUTRINO DECAY WITH: " << event.neutrinoDecays << " WEIGHT: " << weight << std::endl;
   m_nLeptons       ->Fill(event.mynLeptons     , weight) ;
   m_nMuons         ->Fill(event.mynMuons       , weight) ;
   m_nTaus          ->Fill(event.mynTaus        , weight) ;
@@ -525,6 +527,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_dRparton2AK8jet->Fill(event.dRparton2AK8jetVal, weight);
 
 
+  m_genLSF                  ->   Fill(event.myGenLSF, weight);
 
   m_firstPartonJetEtHadronic->Fill(event.firstPartonJetEtHadronicVal, weight);
   m_secondPartonJetEtHadronic->Fill(event.secondPartonJetEtHadronicVal, weight);
@@ -613,7 +616,6 @@ void eventHistos::fillReco(eventBits& event) {
   m_secondElecJetDR        -> Fill(event.secondElecJetDR     , weight);
   m_secondElecPt           -> Fill(event.secondElecPt        , weight);
 
-  m_genLSF                  ->   Fill(event.myGenLSF, weight);
                                                                
   m_MET                    ->Fill(event.MET                    ,weight); 
   m_MET_selJetdPhi         ->Fill(event.MET_selJetdPhi         ,weight); 

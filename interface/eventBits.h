@@ -137,7 +137,7 @@ public:
   int secondInDecayMuon;
 
   //EVENT VALUES
-  bool flavorSideband;
+  int neutrinoDecays;
   int cutProgress;
   int FSBcutProgress;
   bool passesWR2016;
