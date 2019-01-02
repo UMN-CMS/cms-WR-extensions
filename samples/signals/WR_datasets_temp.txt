@@ -1,0 +1,6 @@
+                              DATASET                                                                                                          ||MAX EVENTS||JOBS PER LUMI||XSEC IN PB||LEGEND||COLOR CODE||
+============================================================================================================================================================================================================
+/WR_M-1500_ToLNu_M-100/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM -1 5 1.0+0-0 Singal ROOT.kOrange
+/WR_M-2000_ToLNu_M-200/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM -1 5 1.0+0-0 Singal ROOT.kOrange
+/WR_M-1500_ToLNu_M-150/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM -1 5 1.0+0-0 Singal ROOT.kOrange
+/WR_M-2000_ToLNu_M-100/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM -1 5 1.0+0-0 Singal ROOT.kOrange

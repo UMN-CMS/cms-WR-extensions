@@ -168,6 +168,10 @@ public:
   int	 nAdditionalHEEP;
   int	 nAdditionalHEEP_noISO;
   int    nHighPtMuonsOutsideJet;
+  int    nHighPtMuonsOutsideJet_JECUp;
+  int    nHighPtMuonsOutsideJet_JECDown;
+  int    nHighPtMuonsOutsideJet_JERUp;
+  int    nHighPtMuonsOutsideJet_JERDown;
 
   int    nSecondElectronCands;
 
