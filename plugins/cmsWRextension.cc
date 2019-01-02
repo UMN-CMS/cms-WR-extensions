@@ -2911,10 +2911,16 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
           myGenMuons.push_back(firstMuon);
         }
       }
-      if ( abs(iParticle->mother()->pdgId() == 9900012) || abs(iParticle->mother()->pdgId() == 9900014) || abs(iParticle->mother()->pdgId() == 9900016)) {
-        std::cout << "NR CAND" << std::endl;
+      if ( abs(iParticle->pdgId()) == 9900024) {
+        std::cout << "WR with mass: "<< iParticle->mass() << std::endl;
+      }
+      if ( abs(iParticle->pdgId()) == 9900012 || abs(iParticle->pdgId()) == 9900014 || abs(iParticle->pdgId()) == 9900016) {
+        std::cout << "NR CAND: " << iParticle->pdgId() << " WITH MOTHER: " << iParticle->mother()->pdgId() << std::endl;
+      }
+      if ( abs(iParticle->mother()->pdgId()) == 9900012 || abs(iParticle->mother()->pdgId()) == 9900014 || abs(iParticle->mother()->pdgId()) == 9900016) {
         const reco::Candidate* NR = iParticle->mother();
         myEvent.NR = NR;
+        std::cout << "NR DAUGHTER: " << abs(iParticle->pdgId()) << std::endl;        
         if ( abs(iParticle->pdgId()) == 13 ) {
           std::cout << "SECOND MUON" << std::endl;
      //     const reco::GenParticle* secondMu = ::wrTools::evolveParticle(&(*(iParticle)));
