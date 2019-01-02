@@ -261,6 +261,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
 
   // this goes through the logic descend the proper eventweight depending on source (data/mc type)
+  myRECOevent.Muon_HighPtID_Weight = 1;
+  myRECOevent.Muon_LooseID_Weight = 1;
   setEventWeight(iEvent, myRECOevent);
 
   //here we start tracking our progress through the main cuts 
