@@ -476,6 +476,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         setEventWeight(iEvent, myRECOevent);
       }
       //Fill histograms individually
+      std::cout << "myRECOevent.myAddJetCandsHighPt.size(): " << myRECOevent.myAddJetCandsHighPt.size() << "myRECOevent.myMuonCandsHighPt.size(): " << myRECOevent.myMuonCandsHighPt.size() << "myRECOevent.myMuonJetPairs.size(): " << myRECOevent.myMuonJetPairs.size() << "muonTrigPass: " << muonTrigPass << "addMuons: " << addMuons << "ZMASS_Nom: " << ZMASS_Nom << "myRECOevent.nHighPtMuonsOutsideJet: " << myRECOevent.nHighPtMuonsOutsideJet << std::endl;
       if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && addMuons && ZMASS_Nom==2 && myRECOevent.nHighPtMuonsOutsideJet == 1){
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
         m_eventsPassingExtensionRECO.fill(myRECOevent, 1.);
@@ -2241,7 +2242,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 }
 bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myEvent) {
    
-  if (myEvent.genSecondMuon == NULL) { return false; }
+//  if (myEvent.genSecondMuon == NULL) { return false; }
 
   std::cout<<"STARTING JET SELECTION"<<std::endl;
   edm::Handle<std::vector<pat::Jet>> recoJetsAK8;
@@ -2693,7 +2694,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
   myEvent.JetContainingBothDaughters = JetContainingBothDaughters;
   myEvent.capturedBothDaughtersInSingleJet = capturedBothDaughtersInSingleJet;
 
-  if (myEvent.genSecondMuon != 0 && myEvent.genWRDaughters.size() > 1) {
+  if (myEvent.genSecondMuon != NULL && myEvent.genWRDaughters.size() > 1) {
     std::cout << "DR CALC" << std::endl;
     double jetPhi = myEvent.daughterClusterVector.phi();
     double muPhi  = myEvent.genSecondMuon->phi();
