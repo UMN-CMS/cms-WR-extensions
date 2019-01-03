@@ -137,7 +137,7 @@ public:
   int secondInDecayMuon;
 
   //EVENT VALUES
-  bool flavorSideband;
+  int neutrinoDecays;
   int cutProgress;
   int FSBcutProgress;
   bool passesWR2016;
@@ -168,6 +168,10 @@ public:
   int	 nAdditionalHEEP;
   int	 nAdditionalHEEP_noISO;
   int    nHighPtMuonsOutsideJet;
+  int    nHighPtMuonsOutsideJet_JECUp;
+  int    nHighPtMuonsOutsideJet_JECDown;
+  int    nHighPtMuonsOutsideJet_JERUp;
+  int    nHighPtMuonsOutsideJet_JERDown;
 
   int    nSecondElectronCands;
 
