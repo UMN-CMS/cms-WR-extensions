@@ -3797,15 +3797,15 @@ cmsWRextension::beginJob()
     m_eventsPassResFailBoostGEN.book((fs->mkdir("eventsPassResFailBoostGEN")), 3, m_outputTag, 0);
     m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
 
-    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostRECO_resMod")), 2, m_outputTag, 0);
-    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostRECO_resMod")), 2, m_outputTag, 0);
-    m_eventsPassResFailBoostGEN_resMod.book((fs->mkdir("eventsPassResFailBoostRECO_resMod")), 2, m_outputTag, 0);
-    m_eventsFailResPassBoostGEN_resMod.book((fs->mkdir("eventsFailResPassBoostRECO_resMod")), 2, m_outputTag, 0);
+    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
+    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
+    m_eventsPassResFailBoostGEN_resMod.book((fs->mkdir("eventsPassResFailBoostGEN_resMod")), 3, m_outputTag, 0);
+    m_eventsFailResPassBoostGEN_resMod.book((fs->mkdir("eventsFailResPassBoostGEN_resMod")), 3, m_outputTag, 0);
 
-    m_eventsFailResFailBoostGEN_boostMod.book((fs->mkdir("eventsFailResFailBoostRECO_boostMod")), 2, m_outputTag, 0);
-    m_eventsPassResPassBoostGEN_boostMod.book((fs->mkdir("eventsPassResPassBoostRECO_boostMod")), 2, m_outputTag, 0);
-    m_eventsPassResFailBoostGEN_boostMod.book((fs->mkdir("eventsPassResFailBoostRECO_boostMod")), 2, m_outputTag, 0);
-    m_eventsFailResPassBoostGEN_boostMod.book((fs->mkdir("eventsFailResPassBoostRECO_boostMod")), 2, m_outputTag, 0);
+    m_eventsFailResFailBoostGEN_boostMod.book((fs->mkdir("eventsFailResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
+    m_eventsPassResPassBoostGEN_boostMod.book((fs->mkdir("eventsPassResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
+    m_eventsPassResFailBoostGEN_boostMod.book((fs->mkdir("eventsPassResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
+    m_eventsFailResPassBoostGEN_boostMod.book((fs->mkdir("eventsFailResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
 
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag, false);
