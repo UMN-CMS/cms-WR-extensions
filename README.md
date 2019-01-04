@@ -10,7 +10,7 @@ https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2786.html
 -HEEPv7 ID information for which is here:
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/HEEPElectronIdentificationRun2
 
-As of 12-6-18 the sequence is:
+As of 12-6-18 the sequence is (for 2016):
 ```
 cmsrel CMSSW_8_0_26_patch1
 cd CMSSW_8_0_26_patch1/src/
