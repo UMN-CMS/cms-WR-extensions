@@ -205,13 +205,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   myRECOevent.outputTag = m_outputTag;
   //booleans to check for 4 different selections
   bool passResRECO = false;
-  bool passResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
+  bool passesResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
+  bool passesResModGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 
   bool passBoostRECO = false;
-  bool passBoostGEN = false; //this tracks with our current analysis effort
+  bool passesBoostGEN = false; //this tracks with our current analysis effort
+  bool passesBoostModGEN = false; //this tracks with our current analysis effort
   //various pass/fail bits
   bool passGenCounter = false;
   bool passPreSelectGen = false;
+  bool passZSBGEN       = false;
   //trigger pass info
   bool muonTrigPass = true;
   bool electronTrigPass = true;
@@ -274,13 +277,18 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       passGenCounter = genCounter(iEvent, myRECOevent);
       myRECOevent.passGenCounter = passGenCounter;
       vertexDiff(myRECOevent);
+      signalGENidentifier(iEvent, myRECOevent);
       passPreSelectGen = preSelectGen(iEvent, myRECOevent); 
+      
       myRECOevent.passPreSelectGen = passPreSelectGen;
       genJetAnalyzer(iEvent, myRECOevent);
-      std::cout << "analyzing wr2016 GEN" << std::endl;
-      passResGEN = passWR2016GEN(iEvent, myRECOevent);
-      std::cout << "analyzing extension GEN" << std::endl;
-      passBoostGEN = passExtensionGEN(iEvent, myRECOevent);
+      std::cout << "analyzing GEN objects" << std::endl;
+      objectCompareGEN(iEvent, myRECOevent);
+      passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
+      passesResGEN      = passResGEN          (iEvent, myRECOevent);
+      passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
+      passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
+      passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
     }
     passResRECO = passWR2016RECO(iEvent , myRECOevent);
     if (m_doReco || !m_isMC) {
@@ -425,13 +433,26 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if ( passResRECO && !passBoostRECO)    m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
   if (!passResRECO &&  passBoostRECO)    m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
 
-  if (!passResGEN && !passBoostGEN)    m_eventsFailResFailBoostGEN.fill(myRECOevent, 1);
-  if ( passResGEN &&  passBoostGEN)    m_eventsPassResPassBoostGEN.fill(myRECOevent, 1);
-  if ( passResGEN && !passBoostGEN)    m_eventsPassResFailBoostGEN.fill(myRECOevent, 1);
-  if (!passResGEN &&  passBoostGEN)    m_eventsFailResPassBoostGEN.fill(myRECOevent, 1);
 
-  if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
-  if(passBoostGEN) m_eventsPassingExtensionGEN.fill(myRECOevent, 1);
+  if (passPreSelectGen && passZSBGEN) {
+    //nominal
+    if (!passesResGEN && !passesBoostGEN)    m_eventsFailResFailBoostGEN.fill(myRECOevent, 1);
+    if ( passesResGEN &&  passesBoostGEN)    m_eventsPassResPassBoostGEN.fill(myRECOevent, 1);
+    if ( passesResGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN.fill(myRECOevent, 1);
+    if (!passesResGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN.fill(myRECOevent, 1);
+    //res unchanged
+    if (!passesResGEN && !passesBoostModGEN)    m_eventsFailResFailBoostGEN_boostMod.fill(myRECOevent, 1);
+    if ( passesResGEN &&  passesBoostModGEN)    m_eventsPassResPassBoostGEN_boostMod.fill(myRECOevent, 1);
+    if ( passesResGEN && !passesBoostModGEN)    m_eventsPassResFailBoostGEN_boostMod.fill(myRECOevent, 1);
+    if (!passesResGEN &&  passesBoostModGEN)    m_eventsFailResPassBoostGEN_boostMod.fill(myRECOevent, 1);
+    //boosted unchanged
+    if (!passesResModGEN && !passesBoostGEN)    m_eventsFailResFailBoostGEN_resMod.fill(myRECOevent, 1);
+    if ( passesResModGEN &&  passesBoostGEN)    m_eventsPassResPassBoostGEN_resMod.fill(myRECOevent, 1);
+    if ( passesResModGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN_resMod.fill(myRECOevent, 1);
+    if (!passesResModGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN_resMod.fill(myRECOevent, 1);
+  }
+ // if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
+ // if(passBoostGEN) m_eventsPassingExtensionGEN.fill(myRECOevent, 1);
 
   //THIS PART OF THE CODE RUNS THE ANALYSIS IN FAST MODE.  THE GOAL HERE IS TO PRODUCE ALL THE NECESSARY INFORMATION FOR HIGGS COMBINE
 
@@ -2876,6 +2897,31 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 }
 bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
 {
+  if(myEvent.myGenMuons.size() < 2 || myEvent.myGenPartons.size() < 2) {
+    std::cout << "EVENT FAILS, HARD PROCESS NOT FOUND " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" partons"<< std::endl;
+    return false;
+  }
+  //CHECK THE INDIVIDUAL OBJECT KINEMATICS PASS
+  const reco::GenParticle* mu1 =  myEvent.firstMuon;
+  const reco::GenParticle* mu2 =  myEvent.secondMuon;
+  const reco::GenParticle*  parton1 = myEvent.myGenPartons[0];
+  const reco::GenParticle*  parton2 = myEvent.myGenPartons[1];
+
+  if(fabs(mu1->eta()) > 2.4 ) return false;
+  if(fabs(mu2->eta()) > 2.4 ) return false;
+  if(fabs(parton1->eta()) > 2.4 ) return false;
+  if(fabs(parton2->eta()) > 2.4 ) return false;
+
+  if( mu1->pt() < 40 ) return false;
+  if( mu2->pt() < 40 ) return false;
+  if( parton1->pt() < 40 ) return false;
+  if( parton2->pt() < 40 ) return false;
+
+  return true;
+
+}
+bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& myEvent)
+{
   
   edm::Handle<std::vector<reco::GenParticle>> genParticles;
   iEvent.getByToken(m_genParticleToken, genParticles);
@@ -2998,15 +3044,17 @@ bool cmsWRextension::preSelectGen(const edm::Event& iEvent, eventBits& myEvent)
   myEvent.muon2EtaVal = myEvent.secondMuon->eta();
   myEvent.muon2PhiVal = myEvent.secondMuon->phi();
 
-  myEvent.dRparton1parton2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenPartons[1])));
-  myEvent.dRmuon1muon2Val     = sqrt(deltaR2(*(myGenMuons[0]),*(myGenMuons[1])));
-  myEvent.dRparton1muon1Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.firstMuon)));
-  myEvent.dRparton1muon2Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.secondMuon)));
-  myEvent.dRparton2muon1Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.firstMuon)));
-  myEvent.dRparton2muon2Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.secondMuon))); 
+//  myEvent.dRparton1parton2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenPartons[1])));
+//  myEvent.dRmuon1muon2Val     = sqrt(deltaR2(*(myGenMuons[0]),*(myGenMuons[1])));
+//  myEvent.dRparton1muon1Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.firstMuon)));
+//  myEvent.dRparton1muon2Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.secondMuon)));
+//  myEvent.dRparton2muon1Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.firstMuon)));
+//  myEvent.dRparton2muon2Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.secondMuon))); 
 
   myEvent.myGenPartons = myGenPartons;
   myEvent.myGenMuons = myGenMuons;
+
+  if (myEvent.neutrinoDecays != 0) return false;
 
   return true;
 }  
@@ -3167,26 +3215,6 @@ bool cmsWRextension::genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent
   return true;
 }
 
-bool cmsWRextension::passExtensionGEN(const edm::Event& iEvent, eventBits& myEvent) {
- // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myAK8GenJets.size() << std::endl;
-
-  if(myEvent.myGenMuons.size() < 2 || myEvent.myAK8GenJets.size() < 1) {
-    std::cout << "EVENT FAILS, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myAK8GenJets.size()<<" ak8 jets"<< std::endl;
-    return false;
-  }
- // std::cout <<"SORTING JETS" <<std::endl;
-  std::sort(myEvent.myAK8GenJets.begin(),myEvent.myAK8GenJets.end(),::wrTools::compareEtJetPointer);
-  std::cout<<"There are "<<myEvent.myAK8GenJets.size()<<" AK8GenJets selected"<<std::endl;
-
-//  bool Muon2included=false;
-//  Muon2included = ::wrTools::particleInGenJet(myEvent.myGenMuons[1], myEvent.myAK8GenJets[0]);
-  
-  myEvent.leadAK8JetMuonMassValGEN = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).mass();
-  myEvent.leadAK8JetMuonPtValGEN   = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).pt();
-  myEvent.leadAK8JetMuonEtaValGEN  = (myEvent.myAK8GenJets[0]->p4() + myEvent.myGenMuons[0]->p4()).eta();
-
-  return true;
-}
 bool cmsWRextension::passExtensionRECO_ZPeak(const edm::Event& iEvent, eventBits& myRECOevent) {
 
   std::sort(myRECOevent.myMuonJetPairs_noLSF.begin(),myRECOevent.myMuonJetPairs_noLSF.end(),::wrTools::comparePairMassPointerTAddJet);
@@ -3606,43 +3634,120 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
   return true;
 
 }
-
-bool cmsWRextension::passWR2016GEN(const edm::Event& iEvent, eventBits& myEvent) {
-
- // std::cout <<myEvent.myGenMuons.size() << " "<<myEvent.myGenJets.size() << std::endl;
+bool cmsWRextension::objectCompareGEN(const edm::Event& iEvent, eventBits& myEvent) {
+  bool fat = true; 
   if(myEvent.myGenMuons.size() < 2 || myEvent.myGenPartons.size() < 2) {
-    std::cout << "EVENT FAILS WR2016, NOT ENOUGH TO RECONSTRUCT " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" jets"<< std::endl;
+    std::cout << "EVENT FAILS, HARD PROCESS NOT FOUND " << myEvent.myGenMuons.size()<<" muons "<<  myEvent.myGenJets.size()<<" partons"<< std::endl;
     return false;
   }
+  if (myEvent.myAK8GenJets.size() < 1 ) {
+    std::cout << "EVENT FAILS BOOST GEN, NO FAT JETS FOUND" << std::endl; 
+    fat = false;
+  }
+
   const reco::GenParticle* mu1 =  myEvent.firstMuon;
   const reco::GenParticle* mu2 =  myEvent.secondMuon;
-  const reco::GenParticle*  jet1 = myEvent.myGenPartons[0];
-  const reco::GenParticle*  jet2 = myEvent.myGenPartons[1];
-  //CHECK DR ASSOCIATIONS
-  double dR_pair12 = sqrt(::wrTools::dR2(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi()));
-  double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi()));
-  double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi()));
-  double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi()));
-
-  if (dR_pair12 < 0.4) return false;
-  if (dR_pair21 < 0.4) return false;
-  if (dR_pair22 < 0.4) return false;
-  if (dR_pair11 < 0.4) return false;
-    
-  //CHECK 4 OBJECT MASS
-  double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
-
-  if (resMass < 600) return false;
-
-  myEvent.resolvedGENmass = resMass; 
+  const reco::GenParticle*  parton1 = myEvent.myGenPartons[0];
+  const reco::GenParticle*  parton2 = myEvent.myGenPartons[1];
+  //MAKE HARDPROCESS DR ASSOCIATIONS
+  double dR_pair12 = sqrt(::wrTools::dR2(mu1->eta(),parton2->eta(),mu1->phi(),parton2->phi()));
+  double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),parton1->eta(),mu2->phi(),parton1->phi()));
+  double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),parton2->eta(),mu2->phi(),parton2->phi()));
+  double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),parton1->eta(),mu1->phi(),parton1->phi()));
 
   myEvent.resSubleadMuParton1dR = dR_pair21;
   myEvent.resSubleadMuParton2dR = dR_pair22;
-
   myEvent.resLeadMuParton1dR = dR_pair11;
   myEvent.resLeadMuParton2dR = dR_pair12;
+  //FOR Z SIDEBAND
+  myEvent.muon1muon2dR   = sqrt(::wrTools::dR2(mu1->eta(),mu2->eta(),mu1->phi(),mu2->phi()));
+  myEvent.muon1muon2Mass = (mu1->p4() +mu2->p4()).mass();
+  //BOOSTED CHECKS 
+  if (fat) {
+    const reco::GenJet*      fatJet = myEvent.myAK8GenJets[0];
+
+    double dPhi = fabs(mu1->phi() - fatJet->phi());
+    if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+
+    myEvent.fatJetMuon1dPhi = dPhi;
+    myEvent.fatJetMuon1dR   = sqrt(::wrTools::dR2(mu1->eta(),fatJet->eta(),mu1->phi(),fatJet->phi()));
+    myEvent.fatJetMuon2dR   = sqrt(::wrTools::dR2(mu2->eta(),fatJet->eta(),mu2->phi(),fatJet->phi()));
+    //MAKE DIOBJECT 
+    myEvent.leadAK8JetMuonMassValGEN = (fatJet->p4() + mu1->p4()).mass();
+    myEvent.leadAK8JetMuonPtValGEN   = (fatJet->p4() + mu1->p4()).pt();
+    myEvent.leadAK8JetMuonEtaValGEN  = (fatJet->p4() + mu1->p4()).eta();
+  }
+
+  myEvent.resolvedGENmass = (mu1->p4() + mu2->p4() + parton1->p4() + parton2->p4()).mass();
+  myEvent.resolvedGENpt   = (mu1->p4() + mu2->p4() + parton1->p4() + parton2->p4()).mass();
+  myEvent.resolvedGENeta  = (mu1->p4() + mu2->p4() + parton1->p4() + parton2->p4()).mass();
 
   return true;
+}
+bool cmsWRextension::passZsidebandCutGEN(const edm::Event& iEvent, eventBits& myEvent) {
+  //TRUE MEANS IT IS _NOT_ IN THE Z SIDEBAND
+  if (myEvent.muon1muon2Mass < 0.0) {
+    return false; 
+    //YOU PROBABLY DON'T EVEN HAVE TWO MUONS!
+  }
+  if (myEvent.muon1muon2Mass < 200) {
+    return false;
+  }
+  return true;
+}
+bool cmsWRextension::passBoostGEN(const edm::Event& iEvent, eventBits& myEvent) {
+
+  //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
+  if ( ! ((myEvent.resSubleadMuParton1dR < 0.8) || (myEvent.resSubleadMuParton2dR < 0.8))) return false;
+
+  if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
+
+  if ( myEvent.fatJetMuon2dR > 0.8) return false;
+
+  if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
+  
+  return true;
+}
+
+bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
+
+  if ( myEvent.resolvedGENmass < 600) return false;
+
+  if ( myEvent.resSubleadMuParton1dR < 0.4) return false;
+  if ( myEvent.resSubleadMuParton2dR < 0.4) return false;
+  if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
+  if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
+
+  return true;
+
+}
+//TIGHTER VERSIONS
+bool cmsWRextension::passBoostTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
+
+  //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
+  if ( ! ((myEvent.resSubleadMuParton1dR < 0.4) || (myEvent.resSubleadMuParton2dR < 0.4))) return false;
+
+  if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
+
+  if ( myEvent.fatJetMuon2dR > 0.8) return false;
+
+  if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
+  
+  return true;
+}
+
+bool cmsWRextension::passResTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
+
+  if ( myEvent.resolvedGENmass < 600) return false;
+
+  //THE SECOND MUON SHOULD BE NICE AND FAR AWAY
+  if ( myEvent.resSubleadMuParton1dR < 0.8) return false;
+  if ( myEvent.resSubleadMuParton2dR < 0.8) return false;
+  if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
+  if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
+
+  return true;
+
 }
 void cmsWRextension::loadCMSSWPath() {
     char* cmsswPathChar = getenv("CMSSW_BASE");
@@ -3691,6 +3796,16 @@ cmsWRextension::beginJob()
     m_eventsPassResPassBoostGEN.book((fs->mkdir("eventsPassResPassBoostGEN")), 3, m_outputTag, 0);
     m_eventsPassResFailBoostGEN.book((fs->mkdir("eventsPassResFailBoostGEN")), 3, m_outputTag, 0);
     m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
+
+    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostRECO_resMod")), 2, m_outputTag, 0);
+    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostRECO_resMod")), 2, m_outputTag, 0);
+    m_eventsPassResFailBoostGEN_resMod.book((fs->mkdir("eventsPassResFailBoostRECO_resMod")), 2, m_outputTag, 0);
+    m_eventsFailResPassBoostGEN_resMod.book((fs->mkdir("eventsFailResPassBoostRECO_resMod")), 2, m_outputTag, 0);
+
+    m_eventsFailResFailBoostGEN_boostMod.book((fs->mkdir("eventsFailResFailBoostRECO_boostMod")), 2, m_outputTag, 0);
+    m_eventsPassResPassBoostGEN_boostMod.book((fs->mkdir("eventsPassResPassBoostRECO_boostMod")), 2, m_outputTag, 0);
+    m_eventsPassResFailBoostGEN_boostMod.book((fs->mkdir("eventsPassResFailBoostRECO_boostMod")), 2, m_outputTag, 0);
+    m_eventsFailResPassBoostGEN_boostMod.book((fs->mkdir("eventsFailResPassBoostRECO_boostMod")), 2, m_outputTag, 0);
 
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag, false);

@@ -73,19 +73,35 @@ eventBits::eventBits() {
   //RES ANALYSIS
   resJetDR           = -10000.0; 
   resolvedRECOmass   = -10000.0; 
-  resolvedGENmass   = -10000.0; 
   resSubleadMuJet1dR = -10000.0; 
   resSubleadMuJet2dR = -10000.0;  
   resLeadMuJet1dR = -10000.0; 
   resLeadMuJet2dR = -10000.0;  
 
-  resSubleadMuParton1dR = -10000.0; 
-  resSubleadMuParton2dR = -10000.0;  
-  resLeadMuParton1dR = -10000.0; 
-  resLeadMuParton2dR = -10000.0;  
 
   resMLL             = -10000.0;
   resolvedSubleadMuPt= -10000.0;
+
+  //GEN THINGS
+  muon1muon2dR               = -10000.0;
+  muon1muon2Mass             = -10000.0;
+
+  fatJetMuon1dR              = -10000.0;
+  fatJetMuon1dPhi            = -10000.0;
+  fatJetMuon2dR              = -10000.0;
+
+  leadAK8JetMuonEtaValGEN    = -10000.0;
+  leadAK8JetMuonPtValGEN     = -10000.0;
+  leadAK8JetMuonMassValGEN   = -10000.0;
+
+  resolvedGENmass            = -10000.0;
+  resolvedGENpt              = -10000.0;
+  resolvedGENeta             = -10000.0;
+
+  resSubleadMuParton1dR      = -10000.0;
+  resSubleadMuParton2dR      = -10000.0;
+  resLeadMuParton1dR         = -10000.0;
+  resLeadMuParton2dR         = -10000.0;
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
