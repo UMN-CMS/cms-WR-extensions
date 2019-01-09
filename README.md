@@ -2,6 +2,8 @@
 
 SETUP INSTRUCTIONS:
 
+Recipe for 2016 (As of 12-6-18):
+
 Parts of this code depends on a few different packages:
 
 -BadGlobalMuonTagger package which can be sourced here:
@@ -10,7 +12,6 @@ https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2786.html
 -HEEPv7 ID information for which is here:
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/HEEPElectronIdentificationRun2
 
-As of 12-6-18 the sequence is (for 2016):
 ```
 cmsrel CMSSW_8_0_26_patch1
 cd CMSSW_8_0_26_patch1/src/
@@ -45,33 +46,19 @@ scram b -j 18
 git clone https://github.com/Michael-Krohn/BaconAna.git
 scram b -j8
 ```
-Recipe for 2017 (**IN PROGRESS**):
+Recipe for 2017 (**IN PROGRESS** as of 1-9-2019):
 ```
 cmsrel CMSSW_9_4_12
 cd CMSSW_9_4_12/src/
 cmsenv
+
+git cms-init
+
 git cms-merge-topic cms-egamma:EgammaID_949 #if you want the FallV2 IDs, otherwise skip
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra file to have a setup function to make things easier
 
 ######################## BEGIN OLD RECIPE ############################
 git cms-merge-topic rafaellopesdesa:RegressionCheckNegEnergy
-git cms-merge-topic gpetruc:badMuonFilters_80X_v2               #bad global muon tagger
-
-######################## BEGIN DEPRECATED STEPS #######################
-# HEEP stuff should be included by default for 94X releases
-git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
-git cms-merge-topic ikrav:egm_id_80X_v3 #for other E/gamma IDs in VID if you wish to have them
-git cms-merge-topic Sam-Harper:PackedCandNoPuppi #only necessary to run HEEP V70 on AOD (it will crash if this is not present looking for puppi candidates
-mkdir -p ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/ 
-  #we need this for the mva weights which runs in VID regardless if you need it or not
-git clone git@github.com:cms-data/RecoEgamma-ElectronIdentification ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/data 
-  #we need this for the mva weights which runs in VID regardless if you need it or not
-git clone git@github.com:Sam-Harper/HEEP.git 
-cd HEEP
-git checkout HEEPV70  #this is currently the default branch for now but may change in the future
-cd ..
-git cms-merge-topic Sam-Harper:NewEGModifiers_8010
-######################## END DEPRECATED STEPS ##########################
 
 mkdir ExoAnalysis
 cd ExoAnalysis/
