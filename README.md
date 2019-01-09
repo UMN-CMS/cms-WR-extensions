@@ -57,7 +57,6 @@ git cms-init
 git cms-merge-topic cms-egamma:EgammaID_949 #if you want the FallV2 IDs, otherwise skip
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra file to have a setup function to make things easier
 
-######################## BEGIN OLD RECIPE ############################
 git cms-merge-topic rafaellopesdesa:RegressionCheckNegEnergy
 
 mkdir ExoAnalysis
@@ -66,7 +65,7 @@ git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
 scram b -j 4
 
-git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_80X_V3
+git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_94X_v3
 scram b -j 18
 
 git clone https://github.com/Michael-Krohn/BaconAna.git
