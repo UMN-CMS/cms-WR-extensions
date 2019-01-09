@@ -225,6 +225,8 @@ public:
   double muon1muon2dR;
   double muon1muon2Mass;
 
+  double parton1parton2dR;
+
   double fatJetMuon1dR;
   double fatJetMuon1dPhi;
   double fatJetMuon2dR;

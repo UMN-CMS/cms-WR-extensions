@@ -84,6 +84,7 @@ eventBits::eventBits() {
 
   //GEN THINGS
   muon1muon2dR               = -10000.0;
+  parton1parton2dR           = -10000.0;
   muon1muon2Mass             = -10000.0;
 
   fatJetMuon1dR              = -10000.0;

@@ -249,6 +249,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_doGen;
       bool m_amcatnlo;
       bool m_doReco;
+      bool m_isSignal;
       bool m_isMC;
       bool m_doTrig;
       bool m_doFast;

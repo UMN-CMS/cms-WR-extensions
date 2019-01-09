@@ -124,6 +124,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
   m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false)),
   m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
+  m_isSignal (iConfig.getUntrackedParameter<bool>("isSignal",false)),
   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true)),
   m_doTrig (iConfig.getUntrackedParameter<bool>("doTrig",false)),
   m_doFast (iConfig.getUntrackedParameter<bool>("doFast",false)),
@@ -220,7 +221,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool electronTrigPass = true;
   //this bool is true if the event passes the Mmumu Zmass region cut
   bool ZMASS = false;
-
+  //is quality signal event
+  bool isGoodSignal = false;
   //these are for the JEC/JER toy regions
   int ZMASS_Nom = 0;
   int ZMASS_JECUp = 0;
@@ -277,8 +279,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       passGenCounter = genCounter(iEvent, myRECOevent);
       myRECOevent.passGenCounter = passGenCounter;
       vertexDiff(myRECOevent);
-      signalGENidentifier(iEvent, myRECOevent);
+      isGoodSignal = signalGENidentifier(iEvent, myRECOevent);
       passPreSelectGen = preSelectGen(iEvent, myRECOevent); 
+      std::cout << "IS SIGNAL? " << m_isSignal << std::endl;
+      std::cout << "IS GOOD SIGNAL? " << isGoodSignal << std::endl;
+      if(m_isSignal && !isGoodSignal) return; //IGNORE EVENT
       
       myRECOevent.passPreSelectGen = passPreSelectGen;
       genJetAnalyzer(iEvent, myRECOevent);
@@ -3659,8 +3664,11 @@ bool cmsWRextension::objectCompareGEN(const edm::Event& iEvent, eventBits& myEve
   myEvent.resSubleadMuParton2dR = dR_pair22;
   myEvent.resLeadMuParton1dR = dR_pair11;
   myEvent.resLeadMuParton2dR = dR_pair12;
+
+ 
+  myEvent.muon1muon2dR       = sqrt(::wrTools::dR2(mu1->eta(),mu2->eta(),mu1->phi(),mu2->phi()));
+  myEvent.parton1parton2dR   = sqrt(::wrTools::dR2(parton1->eta(),parton2->eta(),parton1->phi(),parton2->phi()));
   //FOR Z SIDEBAND
-  myEvent.muon1muon2dR   = sqrt(::wrTools::dR2(mu1->eta(),mu2->eta(),mu1->phi(),mu2->phi()));
   myEvent.muon1muon2Mass = (mu1->p4() +mu2->p4()).mass();
   //BOOSTED CHECKS 
   if (fat) {
@@ -3717,6 +3725,8 @@ bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
   if ( myEvent.resSubleadMuParton2dR < 0.4) return false;
   if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
   if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
+
+  if ( myEvent.muon1muon2dR          < 0.4) return false;
 
   return true;
 
