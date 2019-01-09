@@ -71,6 +71,11 @@ git cms-init
 git cms-merge-topic cms-egamma:EgammaID_949 #if you want the FallV2 IDs, otherwise skip
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra file to have a setup function to make things easier
 
+git clone git@github.com:Sam-Harper/HEEP.git 
+cd HEEP
+git checkout HEEPV70  #this is currently the default branch for now but may change in the future
+cd ..
+
 mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git
