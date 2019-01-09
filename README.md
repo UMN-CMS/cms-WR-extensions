@@ -38,7 +38,6 @@ mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
-scram b -j 4
 
 git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_80X_V3
 scram b -j 18
@@ -61,7 +60,6 @@ mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
-scram b -j 4
 
 git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_94X_v3
 scram b -j 18
