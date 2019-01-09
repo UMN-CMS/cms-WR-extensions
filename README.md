@@ -54,9 +54,6 @@ git cms-merge-topic cms-egamma:EgammaID_949 #if you want the FallV2 IDs, otherwi
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra file to have a setup function to make things easier
 
 ######################## BEGIN OLD RECIPE ############################
-cd EgammaAnalysis/ElectronTools/data
-git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearings.git
-cd ../../..
 git cms-merge-topic rafaellopesdesa:RegressionCheckNegEnergy
 git cms-merge-topic gpetruc:badMuonFilters_80X_v2               #bad global muon tagger
 
