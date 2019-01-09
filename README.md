@@ -56,8 +56,10 @@ git clone -b Moriond17_gainSwitch_unc https://github.com/ECALELFS/ScalesSmearing
 cd ../../..
 git cms-merge-topic rafaellopesdesa:RegressionCheckNegEnergy
 git cms-merge-topic gpetruc:badMuonFilters_80X_v2               #bad global muon tagger
-```
-~~git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
+
+# HEEP stuff should be included by default for 94X releases
+# BEGIN DEPRECATED STEPS
+git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
 git cms-merge-topic ikrav:egm_id_80X_v3 #for other E/gamma IDs in VID if you wish to have them
 git cms-merge-topic Sam-Harper:PackedCandNoPuppi #only necessary to run HEEP V70 on AOD (it will crash if this is not present looking for puppi candidates
 mkdir -p ../external/slc6_amd64_gcc530/data/RecoEgamma/ElectronIdentification/ 
@@ -69,7 +71,8 @@ cd HEEP
 git checkout HEEPV70  #this is currently the default branch for now but may change in the future
 cd ..
 git cms-merge-topic Sam-Harper:NewEGModifiers_8010~~
-```
+# END DEPRECATED STEPS
+
 mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git
