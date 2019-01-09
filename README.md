@@ -81,6 +81,7 @@ git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
 ```
+## Other Recipes
 
 How to copy files to CERNbox for sharing.
 
