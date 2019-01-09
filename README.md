@@ -47,8 +47,8 @@ scram b -j8
 ```
 Recipe for 2017 (**IN PROGRESS**):
 ```
-cmsrel CMSSW_9_4_10
-cd CMSSW_9_4_10/src/
+cmsrel CMSSW_9_4_12
+cd CMSSW_9_4_12/src/
 cmsenv
 git cms-merge-topic cms-egamma:EgammaID_949 #if you want the FallV2 IDs, otherwise skip
 git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra file to have a setup function to make things easier
@@ -57,8 +57,8 @@ git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra fi
 git cms-merge-topic rafaellopesdesa:RegressionCheckNegEnergy
 git cms-merge-topic gpetruc:badMuonFilters_80X_v2               #bad global muon tagger
 
-# HEEP stuff should be included by default for 94X releases
 ######################## BEGIN DEPRECATED STEPS #######################
+# HEEP stuff should be included by default for 94X releases
 git cms-merge-topic Sam-Harper:HEEPV70VID_8010_ReducedCheckout  #brings in HEEP V70 into VID
 git cms-merge-topic ikrav:egm_id_80X_v3 #for other E/gamma IDs in VID if you wish to have them
 git cms-merge-topic Sam-Harper:PackedCandNoPuppi #only necessary to run HEEP V70 on AOD (it will crash if this is not present looking for puppi candidates
@@ -70,7 +70,7 @@ git clone git@github.com:Sam-Harper/HEEP.git
 cd HEEP
 git checkout HEEPV70  #this is currently the default branch for now but may change in the future
 cd ..
-git cms-merge-topic Sam-Harper:NewEGModifiers_8010~~
+git cms-merge-topic Sam-Harper:NewEGModifiers_8010
 ######################## END DEPRECATED STEPS ##########################
 
 mkdir ExoAnalysis
