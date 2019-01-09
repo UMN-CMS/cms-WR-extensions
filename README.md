@@ -1,8 +1,6 @@
 # cms-WR-extensions
-
+## 2016 (As of 12-6-18)
 SETUP INSTRUCTIONS:
-
-Recipe for 2016 (As of 12-6-18):
 
 Parts of this code depends on a few different packages:
 
@@ -44,7 +42,25 @@ git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
 ```
-Recipe for 2017 (**IN PROGRESS** as of 1-9-2019):
+
+Example incantations to drive the crab3 interface python (in progress):
+```
+MC
+python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt -c ExoAnalysis/cmsWRextensions/python/ConfFile_cfg_regression.py
+
+DATA
+python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/data/data_datasets_SingleMuon.txt -c ../../../python/ConfFile_cfg_regression.py -v Electron_Regression
+```
+Example incantations to run the analysis by hand:
+```
+cmsRun python/ConfFile_cfg.py inputFiles_load=samples/backgrounds/WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt outputFile=out.root >& out.txt &
+
+cmsRun python/ConfFile_cfg.py inputFiles=root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AC65E566-52D0-E611-ACAA-1866DAEA812C.root outputFile=out.root >& out.txt &
+```
+
+## 2017 (**IN PROGRESS** as of 1-9-2019)
+
+SETUP INSTRUCTIONS
 ```
 cmsrel CMSSW_9_4_12
 cd CMSSW_9_4_12/src/
@@ -64,21 +80,6 @@ git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToo
 git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
-```
-
-Example incantations to drive the crab3 interface python (in progress):
-```
-MC
-python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt -c ExoAnalysis/cmsWRextensions/python/ConfFile_cfg_regression.py
-
-DATA
-python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/data/data_datasets_SingleMuon.txt -c ../../../python/ConfFile_cfg_regression.py -v Electron_Regression
-```
-Example incantations to run the analysis by hand:
-```
-cmsRun python/ConfFile_cfg.py inputFiles_load=samples/backgrounds/WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt outputFile=out.root >& out.txt &
-
-cmsRun python/ConfFile_cfg.py inputFiles=root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AC65E566-52D0-E611-ACAA-1866DAEA812C.root outputFile=out.root >& out.txt &
 ```
 
 How to copy files to CERNbox for sharing.
