@@ -40,10 +40,9 @@ git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
 
 git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_80X_V3
-scram b -j 18
-
 git clone https://github.com/Michael-Krohn/BaconAna.git
-scram b -j8
+
+scram b -j32
 ```
 Recipe for 2017 (**IN PROGRESS** as of 1-9-2019):
 ```
@@ -62,10 +61,9 @@ git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
 
 git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_94X_v3
-scram b -j 18
-
 git clone https://github.com/Michael-Krohn/BaconAna.git
-scram b -j8
+
+scram b -j32
 ```
 
 Example incantations to drive the crab3 interface python (in progress):
