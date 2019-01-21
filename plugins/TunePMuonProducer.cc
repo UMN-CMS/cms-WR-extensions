@@ -35,7 +35,7 @@ void TunePMuonProducer::produce(edm::Event& event, const edm::EventSetup&)
 	edm::Handle<edm::View<reco::Vertex> > primary_vertex;
 	event.getByToken(primaryVertexToken_, primary_vertex);
 
-	std::auto_ptr<pat::MuonCollection> mus(new pat::MuonCollection);
+	std::unique_ptr<pat::MuonCollection> mus(new pat::MuonCollection);
 	reco::Candidate::PolarLorentzVector tmp_muon;
 
 	for(auto mu : *muons) {
@@ -51,7 +51,7 @@ void TunePMuonProducer::produce(edm::Event& event, const edm::EventSetup&)
 		mu.setP4(tmp_muon);
 		mus->push_back(mu);
 	}
-	event.put(mus);
+	event.put(std::move(mus));
 }
 
 DEFINE_FWK_MODULE(TunePMuonProducer);
