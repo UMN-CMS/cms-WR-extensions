@@ -718,10 +718,14 @@ bool cmsWRextension::sameSign(eventBits& myEvent, bool noISO) {
 }
 void cmsWRextension::vertexDiff(eventBits& myEvent) {
   std::cout << "RUNNING VTX DIFF" << std::endl;
-  if (myEvent.genVtx == 0) return;
-  if (myEvent.PVertex == 0) return;
-  
-
+  if (myEvent.genVtx == NULL) {
+	std::cout << "myEvent.genVtx is not defined!" << std::endl;
+    return;
+  }
+  if (myEvent.PVertex == NULL) {
+    std::cout << "myEvent.PVertex is not defined!" << std::endl;
+    return;
+  }
 
   std::cout << "RUNNING VTX DIFF X" << std::endl;
   double dx = myEvent.PVertex->x() - myEvent.genVtx->x();
@@ -2867,7 +2871,7 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
     double z =  myEvent.myGenLeptons[0]->vertex().z();
     std::cout << "GEN VTX: X: "<<x <<" Y: "<<y<<" Z: "<<z<<""<< std::endl;   
     myEvent.genVtx = new math::XYZPoint();
-//    myEvent.genVtx->SetXYZ( x, y, z );
+    myEvent.genVtx->SetXYZ( x, y, z );
   } 
   std::cout << "SETTING VALS" << std::endl;
   nLeptons = nMuons + nTaus + nElectrons;

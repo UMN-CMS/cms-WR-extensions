@@ -150,7 +150,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_nVertices =                    m_histoFolder.make<TH1D>("nVertices", ";#  Vertices;",                                                       70, -.5, 69.5);
 
     m_vertexDiffTan  =               m_histoFolder.make<TH1D>("vertexDiffTan", "GEN vs RECO primary vertex tangential difference"    ,             100, 0.0, 10);
-    m_vertexDiffLon  =               m_histoFolder.make<TH1D>("vertexDiffTan", "GEN vs RECO primary vertex longitudinal difference"  ,             100, 0.0, 10);
+    m_vertexDiffLon  =               m_histoFolder.make<TH1D>("vertexDiffLon", "GEN vs RECO primary vertex longitudinal difference"  ,             100, 0.0, 10);
     //m_nJets =                           m_histoFolder.make<TH1D>("nJets", "# of matched jets",                                                   5, -.5, 4.5);
     m_nAK8Jets =                        m_histoFolder.make<TH1D>("nAK8Jets", ";#  AK8Jets;",                                                       10, -.5, 9.5);
     m_nMuonCands =                    m_histoFolder.make<TH1D>("nMuonCands", ";#  Muons;",                                                       10, -.5, 9.5);

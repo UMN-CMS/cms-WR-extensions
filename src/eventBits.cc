@@ -35,6 +35,7 @@ eventBits::eventBits() {
   secondElectronCand = NULL;
 
   PVertex = NULL;
+  genVtx = NULL;
 
   daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
 
