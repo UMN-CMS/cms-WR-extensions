@@ -86,6 +86,33 @@ git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
 ```
+
+## 2018 (**IN PROGRESS** as of 1-22-2019)
+
+SETUP INSTRUCTIONS
+```
+cmsrel CMSSW_10_4_0_patch1
+cd CMSSW_10_4_0_patch1/src/
+cmsenv
+
+git cms-init
+
+git clone git@github.com:Sam-Harper/HEEP.git 
+cd HEEP
+git checkout HEEPV70  #this is currently the default branch for now but may change in the future
+cd ..
+
+mkdir ExoAnalysis
+cd ExoAnalysis/
+git clone git@github.com:UMN-CMS/cmsWRextensions.git
+cd ..
+
+git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v1
+git clone https://github.com/Michael-Krohn/BaconAna.git
+
+scram b -j32
+```
+
 ## Other Recipes
 
 How to copy files to CERNbox for sharing.
