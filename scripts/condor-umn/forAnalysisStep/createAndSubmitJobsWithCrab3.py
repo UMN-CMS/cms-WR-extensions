@@ -53,6 +53,8 @@ globalTagsByDataset['RunIISpring15MiniAODv2*'] = '74X_mcRun2_asymptotic_v5'
 globalTagsByDataset['RunIISpring16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
 #globalTagsByDataset['RunIISpring16MiniAODv2*withHLT*'] = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
 globalTagsByDataset['RunIISummer16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
+globalTagsByDataset['RunIIFall17MiniAODv2*'] = '94X_mc2017_realistic_v17'
+globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v12'
 globalTagsByDataset['Run2016H-Prompt*'] = '80X_dataRun2_Prompt_v16'
 globalTagsByDataset['Run2016B-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
 globalTagsByDataset['Run2016C-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
@@ -60,6 +62,21 @@ globalTagsByDataset['Run2016D-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
 globalTagsByDataset['Run2016E-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
 globalTagsByDataset['Run2016F-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
 globalTagsByDataset['Run2016G-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
+
+globalTagsByDataset['Run2017A-31Mar2018*'] = '94X_dataRun2_v11'
+globalTagsByDataset['Run2017B-31Mar2018*'] = '94X_dataRun2_v11'
+globalTagsByDataset['Run2017C-31Mar2018*'] = '94X_dataRun2_v11'
+globalTagsByDataset['Run2017D-31Mar2018*'] = '94X_dataRun2_v11'
+globalTagsByDataset['Run2017E-31Mar2018*'] = '94X_dataRun2_v11'
+globalTagsByDataset['Run2017F-31Mar2018*'] = '94X_dataRun2_v11'
+globalTagsByDataset['Run2017G-31Mar2018*'] = '94X_dataRun2_v11'
+globalTagsByDataset['Run2017H-31Mar2018*'] = '94X_dataRun2_v11'
+
+globalTagsByDataset['Run2018A-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018B-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018C-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v11'
+
 # reMiniAOD
 globalTagsByDataset['Run2016B-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
 globalTagsByDataset['Run2016C-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
@@ -320,7 +337,16 @@ with open(localInputListFile, 'r') as f:
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if isData:
       config.JobType.pyCfgParams = ['isMC=False']
-      options.jsonFile = 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+	  if '2016' in datasetName:
+      	options.jsonFile = 'Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+      elif '2017' in datasetName:
+		# Figure this out!
+		# 25 ns
+     	options.jsonFile = 'Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
+        # 50 ns
+        options.jsonFile = 'Cert_299614-299617_13TeV_EOY2017ReReco_Collisions17_50ns_JSON.txt'
+	  elif '2018' in datasetName:
+      	options.jsonFile = 'Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
     #Handle the ext1 vs non ext case specially
     if not isData:
       isAMCATNLO = 'amcatnlo' in datasetName
