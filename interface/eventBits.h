@@ -427,7 +427,6 @@ public:
   double selectedJetPhi;
   double selectedJetEta;
   double selectedJetMass;
-  double selectedJetPrunedMass;
   double selectedJetTau21;
   double selectedJetLSF3;
   double selectedJetMaxSubJetCSV;

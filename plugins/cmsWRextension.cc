@@ -114,7 +114,6 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_regMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("regMuons"))),
   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
   m_AK4recoCHSJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK4recoCHSJets"))),
-  m_AK8recoCHSJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoCHSJets"))),
   m_AK8recoPUPPIJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoPUPPIJets"))),
   m_AK8recoPUPPISubJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("subJetName"))),
   m_offlineVerticesToken (consumes<std::vector<reco::Vertex>> (iConfig.getParameter<edm::InputTag>("vertices"))),
@@ -2279,10 +2278,6 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
   iEvent.getByToken(m_AK8recoPUPPIJetsToken, recoJetsAK8);
   assert(recoJetsAK8.isValid());
 
-  edm::Handle<std::vector<pat::Jet>> recoCHSJetsAK8;
-  iEvent.getByToken(m_AK8recoCHSJetsToken, recoCHSJetsAK8);
-  assert(recoCHSJetsAK8.isValid());
-
   edm::Handle<std::vector<pat::Jet>> recoSubJets;
   iEvent.getByToken(m_AK8recoPUPPISubJetsToken, recoSubJets);
   assert(recoSubJets.isValid());
@@ -2455,19 +2450,6 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
 
     //JETS PASSING WITH VERY HIGH PT
     if( jetCorrPtSmear > 200 ){
-      double minDR_CHS_PUPPI_Jets = 100.;
-      double dR_CHS = 0.;
-      double CHS_Mass = -10.;
-      for(std::vector<pat::Jet>::const_iterator iCHSJet = recoCHSJetsAK8->begin(); iCHSJet != recoCHSJetsAK8->end(); iCHSJet++) {
-	if(iCHSJet->pt() > 200){
-	  dR_CHS = sqrt(deltaR2(*(iJet),*(iCHSJet)));
-	  if (dR_CHS>ROOT::Math::Pi())dR_CHS-=2*ROOT::Math::Pi();
-	  if (dR_CHS < minDR_CHS_PUPPI_Jets){
-	    minDR_CHS_PUPPI_Jets=dR_CHS;
-	    CHS_Mass = iCHSJet->userFloat("ak8PFJetsCHSPrunedMass");
-	  }
-	}
-      }
       if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass") > 40){
       	baconhep::TAddJet* pAddJet = new baconhep::TAddJet();
 
@@ -2478,8 +2460,6 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
       	pAddJet->eta  = iJet->eta();
       	pAddJet->phi  = iJet->phi();
       	pAddJet->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-      	pAddJet->PrunedMass = CHS_Mass;
-//      pAddJet->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(iJet->pt(), iJet->eta());
 
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_2;  pAddJet->lsfC_2 = JetTools::lsf(lClusterParticles, vSubC_2, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 2);
@@ -3259,7 +3239,6 @@ bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRE
   myRECOevent.selectedJetMass = myRECOevent.myMuonJetPairs[0].first->SDmass;
   myRECOevent.selectedJetLSF3 = myRECOevent.myMuonJetPairs[0].first->lsfC_3;
   myRECOevent.selectedJetMaxSubJetCSV = myRECOevent.myMuonJetPairs[0].first->maxSubJetCSV;
-  myRECOevent.selectedJetPrunedMass = myRECOevent.myMuonJetPairs[0].first->PrunedMass;
 
   int nHighPtMuonsOutsideJet = 0;
   if(myRECOevent.muonCands > 1){

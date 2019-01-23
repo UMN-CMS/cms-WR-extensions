@@ -183,7 +183,6 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedElectronEta_Weight1 =                 m_histoFolder.make<TH1D>("selectedElectronEta_NoWeight" ,"Selected Electron Eta; Electron #eta (rad);" ,30,-3.0,3.0 );   
     m_selectedJetEta  =                 m_histoFolder.make<TH1D>("selectedJetEta"  ,"Selected Jet Eta; Jet #eta (rad);"  ,30,-3.0,3.0 ); 
     m_selectedJetMass  =                 m_histoFolder.make<TH1D>("selectedJetMass"  ,"Selected Jet Mass; Jet softdrop mass (GeV);"  ,60,0.0, 2000.0 );
-    m_selectedJetPrunedMass  =                 m_histoFolder.make<TH1D>("selectedJetPrunedMass"  ,"Selected Jet Mass; Jet pruned mass (GeV);"  ,60,0.0, 2000.0 );
     m_selectedJetTau21  =                 m_histoFolder.make<TH1D>("selectedJetTau21"  ,"Selected Jet Tau21; Jet #tau_{21};"  ,30,0.0, 1.0 );
     m_selectedJetMaxDRGenDaughters  =                 m_histoFolder.make<TH1D>("selectedJetMaxDRGenDaughters"  ,"Selected Jet Max DR GenDaughters; Max #Delta R_{Selected Jet, WR Daughters}", 30, 0.0, 4.0);
     m_selectedJetLSF3   =                 m_histoFolder.make<TH1D>("selectedJetLSF3"   ,"Selected Jet LSF_{3}; Jet LSF_{3};"   ,40,0.0,1.0 );
@@ -646,7 +645,6 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedElectronEta_Weight1->Fill(event.selectedElectronEta, 1.0);
   m_selectedJetEta  ->Fill(event.selectedJetEta  ,weight); 
   m_selectedJetMass->Fill(event.selectedJetMass  , weight);
-  m_selectedJetPrunedMass->Fill(event.selectedJetPrunedMass, weight);
   m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
   m_selectedJetMaxDRGenDaughters->Fill(event.MaxDR_genDaughter_CandJet, weight);
   m_selectedJetLSF3->Fill(event.selectedJetLSF3, weight);

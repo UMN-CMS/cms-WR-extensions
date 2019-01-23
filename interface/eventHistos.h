@@ -250,7 +250,6 @@ class eventHistos {
   TH1D* m_selectedJetPhi;
   TH1D* m_selectedJetEta;
   TH1D* m_selectedJetMass;
-  TH1D* m_selectedJetPrunedMass;
   TH1D* m_selectedJetTau21;
   TH1D* m_selectedJetMaxDRGenDaughters;
   TH1D* m_selectedJetLSF3;
