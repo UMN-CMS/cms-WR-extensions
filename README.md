@@ -68,10 +68,6 @@ cmsenv
 
 git cms-init
 
-#######################################################
-############ A MAGIC RECIPE FOR REGRESSION ############
-#######################################################
-
 git clone git@github.com:Sam-Harper/HEEP.git 
 cd HEEP
 git checkout HEEPV70  #this is currently the default branch for now but may change in the future
