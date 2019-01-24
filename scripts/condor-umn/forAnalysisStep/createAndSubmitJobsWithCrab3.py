@@ -46,23 +46,16 @@ from httplib import HTTPException
 #    https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD
 globalTagsByDataset = {}
 # latest miniaod v2
-globalTagsByDataset['Run2015C_25ns-05Oct2015-v*'] = '74X_dataRun2_reMiniAOD_v2'
-globalTagsByDataset['Run2015D-05Oct2015-v*'] = '74X_dataRun2_reMiniAOD_v2'
-globalTagsByDataset['Run2015D-PromptReco-v4'] = '74X_dataRun2_reMiniAOD_v2'
-globalTagsByDataset['RunIISpring15MiniAODv2*'] = '74X_mcRun2_asymptotic_v5'
-globalTagsByDataset['RunIISpring16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
-#globalTagsByDataset['RunIISpring16MiniAODv2*withHLT*'] = '80X_mcRun2_asymptotic_2016_miniAODv2_v1'
-globalTagsByDataset['RunIISummer16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
-globalTagsByDataset['RunIIFall17MiniAODv2*'] = '94X_mc2017_realistic_v17'
-globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v12'
-globalTagsByDataset['Run2016H-Prompt*'] = '80X_dataRun2_Prompt_v16'
-globalTagsByDataset['Run2016B-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
-globalTagsByDataset['Run2016C-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
-globalTagsByDataset['Run2016D-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
-globalTagsByDataset['Run2016E-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
-globalTagsByDataset['Run2016F-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
-globalTagsByDataset['Run2016G-23Sep2016*'] = '80X_dataRun2_2016SeptRepro_v4'
+globalTagsByDataset['RunIISummer16MiniAODv3*'] = '94X_mcRun2_asymptotic_v3'
+globalTagsByDataset['Run2016B-17Jul2018*'] = '94X_dataRun2_v10'
+globalTagsByDataset['Run2016C-17Jul2018*'] = '94X_dataRun2_v10'
+globalTagsByDataset['Run2016D-17Jul2018*'] = '94X_dataRun2_v10'
+globalTagsByDataset['Run2016E-17Jul2018*'] = '94X_dataRun2_v10'
+globalTagsByDataset['Run2016F-17Jul2018*'] = '94X_dataRun2_v10'
+globalTagsByDataset['Run2016G-17Jul2018*'] = '94X_dataRun2_v10'
+globalTagsByDataset['Run2016H-17Jul2018*'] = '94X_dataRun2_v10'
 
+globalTagsByDataset['RunIIFall17MiniAODv2*'] = '94X_mc2017_realistic_v17'
 globalTagsByDataset['Run2017A-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017B-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017C-31Mar2018*'] = '94X_dataRun2_v11'
@@ -72,19 +65,11 @@ globalTagsByDataset['Run2017F-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017G-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017H-31Mar2018*'] = '94X_dataRun2_v11'
 
+globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v12'
 globalTagsByDataset['Run2018A-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
 globalTagsByDataset['Run2018B-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
 globalTagsByDataset['Run2018C-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
 globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v11'
-
-# reMiniAOD
-globalTagsByDataset['Run2016B-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
-globalTagsByDataset['Run2016C-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
-globalTagsByDataset['Run2016D-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
-globalTagsByDataset['Run2016E-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
-globalTagsByDataset['Run2016F-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
-globalTagsByDataset['Run2016G-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
-globalTagsByDataset['Run2016H-03Feb2017*'] = '80X_dataRun2_2016SeptRepro_v7'
 
 xyCorrsByDataset = {}
 xyCorrsByDataset['RunIISummer16MiniAODv2*'] = 'multPhiCorr_MC_DY_sumPT_80X'
@@ -427,6 +412,8 @@ with open(localInputListFile, 'r') as f:
     #    miniAODV2Support = True
 
     globalTag = ''
+	config.JobType.pyCfgParams = ['reco=80X']
+	config.JobType.pyCfgParams = ['era=2016']
     # for MC it will look like DYJetsToLL_M-100to200_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8__RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     # so split to just get RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     for datasetKey,tag in globalTagsByDataset.iteritems():
@@ -434,6 +421,13 @@ with open(localInputListFile, 'r') as f:
       #print 'try to match:',datasetKey,'and',secondaryDatasetName
       if re.match(re.compile(datasetKey),secondaryDatasetName):
         globalTag = tag
+        config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
+		if '2016' in tag:
+			config.JobType.pyCfgParams = ['era=2016']
+        elif '2017' in tag:
+			config.JobType.pyCfgParams = ['era=2017']
+		elif '2018' in tag:
+			config.JobType.pyCfgParams = ['era=2018']
     if globalTag=='':
       print 'WARNING: Using default global tag as specified in template cfg (are you sure it\'s the right one?)'
     else:

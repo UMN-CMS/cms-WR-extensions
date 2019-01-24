@@ -2805,8 +2805,9 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   int GENnDaughters = 0;
 
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
-    if(!iParticle->isHardProcess())   continue;
-    if(iParticle->status() == 21)     continue;
+    if(!iParticle->isHardProcess()) continue;
+    if(iParticle->status() == 21) continue;
+
     if(abs(iParticle->pdgId()) == 13) {
       nMuons++;
       genLeptons.push_back(&(*iParticle));
