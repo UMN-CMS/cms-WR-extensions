@@ -23,25 +23,6 @@ except ImportError:
 from CRABAPI.RawCommand import crabCommand
 from httplib import HTTPException
 
-
-# this prints a bunch of ugly stuff. just check to make sure user has sourced the crab setup first, as above
-# first setup the crab stuff by "sourcing" the crab3 setup script if needed
-# NB: env only prints exported variables.
-# use 'set -a && source [script] && env' to export all vars
-#if not 'crab3' in sys.path:
-#  command = ['bash', '-c', 'set -a && source /cvmfs/cms.cern.ch/crab3/crab.sh && env']
-#  proc = subprocess.Popen(command, stdout = subprocess.PIPE)
-#  for line in proc.stdout:
-#    (key, _, value) = line.partition("=")
-#    os.environ[key] = value.strip('\n') # without this, things get messed up
-#    # if it's the python path, update the sys.path
-#    if key=='PYTHONPATH':
-#      valueSplit = value.split(':')
-#      for v in valueSplit:
-#        sys.path.append(v)
-#  proc.communicate()
-#  newSysPath = sys.path
-
 # Define valid global tags by dataset as noted here:
 #    https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD
 globalTagsByDataset = {}
@@ -70,23 +51,6 @@ globalTagsByDataset['Run2018A-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
 globalTagsByDataset['Run2018B-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
 globalTagsByDataset['Run2018C-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
 globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v11'
-
-xyCorrsByDataset = {}
-xyCorrsByDataset['RunIISummer16MiniAODv2*'] = 'multPhiCorr_MC_DY_sumPT_80X'
-xyCorrsByDataset['Run2016B-03Feb2017*'] = 'multPhiCorr_Data_BCDEF_80X'
-xyCorrsByDataset['Run2016C-03Feb2017*'] = 'multPhiCorr_Data_BCDEF_80X'
-xyCorrsByDataset['Run2016D-03Feb2017*'] = 'multPhiCorr_Data_BCDEF_80X'
-xyCorrsByDataset['Run2016E-03Feb2017*'] = 'multPhiCorr_Data_BCDEF_80X'
-xyCorrsByDataset['Run2016F-03Feb2017*'] = 'multPhiCorr_Data_BCDEF_80X'
-xyCorrsByDataset['Run2016G-03Feb2017*'] = 'multPhiCorr_Data_GH_80X'
-xyCorrsByDataset['Run2016H-03Feb2017*'] =    'multPhiCorr_Data_GH_80X'
-
-# to feed additional files into the crab sandbox
-additionalInputFiles = []
-rootTupleTestDir = os.getenv('CMSSW_BASE')+'/src/Leptoquarks/RootTupleMakerV2/test/'
-# just feed both in, even though we only need one at a time
-#additionalInputFiles.append(rootTupleTestDir+'Summer16_23Sep2016V4_MC.db')
-#additionalInputFiles.append(rootTupleTestDir+'Summer16_23Sep2016AllV4_DATA.db')
 
 def crabSubmit(config):
     try:
@@ -122,7 +86,6 @@ def makeDirAndCheck(dir):
     # in practice, this doesn't happen because of the seconds in the name, but always good to check
     print 'ERROR: directory %s already exists. Not going to overwrite it.' % dir
     exit(-2)
-
 
 ##############################################################
 # RUN
@@ -246,7 +209,6 @@ config.General.workArea = productionDir
 config.JobType.pluginName  = 'Analysis'
 # feed in any additional input files
 config.JobType.inputFiles = []
-config.JobType.inputFiles.extend(additionalInputFiles)
 config.JobType.psetName    = '' # overridden per dataset
 # need to execute the user_script
 #config.JobType.scriptExe = 'user_script.sh'
@@ -259,7 +221,6 @@ config.Data.totalUnits = -1 # overridden per dataset
 # no publishing
 config.Data.publication = False
 config.Data.outputDatasetTag = 'WR' #overridden for data
-#config.Data.outLFNDirBase = '/store/group/phys_exotica/leptonsPlusJets/RootNtuple/RunII/%s/' % (getUsernameFromSiteDB()) + options.tagName + '/'
 config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) + topDirName + '/'
 if options.eosDir is not None:
   # split of /eos/cms if it is there
@@ -275,7 +236,6 @@ if options.eosDir is not None:
   outputLFN+=options.tagName+'/'
   if not getUsernameFromSiteDB() in outputLFN:
     outputLFN.rstrip('/')
-    #config.Data.outLFNDirBase = outputLFN+'/%s/' % (getUsernameFromSiteDB()) + topDirName + '/'
     # make the LFN shorter, and in any case, the timestamp is put in by crab
     config.Data.outLFNDirBase = outputLFN+'/%s/' % (getUsernameFromSiteDB()) + options.tagName + '/'
   else:
@@ -297,11 +257,8 @@ with open(localInputListFile, 'r') as f:
     if len(split) <= 0:
       continue
     if '#' in split[0]: # skip comments
-      #print 'found comment:',line
       continue
-#    if len(split) < 3:
-#      print 'inputList line is not properly formatted:',line
-#      exit(-3)
+
     dataset = split[0]
     nUnits = int(split[1]) #also used for total lumis for data
     nUnitsPerJob = int(split[2])
@@ -401,24 +358,12 @@ with open(localInputListFile, 'r') as f:
     newCmsswConfig = cfgFilesDir+'/'+datasetName+'_cmssw_cfg.py'
     print 'INFO: Creating',newCmsswConfig,'...'
     
-    ## check cmssw version
-    #miniAODV2Support = False
-    #cmsswVersion = os.getenv('CMSSW_VERSION').split('CMSSW_')[-1] # 7_4_14
-    #cmsswVersionSplit = cmsswVersion.split('_')
-    #if cmsswVersionSplit[0]=='7' and cmsswVersionSplit[1]=='4':
-    #  # running 74X
-    #  if int(cmsswVersionSplit[2]) > 12:
-    #    # running 7_4_12 or higher
-    #    miniAODV2Support = True
-
     globalTag = ''
 	config.JobType.pyCfgParams = ['reco=80X']
 	config.JobType.pyCfgParams = ['era=2016']
     # for MC it will look like DYJetsToLL_M-100to200_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8__RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     # so split to just get RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     for datasetKey,tag in globalTagsByDataset.iteritems():
-      #print 'try to match:',datasetKey,'and',datasetNoSlashes.split('__')[1]
-      #print 'try to match:',datasetKey,'and',secondaryDatasetName
       if re.match(re.compile(datasetKey),secondaryDatasetName):
         globalTag = tag
         config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
@@ -432,15 +377,6 @@ with open(localInputListFile, 'r') as f:
       print 'WARNING: Using default global tag as specified in template cfg (are you sure it\'s the right one?)'
     else:
       print 'INFO: Overriding global tag to:',globalTag,'for dataset:',datasetName
-
-    #Get MET phi correction by dataset
-    xyCorr , xyCorrFile = '' , ''
-    for datasetKey,tag in xyCorrsByDataset.iteritems():
-      if re.match(re.compile(datasetKey),secondaryDatasetName):
-        xyCorr = tag
-        xyCOrrFile = 'multPhiCorr_ReMiniAOD_Data_'+xyCorr.split('_')[2]+'_80X_sumPt_cfi'
-    #Put xy correction into config
-    config_txt.replace('#MetPhiCorrectionsInsertHere','from MetTools.MetPhiCorrections.tools.'+xyCorrFile+' import '+xyCorr+' as multPhiCorrParams_Txy_25ns')
 
     # substitute the output filename at the end
     config_txt += '\nprocess.TFileService.fileName = "'+outputFile+'.root"\n'
@@ -487,6 +423,5 @@ with open(localInputListFile, 'r') as f:
     if q.get()==-1:
       exit(-1)
     
-
 print 'Done!' 
 exit(0)

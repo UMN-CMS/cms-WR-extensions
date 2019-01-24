@@ -191,46 +191,16 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
 
 process.load('FWCore.Modules.printContent_cfi')
 
-if options.era == '80X':
-	from EgammaAnalysis.ElectronTools.regressionWeights_cfi import regressionWeights
-	process = regressionWeights(process)
+from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
 	
-	process.RandomNumberGeneratorService = cms.Service("RandomNumberGeneratorService",
-	                  calibratedPatElectrons  = cms.PSet( initialSeed = cms.untracked.uint32(8675389),
-	                                                      engineName = cms.untracked.string('TRandom3'),
-	                                                      ),
-	                  calibratedPatPhotons    = cms.PSet( initialSeed = cms.untracked.uint32(8675389),
-	                                                      engineName = cms.untracked.string('TRandom3'),
-	                                                      ),
-	                                                   )
-	process.load('EgammaAnalysis.ElectronTools.regressionApplication_cff')
-	process.load('ExoAnalysis.cmsWRextensions.calibratedPatElectronsRun2_cfi')
+process.selectedElectrons = cms.EDFilter("PATElectronSelector",
+    src = cms.InputTag("slimmedElectrons"),
+    cut = cms.string("pt>5 && abs(eta)")
+)
+process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
+process.heepIDVarValueMaps.elesMiniAOD  = 'selectedElectrons'
+process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
+process.heepElectrons.src = cms.InputTag('selectedElectrons')
 
-	from PhysicsTools.SelectorUtils.tools.vid_id_tools import *
-	
-	process.EGMsequence = cms.Sequence(process.regressionApplication * process.calibratedPatElectrons)
-	
-	# Set the lines below to True or False depending if you are correcting the scale (data) or smearing the resolution (MC) 
-	process.calibratedPatElectrons.isMC = cms.bool(options.isMC)
-	
-	process.selectedElectrons = cms.EDFilter("PATElectronSelector",
-	    src = cms.InputTag("calibratedPatElectrons"),
-	    cut = cms.string("pt>5 && abs(eta)")
-	)
-	process.egmGsfElectronIDs.physicsObjectSrc = cms.InputTag('selectedElectrons')
-	process.heepIDVarValueMaps.elesMiniAOD  = 'selectedElectrons'
-	process.electronRegressionValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
-	process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
-	process.heepElectrons.src = cms.InputTag('selectedElectrons')
-
-    process.totalPath = cms.Path(process.EGMsequence * process.selectedElectrons * process.heepSequence
-                               * process.muonSelectionSeq * process.analysis)
-
-else:
-    process.selectedElectrons = cms.EDFilter("PATElectronSelector",
-	    src = cms.InputTag("slimmedElectrons"),
-	    cut = cms.string("pt>5 && abs(eta)")
-	)
-
-    process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
-                               * process.muonSelectionSeq * process.analysis)
+process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
+                           * process.muonSelectionSeq * process.analysis)
