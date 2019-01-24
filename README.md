@@ -58,36 +58,7 @@ cmsRun python/ConfFile_cfg.py inputFiles_load=samples/backgrounds/WJetsToLNu_Pt-
 cmsRun python/ConfFile_cfg.py inputFiles=root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AC65E566-52D0-E611-ACAA-1866DAEA812C.root outputFile=out.root >& out.txt &
 ```
 
-## 2017 (**IN PROGRESS** as of 1-9-2019)
-
-SETUP INSTRUCTIONS
-```
-cmsrel CMSSW_9_4_12
-cd CMSSW_9_4_12/src/
-cmsenv
-
-git cms-init
-
-git cms-merge-topic cms-egamma:EgammaID_949 #if you want the FallV2 IDs, otherwise skip
-git cms-merge-topic cms-egamma:EgammaPostRecoTools_940 #just adds in an extra file to have a setup function to make things easier
-
-git clone git@github.com:Sam-Harper/HEEP.git 
-cd HEEP
-git checkout HEEPV70  #this is currently the default branch for now but may change in the future
-cd ..
-
-mkdir ExoAnalysis
-cd ExoAnalysis/
-git clone git@github.com:UMN-CMS/cmsWRextensions.git
-cd ..
-
-git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_94X_v3
-git clone https://github.com/Michael-Krohn/BaconAna.git
-
-scram b -j32
-```
-
-## 2018 (**IN PROGRESS** as of 1-22-2019)
+## Legacy Run II (**IN PROGRESS** as of 1-22-2019)
 
 SETUP INSTRUCTIONS
 ```
