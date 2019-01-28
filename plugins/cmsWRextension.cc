@@ -132,7 +132,8 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   //m_MCL (iConfig.getUntrackedParameter<double>("MCL", 400)),
   //m_MCU (iConfig.getUntrackedParameter<double>("MCU", 8000)),
   m_flavorSideband (iConfig.getUntrackedParameter<bool>("flavorSideband", false)),  //SOON TO BE DEPRECATED
-  m_outputTag (iConfig.getUntrackedParameter<string>("outputTag", "blah"))
+  m_outputTag (iConfig.getUntrackedParameter<string>("outputTag", "blah")),
+  m_era (iConfig.getUntrackedParameter<string>("era", "2016"))
 
 {
    //now do what ever initialization is needed
@@ -165,9 +166,22 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 
   loadCMSSWPath();
   std::string jecPathname = cmsswPath + "/src/ExoAnalysis/cmsWRextensions/data/";
+  std::string resPath;
+  std::string resPathSF;
 
-  resolution = JME::JetResolution(Form("%s/Summer16_25nsV1_MC_PtResolution_AK8PFPuppi.txt",jecPathname.c_str()));
-  resolution_sf = JME::JetResolutionScaleFactor(Form("%s/Summer16_25nsV1_MC_SF_AK8PFPuppi.txt",jecPathname.c_str()));
+  if (m_era == "2016") {
+    resPath = jecPathname + "/Summer16_25nsV1_MC_PtResolution_AK8PFPuppi.txt";
+	resPathSF = jecPathname + "/Summer16_25nsV1_MC_SF_AK8PFPuppi.txt";
+  } else if (m_era == "2017") {
+    resPath = jecPathname + "";
+    resPathSF = jecPathname +"";
+  } else if (m_era == "2018") {
+    resPath = jecPathname + "";
+    resPathSF = jecPathname + "";
+  }
+
+  resolution = JME::JetResolution(Form(resPath.c_str()));
+  resolution_sf = JME::JetResolutionScaleFactor(Form(resPathSF.c_str()));
 
   r = new TRandom3(1988);
 
@@ -2288,17 +2302,33 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
 
   std::string jecPathname = cmsswPath + "/src/ExoAnalysis/cmsWRextensions/data/";
   if(m_isMC){
-    fJetUnc = new JetCorrectionUncertainty(Form("%s/Summer16_23Sep2016V4_MC_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
-  }else{
-    if(iEvent.id().run()<276812){
-      fJetUnc = new JetCorrectionUncertainty(Form("%s//Summer16_23Sep2016BCDV4_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
-    }else if(iEvent.id().run() > 276830 && iEvent.id().run() < 278809){
-      fJetUnc = new JetCorrectionUncertainty(Form("%s//Summer16_23Sep2016EFV4_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
-    }else if(iEvent.id().run() > 278819 && iEvent.id().run() < 280386){
-      fJetUnc = new JetCorrectionUncertainty(Form("%s//Summer16_23Sep2016GV4_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
-    }else if(iEvent.id().run() > 280918){
-      fJetUnc = new JetCorrectionUncertainty(Form("%s//Summer16_23Sep2016HV4_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+	if (m_era == "2016") {
+      fJetUnc = new JetCorrectionUncertainty(Form("%s/2016/Summer16_07Aug2017_V11_MC_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+    } else if (m_era == "2017") {
+      fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017_V32_MC_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+    } else if (m_era == "2018") {
     }
+  }else{
+	if (m_era == "2016") {
+      if(iEvent.id().run()<276812){
+        fJetUnc = new JetCorrectionUncertainty(Form("%s/2016/Summer16_07Aug2017BCD_V11_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      }else if(iEvent.id().run() > 276830 && iEvent.id().run() < 278809){
+        fJetUnc = new JetCorrectionUncertainty(Form("%s/2016/Summer16_07Aug2017EF_V11_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      }else if(iEvent.id().run() > 278819){
+        fJetUnc = new JetCorrectionUncertainty(Form("%s/2016/Summer16_07Aug2017GH_V11_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      }
+	} else if (m_era == "2017") {
+	  if (iEvent.id().run() < 299330) {
+        fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017B_V32_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      } else if (iEvent.id().run() > 299367 && iEvent.id().run() < 302030) {
+        fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017C_V32_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      } else if (iEvent.id().run() > 302029 && iEvent.id().run() < 304798) {
+         fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017DE_V32_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      } else if (iEvent.id().run() > 305039 && iEvent.id().run() < 306461) {
+        fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017F_V32_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      }
+	} else if (m_era == "2018") {
+	}
   }
 
   std::vector<const baconhep::TAddJet*> AddJets;

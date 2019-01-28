@@ -185,7 +185,8 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
 			                  amcatnlo = cms.untracked.bool(options.ISmcatnlo),
                               #MCL = cms.untracked.double(100),
                               #MCU = cms.untracked.double(8000),
-                              outputTag = cms.untracked.string(options.gitTag)
+                              outputTag = cms.untracked.string(options.gitTag),
+							  era = cms.untracked.string(options.era)
 
 )
 

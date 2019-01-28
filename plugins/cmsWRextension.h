@@ -274,6 +274,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       GenericTriggerEventFlag* m_genericTriggerEventFlag;
 
       std::string m_outputTag;
+	  std::string m_era;
 
       FactorizedJetCorrector   *fJetCorr;
       JetCorrectionUncertainty *fJetUnc;
