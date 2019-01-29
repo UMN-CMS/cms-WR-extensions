@@ -2749,6 +2749,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
     myEvent.secondMuonWRjetdR = dR;
   }
 
+  delete fJetUnc;
   return true;
 }
 double cmsWRextension::PUPPIweight(double puppipt, double puppieta){
