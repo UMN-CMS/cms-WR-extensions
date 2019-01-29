@@ -36,6 +36,7 @@ eventBits::eventBits() {
 
   PVertex = NULL;
   genVtx = NULL;
+  myVertexDiff = NULL;
 
   daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
 
