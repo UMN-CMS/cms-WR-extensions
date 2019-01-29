@@ -35,6 +35,13 @@ eventInfo::eventInfo () {
 
 }
 
+eventInfo::~eventInfo() {
+
+  delete fPUWeightHist; 
+  delete fPUWeightHist_up;
+  delete fPUWeightHist_down;
+}
+
 bool eventInfo::PVselection(edm::Handle<std::vector<reco::Vertex>> vertices) {
 
   bool isPV = false;

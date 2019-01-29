@@ -19,6 +19,7 @@ class eventBits {
 public:
 
   eventBits();
+  ~eventBits();
   void clear();
   //Misc numbers
   int run;

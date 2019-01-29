@@ -21,6 +21,7 @@
 class eventInfo {
   public:
   eventInfo();
+  ~eventInfo();
   bool PVselection(edm::Handle<std::vector<reco::Vertex>> vertices);
   std::vector<float> PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct);
 

@@ -475,6 +475,12 @@ void eventBits::clear() {
   myEventMass = 0.0;
 
 }
+
+eventBits::~eventBits() {
+  delete genVtx;
+  delete myVertexDiff;
+}
+
 bool eventBits::passesGenCuts() {
 
   if(muon1EtVal <= 20)               return false;
@@ -483,6 +489,4 @@ bool eventBits::passesGenCuts() {
   if(parton2EtVal <= 20)             return false;
 
   return true;
-
-
 }
