@@ -480,6 +480,13 @@ void eventBits::clear() {
 eventBits::~eventBits() {
   delete genVtx;
   delete myVertexDiff;
+
+  for (auto aJet : myAddJetCandsHighPt) { delete aJet; }
+  for (auto aJet : myAddJetCandsHighPt_JECUp) { delete aJet; }
+  for (auto aJet : myAddJetCandsHighPt_JECDown) { delete aJet; }
+  for (auto aJet : myAddJetCandsHighPt_JERUp) { delete aJet; }
+  for (auto aJet : myAddJetCandsHighPt_JERDown) { delete aJet; }
+
 }
 
 bool eventBits::passesGenCuts() {

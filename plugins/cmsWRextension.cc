@@ -170,11 +170,11 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   std::string resPathSF;
 
   if (m_era == "2016") {
-    resPath = jecPathname + "/Summer16_25nsV1_MC_PtResolution_AK8PFPuppi.txt";
-	resPathSF = jecPathname + "/Summer16_25nsV1_MC_SF_AK8PFPuppi.txt";
+    resPath = jecPathname + "2016/Summer16_25nsV1_MC_PtResolution_AK8PFPuppi.txt";
+	resPathSF = jecPathname + "2016/Summer16_25nsV1_MC_SF_AK8PFPuppi.txt";
   } else if (m_era == "2017") {
-    resPath = jecPathname + "";
-    resPathSF = jecPathname +"";
+    resPath = jecPathname + "2017/Fall17_V3_MC_PtResolution_AK8PFPuppi.txt";
+    resPathSF = jecPathname +"2017/Fall17_V3_MC_SF_AK8PFPuppi.txt";
   } else if (m_era == "2018") {
     resPath = jecPathname + "";
     resPathSF = jecPathname + "";
@@ -184,10 +184,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   resolution_sf = JME::JetResolutionScaleFactor(Form(resPathSF.c_str()));
 
   r = new TRandom3(1988);
-
-
 }
-
 
 cmsWRextension::~cmsWRextension() {
    // do anything here that needs to be done at desctruction time
@@ -196,7 +193,6 @@ cmsWRextension::~cmsWRextension() {
      delete m_genericTriggerEventFlag;
 
 }
-
 
 //
 // member functions
@@ -690,6 +686,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
   m_allEvents.fill(myRECOevent, 1);
+  
 }
 // A B
 // C D
