@@ -241,7 +241,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       double m_MCU;
 
       
-      double m_highPTleptonCut = 200;
+      double m_highPTleptonCut = 150;
       double m_subleadPTleptonCut = 10;
       double m_leptonEtaCut = 2.4;
       double m_muonIsoCut = .05;
