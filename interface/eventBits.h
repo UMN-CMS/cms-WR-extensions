@@ -212,19 +212,37 @@ public:
   //RESOLVED ANA   
   double resJetDR;
   double resolvedRECOmass;
-  double resolvedGENmass;
   double resSubleadMuJet1dR;
   double resSubleadMuJet2dR;
   double resLeadMuJet1dR;
   double resLeadMuJet2dR;
 
+
+  double resMLL;
+  double resolvedSubleadMuPt;
+
+  //GEN THINGS
+  double muon1muon2dR;
+  double muon1muon2Mass;
+
+  double parton1parton2dR;
+
+  double fatJetMuon1dR;
+  double fatJetMuon1dPhi;
+  double fatJetMuon2dR;
+
+  double leadAK8JetMuonEtaValGEN;
+  double leadAK8JetMuonPtValGEN;
+  double leadAK8JetMuonMassValGEN;
+
+  double resolvedGENmass;
+  double resolvedGENpt;
+  double resolvedGENeta;
+
   double resSubleadMuParton1dR;
   double resSubleadMuParton2dR;
   double resLeadMuParton1dR;
   double resLeadMuParton2dR;
-
-  double resMLL;
-  double resolvedSubleadMuPt;
 
   //HEEP THINGS
   double selElectron_barrel_dEtaInSeed      ; 
@@ -331,7 +349,7 @@ public:
   double leadSubleadingPartonsMuonsMassVal;
   double leadAK8JetMuonMassVal;
   double leadAK8JetMuonMassVal_noLSF;
-  double leadAK8JetMuonMassValGEN;
+
   double leadAK8JetDiMuonMassVal;
   double leadAK8JetElectronMassVal;
   double leadAK8JetElectronMassVal_JECUp;
@@ -366,7 +384,6 @@ public:
   double leadSubleadingJetsMuonsPtVal;
   double leadSubleadingPartonsMuonsPtVal;
   double leadAK8JetMuonPtVal;
-  double leadAK8JetMuonPtValGEN;
   double leadAK8JetElectronPtVal;
   double leadAK8JetElectronPtVal_noISO;
 
@@ -374,7 +391,6 @@ public:
   double leadSubleadingJetsMuonsEtaVal;
   double leadSubleadingPartonsMuonsEtaVal;
   double leadAK8JetMuonEtaVal;
-  double leadAK8JetMuonEtaValGEN;
   double leadAK8JetElectronEtaVal;
   double leadAK8JetElectronEtaVal_noISO;
 

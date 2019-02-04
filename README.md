@@ -1,5 +1,5 @@
 # cms-WR-extensions
-
+## 2016 (As of 12-6-18)
 SETUP INSTRUCTIONS:
 
 Parts of this code depends on a few different packages:
@@ -10,7 +10,6 @@ https://hypernews.cern.ch/HyperNews/CMS/get/physics-validation/2786.html
 -HEEPv7 ID information for which is here:
 https://twiki.cern.ch/twiki/bin/viewauth/CMS/HEEPElectronIdentificationRun2
 
-As of 12-6-18 the sequence is:
 ```
 cmsrel CMSSW_8_0_26_patch1
 cd CMSSW_8_0_26_patch1/src/
@@ -37,22 +36,20 @@ mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
-scram b -j 4
 
 git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_80X_V3
-scram b -j 18
-
 git clone https://github.com/Michael-Krohn/BaconAna.git
-scram b -j8
+
+scram b -j32
 ```
 
 Example incantations to drive the crab3 interface python (in progress):
 ```
 MC
-python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt -c ExoAnalysis/cmsWRextensions/python/ConfFile_cfg_regression.py
+python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt -c ExoAnalysis/cmsWRextensions/python/ConfFile_cfg_regression_IDs.py
 
 DATA
-python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/data/data_datasets_SingleMuon.txt -c ../../../python/ConfFile_cfg_regression.py -v Electron_Regression
+python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/data/data_datasets_SingleMuon.txt -c ../../../python/ConfFile_cfg_regression_IDs.py -v Electron_Regression
 ```
 Example incantations to run the analysis by hand:
 ```
@@ -60,6 +57,34 @@ cmsRun python/ConfFile_cfg.py inputFiles_load=samples/backgrounds/WJetsToLNu_Pt-
 
 cmsRun python/ConfFile_cfg.py inputFiles=root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AC65E566-52D0-E611-ACAA-1866DAEA812C.root outputFile=out.root >& out.txt &
 ```
+
+## Legacy Run II (**IN PROGRESS** as of 1-22-2019)
+
+SETUP INSTRUCTIONS
+```
+cmsrel CMSSW_10_4_0_patch1
+cd CMSSW_10_4_0_patch1/src/
+cmsenv
+
+git cms-init
+
+git clone git@github.com:Sam-Harper/HEEP.git 
+cd HEEP
+git checkout HEEPV70  #this is currently the default branch for now but may change in the future
+cd ..
+
+mkdir ExoAnalysis
+cd ExoAnalysis/
+git clone git@github.com:UMN-CMS/cmsWRextensions.git
+cd ..
+
+git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v1
+git clone https://github.com/Michael-Krohn/BaconAna.git
+
+scram b -j32
+```
+
+## Other Recipes
 
 How to copy files to CERNbox for sharing.
 

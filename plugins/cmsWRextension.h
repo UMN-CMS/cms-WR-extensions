@@ -122,8 +122,13 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool preSelectReco_Fast (const edm::Event&, const edm::EventSetup&, eventBits&);
       bool passMuonTrig (const edm::Event&, eventBits&);
       bool passElectronTrig (const edm::Event&, eventBits&);
-      bool passWR2016GEN (const edm::Event&, eventBits&);
-      bool passExtensionGEN (const edm::Event&, eventBits&);
+      bool passResGEN (const edm::Event&, eventBits&);
+      bool passBoostGEN (const edm::Event&, eventBits&);
+      bool passResTightGEN (const edm::Event&, eventBits&);
+      bool passBoostTightGEN (const edm::Event&, eventBits&);
+      bool objectCompareGEN(const edm::Event&, eventBits&);
+      bool signalGENidentifier(const edm::Event&, eventBits&);
+      bool passZsidebandCutGEN(const edm::Event&, eventBits&);
       bool passWR2016RECO (const edm::Event&, eventBits&);
       bool passExtensionRECO(const edm::Event&, eventBits&);
       bool passExtensionRECO_ZPeak(const edm::Event&, eventBits&);
@@ -186,6 +191,16 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResFailBoostGEN;
       eventHistos m_eventsFailResPassBoostGEN;
 
+      eventHistos m_eventsFailResFailBoostGEN_boostMod;
+      eventHistos m_eventsPassResPassBoostGEN_boostMod;
+      eventHistos m_eventsPassResFailBoostGEN_boostMod;
+      eventHistos m_eventsFailResPassBoostGEN_boostMod;
+
+      eventHistos m_eventsFailResFailBoostGEN_resMod;
+      eventHistos m_eventsPassResPassBoostGEN_resMod;
+      eventHistos m_eventsPassResFailBoostGEN_resMod;
+      eventHistos m_eventsFailResPassBoostGEN_resMod;
+
       eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt150;
@@ -234,6 +249,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_doGen;
       bool m_amcatnlo;
       bool m_doReco;
+      bool m_isSignal;
       bool m_isMC;
       bool m_doTrig;
       bool m_doFast;
