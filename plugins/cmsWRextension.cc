@@ -292,8 +292,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
       passesResGEN      = passResGEN          (iEvent, myRECOevent);
       passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
-      passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
-      passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
+   //   passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
+   //   passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
     }
     passResRECO = passWR2016RECO(iEvent , myRECOevent);
     if (m_doReco || !m_isMC) {
@@ -446,15 +446,15 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if ( passesResGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN.fill(myRECOevent, 1);
     if (!passesResGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN.fill(myRECOevent, 1);
     //res unchanged
-    if (!passesResGEN && !passesBoostModGEN)    m_eventsFailResFailBoostGEN_boostMod.fill(myRECOevent, 1);
-    if ( passesResGEN &&  passesBoostModGEN)    m_eventsPassResPassBoostGEN_boostMod.fill(myRECOevent, 1);
-    if ( passesResGEN && !passesBoostModGEN)    m_eventsPassResFailBoostGEN_boostMod.fill(myRECOevent, 1);
-    if (!passesResGEN &&  passesBoostModGEN)    m_eventsFailResPassBoostGEN_boostMod.fill(myRECOevent, 1);
-    //boosted unchanged
-    if (!passesResModGEN && !passesBoostGEN)    m_eventsFailResFailBoostGEN_resMod.fill(myRECOevent, 1);
-    if ( passesResModGEN &&  passesBoostGEN)    m_eventsPassResPassBoostGEN_resMod.fill(myRECOevent, 1);
-    if ( passesResModGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN_resMod.fill(myRECOevent, 1);
-    if (!passesResModGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN_resMod.fill(myRECOevent, 1);
+//    if (!passesResGEN && !passesBoostModGEN)    m_eventsFailResFailBoostGEN_boostMod.fill(myRECOevent, 1);
+//    if ( passesResGEN &&  passesBoostModGEN)    m_eventsPassResPassBoostGEN_boostMod.fill(myRECOevent, 1);
+//    if ( passesResGEN && !passesBoostModGEN)    m_eventsPassResFailBoostGEN_boostMod.fill(myRECOevent, 1);
+//    if (!passesResGEN &&  passesBoostModGEN)    m_eventsFailResPassBoostGEN_boostMod.fill(myRECOevent, 1);
+//    //boosted unchanged
+//    if (!passesResModGEN && !passesBoostGEN)    m_eventsFailResFailBoostGEN_resMod.fill(myRECOevent, 1);
+//    if ( passesResModGEN &&  passesBoostGEN)    m_eventsPassResPassBoostGEN_resMod.fill(myRECOevent, 1);
+//    if ( passesResModGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN_resMod.fill(myRECOevent, 1);
+//    if (!passesResModGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN_resMod.fill(myRECOevent, 1);
   }
  // if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
  // if(passBoostGEN) m_eventsPassingExtensionGEN.fill(myRECOevent, 1);
@@ -3670,6 +3670,13 @@ bool cmsWRextension::objectCompareGEN(const edm::Event& iEvent, eventBits& myEve
   myEvent.parton1parton2dR   = sqrt(::wrTools::dR2(parton1->eta(),parton2->eta(),parton1->phi(),parton2->phi()));
   //FOR Z SIDEBAND
   myEvent.muon1muon2Mass = (mu1->p4() +mu2->p4()).mass();
+  //FIND MININUM DR
+  if (dR_pair21 < dR_pair22) {
+    myEvent.minPartonMuon2dR = dR_pair21;
+  } else {
+    myEvent.minPartonMuon2dR = dR_pair22;
+
+  }
   //BOOSTED CHECKS 
   if (fat) {
     const reco::GenJet*      fatJet = myEvent.myAK8GenJets[0];
@@ -3703,14 +3710,20 @@ bool cmsWRextension::passZsidebandCutGEN(const edm::Event& iEvent, eventBits& my
   }
   return true;
 }
+//dR cut setting
+static const float DRCUT = 0.4;
+//static const float DRCUT = 0.5;
+//static const float DRCUT = 0.6;
+//static const float DRCUT = 0.7;
+//static const float DRCUT = 0.8;
 bool cmsWRextension::passBoostGEN(const edm::Event& iEvent, eventBits& myEvent) {
 
   //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
-  if ( ! ((myEvent.resSubleadMuParton1dR < 0.8) || (myEvent.resSubleadMuParton2dR < 0.8))) return false;
+  if ( ! ((myEvent.resSubleadMuParton1dR < DRCUT) || (myEvent.resSubleadMuParton2dR < DRCUT))) return false;
 
   if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
 
-  if ( myEvent.fatJetMuon2dR > 0.8) return false;
+  if ( myEvent.fatJetMuon2dR > DRCUT) return false;
 
   if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
   
@@ -3721,8 +3734,8 @@ bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
 
   if ( myEvent.resolvedGENmass < 600) return false;
 
-  if ( myEvent.resSubleadMuParton1dR < 0.4) return false;
-  if ( myEvent.resSubleadMuParton2dR < 0.4) return false;
+  if ( myEvent.resSubleadMuParton1dR < DRCUT) return false;
+  if ( myEvent.resSubleadMuParton2dR < DRCUT) return false;
   if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
   if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
 
@@ -3732,33 +3745,33 @@ bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
 
 }
 //TIGHTER VERSIONS
-bool cmsWRextension::passBoostTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
-
-  //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
-  if ( ! ((myEvent.resSubleadMuParton1dR < 0.4) || (myEvent.resSubleadMuParton2dR < 0.4))) return false;
-
-  if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
-
-  if ( myEvent.fatJetMuon2dR > 0.8) return false;
-
-  if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
-  
-  return true;
-}
-
-bool cmsWRextension::passResTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
-
-  if ( myEvent.resolvedGENmass < 600) return false;
-
-  //THE SECOND MUON SHOULD BE NICE AND FAR AWAY
-  if ( myEvent.resSubleadMuParton1dR < 0.8) return false;
-  if ( myEvent.resSubleadMuParton2dR < 0.8) return false;
-  if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
-  if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
-
-  return true;
-
-}
+//bool cmsWRextension::passBoostTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
+//
+//  //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
+//  if ( ! ((myEvent.resSubleadMuParton1dR < 0.4) || (myEvent.resSubleadMuParton2dR < 0.4))) return false;
+//
+//  if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
+//
+//  if ( myEvent.fatJetMuon2dR > 0.8) return false;
+//
+//  if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
+//  
+//  return true;
+//}
+//
+//bool cmsWRextension::passResTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
+//
+//  if ( myEvent.resolvedGENmass < 600) return false;
+//
+//  //THE SECOND MUON SHOULD BE NICE AND FAR AWAY
+//  if ( myEvent.resSubleadMuParton1dR < 0.8) return false;
+//  if ( myEvent.resSubleadMuParton2dR < 0.8) return false;
+//  if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
+//  if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
+//
+//  return true;
+//
+//}
 void cmsWRextension::loadCMSSWPath() {
     char* cmsswPathChar = getenv("CMSSW_BASE");
     if (cmsswPathChar == NULL) {

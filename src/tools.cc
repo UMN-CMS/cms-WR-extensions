@@ -78,6 +78,25 @@ namespace wrTools {
     for(std::vector<const reco::Candidate*>::const_iterator iConst = constituents.begin(); iConst != constituents.end(); iConst++) {
       if((*iConst)->pdgId() != particle->pdgId()) continue; //WRONG PDGID
       if(abs((*iConst)->pt() - particle->pt()) >= 1.0) continue; //PT NOT CLOSE ENOUGH
+      if(abs((*iConst)->eta() - particle->eta()) >= 0.1) continue; 
+      if(abs((*iConst)->phi() - particle->phi()) >= 0.1) continue; 
+      
+      std::cout << "Found daughter with PT: "<<(*iConst)->pt() <<" compared to: "<<particle->pt() << std::endl;
+      return true;
+    }
+    
+
+
+
+    return false;
+  }
+  bool particleInPatJet(const reco::Candidate* particle, const pat::Jet* jet) {
+    //loop over jet candidates
+    std::vector<const reco::Candidate*> constituents = jet->getJetConstituentsQuick();
+    for(std::vector<const reco::Candidate*>::const_iterator iConst = constituents.begin(); iConst != constituents.end(); iConst++) {
+      if(abs((*iConst)->pt() - particle->pt()) >= 0.1) continue; //PT NOT CLOSE ENOUGH
+      if(abs((*iConst)->eta() - particle->eta()) >= 0.1) continue; 
+      if(abs((*iConst)->phi() - particle->phi()) >= 0.1) continue; 
       
       std::cout << "Found daughter with PT: "<<(*iConst)->pt() <<" compared to: "<<particle->pt() << std::endl;
       return true;
