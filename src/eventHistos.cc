@@ -93,6 +93,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_dRparton2jet =                    m_histoFolder.make<TH1D>("dRparton2jet", "deltaR between parton2 and closest jet;delta R;",            40, 0.0,  0.4);
     m_dRparton1AK8jet =                 m_histoFolder.make<TH1D>("dRparton1AK8jet", "deltaR between parton1 and closest AK8 jet;delta R;",     40, 0.0,  0.8);
     m_dRparton2AK8jet =                 m_histoFolder.make<TH1D>("dRparton2AK8jet", "deltaR between parton2 and closest AK8 jet;delta R;",     40, 0.0,  0.8);
+    m_minPartonMuon2dR =                m_histoFolder.make<TH1D>("minPartonMuon2dR", "minPartonMuon2dR", 40, 0.0, 2.0);
 
     m_firstPartonJetEt =                m_histoFolder.make<TH1D>("firstPartonJetEt", " Jet Et for Leading Parton;Et (GeV);",                      80,0.0,4000);
     m_secondPartonJetEt =               m_histoFolder.make<TH1D>("secondPartonJetEt"," Jet Et for Subleading Parton;Et (GeV);",                   80,0.0,4000);
@@ -525,6 +526,7 @@ void eventHistos::fillGen(eventBits& event) {
   m_dRparton2jet->Fill(event.dRparton2jetVal, weight);
   m_dRparton1AK8jet->Fill(event.dRparton1AK8jetVal, weight);
   m_dRparton2AK8jet->Fill(event.dRparton2AK8jetVal, weight);
+  m_minPartonMuon2dR->Fill(event.minPartonMuon2dR, weight);
 
 
   m_genLSF                  ->   Fill(event.myGenLSF, weight);

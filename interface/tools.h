@@ -15,6 +15,7 @@
 #include "BaconAna/DataFormats/interface/TAddJet.hh"
 #include "DataFormats/PatCandidates/interface/Jet.h"
 #include "DataFormats/PatCandidates/interface/VIDCutFlowResult.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
 #include "TLorentzVector.h"
 #include "TRandom3.h"
 #include "TMath.h"
@@ -30,6 +31,7 @@ namespace wrTools {
  bool particleIsFrom(const reco::Candidate* particle, int pdgId);
  bool particleIsFromABS(const reco::Candidate* particle, unsigned int pdgId);
  bool particleInGenJet(const reco::Candidate* particle, const reco::GenJet* jet);
+ bool particleInPatJet(const reco::Candidate* particle, const pat::Jet* jet);
  bool compareEtCandidatePointer(const reco::Candidate* cand1, const reco::Candidate* cand2);
  bool compareEtCandidatePointerTAddJet(const baconhep::TAddJet* cand1, const baconhep::TAddJet* cand2);
  bool compareMUFCandidatePointer(const pat::Jet* cand1, const pat::Jet* cand2);

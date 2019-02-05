@@ -103,6 +103,8 @@ eventBits::eventBits() {
   resSubleadMuParton2dR      = -10000.0;
   resLeadMuParton1dR         = -10000.0;
   resLeadMuParton2dR         = -10000.0;
+  
+  minPartonMuon2dR           = -10000.0;
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
