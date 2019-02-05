@@ -579,6 +579,7 @@ void eventHistos::fillReco(eventBits& event) {
   else
     weight = event.weight;
 
+  std::cout << "fillRECO" << std::endl;
   std::cout << "event.weight: " << event.weight << std::endl;
   std::cout << "event.leadAK8JetMuonMassVal: " << event.leadAK8JetMuonMassVal << std::endl;
   m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, weight);
@@ -784,7 +785,7 @@ void eventHistos::fillCombine_Nominal(eventBits& event) {
     weight = 1.;
   }
   
-
+  std::cout << "fillCombine_Nominal" << std::endl;
   std::cout << "doFast event.weight : " << event.weight << std::endl;
   std::cout << "doFast event.leadAK8JetMuonMassVal: " << event.leadAK8JetMuonMassVal << std::endl;
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);

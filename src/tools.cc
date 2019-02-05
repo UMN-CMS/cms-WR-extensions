@@ -20,8 +20,12 @@ namespace wrTools {
     if (jet1->et() > jet2->et() ) return true;
     return false;
   }
-  bool compareEtCandidatePointer(const reco::Candidate* cand1, const reco::Candidate* cand2) { 
+  bool compareEtCandidatePointer(const reco::Candidate* cand1, const reco::Candidate* cand2) {
     if ( cand1->et() > cand2->et() ) return true;
+    return false;
+  }
+  bool compareMUFCandidatePointer(const pat::Jet* cand1, const pat::Jet* cand2) { 
+    if ( cand1->muonEnergyFraction() < cand2->muonEnergyFraction() ) return true;
     return false;
   }
   bool compareEtCandidatePointerTAddJet(const baconhep::TAddJet* cand1, const baconhep::TAddJet* cand2) {
