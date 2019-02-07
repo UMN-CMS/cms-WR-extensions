@@ -129,7 +129,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool objectCompareGEN(const edm::Event&, eventBits&);
       bool signalGENidentifier(const edm::Event&, eventBits&);
       bool passZsidebandCutGEN(const edm::Event&, eventBits&);
-      bool passWR2016RECO (const edm::Event&, eventBits&);
+      bool passResRECO (const edm::Event&, eventBits&);
       bool passBoostRECO(const edm::Event&, eventBits&);
       bool passExtensionRECO_ZPeak(const edm::Event&, eventBits&);
       void passExtensionRECO_Fast(const edm::Event&, eventBits&);

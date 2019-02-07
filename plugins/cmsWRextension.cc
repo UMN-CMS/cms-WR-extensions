@@ -205,7 +205,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   //tag to label events with
   myRECOevent.outputTag = m_outputTag;
   //booleans to check for 4 different selections
-  bool passResRECO = false;
+  bool passesResRECO = false;
   bool passesResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 //  bool passesResModGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 
@@ -296,7 +296,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    //   passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
     }
     if (m_doReco || !m_isMC) {
-      passResRECO = passWR2016RECO(iEvent , myRECOevent);
+      passesResRECO = passResRECO(iEvent , myRECOevent);
       std::cout << "myRECOevent.myResCandJets.size(): " << myRECOevent.myResCandJets.size() << " myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
       std::cout<<"running preselection reco"<<std::endl;
       if(preSelectBoostReco(iEvent, iSetup, myRECOevent)) {
@@ -439,12 +439,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   //FILL STUFF
-  passResRECO = (passResRECO && muonTrigPass);
-  std::cout << "passResRECO: " << passResRECO << " passesBoostRECO: " << passesBoostRECO << std::endl;
-  if (!passResRECO && !passesBoostRECO)    m_eventsFailResFailBoostRECO.fill(myRECOevent, 1);
-  if ( passResRECO &&  passesBoostRECO)    m_eventsPassResPassBoostRECO.fill(myRECOevent, 1);
-  if ( passResRECO && !passesBoostRECO)    m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
-  if (!passResRECO &&  passesBoostRECO)    m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
+  passesResRECO = (passesResRECO && muonTrigPass);
+  std::cout << "passesResRECO: " << passesResRECO << " passesBoostRECO: " << passesBoostRECO << std::endl;
+  if (!passesResRECO && !passesBoostRECO)    m_eventsFailResFailBoostRECO.fill(myRECOevent, 1);
+  if ( passesResRECO &&  passesBoostRECO)    m_eventsPassResPassBoostRECO.fill(myRECOevent, 1);
+  if ( passesResRECO && !passesBoostRECO)    m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
+  if (!passesResRECO &&  passesBoostRECO)    m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
 
 
   if (passPreSelectGen && passZSBGEN) {
@@ -481,7 +481,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       std::cout << "IS GOOD SIGNAL? " << isGoodSignal << std::endl;
       if(m_isSignal && !isGoodSignal) return; //IGNORE EVENT
     }
-    passResRECO = passWR2016RECO(iEvent , myRECOevent);
+    passesResRECO = passResRECO(iEvent , myRECOevent);
   }
 
   if ((m_doReco || !m_isMC) && m_doFast){
@@ -3667,7 +3667,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   }
 
 }
-bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
+bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES SELECTION CALL" << std::endl;
   std::cout << "RES LEPTON SELECTION CALL" << std::endl;
   if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
