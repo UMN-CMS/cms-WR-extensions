@@ -304,11 +304,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         myRECOevent.cutProgress++;
         if(myRECOevent.myMuonJetPairs.size() > 0){
           if(passExtensionRECO(iEvent, myRECOevent)) {
-            addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
+//            addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
             ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, false);
-            if(m_isMC && addMuons) {
+            if(m_isMC) {
               std::vector<double> Muon_LooseID_Weights;
-              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+//              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta());
               myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
               myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
               myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
@@ -319,13 +320,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
               myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
               setEventWeight(iEvent, myRECOevent);
             }
-            if ((m_isMC || m_flavorSideband) && addMuons){
+            if ((m_isMC || m_flavorSideband)){
               myRECOevent.cutProgress++;
               if(!ZMASS){
+		std::cout << "above the ZMASS" << std::endl;
                 myRECOevent.cutProgress++;
                 if(muonTrigPass && m_doTrig){
+		  std::cout << "triggers are passed" << std::endl;
                   myRECOevent.cutProgress++;
           	if(myRECOevent.nHighPtMuonsOutsideJet == 1){
+		    std::cout << "one high pt muon outside jet" <<std::endl;
                     myRECOevent.cutProgress++;
                     passBoostRECO = true;             
                     std::cout << "myRECOevent.weight: " << myRECOevent.weight << std::endl;
@@ -342,12 +346,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           std::cout << "Inside ZPeak preselection" << std::endl;
           if(passExtensionRECO_ZPeak(iEvent, myRECOevent)) {
             std::cout << "Inside ZPeak passExtensionRECO_ZPeak" << std::endl;
-            addMuons = additionalMuons(iEvent, myRECOevent, false, true, 0, false);
+//            addMuons = additionalMuons(iEvent, myRECOevent, false, true, 0, false);
+	    std::cout << "myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
             ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, true);
-            std::cout << "addMuons: " << addMuons << ", ZMASS: " << ZMASS << std::endl;
-            if(m_isMC && addMuons) {
+//            std::cout << "addMuons: " << addMuons << ", ZMASS: " << ZMASS << std::endl;
+            if(m_isMC) {
               std::vector<double> Muon_LooseID_Weights;
-              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+//              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta());
               myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
               myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
               myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
@@ -358,7 +364,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
               myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
               setEventWeight(iEvent, myRECOevent);
             }
-            if(addMuons && ZMASS && muonTrigPass) {
+            if(ZMASS && muonTrigPass) {
               std::cout<< "FILLING ZPeak Region" << std::endl;
               m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 1);
             }
@@ -462,6 +468,21 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
  // if(passBoostGEN) m_eventsPassingExtensionGEN.fill(myRECOevent, 1);
 
   //THIS PART OF THE CODE RUNS THE ANALYSIS IN FAST MODE.  THE GOAL HERE IS TO PRODUCE ALL THE NECESSARY INFORMATION FOR HIGGS COMBINE
+
+  if (m_doFast){
+    if (m_isMC && m_doGen) {
+
+      passGenCounter = genCounter(iEvent, myRECOevent);
+      myRECOevent.passGenCounter = passGenCounter;
+      vertexDiff(myRECOevent);
+      isGoodSignal = signalGENidentifier(iEvent, myRECOevent);
+      passPreSelectGen = preSelectGen(iEvent, myRECOevent);
+      std::cout << "IS SIGNAL? " << m_isSignal << std::endl;
+      std::cout << "IS GOOD SIGNAL? " << isGoodSignal << std::endl;
+      if(m_isSignal && !isGoodSignal) return; //IGNORE EVENT
+    }
+    passResRECO = passWR2016RECO(iEvent , myRECOevent);
+  }
 
   if ((m_doReco || !m_isMC) && m_doFast){
     std::cout << "RUNNING CONDENSED ANALYSIS FOR HIGGS COMBINE" << std::endl;
@@ -1262,12 +1283,17 @@ bool cmsWRextension::preSelectReco(const edm::Event& iEvent, const edm::EventSet
   std::cout << "checking dR for orthogonality" << std::endl;
   if (myRECOevent.myResCandJets.size() == 1 && myRECOevent.resolvedANAMuons.size() > 1){
     double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[0]->eta(),myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[0]->phi()));
+    std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
     if (dR_jet1_muon2 > 0.4) return false;
   }else if(myRECOevent.myResCandJets.size() > 1 && myRECOevent.resolvedANAMuons.size() > 1){
     double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[0]->eta(),myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[0]->phi()));
     double dR_jet2_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[1]->eta(),myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[1]->phi()));
+    std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
+    std::cout << "dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
     if (dR_jet1_muon2 > 0.4 && dR_jet2_muon2 > 0.4) return false;
-  }else{
+  }else if(myRECOevent.resolvedANAMuons.size() < 2){
+    std::cout << "myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
+    std::cout << "don't have 2 muons" <<std::endl;
     return false;
   }
 
@@ -1457,9 +1483,11 @@ bool cmsWRextension::selectHighPtISOMuon(const edm::Event& iEvent, eventBits& my
 }
 bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
   //CHECK IF WE HAVE A SUBLEADING MUON
-  if(myEvent.mySubleadMuon == 0) return false;
-
-  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+//  if(myEvent.mySubleadMuon == 0) return false;
+  std::cout << "Inside subLeadingMuonZMass" << std::endl;
+  const pat::Muon* subleadMuon = myEvent.resolvedANAMuons[1];
+  std::cout << "Have 2nd muon" << std::endl;
+//  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
   const pat::Muon* selMuon     = myEvent.myMuonCand;
   const baconhep::TAddJet*  selJet;
   if(ZPeak){
@@ -1788,6 +1816,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     if ( iMuon->pt() < 10 || fabs(iMuon->eta()) > 2.4) continue;  //10 GeV is designed to capture slow muons from Z->MUMU
     if ( ! iMuon->isLooseMuon() ) continue;  //Loose MuonID
     std::cout << "Additional Muon passes Loose ID" << std::endl;
+    std::cout << "additional Muon pT: " << iMuon->pt() << std::endl;
     if(flavorSideband==true){
       double muPhi  = iMuon->phi();
       double muEta  = iMuon->eta();
@@ -2025,34 +2054,56 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
 bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES LEPTON SELECTION" << std::endl;
   std::vector<const pat::Muon*> resolvedANAMuons;
+  std::vector<const pat::Muon*> resolvedLooseMuons;
+  std::vector<const pat::Muon*> resolvedHighPtMuons;
+
   edm::Handle<std::vector<pat::Muon>> highMuons;
   iEvent.getByToken(m_highMuonToken, highMuons);
 
+  edm::Handle<std::vector<pat::Muon>> regMuons;
+  iEvent.getByToken(m_regMuonToken, regMuons);
+
+//  for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
-//    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 10) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {    //korea
-//    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 32) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {  //middle
-   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53)){ // && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
+
+//   if(( iMuon->isLooseMuon() && iMuon->pt() > 10 && fabs(iMuon->eta()) < 2.4)){
+   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 60)){ // && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
       std::cout<<"RES LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
       std::cout<<"RES LEPTON CAND WITH Iso: " << iMuon->isolationR03().sumPt/iMuon->pt() << std::endl;
      
-      resolvedANAMuons.push_back(&(*iMuon));
+      resolvedHighPtMuons.push_back(&(*iMuon));
     }
   }
+
+  for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
+     if(( iMuon->isLooseMuon() && iMuon->pt() > 10 && fabs(iMuon->eta()) < 2.4)){
+       if(resolvedHighPtMuons.size() > 0){
+	 if(fabs(reco::deltaPhi((iMuon)->phi(), resolvedHighPtMuons[0]->phi())) > 0.01){
+           resolvedLooseMuons.push_back(&(*iMuon));
+
+	 }
+       }
+     }
+  }
+
+  if(resolvedHighPtMuons.size() > 0 && resolvedLooseMuons.size() > 0){
+    resolvedANAMuons.push_back(resolvedHighPtMuons[0]);
+    resolvedANAMuons.push_back(resolvedLooseMuons[0]);
+  }
+
   myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
   if (myEvent.NresolvedANAMuonCands < 2) return false;
 
   std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
 
+  std::cout << "high pT lead muon" << std::endl;
   //if (resolvedANAMuons[0]->pt() <= 52) return false;  //korea
+  if (!resolvedANAMuons[0]->isHighPtMuon(*myEvent.PVertex)) return false;
   std::cout << "60 GeV lead muon" << std::endl;
   if (resolvedANAMuons[0]->pt() <= 60) return false;
   std::cout << "isolation of lead muon" << std::endl;
   if (resolvedANAMuons[0]->isolationR03().sumPt/resolvedANAMuons[0]->pt() > 0.1) return false;
 
-  std::cout << "dR between muons" << std::endl;
-  double dR_pair = sqrt(::wrTools::dR2(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi()));
-  if (dR_pair < 0.4) return false;
-  
   myEvent.resolvedANAMuons = resolvedANAMuons;
 
 
@@ -2248,7 +2299,8 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
   for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK4->begin(); iJet != recoJetsAK4->end(); iJet++) {
     if ( iJet->pt() < 40 ) continue;
     if ( fabs(iJet->eta()) > 2.4) continue;
-
+    std::cout<<"POSSIBLE JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
+    std::cout << "iJet->muonEnergyFraction(): " << iJet->muonEnergyFraction() << " iJet->chargedEmEnergyFraction(): " << iJet->chargedEmEnergyFraction() << std::endl;
     double NHF  =                iJet->neutralHadronEnergyFraction();
     double NEMF =                iJet->neutralEmEnergyFraction();
     double CHF  =                iJet->chargedHadronEnergyFraction();
@@ -3262,6 +3314,11 @@ bool cmsWRextension::passExtensionRECO_ZPeak(const edm::Event& iEvent, eventBits
 bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRECOevent) { //LOOP OVE. JET MUON PAIRS AND TAKE THE HIGHEST MASS ONE
 
   std::sort(myRECOevent.myMuonJetPairs.begin(),myRECOevent.myMuonJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
+
+  double dR_AK8jet_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myMuonJetPairs[0].first->phi));
+  std::cout << "dR_AK8jet_muon2: " << dR_AK8jet_muon2 << std::endl;
+  if (dR_AK8jet_muon2 > 0.4) return false;
+
   TLorentzVector JetVector_temp = TLorentzVector();
   JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->E);
 
@@ -3632,6 +3689,14 @@ bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent
   double dR_jet2_muon2 = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[1]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.resolvedANAMuons[1]->phi(),myEvent.myResCandJets[1]->phi()));
   std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << " dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
   if (dR_jet1_muon2 < 0.4 || dR_jet2_muon2 < 0.4) return false;
+
+  std::cout << "dR between muons" << std::endl;
+  double dR_pair = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[0]->eta(),myEvent.resolvedANAMuons[1]->eta(),myEvent.resolvedANAMuons[0]->phi(),myEvent.resolvedANAMuons[1]->phi()));
+  std::cout << "Muons dR_pair: " << dR_pair << std::endl;
+  if (dR_pair < 0.4) return false;
+
+  std::cout << "subleading Muon pT" << std::endl;
+  if (myEvent.resolvedANAMuons[1]->pt() < 53) return false;
 
   std::cout << "subleading Muon ISO" << std::endl;
   if (myEvent.resolvedANAMuons[1]->isolationR03().sumPt/myEvent.resolvedANAMuons[1]->pt() > 0.1) return false;
