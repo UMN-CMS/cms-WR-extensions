@@ -69,7 +69,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
 
 process.source = cms.Source ("PoolSource",
 	  fileNames = cms.untracked.vstring (options.inputFiles),
-#	  skipEvents = cms.untracked.uint32(30000)
+# 	  skipEvents = cms.untracked.uint32(88850)
 )
 
 process.options = cms.untracked.PSet(
@@ -179,7 +179,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True),
-                              isSignal = cms.untracked.bool(True),
+                              isSignal = cms.untracked.bool(False),
                               doFast = cms.untracked.bool(options.doFast),
                               isMC = cms.untracked.bool(options.isMC),
 			                  amcatnlo = cms.untracked.bool(options.ISmcatnlo),
