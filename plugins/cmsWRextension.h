@@ -118,7 +118,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       virtual void endJob() override;
       // ----------member functions---------------------
       bool preSelectGen (const edm::Event&, eventBits&);
-      bool preSelectReco (const edm::Event&, const edm::EventSetup&, eventBits&);
+      bool preSelectBoostReco (const edm::Event&, const edm::EventSetup&, eventBits&);
       bool preSelectReco_Fast (const edm::Event&, const edm::EventSetup&, eventBits&);
       bool passMuonTrig (const edm::Event&, eventBits&);
       bool passElectronTrig (const edm::Event&, eventBits&);
@@ -129,8 +129,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool objectCompareGEN(const edm::Event&, eventBits&);
       bool signalGENidentifier(const edm::Event&, eventBits&);
       bool passZsidebandCutGEN(const edm::Event&, eventBits&);
-      bool passWR2016RECO (const edm::Event&, eventBits&);
-      bool passExtensionRECO(const edm::Event&, eventBits&);
+      bool passResRECO (const edm::Event&, eventBits&);
+      bool passBoostRECO(const edm::Event&, eventBits&);
       bool passExtensionRECO_ZPeak(const edm::Event&, eventBits&);
       void passExtensionRECO_Fast(const edm::Event&, eventBits&);
       bool passFlavorSideband(const edm::Event&, eventBits&);

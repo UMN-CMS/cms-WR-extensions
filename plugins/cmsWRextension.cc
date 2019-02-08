@@ -214,13 +214,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   //tag to label events with
   myRECOevent.outputTag = m_outputTag;
   //booleans to check for 4 different selections
-  bool passResRECO = false;
+  bool passesResRECO = false;
   bool passesResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
-  bool passesResModGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
+//  bool passesResModGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 
-  bool passBoostRECO = false;
+  bool passesBoostRECO = false;
   bool passesBoostGEN = false; //this tracks with our current analysis effort
-  bool passesBoostModGEN = false; //this tracks with our current analysis effort
+//  bool passesBoostModGEN = false; //this tracks with our current analysis effort
   //various pass/fail bits
   bool passGenCounter = false;
   bool passPreSelectGen = false;
@@ -301,22 +301,24 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
       passesResGEN      = passResGEN          (iEvent, myRECOevent);
       passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
-      passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
-      passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
+   //   passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
+   //   passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
     }
-    passResRECO = passWR2016RECO(iEvent , myRECOevent);
     if (m_doReco || !m_isMC) {
+      passesResRECO = passResRECO(iEvent , myRECOevent);
+      std::cout << "myRECOevent.myResCandJets.size(): " << myRECOevent.myResCandJets.size() << " myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
       std::cout<<"running preselection reco"<<std::endl;
-      if(preSelectReco(iEvent, iSetup, myRECOevent)) {
+      if(preSelectBoostReco(iEvent, iSetup, myRECOevent)) {
 
         myRECOevent.cutProgress++;
         if(myRECOevent.myMuonJetPairs.size() > 0){
-          if(passExtensionRECO(iEvent, myRECOevent)) {
-            addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
+          if(passBoostRECO(iEvent, myRECOevent)) {
+//            addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
             ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, false);
-            if(m_isMC && addMuons) {
+            if(m_isMC) {
               std::vector<double> Muon_LooseID_Weights;
-              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+//              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta());
               myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
               myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
               myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
@@ -327,15 +329,18 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
               myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
               setEventWeight(iEvent, myRECOevent);
             }
-            if ((m_isMC || m_flavorSideband) && addMuons){
+            if ((m_isMC || m_flavorSideband)){
               myRECOevent.cutProgress++;
               if(!ZMASS){
+		std::cout << "above the ZMASS" << std::endl;
                 myRECOevent.cutProgress++;
                 if(muonTrigPass && m_doTrig){
+		  std::cout << "triggers are passed" << std::endl;
                   myRECOevent.cutProgress++;
           	if(myRECOevent.nHighPtMuonsOutsideJet == 1){
+		    std::cout << "one high pt muon outside jet" <<std::endl;
                     myRECOevent.cutProgress++;
-                    passBoostRECO = true;             
+                    passesBoostRECO = true;             
                     std::cout << "myRECOevent.weight: " << myRECOevent.weight << std::endl;
                     m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent, 1);
           	}
@@ -350,12 +355,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           std::cout << "Inside ZPeak preselection" << std::endl;
           if(passExtensionRECO_ZPeak(iEvent, myRECOevent)) {
             std::cout << "Inside ZPeak passExtensionRECO_ZPeak" << std::endl;
-            addMuons = additionalMuons(iEvent, myRECOevent, false, true, 0, false);
+//            addMuons = additionalMuons(iEvent, myRECOevent, false, true, 0, false);
+	    std::cout << "myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
             ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, true);
-            std::cout << "addMuons: " << addMuons << ", ZMASS: " << ZMASS << std::endl;
-            if(m_isMC && addMuons) {
+//            std::cout << "addMuons: " << addMuons << ", ZMASS: " << ZMASS << std::endl;
+            if(m_isMC) {
               std::vector<double> Muon_LooseID_Weights;
-              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+//              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta());
               myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
               myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
               myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
@@ -366,7 +373,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
               myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
               setEventWeight(iEvent, myRECOevent);
             }
-            if(addMuons && ZMASS && muonTrigPass) {
+            if(ZMASS && muonTrigPass) {
               std::cout<< "FILLING ZPeak Region" << std::endl;
               m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 1);
             }
@@ -378,55 +385,55 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.FSBcutProgress++;
 
       if(passFlavorSideband(iEvent, myRECOevent)) {
-        std::cout << "Inside FSB" << std::endl;
-        bool ss = false;
-        bool ss_noISO = false;
-        if (myRECOevent.electronCands200  > 0 && myRECOevent.myElectronJetPairs.size() > 0){
-          ss = sameSign(myRECOevent, false);
-        }
-        if (myRECOevent.electronCands200_noISO  > 0 && myRECOevent.myElectronJetPairs_noISO.size() > 0){
-          ss_noISO = sameSign(myRECOevent, true);
-        }
+//        std::cout << "Inside FSB" << std::endl;
+//        bool ss = false;
+//        bool ss_noISO = false;
+//        if (myRECOevent.electronCands200  > 0 && myRECOevent.myElectronJetPairs.size() > 0){
+//          ss = sameSign(myRECOevent, false);
+//        }
+//        if (myRECOevent.electronCands200_noISO  > 0 && myRECOevent.myElectronJetPairs_noISO.size() > 0){
+//          ss_noISO = sameSign(myRECOevent, true);
+//        }
 
         std::cout << "PASSES THE FLAVOR SIDEBAND" << std::endl;
         if (m_doTrig){
           if (passElectronTrig(iEvent, myRECOevent)){
             std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
-            if (passFSBbin(myRECOevent, true, 50)) {
-              m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent, 1);
-            }
-            if (!m_doFast) {
-              if (passFSBbin(myRECOevent, true, 100)) {
-                m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent, 1);
-              }
-              if (passFSBbin(myRECOevent, true, 150)) {
-                m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent, 1);
-              }
-              if (passFSBbin(myRECOevent, true, 200)) {
-                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt200_all" << std::endl;
-                m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
-                if (ss) m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
-                else m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
-              }
-              if (passFSBbin(myRECOevent, false, 200)) {
-                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt200_noISO" << std::endl;
-                if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
-                else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
-              }
-              if (passFSBbin(myRECOevent, false, 50)) {
-                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt50_noISO" << std::endl;
-                m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
-              }
-            }
+//            if (passFSBbin(myRECOevent, true, 50)) {
+//              m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent, 1);
+//            }
+//            if (!m_doFast) {
+//              if (passFSBbin(myRECOevent, true, 100)) {
+//                m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent, 1);
+//              }
+//              if (passFSBbin(myRECOevent, true, 150)) {
+//                m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent, 1);
+//              }
+//              if (passFSBbin(myRECOevent, true, 200)) {
+//                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt200_all" << std::endl;
+//                m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
+//                if (ss) m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
+//                else m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+//              }
+//              if (passFSBbin(myRECOevent, false, 200)) {
+//                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt200_noISO" << std::endl;
+//                if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
+//                else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
+//              }
+//              if (passFSBbin(myRECOevent, false, 50)) {
+//                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt50_noISO" << std::endl;
+//                m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
+//              }
+//            }
           }
         }
-        if (passFSBbin(myRECOevent, false, 200)) {
-          if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.fill(myRECOevent, 1);
-          else m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.fill(myRECOevent, 1);
-        }
-        if (passFSBbin(myRECOevent, true, 50) && !m_doFast) {
-          m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
-        }
+//        if (passFSBbin(myRECOevent, false, 200)) {
+//          if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.fill(myRECOevent, 1);
+//          else m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.fill(myRECOevent, 1);
+//        }
+//        if (passFSBbin(myRECOevent, true, 50) && !m_doFast) {
+//          m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
+//        }
         //ABCD BIN DEFINITION
         if (passFSBbin(myRECOevent, false, 200)) {
           bool ABorCD = passABCD(myRECOevent, true); //SIGMAIETAIETA
@@ -441,11 +448,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   //FILL STUFF
-  passResRECO = (passResRECO && muonTrigPass);
-  if (!passResRECO && !passBoostRECO)    m_eventsFailResFailBoostRECO.fill(myRECOevent, 1);
-  if ( passResRECO &&  passBoostRECO)    m_eventsPassResPassBoostRECO.fill(myRECOevent, 1);
-  if ( passResRECO && !passBoostRECO)    m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
-  if (!passResRECO &&  passBoostRECO)    m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
+  passesResRECO = (passesResRECO && muonTrigPass);
+  std::cout << "passesResRECO: " << passesResRECO << " passesBoostRECO: " << passesBoostRECO << std::endl;
+  if (!passesResRECO && !passesBoostRECO)    m_eventsFailResFailBoostRECO.fill(myRECOevent, 1);
+  if ( passesResRECO &&  passesBoostRECO)    m_eventsPassResPassBoostRECO.fill(myRECOevent, 1);
+  if ( passesResRECO && !passesBoostRECO)    m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
+  if (!passesResRECO &&  passesBoostRECO)    m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
 
 
   if (passPreSelectGen && passZSBGEN) {
@@ -455,20 +463,35 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if ( passesResGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN.fill(myRECOevent, 1);
     if (!passesResGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN.fill(myRECOevent, 1);
     //res unchanged
-    if (!passesResGEN && !passesBoostModGEN)    m_eventsFailResFailBoostGEN_boostMod.fill(myRECOevent, 1);
-    if ( passesResGEN &&  passesBoostModGEN)    m_eventsPassResPassBoostGEN_boostMod.fill(myRECOevent, 1);
-    if ( passesResGEN && !passesBoostModGEN)    m_eventsPassResFailBoostGEN_boostMod.fill(myRECOevent, 1);
-    if (!passesResGEN &&  passesBoostModGEN)    m_eventsFailResPassBoostGEN_boostMod.fill(myRECOevent, 1);
-    //boosted unchanged
-    if (!passesResModGEN && !passesBoostGEN)    m_eventsFailResFailBoostGEN_resMod.fill(myRECOevent, 1);
-    if ( passesResModGEN &&  passesBoostGEN)    m_eventsPassResPassBoostGEN_resMod.fill(myRECOevent, 1);
-    if ( passesResModGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN_resMod.fill(myRECOevent, 1);
-    if (!passesResModGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN_resMod.fill(myRECOevent, 1);
+//    if (!passesResGEN && !passesBoostModGEN)    m_eventsFailResFailBoostGEN_boostMod.fill(myRECOevent, 1);
+//    if ( passesResGEN &&  passesBoostModGEN)    m_eventsPassResPassBoostGEN_boostMod.fill(myRECOevent, 1);
+//    if ( passesResGEN && !passesBoostModGEN)    m_eventsPassResFailBoostGEN_boostMod.fill(myRECOevent, 1);
+//    if (!passesResGEN &&  passesBoostModGEN)    m_eventsFailResPassBoostGEN_boostMod.fill(myRECOevent, 1);
+//    //boosted unchanged
+//    if (!passesResModGEN && !passesBoostGEN)    m_eventsFailResFailBoostGEN_resMod.fill(myRECOevent, 1);
+//    if ( passesResModGEN &&  passesBoostGEN)    m_eventsPassResPassBoostGEN_resMod.fill(myRECOevent, 1);
+//    if ( passesResModGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN_resMod.fill(myRECOevent, 1);
+//    if (!passesResModGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN_resMod.fill(myRECOevent, 1);
   }
  // if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
  // if(passBoostGEN) m_eventsPassingExtensionGEN.fill(myRECOevent, 1);
 
   //THIS PART OF THE CODE RUNS THE ANALYSIS IN FAST MODE.  THE GOAL HERE IS TO PRODUCE ALL THE NECESSARY INFORMATION FOR HIGGS COMBINE
+
+  if (m_doFast){
+    if (m_isMC && m_doGen) {
+
+      passGenCounter = genCounter(iEvent, myRECOevent);
+      myRECOevent.passGenCounter = passGenCounter;
+      vertexDiff(myRECOevent);
+      isGoodSignal = signalGENidentifier(iEvent, myRECOevent);
+      passPreSelectGen = preSelectGen(iEvent, myRECOevent);
+      std::cout << "IS SIGNAL? " << m_isSignal << std::endl;
+      std::cout << "IS GOOD SIGNAL? " << isGoodSignal << std::endl;
+      if(m_isSignal && !isGoodSignal) return; //IGNORE EVENT
+    }
+    passesResRECO = passResRECO(iEvent , myRECOevent);
+  }
 
   if ((m_doReco || !m_isMC) && m_doFast){
     std::cout << "RUNNING CONDENSED ANALYSIS FOR HIGGS COMBINE" << std::endl;
@@ -1270,7 +1293,24 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   return true;
 }
 
-bool cmsWRextension::preSelectReco(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myRECOevent) {
+bool cmsWRextension::preSelectBoostReco(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myRECOevent) {
+  std::cout << "checking dR for orthogonality" << std::endl;
+  if (myRECOevent.myResCandJets.size() == 1 && myRECOevent.resolvedANAMuons.size() > 1){
+    double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[0]->eta(),myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[0]->phi()));
+    std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
+    if (dR_jet1_muon2 > 0.4) return false;
+  }else if(myRECOevent.myResCandJets.size() > 1 && myRECOevent.resolvedANAMuons.size() > 1){
+    double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[0]->eta(),myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[0]->phi()));
+    double dR_jet2_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[1]->eta(),myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[1]->phi()));
+    std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
+    std::cout << "dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
+    if (dR_jet1_muon2 > 0.4 && dR_jet2_muon2 > 0.4) return false;
+  }else if(myRECOevent.resolvedANAMuons.size() < 2){
+    std::cout << "myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
+    std::cout << "don't have 2 muons" <<std::endl;
+    return false;
+  }
+
   std::cout << "beginning preselection" << std::endl;
   muonSelection(iEvent, myRECOevent);
   electronSelection(iEvent, myRECOevent);
@@ -1457,9 +1497,11 @@ bool cmsWRextension::selectHighPtISOMuon(const edm::Event& iEvent, eventBits& my
 }
 bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
   //CHECK IF WE HAVE A SUBLEADING MUON
-  if(myEvent.mySubleadMuon == 0) return false;
-
-  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+//  if(myEvent.mySubleadMuon == 0) return false;
+  std::cout << "Inside subLeadingMuonZMass" << std::endl;
+  const pat::Muon* subleadMuon = myEvent.resolvedANAMuons[1];
+  std::cout << "Have 2nd muon" << std::endl;
+//  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
   const pat::Muon* selMuon     = myEvent.myMuonCand;
   const baconhep::TAddJet*  selJet;
   if(ZPeak){
@@ -1788,6 +1830,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     if ( iMuon->pt() < 10 || fabs(iMuon->eta()) > 2.4) continue;  //10 GeV is designed to capture slow muons from Z->MUMU
     if ( ! iMuon->isLooseMuon() ) continue;  //Loose MuonID
     std::cout << "Additional Muon passes Loose ID" << std::endl;
+    std::cout << "additional Muon pT: " << iMuon->pt() << std::endl;
     if(flavorSideband==true){
       double muPhi  = iMuon->phi();
       double muEta  = iMuon->eta();
@@ -2025,29 +2068,56 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
 bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES LEPTON SELECTION" << std::endl;
   std::vector<const pat::Muon*> resolvedANAMuons;
+  std::vector<const pat::Muon*> resolvedLooseMuons;
+  std::vector<const pat::Muon*> resolvedHighPtMuons;
+
   edm::Handle<std::vector<pat::Muon>> highMuons;
   iEvent.getByToken(m_highMuonToken, highMuons);
 
+  edm::Handle<std::vector<pat::Muon>> regMuons;
+  iEvent.getByToken(m_regMuonToken, regMuons);
+
+//  for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
-//    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 10) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {    //korea
-//    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 32) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {  //middle
-   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
+
+//   if(( iMuon->isLooseMuon() && iMuon->pt() > 10 && fabs(iMuon->eta()) < 2.4)){
+   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 60)){ // && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
       std::cout<<"RES LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
+      std::cout<<"RES LEPTON CAND WITH Iso: " << iMuon->isolationR03().sumPt/iMuon->pt() << std::endl;
      
-      resolvedANAMuons.push_back(&(*iMuon));
+      resolvedHighPtMuons.push_back(&(*iMuon));
     }
   }
+
+  for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
+     if(( iMuon->isLooseMuon() && iMuon->pt() > 10 && fabs(iMuon->eta()) < 2.4)){
+       if(resolvedHighPtMuons.size() > 0){
+	 if(fabs(reco::deltaPhi((iMuon)->phi(), resolvedHighPtMuons[0]->phi())) > 0.01){
+           resolvedLooseMuons.push_back(&(*iMuon));
+
+	 }
+       }
+     }
+  }
+
+  if(resolvedHighPtMuons.size() > 0 && resolvedLooseMuons.size() > 0){
+    resolvedANAMuons.push_back(resolvedHighPtMuons[0]);
+    resolvedANAMuons.push_back(resolvedLooseMuons[0]);
+  }
+
   myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
   if (myEvent.NresolvedANAMuonCands < 2) return false;
 
   std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
 
+  std::cout << "high pT lead muon" << std::endl;
   //if (resolvedANAMuons[0]->pt() <= 52) return false;  //korea
+  if (!resolvedANAMuons[0]->isHighPtMuon(*myEvent.PVertex)) return false;
+  std::cout << "60 GeV lead muon" << std::endl;
   if (resolvedANAMuons[0]->pt() <= 60) return false;
+  std::cout << "isolation of lead muon" << std::endl;
+  if (resolvedANAMuons[0]->isolationR03().sumPt/resolvedANAMuons[0]->pt() > 0.1) return false;
 
-  double dR_pair = sqrt(::wrTools::dR2(resolvedANAMuons[0]->eta(),resolvedANAMuons[1]->eta(),resolvedANAMuons[0]->phi(),resolvedANAMuons[1]->phi()));
-  if (dR_pair < 0.4) return false;
-  
   myEvent.resolvedANAMuons = resolvedANAMuons;
 
 
@@ -2243,7 +2313,8 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
   for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK4->begin(); iJet != recoJetsAK4->end(); iJet++) {
     if ( iJet->pt() < 40 ) continue;
     if ( fabs(iJet->eta()) > 2.4) continue;
-
+    std::cout<<"POSSIBLE JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
+    std::cout << "iJet->muonEnergyFraction(): " << iJet->muonEnergyFraction() << " iJet->chargedEmEnergyFraction(): " << iJet->chargedEmEnergyFraction() << std::endl;
     double NHF  =                iJet->neutralHadronEnergyFraction();
     double NEMF =                iJet->neutralEmEnergyFraction();
     double CHF  =                iJet->chargedHadronEnergyFraction();
@@ -2259,23 +2330,30 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
     if (CHF == 0) continue;
     if (CHM == 0) continue;
-    if (CEMF > .90) continue;
- 
+    //if (CEMF > .99) continue;
+    if (CEMF > .90) continue; 
+
     //CHECK THAT IT DOESN'T OVERLAP A MUON
-    if (sqrt(::wrTools::dR2(iJet->eta(),mu1->eta(),iJet->phi(),mu1->phi())) <= 0.05) continue;
-    if (sqrt(::wrTools::dR2(iJet->eta(),mu2->eta(),iJet->phi(),mu2->phi())) <= 0.05) continue;
+//    if (sqrt(::wrTools::dR2(iJet->eta(),mu1->eta(),iJet->phi(),mu1->phi())) <= 0.05) continue;
+//    if (sqrt(::wrTools::dR2(iJet->eta(),mu2->eta(),iJet->phi(),mu2->phi())) <= 0.05) continue;
     resCandJets.push_back(&(*iJet));
     std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
+    std::cout << "iJet->muonEnergyFraction(): " << iJet->muonEnergyFraction() << " iJet->chargedEmEnergyFraction(): " << iJet->chargedEmEnergyFraction() << std::endl;
+
   }
   //ONLY THE FIRST TWO JETS ARE CONSIDERED
-  if (resCandJets.size() < 2) {
+/*  if (resCandJets.size() < 2) {
     return false;
   } else {
     std::sort(resCandJets.begin(), resCandJets.end(), ::wrTools::compareEtCandidatePointer);
     double dR_pair = sqrt(::wrTools::dR2(resCandJets[0]->eta(),resCandJets[1]->eta(),resCandJets[0]->phi(),resCandJets[1]->phi()));
-    if (dR_pair < 0.4) return false;
+    //if (dR_pair < 0.4) return false;
     myEvent.resJetDR = dR_pair;
-  }
+  }*/
+  /*std::sort(resCandJets.begin(), resCandJets.end(), ::wrTools::compareMUFCandidatePointer);
+  for(unsigned int i=0; i < resCandJets.size(); i++){
+    std::cout << "resCandJets[i]->muonEnergyFraction(): " << resCandJets[i]->muonEnergyFraction() << std::endl;
+  }*/
   myEvent.myResCandJets = resCandJets;
   return true;
 
@@ -3246,9 +3324,14 @@ bool cmsWRextension::passExtensionRECO_ZPeak(const edm::Event& iEvent, eventBits
 
   return true;
 }
-bool cmsWRextension::passExtensionRECO(const edm::Event& iEvent, eventBits& myRECOevent) { //LOOP OVE. JET MUON PAIRS AND TAKE THE HIGHEST MASS ONE
+bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOevent) { //LOOP OVE. JET MUON PAIRS AND TAKE THE HIGHEST MASS ONE
 
   std::sort(myRECOevent.myMuonJetPairs.begin(),myRECOevent.myMuonJetPairs.end(),::wrTools::comparePairMassPointerTAddJet);
+
+  double dR_AK8jet_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myMuonJetPairs[0].first->phi));
+  std::cout << "dR_AK8jet_muon2: " << dR_AK8jet_muon2 << std::endl;
+  if (dR_AK8jet_muon2 > 0.4) return false;
+
   TLorentzVector JetVector_temp = TLorentzVector();
   JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs[0].first->pT,myRECOevent.myMuonJetPairs[0].first->eta,myRECOevent.myMuonJetPairs[0].first->phi,myRECOevent.myMuonJetPairs[0].first->E);
 
@@ -3596,12 +3679,40 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   }
 
 }
-bool cmsWRextension::passWR2016RECO(const edm::Event& iEvent, eventBits& myEvent) {
+bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES SELECTION CALL" << std::endl;
   std::cout << "RES LEPTON SELECTION CALL" << std::endl;
   if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
   std::cout << "RES JET SELECTION CALL" << std::endl;
   if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
+
+  if (myEvent.myResCandJets.size() < 2) {
+    return false;
+  } else {
+    std::sort(myEvent.myResCandJets.begin(), myEvent.myResCandJets.end(), ::wrTools::compareEtCandidatePointer);
+    double dR_pair = sqrt(::wrTools::dR2(myEvent.myResCandJets[0]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.myResCandJets[0]->phi(),myEvent.myResCandJets[1]->phi()));
+    std::cout<< "Jets dR_pair: " << dR_pair << std::endl;
+    if (dR_pair < 0.4) return false;
+     myEvent.resJetDR = dR_pair;
+  }
+
+  std::cout << "dR(AK4 jets, subleading muon) SELECTION" << std::endl;
+  double dR_jet1_muon2 = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[1]->eta(),myEvent.myResCandJets[0]->eta(),myEvent.resolvedANAMuons[1]->phi(),myEvent.myResCandJets[0]->phi()));
+  double dR_jet2_muon2 = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[1]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.resolvedANAMuons[1]->phi(),myEvent.myResCandJets[1]->phi()));
+  std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << " dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
+  if (dR_jet1_muon2 < 0.4 || dR_jet2_muon2 < 0.4) return false;
+
+  std::cout << "dR between muons" << std::endl;
+  double dR_pair = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[0]->eta(),myEvent.resolvedANAMuons[1]->eta(),myEvent.resolvedANAMuons[0]->phi(),myEvent.resolvedANAMuons[1]->phi()));
+  std::cout << "Muons dR_pair: " << dR_pair << std::endl;
+  if (dR_pair < 0.4) return false;
+
+  std::cout << "subleading Muon pT" << std::endl;
+  if (myEvent.resolvedANAMuons[1]->pt() < 53) return false;
+
+  std::cout << "subleading Muon ISO" << std::endl;
+  if (myEvent.resolvedANAMuons[1]->isolationR03().sumPt/myEvent.resolvedANAMuons[1]->pt() > 0.1) return false;
+
   std::cout << "RES OBJECT SELECTIONS PASSED" << std::endl;
 
   const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
@@ -3682,6 +3793,13 @@ bool cmsWRextension::objectCompareGEN(const edm::Event& iEvent, eventBits& myEve
   myEvent.parton1parton2dR   = sqrt(::wrTools::dR2(parton1->eta(),parton2->eta(),parton1->phi(),parton2->phi()));
   //FOR Z SIDEBAND
   myEvent.muon1muon2Mass = (mu1->p4() +mu2->p4()).mass();
+  //FIND MININUM DR
+  if (dR_pair21 < dR_pair22) {
+    myEvent.minPartonMuon2dR = dR_pair21;
+  } else {
+    myEvent.minPartonMuon2dR = dR_pair22;
+
+  }
   //BOOSTED CHECKS 
   if (fat) {
     const reco::GenJet*      fatJet = myEvent.myAK8GenJets[0];
@@ -3715,14 +3833,20 @@ bool cmsWRextension::passZsidebandCutGEN(const edm::Event& iEvent, eventBits& my
   }
   return true;
 }
+//dR cut setting
+static const float DRCUT = 0.4;
+//static const float DRCUT = 0.5;
+//static const float DRCUT = 0.6;
+//static const float DRCUT = 0.7;
+//static const float DRCUT = 0.8;
 bool cmsWRextension::passBoostGEN(const edm::Event& iEvent, eventBits& myEvent) {
 
   //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
-  if ( ! ((myEvent.resSubleadMuParton1dR < 0.8) || (myEvent.resSubleadMuParton2dR < 0.8))) return false;
+  if ( ! ((myEvent.resSubleadMuParton1dR < DRCUT) || (myEvent.resSubleadMuParton2dR < DRCUT))) return false;
 
   if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
 
-  if ( myEvent.fatJetMuon2dR > 0.8) return false;
+  if ( myEvent.fatJetMuon2dR > DRCUT) return false;
 
   if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
   
@@ -3733,8 +3857,8 @@ bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
 
   if ( myEvent.resolvedGENmass < 600) return false;
 
-  if ( myEvent.resSubleadMuParton1dR < 0.4) return false;
-  if ( myEvent.resSubleadMuParton2dR < 0.4) return false;
+  if ( myEvent.resSubleadMuParton1dR < DRCUT) return false;
+  if ( myEvent.resSubleadMuParton2dR < DRCUT) return false;
   if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
   if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
 
@@ -3744,33 +3868,33 @@ bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
 
 }
 //TIGHTER VERSIONS
-bool cmsWRextension::passBoostTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
-
-  //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
-  if ( ! ((myEvent.resSubleadMuParton1dR < 0.4) || (myEvent.resSubleadMuParton2dR < 0.4))) return false;
-
-  if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
-
-  if ( myEvent.fatJetMuon2dR > 0.8) return false;
-
-  if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
-  
-  return true;
-}
-
-bool cmsWRextension::passResTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
-
-  if ( myEvent.resolvedGENmass < 600) return false;
-
-  //THE SECOND MUON SHOULD BE NICE AND FAR AWAY
-  if ( myEvent.resSubleadMuParton1dR < 0.8) return false;
-  if ( myEvent.resSubleadMuParton2dR < 0.8) return false;
-  if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
-  if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
-
-  return true;
-
-}
+//bool cmsWRextension::passBoostTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
+//
+//  //IT SHOULD BE NEAR AT LEAST ONE OF THE QUARKS
+//  if ( ! ((myEvent.resSubleadMuParton1dR < 0.4) || (myEvent.resSubleadMuParton2dR < 0.4))) return false;
+//
+//  if ( myEvent.leadAK8JetMuonMassValGEN < 200) return false;
+//
+//  if ( myEvent.fatJetMuon2dR > 0.8) return false;
+//
+//  if ( myEvent.fatJetMuon1dPhi < 2.0) return false;
+//  
+//  return true;
+//}
+//
+//bool cmsWRextension::passResTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
+//
+//  if ( myEvent.resolvedGENmass < 600) return false;
+//
+//  //THE SECOND MUON SHOULD BE NICE AND FAR AWAY
+//  if ( myEvent.resSubleadMuParton1dR < 0.8) return false;
+//  if ( myEvent.resSubleadMuParton2dR < 0.8) return false;
+//  if ( myEvent.resLeadMuParton1dR    < 0.4) return false;
+//  if ( myEvent.resLeadMuParton2dR    < 0.4) return false;
+//
+//  return true;
+//
+//}
 void cmsWRextension::loadCMSSWPath() {
     char* cmsswPathChar = getenv("CMSSW_BASE");
     if (cmsswPathChar == NULL) {
@@ -3819,33 +3943,33 @@ cmsWRextension::beginJob()
     m_eventsPassResFailBoostGEN.book((fs->mkdir("eventsPassResFailBoostGEN")), 3, m_outputTag, 0);
     m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
 
-    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
-    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
-    m_eventsPassResFailBoostGEN_resMod.book((fs->mkdir("eventsPassResFailBoostGEN_resMod")), 3, m_outputTag, 0);
-    m_eventsFailResPassBoostGEN_resMod.book((fs->mkdir("eventsFailResPassBoostGEN_resMod")), 3, m_outputTag, 0);
-
-    m_eventsFailResFailBoostGEN_boostMod.book((fs->mkdir("eventsFailResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
-    m_eventsPassResPassBoostGEN_boostMod.book((fs->mkdir("eventsPassResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
-    m_eventsPassResFailBoostGEN_boostMod.book((fs->mkdir("eventsPassResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
-    m_eventsFailResPassBoostGEN_boostMod.book((fs->mkdir("eventsFailResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
+//    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
+//    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
+//    m_eventsPassResFailBoostGEN_resMod.book((fs->mkdir("eventsPassResFailBoostGEN_resMod")), 3, m_outputTag, 0);
+//    m_eventsFailResPassBoostGEN_resMod.book((fs->mkdir("eventsFailResPassBoostGEN_resMod")), 3, m_outputTag, 0);
+//
+//    m_eventsFailResFailBoostGEN_boostMod.book((fs->mkdir("eventsFailResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
+//    m_eventsPassResPassBoostGEN_boostMod.book((fs->mkdir("eventsPassResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
+//    m_eventsPassResFailBoostGEN_boostMod.book((fs->mkdir("eventsPassResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
+//    m_eventsFailResPassBoostGEN_boostMod.book((fs->mkdir("eventsFailResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
 
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag, 0);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3, m_outputTag, 0);
-    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  3, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 3, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 3, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  3, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt50_noISO.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50_noISO")),  3, m_outputTag, 2);
+//    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  3, m_outputTag, 1);
+//    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 3, m_outputTag, 1);
+//    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 3, m_outputTag, 1);
+//    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  3, m_outputTag, 1);
+//    m_eventsPassingFlavorSidebandRECOelePt50_noISO.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50_noISO")),  3, m_outputTag, 2);
     //ABCD
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 3, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 3, m_outputTag, 1);
+//    m_eventsPassingFlavorSidebandRECOelePt200_noISO.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO")), 3, m_outputTag, 2);
+//    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 3, m_outputTag, 2);
+//    m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig")), 3, m_outputTag, 2);
+//    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig")), 3, m_outputTag, 2);
+//    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, 1);
+//    m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 3, m_outputTag, 1);
+//    m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 3, m_outputTag, 1);
 
     m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 3, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 3, m_outputTag, 2);
