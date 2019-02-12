@@ -42,7 +42,7 @@ namespace wrTools {
   }
   double dR2(double eta1, double eta2, double phi1, double phi2) {
    double deta = eta1 - eta2;
-   double dphi = std::abs(phi1-phi2); if (dphi>ROOT::Math::Pi()) dphi-=ROOT::Math::Pi();  
+   double dphi = std::abs(phi1-phi2); if (dphi>ROOT::Math::Pi()) dphi-=2*ROOT::Math::Pi();  
    return deta*deta + dphi*dphi;
   }
   bool comparePairMassPointerTAddJet(std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair1, std::pair< const baconhep::TAddJet*, const reco::Candidate* > pair2) {
