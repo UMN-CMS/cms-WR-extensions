@@ -58,6 +58,7 @@ class eventHistos {
 
   //GEN PLOTS
   TH1D* m_eventsWeight;
+  TH1D* m_RECOpasses;
   TH1D* m_finalEventWeight;
 
   TH1D* m_FSBfinalEventWeight_E;
@@ -87,6 +88,7 @@ class eventHistos {
   TH1D* m_eventFlavor       ;
 
   TH1D* m_cutProgress;
+  TH1D* m_ResCutProgress;
   TH1D* m_FSBcutProgress;
 
   TH1D* m_parton1Et;

@@ -38,6 +38,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     std::cout << "HERE WE CONSTRUCT THE PLOTS" << std::endl;
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
 
+    m_RECOpasses   = m_histoFolder.make<TH1D>("RECOpasses","number of events passing each RECO category", 2, 0.5, 2.5);
+
     m_neutrinoDecays = m_histoFolder.make<TH1D>("neutrinoDecays", "; # neutrino decays to neutrino",                                                       2, -.5, 1.5);
 
     m_nLeptons       = m_histoFolder.make<TH1D>("nLeptons"     , "; # Leptons; Events per #"     ,                                                       10, -.5, 9.5);
@@ -53,6 +55,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
 
     m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
+    m_ResCutProgress       = m_histoFolder.make<TH1D>("ResCutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_FSBcutProgress    = m_histoFolder.make<TH1D>("FSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
     
     m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et;Et (GeV); ",                         80, 0.0, 4000);
@@ -449,6 +452,7 @@ void eventHistos::fillCutProgress(eventBits& event) {
   std::cout << "Filling Cut Progress" << std::endl;
   int toFill = event.cutProgress;
   int FSBtoFill = event.FSBcutProgress;
+  int REStoFill = event.ResCutProgress;
   while (toFill > 0) {
     m_cutProgress->Fill(toFill , weight);
     toFill--;
@@ -456,6 +460,10 @@ void eventHistos::fillCutProgress(eventBits& event) {
   while (FSBtoFill > 0) {
     m_FSBcutProgress->Fill(FSBtoFill , weight);
     FSBtoFill--;
+  }
+  while (REStoFill > 0){
+    m_ResCutProgress->Fill(REStoFill, weight);
+    REStoFill--;
   }
 }
 void eventHistos::fillWeight(eventBits& event) {
@@ -488,6 +496,8 @@ void eventHistos::fillGen(eventBits& event) {
   m_nTops          ->Fill(event.mynTops        , weight) ;
   m_nBs            ->Fill(event.mynBs          , weight) ;
   m_nPartons       ->Fill(event.mynPartons     , weight) ;
+
+  m_RECOpasses     ->Fill(event.RECOcategory) ;
 
   m_parton1Et->Fill(event.parton1EtVal, weight);
   m_parton2Et->Fill(event.parton2EtVal, weight);
