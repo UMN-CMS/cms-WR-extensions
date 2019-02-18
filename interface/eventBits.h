@@ -33,6 +33,8 @@ public:
   double FSBweight_E_noISO;
   double FSBweight_B_noISO;
 
+  int RECOcategory;
+
   bool isMC;
 
   std::string outputTag;  //LABELLING THE DATA
@@ -140,6 +142,7 @@ public:
   //EVENT VALUES
   int neutrinoDecays;
   int cutProgress;
+  int ResCutProgress;
   int FSBcutProgress;
   bool passesWR2016;
   int muons10;

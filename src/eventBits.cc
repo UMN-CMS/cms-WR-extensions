@@ -348,6 +348,7 @@ void eventBits::clear() {
 
   count = 0;
   
+  ResCutProgress = 0;
   cutProgress = 0;
   FSBcutProgress = 0;
 
