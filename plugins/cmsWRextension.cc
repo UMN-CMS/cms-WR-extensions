@@ -298,12 +298,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.passPreSelectGen = passPreSelectGen;
       genJetAnalyzer(iEvent, myRECOevent);
       std::cout << "analyzing GEN objects" << std::endl;
-      objectCompareGEN(iEvent, myRECOevent);
-      passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
-      passesResGEN      = passResGEN          (iEvent, myRECOevent);
-      passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
+      if(m_isSignal){
+        objectCompareGEN(iEvent, myRECOevent);
+        passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
+        passesResGEN      = passResGEN          (iEvent, myRECOevent);
+        passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
    //   passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
    //   passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
+      }
     }
     if (m_doReco || !m_isMC) {
       passesResRECO = passResRECO(iEvent , myRECOevent);
