@@ -205,3 +205,7 @@ process.heepElectrons.src = cms.InputTag('selectedElectrons')
 
 process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
                            * process.muonSelectionSeq * process.analysis)
+
+process.TFileService.fileName = "WJetsToLNu_Pt-400To600.root"
+
+process.GlobalTag.globaltag = "94X_mcRun2_asymptotic_v3"

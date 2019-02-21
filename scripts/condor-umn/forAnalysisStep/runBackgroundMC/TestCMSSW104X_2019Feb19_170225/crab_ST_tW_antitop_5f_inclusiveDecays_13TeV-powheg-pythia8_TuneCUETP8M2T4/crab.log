@@ -1,0 +1,331 @@
+|---- jetToolbox: Initializing collection... (with postfix )
+|---- jetToolBox: Adding these btag discriminators: ['pfCombinedInclusiveSecondaryVertexV2BJetTags', 'pfCombinedCvsLJetTags', 'pfCombinedCvsBJetTags'] in the subjet collection.
+|---- jetToolBox: Adding these btag discriminators: ['pfBoostedDoubleSecondaryVertexAK8BJetTags'] in the jet collection.
+|---- jetToolBox: JETTOOLBOX RUNNING ON MiniAOD FOR AK8 JETS USING Puppi
+|---- jetToolBox: Applying these corrections: ('AK8PFPuppi', ['L1FastJet', 'L2Relative', 'L3Absolute'], 'None')
+|---- jetToolBox: Creating packedPatJetsAK8PFPuppiSoftDrop collection with SoftDrop subjets.
+|---- jetToolBox: Running ak8PFJetsPuppiSoftDropMass, selectedPatJetsAK8PFPuppiSoftDropPacked:SubJets, NjettinessAK8Puppi.
+|---- jetToolBox: Creating selectedPatJetsAK8PFPuppi collection.
+DEBUG 2019-02-19 17:10:10,314: 	 Executing command: 'submit'
+DEBUG 2019-02-19 17:10:10,322: 	 Found CRAB cache file /uscms/home/mkrohn/.crab3
+DEBUG 2019-02-19 17:10:10,331: 	 Checking credentials
+DEBUG 2019-02-19 17:10:10,331: 	 Found proxy file /uscms/home/mkrohn/x509up_u47835
+DEBUG 2019-02-19 17:10:10,331: 	 Getting proxy life time left
+DEBUG 2019-02-19 17:10:10,435: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -timeleft
+ output : 38289
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:10,539: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -actimeleft
+ output : 38289
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:10,539: 	 Proxy valid for 10:38:09 hours
+DEBUG 2019-02-19 17:10:10,541: 	 Will use CRAB Analysis plugin (i.e. will run an analysis job type).
+DEBUG 2019-02-19 17:10:10,659: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:10,660: 	 Checking credentials
+DEBUG 2019-02-19 17:10:10,660: 	 Found proxy file /uscms/home/mkrohn/x509up_u47835
+DEBUG 2019-02-19 17:10:10,660: 	 Getting proxy life time left
+DEBUG 2019-02-19 17:10:10,764: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -timeleft
+ output : 38289
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:10,868: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -actimeleft
+ output : 38289
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:10,868: 	 Proxy valid for 10:38:09 hours
+DEBUG 2019-02-19 17:10:10,972: 	 Executing : 
+ command : env X509_USER_PROXY=/uscms/home/mkrohn/x509up_u47835 voms-proxy-info -fqan
+ output : /cms/Role=NULL/Capability=NULL
+/cms/uscms/Role=NULL/Capability=NULL
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:11,607: 	 Registering user credentials for server /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+DEBUG 2019-02-19 17:10:11,718: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:11,718: 	 Getting myproxy life time left for myproxy.cern.ch
+DEBUG 2019-02-19 17:10:11,718: 	 Calculating hash of /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn_cmsweb.cern.ch for credential name
+DEBUG 2019-02-19 17:10:12,623: 	 Executing : 
+ command : myproxy-info -l b45b8d39715878c864c49b92839b63984e565039 -s myproxy.cern.ch
+ output : username: b45b8d39715878c864c49b92839b63984e565039
+owner: /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+  renewal policy: /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+  trusted retrieval policy: /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+  timeleft: 719:57:09  (30.0 days)
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-19 17:10:12,625: 	 Myproxy is valid: 2591829
+DEBUG 2019-02-19 17:10:12,625: 	 Command use: submit
+DEBUG 2019-02-19 17:10:12,625: 	 Options use: ['--config', <WMCore.Configuration.Configuration object at 0x7f4032ae3cd0>]
+DEBUG 2019-02-19 17:10:13,228: 	 CRABClient version: 3.3.1902.patch1
+DEBUG 2019-02-19 17:10:13,228: 	 Instance is prod
+DEBUG 2019-02-19 17:10:13,228: 	 Server base url is cmsweb.cern.ch
+DEBUG 2019-02-19 17:10:13,228: 	 Command url /crabserver/prod/workflow
+DEBUG 2019-02-19 17:10:13,228: 	 Started submission
+DEBUG 2019-02-19 17:10:13,229: 	 Working on /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+DEBUG 2019-02-19 17:10:13,863: 	 Loading required information from the environment
+DEBUG 2019-02-19 17:10:13,863: 	 Found CMSSW_10_4_0_patch1 for slc6_amd64_gcc700 with base /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1
+DEBUG 2019-02-19 17:10:13,863: 	 Loading required information from the environment
+DEBUG 2019-02-19 17:10:13,863: 	 Found CMSSW_10_4_0_patch1 for slc6_amd64_gcc700 with base /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1
+DEBUG 2019-02-19 17:10:13,878: 	 UNIQUE NAME: tarUUID b5f638d2-c0ae-4b5f-8217-695c8283b7eb 
+DEBUG 2019-02-19 17:10:13,878: 	 self.config: from WMCore.Configuration import Configuration
+config = Configuration()
+config.section_('General')
+config.General.workArea = 'runBackgroundMC/TestCMSSW104X_2019Feb19_170225'
+config.General.transferOutputs = True
+config.General.transferLogs = False
+config.General.requestName = 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4'
+config.section_('JobType')
+config.JobType.psetName = 'runBackgroundMC/TestCMSSW104X_2019Feb19_170225/cfgfiles/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4_cmssw_cfg.py'
+config.JobType.pluginName = 'Analysis'
+config.JobType.inputFiles = []
+config.JobType.pyCfgParams = ['reco=94X']
+config.JobType.maxMemoryMB = 7000
+config.section_('Data')
+config.Data.inputDataset = '/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM'
+config.Data.outputDatasetTag = 'WR'
+config.Data.totalUnits = -1
+config.Data.unitsPerJob = 1
+config.Data.inputDBS = 'global'
+config.Data.splitting = 'FileBased'
+config.Data.outLFNDirBase = '/store/user/mkrohn/TestCMSSW104X_2019Feb19_170225/'
+config.Data.publication = False
+config.section_('Site')
+config.Site.storageSite = 'T3_US_FNALLPC'
+config.section_('User')
+config.section_('Debug')
+
+DEBUG 2019-02-19 17:10:13,878: 	 self.config.JobType.psetName: runBackgroundMC/TestCMSSW104X_2019Feb19_170225/cfgfiles/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4_cmssw_cfg.py
+INFO 2019-02-19 17:10:13,879: 	 Importing CMSSW configuration runBackgroundMC/TestCMSSW104X_2019Feb19_170225/cfgfiles/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4_cmssw_cfg.py
+DEBUG 2019-02-19 17:10:13,879: 	 Additional parameters for the CMSSW configuration are: ['reco=94X']
+INFO 2019-02-19 17:10:19,035: 	 Finished importing CMSSW configuration runBackgroundMC/TestCMSSW104X_2019Feb19_170225/cfgfiles/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4_cmssw_cfg.py
+DEBUG 2019-02-19 17:10:19,035: 	 Writing CMSSW configuration to /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/inputs/PSet.py
+DEBUG 2019-02-19 17:10:19,960: 	 The following EDM output files will be collected: ['jettoolbox.root']
+DEBUG 2019-02-19 17:10:19,961: 	 The following TFile output files will be collected: ['ST_tW_antitop_5f_inclusiveDecays.root']
+DEBUG 2019-02-19 17:10:19,961: 	 The following user output files will be collected: []
+DEBUG 2019-02-19 17:10:19,961: 	 Loading required information from the environment
+DEBUG 2019-02-19 17:10:19,961: 	 Found CMSSW_10_4_0_patch1 for slc6_amd64_gcc700 with base /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1
+DEBUG 2019-02-19 17:10:19,961: 	 Making tarball in /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/inputs/b5f638d2-c0ae-4b5f-8217-695c8283b7ebdefault.tgz
+DEBUG 2019-02-19 17:10:19,963: 	 Checking directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/lib
+DEBUG 2019-02-19 17:10:19,963: 	 Adding directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/lib to tarball
+DEBUG 2019-02-19 17:10:20,151: 	 Checking directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/biglib
+DEBUG 2019-02-19 17:10:20,151: 	 Adding directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/biglib to tarball
+DEBUG 2019-02-19 17:10:20,152: 	 Checking directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/module
+DEBUG 2019-02-19 17:10:20,190: 	 Adding data directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/HEEP/VID/interface to tarball
+DEBUG 2019-02-19 17:10:20,199: 	 Adding data directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/data to tarball
+DEBUG 2019-02-19 17:10:20,356: 	 Adding data directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/interface to tarball
+DEBUG 2019-02-19 17:10:20,369: 	 Adding data directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data to tarball
+DEBUG 2019-02-19 17:10:20,550: 	 Adding data directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/BaconAna/DataFormats/data to tarball
+DEBUG 2019-02-19 17:10:20,559: 	 Adding data directory /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/BaconAna/DataFormats/interface to tarball
+DEBUG 2019-02-19 17:10:20,646: 	 Uploading archive /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/inputs/b5f638d2-c0ae-4b5f-8217-695c8283b7ebdefault.tgz (1.385742.1 MB) to the CRAB cache. Using URI https://cmsweb.cern.ch/crabcache
+DEBUG 2019-02-19 17:10:23,340: 	 Loading required information from the environment
+DEBUG 2019-02-19 17:10:23,340: 	 Found CMSSW_10_4_0_patch1 for slc6_amd64_gcc700 with base /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1
+DEBUG 2019-02-19 17:10:23,341: 	 Making tarball in /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/inputs/debugFiles.tgz
+DEBUG 2019-02-19 17:10:23,347: 	 Uploading archive /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/inputs/debugFiles.tgz (3 KB) to the CRAB cache. Using URI https://cmsweb.cern.ch/crabcache
+DEBUG 2019-02-19 17:10:24,041: 	 Result uploading input files: 268102cccd2e6372a1dee906bd2d3f659c74e8770c843ab58a0621e23b6d8813.tar.gz 
+INFO 2019-02-19 17:10:24,041: 	 Sending the request to the server
+DEBUG 2019-02-19 17:10:24,041: 	 Submitting {'maxjobruntime': 1250, 'extrajdl': [], 'ignorelocality': 0, 'savelogsflag': 0, 'useparent': 0, 'asyncdest': 'T3_US_FNALLPC', 'algoargs': 1, 'cachefilename': '268102cccd2e6372a1dee906bd2d3f659c74e8770c843ab58a0621e23b6d8813.tar.gz', 'numcores': 1, 'addoutputfiles': [], 'generator': 'pythia', 'maxmemory': 7000, 'publishdbsurl': 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter', 'priority': 10, 'jobsw': 'CMSSW_10_4_0_patch1', 'edmoutfiles': ['jettoolbox.root'], 'userfiles': [], 'primarydataset': '', 'inputdata': '/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM', 'lfn': '/store/user/mkrohn/TestCMSSW104X_2019Feb19_170225/', 'dryrun': 0, 'workflow': 'crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4', 'cacheurl': u'https://cmsweb.cern.ch/crabcache', 'nonprodsw': 0, 'tfileoutfiles': ['ST_tW_antitop_5f_inclusiveDecays.root'], 'oneEventMode': 0, 'debugfilename': '31e0148c6067724b9505815a228e179a5c7914747d45c26d6d70865f0aa8a071.tar.gz', 'saveoutput': 1, 'publication': 0, 'jobarch': 'slc6_amd64_gcc700', 'totalunits': -1, 'splitalgo': 'FileBased', 'ignoreglobalblacklist': 0, 'nonvaliddata': 0, 'dbsurl': 'https://cmsweb.cern.ch/dbs/prod/global/DBSReader', 'publishgroupname': 0, 'jobtype': 'Analysis', 'publishname2': 'WR'} 
+DEBUG 2019-02-19 17:10:24,042: 	 Encoded submit request: maxjobruntime=1250&ignorelocality=0&savelogsflag=0&useparent=0&asyncdest=T3_US_FNALLPC&algoargs=1&cachefilename=268102cccd2e6372a1dee906bd2d3f659c74e8770c843ab58a0621e23b6d8813.tar.gz&numcores=1&generator=pythia&maxmemory=7000&publishdbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fphys03%2FDBSWriter&priority=10&jobsw=CMSSW_10_4_0_patch1&primarydataset=&inputdata=%2FST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4%2FRunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1%2FMINIAODSIM&lfn=%2Fstore%2Fuser%2Fmkrohn%2FTestCMSSW104X_2019Feb19_170225%2F&dryrun=0&workflow=crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4&cacheurl=https%3A%2F%2Fcmsweb.cern.ch%2Fcrabcache&nonprodsw=0&oneEventMode=0&debugfilename=31e0148c6067724b9505815a228e179a5c7914747d45c26d6d70865f0aa8a071.tar.gz&saveoutput=1&publication=0&jobarch=slc6_amd64_gcc700&totalunits=-1&splitalgo=FileBased&ignoreglobalblacklist=0&nonvaliddata=0&dbsurl=https%3A%2F%2Fcmsweb.cern.ch%2Fdbs%2Fprod%2Fglobal%2FDBSReader&publishgroupname=0&jobtype=Analysis&publishname2=WR&tfileoutfiles=ST_tW_antitop_5f_inclusiveDecays.root&edmoutfiles=jettoolbox.root
+DEBUG 2019-02-19 17:10:24,934: 	 Result: {u'result': [{u'RequestName': u'190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4'}]}
+INFO 2019-02-19 17:10:24,938: 	 Success: Your task has been delivered to the CRAB3 server.
+INFO 2019-02-19 17:10:24,938: 	 Task name: 190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+INFO 2019-02-19 17:10:24,938: 	 Please use 'crab status' to check how the submission process proceeds.
+DEBUG 2019-02-19 17:10:24,938: 	 About to return
+DEBUG 2019-02-20 08:47:47,280: 	 Executing command: 'resubmit'
+DEBUG 2019-02-20 08:47:47,281: 	 Found CRAB cache file /uscms/home/mkrohn/.crab3
+DEBUG 2019-02-20 08:47:47,302: 	 Checking credentials
+DEBUG 2019-02-20 08:47:47,302: 	 Found proxy file /uscms/home/mkrohn/x509up_u47835
+DEBUG 2019-02-20 08:47:47,302: 	 Getting proxy life time left
+DEBUG 2019-02-20 08:47:47,406: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -timeleft
+ output : 42796
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:47,510: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -actimeleft
+ output : 42796
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:47,511: 	 Proxy valid for 11:53:16 hours
+DEBUG 2019-02-20 08:47:47,625: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:47,625: 	 Checking credentials
+DEBUG 2019-02-20 08:47:47,626: 	 Found proxy file /uscms/home/mkrohn/x509up_u47835
+DEBUG 2019-02-20 08:47:47,626: 	 Getting proxy life time left
+DEBUG 2019-02-20 08:47:47,729: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -timeleft
+ output : 42796
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:47,834: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -actimeleft
+ output : 42796
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:47,834: 	 Proxy valid for 11:53:16 hours
+DEBUG 2019-02-20 08:47:48,435: 	 Registering user credentials for server /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+DEBUG 2019-02-20 08:47:48,545: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:48,546: 	 Getting myproxy life time left for myproxy.cern.ch
+DEBUG 2019-02-20 08:47:48,546: 	 Calculating hash of /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn_cmsweb.cern.ch for credential name
+DEBUG 2019-02-20 08:47:49,451: 	 Executing : 
+ command : myproxy-info -l b45b8d39715878c864c49b92839b63984e565039 -s myproxy.cern.ch
+ output : username: b45b8d39715878c864c49b92839b63984e565039
+owner: /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+  renewal policy: /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+  trusted retrieval policy: /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+  timeleft: 704:19:32  (29.3 days)
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:49,453: 	 Myproxy is valid: 2535572
+DEBUG 2019-02-20 08:47:50,071: 	 Command use: resubmit
+DEBUG 2019-02-20 08:47:50,072: 	 Options use: ['--dir', 'runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/']
+DEBUG 2019-02-20 08:47:50,673: 	 CRABClient version: 3.3.1902.patch1
+DEBUG 2019-02-20 08:47:50,673: 	 Instance is prod
+DEBUG 2019-02-20 08:47:50,673: 	 Server base url is cmsweb.cern.ch
+DEBUG 2019-02-20 08:47:50,673: 	 Command url /crabserver/prod/workflow
+DEBUG 2019-02-20 08:47:50,673: 	 Executing command: 'status'
+DEBUG 2019-02-20 08:47:50,673: 	 Found CRAB cache file /uscms/home/mkrohn/.crab3
+DEBUG 2019-02-20 08:47:50,683: 	 Checking credentials
+DEBUG 2019-02-20 08:47:50,683: 	 Found proxy file /uscms/home/mkrohn/x509up_u47835
+DEBUG 2019-02-20 08:47:50,683: 	 Getting proxy life time left
+DEBUG 2019-02-20 08:47:50,787: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -timeleft
+ output : 42793
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:50,891: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -actimeleft
+ output : 42793
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:50,892: 	 Proxy valid for 11:53:13 hours
+DEBUG 2019-02-20 08:47:51,006: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:51,006: 	 Checking credentials
+DEBUG 2019-02-20 08:47:51,006: 	 Found proxy file /uscms/home/mkrohn/x509up_u47835
+DEBUG 2019-02-20 08:47:51,006: 	 Getting proxy life time left
+DEBUG 2019-02-20 08:47:51,110: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -timeleft
+ output : 42792
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:51,214: 	 Executing : 
+ command : voms-proxy-info -file /uscms/home/mkrohn/x509up_u47835 -actimeleft
+ output : 42792
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:51,215: 	 Proxy valid for 11:53:12 hours
+DEBUG 2019-02-20 08:47:51,812: 	 Registering user credentials for server /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+DEBUG 2019-02-20 08:47:51,922: 	 Executing : 
+ command : openssl x509 -in ~/.globus/usercert.pem -subject -noout
+ output : subject= /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:51,922: 	 Getting myproxy life time left for myproxy.cern.ch
+DEBUG 2019-02-20 08:47:51,923: 	 Calculating hash of /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn_cmsweb.cern.ch for credential name
+DEBUG 2019-02-20 08:47:53,329: 	 Executing : 
+ command : myproxy-info -l b45b8d39715878c864c49b92839b63984e565039 -s myproxy.cern.ch
+ output : username: b45b8d39715878c864c49b92839b63984e565039
+owner: /DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn
+  renewal policy: /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+  trusted retrieval policy: /DC=ch/DC=cern/OU=computers/CN=vocms(052|058|030|0118|0105|0109).cern.ch|/DC=ch/DC=cern/OU=computers/CN=crab-(preprod|prod)-tw(02|01).cern.ch
+  timeleft: 704:19:28  (29.3 days)
+
+ error: 
+ retcode : 0
+DEBUG 2019-02-20 08:47:53,330: 	 Myproxy is valid: 2535568
+DEBUG 2019-02-20 08:47:53,332: 	 Command use: status
+DEBUG 2019-02-20 08:47:53,332: 	 Options use: []
+DEBUG 2019-02-20 08:47:53,944: 	 CRABClient version: 3.3.1902.patch1
+DEBUG 2019-02-20 08:47:53,944: 	 Instance is prod
+DEBUG 2019-02-20 08:47:53,944: 	 Server base url is cmsweb.cern.ch
+DEBUG 2019-02-20 08:47:53,944: 	 Command url /crabserver/prod/workflow
+DEBUG 2019-02-20 08:47:54,550: 	 Got information from server oracle database: {u'result': [u'190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4', u'None', u'None', u'SUBMITTED', u'SUBMIT', u'2019-02-19 23:10:24.865659', u'None', u'2019-02-19 23:11:18.662606', u'None', u'CMSSW_10_4_0_patch1', u'slc6_amd64_gcc700', u'/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/MINIAODSIM', u'F', u'0', u'[]', u'[]', u'FileBased', u"{'splitOnRun': False, 'halt_job_on_file_boundaries': False, 'files_per_job': 1, 'runs': [], 'lumis': []}", u'268102cccd2e6372a1dee906bd2d3f659c74e8770c843ab58a0621e23b6d8813.tar.gz', u'https://cmsweb.cern.ch/crabcache', u'mkrohn', u'/DC=ch/DC=cern/OU=Organic Units/OU=Users/CN=mkrohn/CN=751145/CN=Michael David Krohn', u'cms', u'None', u'None', u'WR-00000000000000000000000000000000', u'F', u'T3_US_FNALLPC', u'https://cmsweb.cern.ch/dbs/prod/global/DBSReader', u'https://cmsweb.cern.ch/dbs/prod/phys03/DBSWriter', u'F', u'[]', u"['ST_tW_antitop_5f_inclusiveDecays.root']", u"['jettoolbox.root']", u'Analysis', u'pythia', u'None', u'{}', u'[]', u'F', u'crab-prod-tw01', u'[]', u'1250', u'1', u'7000', u'10', u"['/ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/mkrohn-WR-311514693eb261a9c40920f24937e49b/USER']", u"['Task requests 7000 MB of memory, but only 2500 MB are guaranteed to be available. Jobs may not find a site where to run and stay idle forever.']", u'http://vocms0122.cern.ch/mon/cms1179/190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4', u'None', u'[]', u'[]', u'https://cmsweb.cern.ch/crabserver/prod', u'cmsgwms-collector-global.cern.ch:9620,cmssrv221.fnal.gov:9620', u'crab3@vocms0122.cern.ch', u'F', u'[]', u'T', u'/store/user/mkrohn/TestCMSSW104X_2019Feb19_170225/', u'F', u'None', u'F', u'None', u'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4', u'None', u'31e0148c6067724b9505815a228e179a5c7914747d45c26d6d70865f0aa8a071.tar.gz', u'40038197', u'filetransfers', u'F', u'131.225.190.121', u'-1.0', u'None'], u'desc': {u'columns': [u'tm_taskname', u'tm_activity', u'panda_jobset_id', u'tm_task_status', u'tm_task_command', u'tm_start_time', u'tm_start_injection', u'tm_end_injection', u'tm_task_failure', u'tm_job_sw', u'tm_job_arch', u'tm_input_dataset', u'tm_nonvalid_input_dataset', u'tm_use_parent', u'tm_site_whitelist', u'tm_site_blacklist', u'tm_split_algo', u'tm_split_args', u'tm_user_sandbox', u'tm_cache_url', u'tm_username', u'tm_user_dn', u'tm_user_vo', u'tm_user_role', u'tm_user_group', u'tm_publish_name', u'tm_publish_groupname', u'tm_asyncdest', u'tm_dbs_url', u'tm_publish_dbs_url', u'tm_publication', u'tm_outfiles', u'tm_tfile_outfiles', u'tm_edm_outfiles', u'tm_job_type', u'tm_generator', u'tm_events_per_lumi', u'tm_arguments', u'panda_resubmitted_jobs', u'tm_save_logs', u'tw_name', u'tm_user_infiles', u'tm_maxjobruntime', u'tm_numcores', u'tm_maxmemory', u'tm_priority', u'tm_output_dataset', u'tm_task_warnings', u'tm_user_webdir', u'tm_scriptexe', u'tm_scriptargs', u'tm_extrajdl', u'tm_asourl', u'tm_collector', u'tm_schedd', u'tm_dry_run', u'tm_user_files', u'tm_transfer_outputs', u'tm_output_lfn', u'tm_ignore_locality', u'tm_fail_limit', u'tm_one_event_mode', u'tm_secondary_input_dataset', u'tm_primary_dataset', u'tm_last_publication', u'tm_debug_files', u'clusterid', u'tm_asodb', u'tm_ignore_global_blacklist', u'tm_submitter_ip_addr', u'tm_totalunits', u'tm_ddm_reqid']}}
+INFO 2019-02-20 08:47:54,551: 	 CRAB project directory:		/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+INFO 2019-02-20 08:47:54,551: 	 Task name:			190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+INFO 2019-02-20 08:47:54,551: 	 Grid scheduler - Task Worker:	crab3@vocms0122.cern.ch - crab-prod-tw01
+INFO 2019-02-20 08:47:54,551: 	 Status on the CRAB server:	SUBMITTED
+INFO 2019-02-20 08:47:54,551: 	 Task URL to use for HELP:	https://cmsweb.cern.ch/crabserver/ui/task/190219_231024%3Amkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+INFO 2019-02-20 08:47:54,551: 	 Dashboard monitoring URL:	http://dashb-cms-job.cern.ch/dashboard/templates/task-analysis/#user=mkrohn&refresh=0&table=Jobs&p=1&records=25&activemenu=2&status=&site=&tid=190219_231024%3Amkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+WARNING 2019-02-20 08:47:54,551: 	 Warning:			Task requests 7000 MB of memory, but only 2500 MB are guaranteed to be available. Jobs may not find a site where to run and stay idle forever.
+DEBUG 2019-02-20 08:47:54,552: 	 The CRAB server submitted your task to the Grid scheduler (cluster ID: 40038197)
+DEBUG 2019-02-20 08:47:54,552: 	 Webdir is located at http://vocms0122.cern.ch/mon/cms1179/190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+DEBUG 2019-02-20 08:47:55,183: 	 Proxied webdir is located at https://cmsweb.cern.ch/scheddmon/0122/cms1179/190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+DEBUG 2019-02-20 08:47:55,183: 	 Retrieving 'status_cache' file from https://cmsweb.cern.ch/scheddmon/0122/cms1179/190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/status_cache
+DEBUG 2019-02-20 08:47:55,776: 	 Got information from status cache file: {'11': {'Retries': 0, 'WallDurations': [8.0, 5992.0], 'StartTimes': [1550618375.0], 'SubmitTimes': [1550617892.0], 'JobIds': ['40038222.0'], 'EndTimes': [1550624367.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1440076], 'TotalUserCpuTimeHistory': [5663], 'SiteHistory': ['Unknown', 'T2_UK_SGrid_RALPP'], 'TotalSysCpuTimeHistory': [135]}, '10': {'Retries': 0, 'WallDurations': [9.0, 7994.0], 'StartTimes': [1550618375.0], 'SubmitTimes': [1550617892.0], 'JobIds': ['40038221.0'], 'EndTimes': [1550626369.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1444796], 'TotalUserCpuTimeHistory': [7615], 'SiteHistory': ['Unknown', 'T2_UK_SGrid_RALPP'], 'TotalSysCpuTimeHistory': [163]}, '13': {'Retries': 0, 'WallDurations': [8.0, 6067.0], 'StartTimes': [1550618375.0], 'SubmitTimes': [1550617892.0], 'JobIds': ['40038224.0'], 'EndTimes': [1550624442.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1432276], 'TotalUserCpuTimeHistory': [5733], 'SiteHistory': ['Unknown', 'T2_UK_SGrid_RALPP'], 'TotalSysCpuTimeHistory': [140]}, '12': {'Retries': 0, 'WallDurations': [9.0, 7918.0], 'StartTimes': [1550618373.0], 'SubmitTimes': [1550617892.0], 'JobIds': ['40038223.0'], 'EndTimes': [1550626291.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1572300], 'TotalUserCpuTimeHistory': [7651], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [132]}, '15': {'Retries': 0, 'WallDurations': [9.0, 14628.0], 'StartTimes': [1550618371.0], 'SubmitTimes': [1550617893.0], 'JobIds': ['40038226.0'], 'EndTimes': [1550632999.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1553484], 'TotalUserCpuTimeHistory': [14134], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [324]}, '14': {'Retries': 0, 'WallDurations': [9.0, 13072.0], 'StartTimes': [1550618376.0], 'SubmitTimes': [1550617892.0], 'JobIds': ['40038225.0'], 'EndTimes': [1550631448.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1563560], 'TotalUserCpuTimeHistory': [12460], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [364]}, '17': {'Retries': 2, 'WallDurations': [9.0, 1958.0, 8.0, 1424.0, 1195.0], 'StartTimes': [1550618889.0, 1550640862.0, 1550653264.0], 'SubmitTimes': [1550617893.0, 1550640744.0, 1550653223.0], 'JobIds': ['40038227.0', '40049545.0', '40055247.0'], 'TotalUserCpuTimeHistory': [1566, 1245, 1134], 'EndTimes': [1550620847.0, 1550642286.0, 1550654459.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'failed', 'ResidentSetSize': [1328020, 1437644, 1538672], 'Error': [90000, 'Got recoverable stageout exception:\nStageout failed with code 1.\nThere were 1 failed/killed stageout jobs.\nFailure reasons (per document) follow:\n- e0935274a25c8a5d917aeccd45b03fea1962f058f057295036861530:\n  -----> ASO log start -----\n  TRANSFER 28 TRANSFER  globus_ftp_client: the server responded with an error 500 Command failed. :  [...CUT...] Full log at https://fts3.cern.ch:8449/fts3/ftsmon/#/job/fedf7618-34f0-11e9-9735-02163e01811c\n  <----- ASO log finish ----', {}], 'SiteHistory': ['Unknown', 'T2_US_UCSD', 'Unknown', 'T2_UK_SGrid_RALPP', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [46, 30, 20]}, '16': {'Retries': 0, 'WallDurations': [9.0, 11527.0], 'StartTimes': [1550618374.0], 'SubmitTimes': [1550617893.0], 'JobIds': ['40038229.0'], 'EndTimes': [1550629901.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1555848], 'TotalUserCpuTimeHistory': [11127], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [250]}, '1': {'Retries': 1, 'WallDurations': [9.0, 10080.0, 0], 'StartTimes': [1550626071.0], 'SubmitTimes': [1550617891.0, 1550647039.0], 'JobIds': ['40038219.0', '40051882.0'], 'EndTimes': [1550636151.0], 'Restarts': 0, 'RecordedSite': False, 'State': 'idle', 'ResidentSetSize': [1517748, 0], 'TotalUserCpuTimeHistory': [9672, 0.0], 'SiteHistory': ['Unknown', 'T2_BE_IIHE', 'Unknown'], 'TotalSysCpuTimeHistory': [229, 0.0]}, '3': {'Retries': 0, 'WallDurations': [10.0, 1243.0], 'StartTimes': [1550618375.0], 'SubmitTimes': [1550617890.0], 'JobIds': ['40038212.0'], 'EndTimes': [1550619618.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1335680], 'TotalUserCpuTimeHistory': [1073], 'SiteHistory': ['Unknown', 'T2_BE_IIHE'], 'TotalSysCpuTimeHistory': [27]}, '2': {'Retries': 2, 'WallDurations': [8.0, 13319.0, 9.0, 13221.0, 0], 'StartTimes': [1550619622.0, 1550653662.0], 'SubmitTimes': [1550617891.0, 1550643830.0, 1550668818.0], 'JobIds': ['40038216.0', '40050811.0', '40067656.0'], 'EndTimes': [1550632941.0, 1550666883.0], 'Restarts': 0, 'RecordedSite': False, 'State': 'idle', 'ResidentSetSize': [2869992, 1308972, 0], 'TotalUserCpuTimeHistory': [12666, 11970, 0.0], 'SiteHistory': ['Unknown', 'T2_BE_IIHE', 'Unknown', 'T2_IT_Bari', 'Unknown'], 'TotalSysCpuTimeHistory': [356, 488, 0.0]}, '5': {'Retries': 1, 'WallDurations': [8.0, 12935.0, 0], 'StartTimes': [1550618375.0], 'SubmitTimes': [1550617891.0, 1550643991.0], 'JobIds': ['40038213.0', '40050826.0'], 'EndTimes': [1550631310.0], 'Restarts': 0, 'RecordedSite': False, 'State': 'idle', 'ResidentSetSize': [2723528, 0], 'TotalUserCpuTimeHistory': [12289, 0.0], 'SiteHistory': ['Unknown', 'T2_BE_IIHE', 'Unknown'], 'TotalSysCpuTimeHistory': [305, 0.0]}, '4': {'Retries': 2, 'WallDurations': [9.0, 5778.0, 9.0, 7875.0, 8.0, 5417.0], 'StartTimes': [1550624267.0, 1550645780.0, 1550666888.0], 'SubmitTimes': [1550617891.0, 1550642734.0, 1550655587.0], 'JobIds': ['40038217.0', '40050446.0', '40056825.0'], 'EndTimes': [1550630045.0, 1550653655.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'running', 'ResidentSetSize': [1500644, 1306036, 1441572], 'TotalUserCpuTimeHistory': [5561, 7150, 4729.0], 'SiteHistory': ['Unknown', 'T2_BE_IIHE', 'Unknown', 'T2_IT_Bari', 'Unknown', 'T2_IT_Bari'], 'TotalSysCpuTimeHistory': [112, 260, 204.0]}, '7': {'Retries': 0, 'WallDurations': [9.0, 14621.0], 'StartTimes': [1550618374.0], 'SubmitTimes': [1550617891.0], 'JobIds': ['40038215.0'], 'EndTimes': [1550632995.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1567196], 'TotalUserCpuTimeHistory': [13527], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [435]}, '6': {'Retries': 0, 'WallDurations': [9.0, 6276.0], 'StartTimes': [1550618373.0], 'SubmitTimes': [1550617891.0], 'JobIds': ['40038214.0'], 'EndTimes': [1550624649.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1558364], 'TotalUserCpuTimeHistory': [6065], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [98]}, '9': {'Retries': 0, 'WallDurations': [9.0, 15164.0], 'StartTimes': [1550618376.0], 'SubmitTimes': [1550617892.0], 'JobIds': ['40038220.0'], 'EndTimes': [1550633540.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1564092], 'TotalUserCpuTimeHistory': [14348], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [424]}, '8': {'Retries': 0, 'WallDurations': [8.0, 5385.0], 'StartTimes': [1550618373.0], 'SubmitTimes': [1550617891.0], 'JobIds': ['40038218.0'], 'EndTimes': [1550623758.0], 'Restarts': 0, 'RecordedSite': True, 'State': 'finished', 'ResidentSetSize': [1567348], 'TotalUserCpuTimeHistory': [5215], 'SiteHistory': ['Unknown', 'T2_US_Florida'], 'TotalSysCpuTimeHistory': [83]}}
+INFO 2019-02-20 08:47:55,776: 	 Status on the scheduler:	SUBMITTED
+INFO 2019-02-20 08:47:55,777: 	 
+Jobs status:                    failed       		  5.9% ( 1/17)
+INFO 2019-02-20 08:47:55,777: 	 				finished     		 70.6% (12/17)
+INFO 2019-02-20 08:47:55,777: 	 				idle         		 17.6% ( 3/17)
+INFO 2019-02-20 08:47:55,777: 	 				running      		  5.9% ( 1/17)
+INFO 2019-02-20 08:47:55,777: 	 
+No publication information (publication has been disabled in the CRAB configuration file)
+INFO 2019-02-20 08:47:55,777: 	 
+Error Summary: (use crab status --verboseErrors for details about the errors)
+
+ 1 jobs failed in postprocessing step
+
+Have a look at https://twiki.cern.ch/twiki/bin/viewauth/CMSPublic/JobExitCodes for a description of the exit codes.
+INFO 2019-02-20 08:47:55,778: 	 
+Warning: the max jobs runtime is less than 30% of the task requested value (1250 min), please consider to request a lower value for failed jobs (allowed through crab resubmit) and/or improve the jobs splitting (e.g. config.Data.splitting = 'Automatic') in a new task.
+INFO 2019-02-20 08:47:55,778: 	 
+Warning: the max jobs memory is less than 70% of the task requested value (7000 MB), please consider to request a lower value for failed jobs (allowed through crab resubmit) and/or improve the jobs splitting (e.g. config.Data.splitting = 'Automatic') in a new task.
+INFO 2019-02-20 08:47:55,778: 	 
+Summary of run jobs:
+ * Memory: 0MB min, 1535MB max, 1479MB ave
+ * Runtime: 0:00:00 min, 4:12:44 max, 2:22:24 ave
+ * CPU eff: 88% min, 99% max, 98% ave
+ * Waste: 0:58:25 (3% of total)
+
+DEBUG 2019-02-20 08:47:55,785: 	 Requesting resubmission of failed jobs in task 190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4
+INFO 2019-02-20 08:47:55,785: 	 Sending resubmit request to the server.
+DEBUG 2019-02-20 08:47:55,785: 	 Submitting {'publication': 0, 'jobids': ['17'], 'subresource': 'resubmit2', 'workflow': u'190219_231024:mkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4'} 
+DEBUG 2019-02-20 08:47:55,785: 	 Encoded resubmit request: publication=0&subresource=resubmit2&workflow=190219_231024%3Amkrohn_crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4&jobids=17
+DEBUG 2019-02-20 08:47:56,628: 	 Result: {u'result': [{u'result': u'ok'}], u'desc': {u'columns': [u'tm_site_blacklist', u'tm_site_whitelist', u'tm_maxjobruntime', u'tm_maxmemory', u'tm_numcores', u'tm_priority']}}
+INFO 2019-02-20 08:47:56,628: 	 Resubmit request sent to the server.
+INFO 2019-02-20 08:47:56,628: 	 Please use 'crab status' to check how the resubmission process proceeds.
+Notice it may take a couple of minutes for the resubmission to get fully processed.
+INFO 2019-02-20 08:47:56,636: 	 Log file is /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/scripts/condor-umn/forAnalysisStep/runBackgroundMC/TestCMSSW104X_2019Feb19_170225/crab_ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4/crab.log

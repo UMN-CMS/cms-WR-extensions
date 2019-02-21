@@ -205,3 +205,7 @@ process.heepElectrons.src = cms.InputTag('selectedElectrons')
 
 process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
                            * process.muonSelectionSeq * process.analysis)
+
+process.TFileService.fileName = "ST_t-channel_antitop_4f_inclusiveDecays.root"
+
+process.GlobalTag.globaltag = "94X_mcRun2_asymptotic_v3"
