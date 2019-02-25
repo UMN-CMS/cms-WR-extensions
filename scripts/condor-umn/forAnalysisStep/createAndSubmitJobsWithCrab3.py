@@ -280,11 +280,11 @@ with open(localInputListFile, 'r') as f:
     if isData:
       config.JobType.pyCfgParams = ['isMC=False']
       if '2016' in datasetName:
-      	options.jsonFile = 'samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+      	options.jsonFile = 'samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt'
       elif '2017' in datasetName:
-     	options.jsonFile = 'samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
+     	options.jsonFile = 'samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_MuonPhys.txt'
       elif '2018' in datasetName:
-      	options.jsonFile = 'samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+      	options.jsonFile = 'samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON_MuonPhys.txt'
     #Handle the ext1 vs non ext case specially
     if not isData:
       isAMCATNLO = 'amcatnlo' in datasetName
