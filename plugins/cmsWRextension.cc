@@ -1950,7 +1950,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
   }else{
   //IF WE HAVE ADDITION MUONS, WE SHOULD SEE WHICH IS THE LEADING MUON WHICH ISN'T THE MAIN CANDIDATE
     for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
-      if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
+      if(sqrt(::wrTools::dR2((*iMuon)->eta(),(myEvent.myMuonCand)->eta(),(*iMuon)->phi(),(myEvent.myMuonCand)->phi())) > 0.02) {
         myEvent.mySubleadMuon = *iMuon;
 	if(ZPeak==false){
     	  double muPhi  = myEvent.mySubleadMuon->phi();
