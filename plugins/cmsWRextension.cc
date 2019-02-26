@@ -298,12 +298,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.passPreSelectGen = passPreSelectGen;
       genJetAnalyzer(iEvent, myRECOevent);
       std::cout << "analyzing GEN objects" << std::endl;
-      objectCompareGEN(iEvent, myRECOevent);
-      passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
-      passesResGEN      = passResGEN          (iEvent, myRECOevent);
-      passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
+      if(m_isSignal){
+        objectCompareGEN(iEvent, myRECOevent);
+        passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
+        passesResGEN      = passResGEN          (iEvent, myRECOevent);
+        passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
    //   passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
    //   passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
+      }
     }
     if (m_doReco || !m_isMC) {
       passesResRECO = passResRECO(iEvent , myRECOevent);
@@ -1832,7 +1834,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
   std::vector<const pat::Muon*> allMuons;
 
   for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
-    if ( iMuon->pt() < 10 || fabs(iMuon->eta()) > 2.4) continue;  //10 GeV is designed to capture slow muons from Z->MUMU
+    if ( iMuon->pt() < 50 || fabs(iMuon->eta()) > 2.4) continue;  //10 GeV is designed to capture slow muons from Z->MUMU
     if ( ! iMuon->isLooseMuon() ) continue;  //Loose MuonID
     std::cout << "Additional Muon passes Loose ID" << std::endl;
     std::cout << "additional Muon pT: " << iMuon->pt() << std::endl;
@@ -1948,7 +1950,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
   }else{
   //IF WE HAVE ADDITION MUONS, WE SHOULD SEE WHICH IS THE LEADING MUON WHICH ISN'T THE MAIN CANDIDATE
     for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
-      if(fabs(reco::deltaPhi((*iMuon)->phi(), myEvent.myMuonCand->phi())) > 0.01) {
+      if(sqrt(::wrTools::dR2((*iMuon)->eta(),(myEvent.myMuonCand)->eta(),(*iMuon)->phi(),(myEvent.myMuonCand)->phi())) > 0.02) {
         myEvent.mySubleadMuon = *iMuon;
 	if(ZPeak==false){
     	  double muPhi  = myEvent.mySubleadMuon->phi();

@@ -280,11 +280,11 @@ with open(localInputListFile, 'r') as f:
     if isData:
       config.JobType.pyCfgParams = ['isMC=False']
       if '2016' in datasetName:
-        options.jsonFile = 'samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+      	options.jsonFile = 'samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON_MuonPhys.txt'
       elif '2017' in datasetName:
-        options.jsonFile = 'samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
+     	options.jsonFile = 'samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON_MuonPhys.txt'
       elif '2018' in datasetName:
-        options.jsonFile = 'samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+      	options.jsonFile = 'samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON_MuonPhys.txt'
     #Handle the ext1 vs non ext case specially
     if not isData:
       isAMCATNLO = 'amcatnlo' in datasetName
@@ -363,12 +363,12 @@ with open(localInputListFile, 'r') as f:
       if re.match(re.compile(datasetKey),secondaryDatasetName):
         globalTag = tag
         config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
-        if '2016' in tag:
-            config.JobType.pyCfgParams = ['era=2016']
+	if '2016' in tag:
+			config.JobType.pyCfgParams = ['era=2016']
         elif '2017' in tag:
-            config.JobType.pyCfgParams = ['era=2017']
-        elif '2018' in tag:
-            config.JobType.pyCfgParams = ['era=2018']
+			config.JobType.pyCfgParams = ['era=2017']
+	elif '2018' in tag:
+			config.JobType.pyCfgParams = ['era=2018']
     if globalTag=='':
       print 'WARNING: Using default global tag as specified in template cfg (are you sure it\'s the right one?)'
     else:
