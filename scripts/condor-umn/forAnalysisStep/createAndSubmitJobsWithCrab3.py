@@ -241,7 +241,7 @@ if options.eosDir is not None:
   else:
     config.Data.outLFNDirBase = outputLFN
 print 'Using outLFNDirBase:',config.Data.outLFNDirBase
-config.Site.storageSite = 'T3_US_FNALLPC'
+config.Site.storageSite = 'T3_US_Minnesota'
 
 # look at the input list
 # use DAS to find the dataset names.
@@ -279,32 +279,32 @@ with open(localInputListFile, 'r') as f:
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if isData:
       config.JobType.pyCfgParams = ['isMC=False']
-	  if '2016' in datasetName:
-      	options.jsonFile = 'samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+      if '2016' in datasetName:
+        options.jsonFile = 'samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
       elif '2017' in datasetName:
-     	options.jsonFile = 'samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
-	  elif '2018' in datasetName:
-      	options.jsonFile = 'samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+        options.jsonFile = 'samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
+      elif '2018' in datasetName:
+        options.jsonFile = 'samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
     #Handle the ext1 vs non ext case specially
     if not isData:
       isAMCATNLO = 'amcatnlo' in datasetName
       print "isAMCATNLO: ", isAMCATNLO
       if isAMCATNLO:
-	config.JobType.pyCfgParams = ['ISmcatnlo=True']
+        config.JobType.pyCfgParams = ['ISmcatnlo=True']
     if 'ext' in dataset:
       extN = dataset[dataset.find('_ext')+4]
       datasetName=datasetName+'_ext'+extN
       config.Data.outputDatasetTag='WR_ext'+extN
     #NOT CURRENTLY USED IN WR ANALYSIS
-    if options.doFast is not None:
-	if options.doFast: 
-		print "Running condensed analysis"
-		if isData:
-			config.JobType.pyCfgParams = ['doFast=True','isMC=False']
-		elif isAMCATNLO:
-			config.JobType.pyCfgParams = ['doFast=True','ISmcatnlo=True']
-		else:
-			config.JobType.pyCfgParams = ['doFast=True']
+    #if options.doFast is not None:
+    if options.doFast: 
+        print "Running condensed analysis"
+        if isData:
+            config.JobType.pyCfgParams = ['doFast=True','isMC=False']
+        elif isAMCATNLO:
+            config.JobType.pyCfgParams = ['doFast=True','ISmcatnlo=True']
+        else:
+            config.JobType.pyCfgParams = ['doFast=True']
     if 'backup' in dataset:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
@@ -355,20 +355,20 @@ with open(localInputListFile, 'r') as f:
     print 'INFO: Creating',newCmsswConfig,'...'
     
     globalTag = ''
-	config.JobType.pyCfgParams = ['reco=80X']
-	config.JobType.pyCfgParams = ['era=2016']
+    config.JobType.pyCfgParams = ['reco=80X']
+    config.JobType.pyCfgParams = ['era=2016']
     # for MC it will look like DYJetsToLL_M-100to200_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8__RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     # so split to just get RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     for datasetKey,tag in globalTagsByDataset.iteritems():
       if re.match(re.compile(datasetKey),secondaryDatasetName):
         globalTag = tag
         config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
-		if '2016' in tag:
-			config.JobType.pyCfgParams = ['era=2016']
+        if '2016' in tag:
+            config.JobType.pyCfgParams = ['era=2016']
         elif '2017' in tag:
-			config.JobType.pyCfgParams = ['era=2017']
-		elif '2018' in tag:
-			config.JobType.pyCfgParams = ['era=2018']
+            config.JobType.pyCfgParams = ['era=2017']
+        elif '2018' in tag:
+            config.JobType.pyCfgParams = ['era=2018']
     if globalTag=='':
       print 'WARNING: Using default global tag as specified in template cfg (are you sure it\'s the right one?)'
     else:
@@ -403,7 +403,7 @@ with open(localInputListFile, 'r') as f:
         newLumiList.writeJSON('newJSON_minus_oldJSON.json')
         config.Data.lumiMask = 'newJSON_minus_oldJSON.json'
       else:
-	print "USING JSON: ", options.jsonFile
+        print "USING JSON: ", options.jsonFile
         config.Data.lumiMask = options.jsonFile
     if options.runRange is not None:
       config.Data.runRange = runRange
