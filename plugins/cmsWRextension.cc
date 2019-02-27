@@ -3066,8 +3066,12 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
 //    if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
     if( ! iParticle->isHardProcess() ) continue;  //ONLY HARD PROCESS AND NOT INCOMING
     if( iParticle->status() == 21 )    continue;
-    
+    if(iParticle->pdgId() == 13) {
+        std::cout << "MUON HAS MOTHER WITH ID: " << iParticle->mother()->pdgId() << std::endl;
+    }
+
     if( iParticle->mother() ) {
+
       if ( abs(iParticle->mother()->pdgId()) == 9900024) {
         const reco::Candidate* WR = iParticle->mother();
         myEvent.WR = WR;
@@ -3894,6 +3898,11 @@ bool cmsWRextension::passBoostGEN(const edm::Event& iEvent, eventBits& myEvent) 
 }
 
 bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
+    
+  if (myEvent.firstMuon == NULL || myEvent.secondMuon == NULL) {
+    std::cout << "firstMuon or secondMuon is uninitialized: passResGEN fails" << std::endl;
+    return false;
+  }
 
   if(myEvent.firstMuon->pt() < 60) return false;
   if(myEvent.secondMuon->pt() < 53) return false;

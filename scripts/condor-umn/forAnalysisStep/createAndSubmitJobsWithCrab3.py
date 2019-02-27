@@ -241,7 +241,7 @@ if options.eosDir is not None:
   else:
     config.Data.outLFNDirBase = outputLFN
 print 'Using outLFNDirBase:',config.Data.outLFNDirBase
-config.Site.storageSite = 'T3_US_FNALLPC'
+config.Site.storageSite = 'T3_US_Minnesota'
 
 # look at the input list
 # use DAS to find the dataset names.
@@ -290,21 +290,21 @@ with open(localInputListFile, 'r') as f:
       isAMCATNLO = 'amcatnlo' in datasetName
       print "isAMCATNLO: ", isAMCATNLO
       if isAMCATNLO:
-	config.JobType.pyCfgParams = ['ISmcatnlo=True']
+        config.JobType.pyCfgParams = ['ISmcatnlo=True']
     if 'ext' in dataset:
       extN = dataset[dataset.find('_ext')+4]
       datasetName=datasetName+'_ext'+extN
       config.Data.outputDatasetTag='WR_ext'+extN
     #NOT CURRENTLY USED IN WR ANALYSIS
-    if options.doFast is not None:
-	if options.doFast: 
-		print "Running condensed analysis"
-		if isData:
-			config.JobType.pyCfgParams = ['doFast=True','isMC=False']
-		elif isAMCATNLO:
-			config.JobType.pyCfgParams = ['doFast=True','ISmcatnlo=True']
-		else:
-			config.JobType.pyCfgParams = ['doFast=True']
+    #if options.doFast is not None:
+    if options.doFast: 
+        print "Running condensed analysis"
+        if isData:
+            config.JobType.pyCfgParams = ['doFast=True','isMC=False']
+        elif isAMCATNLO:
+            config.JobType.pyCfgParams = ['doFast=True','ISmcatnlo=True']
+        else:
+            config.JobType.pyCfgParams = ['doFast=True']
     if 'backup' in dataset:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
@@ -403,7 +403,7 @@ with open(localInputListFile, 'r') as f:
         newLumiList.writeJSON('newJSON_minus_oldJSON.json')
         config.Data.lumiMask = 'newJSON_minus_oldJSON.json'
       else:
-	print "USING JSON: ", options.jsonFile
+        print "USING JSON: ", options.jsonFile
         config.Data.lumiMask = options.jsonFile
     if options.runRange is not None:
       config.Data.runRange = runRange
