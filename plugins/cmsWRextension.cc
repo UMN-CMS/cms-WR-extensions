@@ -230,6 +230,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool electronTrigPass = true;
   //this bool is true if the event passes the Mmumu Zmass region cut
   bool ZMASS = false;
+  bool ZMASSres = false;
   //is quality signal event
   bool isGoodSignal = false;
   //these are for the JEC/JER toy regions
@@ -309,6 +310,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
     if (m_doReco || !m_isMC) {
       passesResRECO = passResRECO(iEvent , myRECOevent);
+      ZMASSres = subLeadingMuonZMass(iEvent, myRECOevent, false, true);
       std::cout << "myRECOevent.myResCandJets.size(): " << myRECOevent.myResCandJets.size() << " myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
       std::cout<<"running preselection reco"<<std::endl;
       if(preSelectBoostReco(iEvent, iSetup, myRECOevent)) {
@@ -317,7 +319,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         if(myRECOevent.myMuonJetPairs.size() > 0){
           if(passBoostRECO(iEvent, myRECOevent)) {
             addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
-            ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, false);
+            ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, false, false);
             if(m_isMC && addMuons) {
               std::vector<double> Muon_LooseID_Weights;
               Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
@@ -360,7 +362,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             std::cout << "Inside ZPeak passExtensionRECO_ZPeak" << std::endl;
             addMuons = additionalMuons(iEvent, myRECOevent, false, true, 0, false);
 	    std::cout << "myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
-            ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, true);
+            ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, true, false);
 //            std::cout << "addMuons: " << addMuons << ", ZMASS: " << ZMASS << std::endl;
             if(m_isMC && addMuons) {
               std::vector<double> Muon_LooseID_Weights;
@@ -451,7 +453,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   //FILL STUFF
-  passesResRECO = (passesResRECO && muonTrigPass);
+  passesResRECO = (passesResRECO && muonTrigPass && !ZMASSres);
 
   if(passesResRECO)myRECOevent.RECOcategory = 1;
   else if(passesBoostRECO) myRECOevent.RECOcategory = 2;
@@ -1502,22 +1504,34 @@ bool cmsWRextension::selectHighPtISOMuon(const edm::Event& iEvent, eventBits& my
 
   return false;
 }
-bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
+bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak, bool useResMu) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
   //CHECK IF WE HAVE A SUBLEADING MUON
-  if(myEvent.mySubleadMuon == 0) return false;
   std::cout << "Inside subLeadingMuonZMass" << std::endl;
 //  const pat::Muon* subleadMuon = myEvent.resolvedANAMuons[1];
 //  std::cout << "Have 2nd muon" << std::endl;
-  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
-  const pat::Muon* selMuon     = myEvent.myMuonCand;
-  const baconhep::TAddJet*  selJet;
-  if(ZPeak){
-    selJet  = myEvent.myMuonJetPairs_noLSF[0].first;
-  }else{
-    selJet  = myEvent.myMuonJetPairs[0].first;
+  const pat::Muon* subleadMuon;
+  const pat::Muon* selMuon;
+  if (useResMu) {
+    if(myEvent.resolvedANAMuons[0] == NULL) return false;
+    if(myEvent.resolvedANAMuons[1] == NULL) return false;
+    subleadMuon = myEvent.resolvedANAMuons[1];
+    selMuon     = myEvent.resolvedANAMuons[0];
+  } else { 
+    if(myEvent.mySubleadMuon == NULL) return false;
+    if(myEvent.myMuonCand    == NULL) return false;
+    subleadMuon = myEvent.mySubleadMuon;
+    selMuon     = myEvent.myMuonCand;
   }
+  if (!useResMu) {
+    const baconhep::TAddJet*  selJet;
+    if(ZPeak){
+      selJet  = myEvent.myMuonJetPairs_noLSF[0].first;
+    }else{
+      selJet  = myEvent.myMuonJetPairs[0].first;
+    }
 
-  myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+    myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+  }
   myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
   myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
   myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
@@ -1526,18 +1540,19 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuonEta           = subleadMuon->eta();
   myEvent.subleadMuonPhi           = subleadMuon->phi();
 
-  double dPhi = fabs(myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi);
-  if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+  if (!useResMu) {
+    double dPhi = fabs(myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi);
+    if (dPhi > ROOT::Math::Pi()) dPhi -= 2*ROOT::Math::Pi();
 
-  double dRlsfLep_subleadMuon = sqrt(( pow((myEvent.lsfLeptonEta - myEvent.subleadMuonEta), 2.0) + pow( dPhi, 2.0) ));
-//  if (dRlsfLep_subleadMuon > 2*ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
-  myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
-
+    double dRlsfLep_subleadMuon = sqrt( ::wrTools::dR2(myEvent.lsfLeptonEta, myEvent.subleadMuonEta, myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi ));
+//    if (dRlsfLep_subleadMuon > 2*ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
+    myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
+  }
 //  subleadMuon_selMuondR
   dPhi = fabs(subleadMuon->phi() - myEvent.myMuonCand->phi());
-  if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+  if (dPhi > ROOT::Math::Pi()) dPhi -= 2*ROOT::Math::Pi();
 
-  double subleadMuon_selMuondR = sqrt(( pow((myEvent.subleadMuonEta - myEvent.myMuonCand->eta()), 2.0) + pow( dPhi, 2.0) ));
+  double subleadMuon_selMuondR = sqrt( ::wrTools::dR2(selMuon->eta(), myEvent.subleadMuonEta, selMuon->phi(), myEvent.subleadMuonPhi ));
  // if (subleadMuon_selMuondR > 2*ROOT::Math::Pi()) subleadMuon_selMuondR -= 2*ROOT::Math::Pi();
   myEvent.subleadMuon_selMuondR = subleadMuon_selMuondR;
 
