@@ -1541,16 +1541,15 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuonPhi           = subleadMuon->phi();
 
   if (!useResMu) {
-    double dPhi = fabs(myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi);
-    if (dPhi > ROOT::Math::Pi()) dPhi -= 2*ROOT::Math::Pi();
+    double dPhi = fabs(::wrTools::dPhi(myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi));
 
     double dRlsfLep_subleadMuon = sqrt( ::wrTools::dR2(myEvent.lsfLeptonEta, myEvent.subleadMuonEta, myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi ));
 //    if (dRlsfLep_subleadMuon > 2*ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
     myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
   }
 //  subleadMuon_selMuondR
-  dPhi = fabs(subleadMuon->phi() - myEvent.myMuonCand->phi());
-  if (dPhi > ROOT::Math::Pi()) dPhi -= 2*ROOT::Math::Pi();
+//  double dPhi;
+//  dPhi = fabs(::wrTools::dPhi(subleadMuon->phi(), myEvent.myMuonCand->phi()));
 
   double subleadMuon_selMuondR = sqrt( ::wrTools::dR2(selMuon->eta(), myEvent.subleadMuonEta, selMuon->phi(), myEvent.subleadMuonPhi ));
  // if (subleadMuon_selMuondR > 2*ROOT::Math::Pi()) subleadMuon_selMuondR -= 2*ROOT::Math::Pi();
@@ -1580,16 +1579,15 @@ int cmsWRextension::subLeadingMuonZMass_Nominal(const edm::Event& iEvent, eventB
   myEvent.subleadMuonEta           = subleadMuon->eta();
   myEvent.subleadMuonPhi           = subleadMuon->phi();
 
-  double dPhi = fabs(myEvent.lsfLeptonPhi - myEvent.subleadMuonPhi);
-  if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+  double dPhi = fabs(::wrTools::dPhi(myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi));
 
   double dRlsfLep_subleadMuon = sqrt(( pow((myEvent.lsfLeptonEta - myEvent.subleadMuonEta), 2.0) + pow( dPhi, 2.0) )); 
 //  if (dRlsfLep_subleadMuon > 2*ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
   myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
 
 //  subleadMuon_selMuondR
-  dPhi = fabs(subleadMuon->phi() - myEvent.myMuonCand->phi());
-  if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+  
+  dPhi = fabs(::wrTools::dPhi(subleadMuon->phi(), myEvent.myMuonCand->phi()));
 
   double subleadMuon_selMuondR = sqrt(( pow((myEvent.subleadMuonEta - myEvent.myMuonCand->eta()), 2.0) + pow( dPhi, 2.0) )); 
  // if (subleadMuon_selMuondR > 2*ROOT::Math::Pi()) subleadMuon_selMuondR -= 2*ROOT::Math::Pi();
@@ -1879,9 +1877,8 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
             jetPhi = myEvent.myElectronJetPairs_JERDown[0].first->phi;
             jetEta = myEvent.myElectronJetPairs_JERDown[0].first->eta;
         }
-        double dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-        double dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
-        if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+        double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+        double dR = sqrt(::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
         std::cout << "abs(dR): " << abs(dR) << std::endl;
 
         if(abs(dR) > 0.8) continue;
@@ -1908,9 +1905,8 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
           jetPhi = myEvent.myMuonJetPairs_noLSF_JERDown[0].first->phi;
           jetEta = myEvent.myMuonJetPairs_noLSF_JERDown[0].first->eta;
         }
-      	double dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-      	double dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
-      	if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+        double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+        double dR = sqrt(::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
 	std::cout << "abs(dR): " << abs(dR) << std::endl;
 
       	//if(abs(dR) > 0.8) continue;
@@ -1936,9 +1932,8 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
           jetPhi = myEvent.myMuonJetPairs_JERDown[0].first->phi;
           jetEta = myEvent.myMuonJetPairs_JERDown[0].first->eta;
         }
-        double dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-        double dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
-        if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+        double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+        double dR = sqrt(::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
 
         if(abs(dR) > 0.8) continue;
 
@@ -1988,9 +1983,8 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
             jetPhi = myEvent.myMuonJetPairs_JERDown[0].first->phi;
             jetEta = myEvent.myMuonJetPairs_JERDown[0].first->eta;
           }
-    	  double dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-	  double dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
-          if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+          double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+          double dR = sqrt( ::wrTools::dR2( jetEta, muEta, jetPhi, muPhi));
 
           myEvent.secondRECOMuonRECOjetDR = dR;
 	}
@@ -2776,7 +2770,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
   std::cout << "Number of Candidate Jets with LSF: " << AddJets.size() << std::endl;
   std::cout << "Number of Candidate Jets without LSF: " << AddJets_noLSF.size() << std::endl;
 
-  double dPhi = 0.;
+  //double dPhi = 0.;
   double dR   = 0.;
   int nDaughterContainedPtLeadJet = 0;
   int nDaughterContainedSubLeadJet = 0;
@@ -2785,33 +2779,29 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
   int capturedBothDaughtersInSingleJet = -1;
   if(AddJets.size() > 0){
     for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
-      dPhi=abs(AddJets[0]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
-      dR = sqrt((AddJets[0]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[0]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
-      if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+    //  dPhi=fabs(::wrTools::dPhi(AddJets[0]->phi, myEvent.genWRDaughters[i]->phi()));
+      dR = sqrt(::wrTools::dR2(AddJets[0]->eta, myEvent.genWRDaughters[i]->eta(), AddJets[0]->phi, myEvent.genWRDaughters[i]->phi()));
       if (dR<0.4)nDaughterContainedPtLeadJet++;
       myEvent.daughterClusterVector = myEvent.daughterClusterVector + myEvent.genWRDaughters[i]->p4();
     }
     if(AddJets.size() > 1){
       for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
-        dPhi=abs(AddJets[1]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
-	dR = sqrt((AddJets[1]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[1]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
-	if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+     //   dPhi=fabs(::wrTools::dPhi(AddJets[1]->phi, myEvent.genWRDaughters[i]->phi()));
+        dR = sqrt(::wrTools::dR2(AddJets[1]->eta, myEvent.genWRDaughters[i]->eta(), AddJets[1]->phi, myEvent.genWRDaughters[i]->phi()));
 	if (dR<0.4)nDaughterContainedSubLeadJet++;
       }
     }
     if(AddJets.size() > 2){
       for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
-        dPhi=abs(AddJets[2]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
-        dR = sqrt((AddJets[2]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[2]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
-        if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+    //    dPhi=fabs(::wrTools::dPhi(AddJets[2]->phi, myEvent.genWRDaughters[i]->phi()));
+        dR = sqrt(::wrTools::dR2(AddJets[2]->eta, myEvent.genWRDaughters[i]->eta(), AddJets[2]->phi, myEvent.genWRDaughters[i]->phi()));
         if (dR<0.4)nDaughterContained2ndSubLeadJet++;
       }
     }
     if(AddJets.size() > 3){
       for(int i = 0; i < int(myEvent.genWRDaughters.size()); i++){
-        dPhi=abs(AddJets[3]->phi-myEvent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
-        dR = sqrt((AddJets[3]->eta-myEvent.genWRDaughters[i]->eta())*(AddJets[3]->eta-myEvent.genWRDaughters[i]->eta()) + dPhi*dPhi);
-        if (dR>ROOT::Math::Pi())dR-=2*ROOT::Math::Pi();
+   //     dPhi=fabs(::wrTools::dPhi(AddJets[3]->phi, myEvent.genWRDaughters[i]->phi()));
+        dR = sqrt(::wrTools::dR2(AddJets[3]->eta, myEvent.genWRDaughters[i]->eta(), AddJets[3]->phi, myEvent.genWRDaughters[i]->phi()));
         if (dR<0.4)nDaughterContained3rdSubLeadJet++;
       }
     }
@@ -2841,11 +2831,10 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
     double muPhi  = myEvent.genSecondMuon->phi();
     double jetEta = myEvent.daughterClusterVector.eta();
     double muEta  = myEvent.genSecondMuon->eta();
-    double dPhi = 0.0;
+ //   double dPhi = 0.0;
     double dR   = 0.0;
-    dPhi = abs( jetPhi - muPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-    dR = sqrt( ( jetEta - muEta ) * ( jetEta - muEta ) + dPhi * dPhi );
-    if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+ //   dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+    dR = sqrt( ::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
 
     myEvent.secondMuonWRjetdR = dR;
   }
@@ -2966,12 +2955,11 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
     }
   }
 
-  double dPhi = 0.;
+  //double dPhi = 0.;
   double dR_Daughters = -1.0;
   if (WRDaughters.size() > 1){
-    dPhi=abs(WRDaughters[0]->phi()-WRDaughters[1]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
-    dR_Daughters = sqrt((WRDaughters[0]->eta()-WRDaughters[1]->eta())*(WRDaughters[0]->eta()-WRDaughters[1]->eta()) + dPhi*dPhi);
-    if (dR_Daughters>ROOT::Math::Pi()) dR_Daughters-=2*ROOT::Math::Pi();
+    //dPhi=fabs(::wrTools::dPhi(WRDaughters[0]->phi(), WRDaughters[1]->phi()));
+    dR_Daughters = sqrt(::wrTools::dR2(WRDaughters[0]->eta(), WRDaughters[1]->eta(), WRDaughters[0]->phi(), WRDaughters[1]->phi()));
     
   }
   myEvent.dR_Daughters = dR_Daughters;
@@ -3387,26 +3375,23 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
     myRECOevent.secondHighPtMuonPt = myRECOevent.my2ndHighPtMuonCand->pt();
     myRECOevent.secondHighPtMuonPhi = myRECOevent.my2ndHighPtMuonCand->phi();
     myRECOevent.secondHighPtMuonEta = myRECOevent.my2ndHighPtMuonCand->eta();
-    double dPhi = abs( myRECOevent.selectedJetPhi - myRECOevent.secondHighPtMuonPhi ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-    double dR = sqrt( ( myRECOevent.selectedJetEta - myRECOevent.secondHighPtMuonEta ) * ( myRECOevent.selectedJetEta - myRECOevent.secondHighPtMuonEta ) + dPhi * dPhi );
-    if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();    
+    double dPhi = fabs( ::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.secondHighPtMuonPhi));
+    double dR = sqrt(::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.secondHighPtMuonEta, myRECOevent.selectedJetPhi, myRECOevent.secondHighPtMuonPhi));
     myRECOevent.selectedJetSecondHighPtMuonDR = dR;
   }
   for(int j=0; j<myRECOevent.muonCands; j++){
-     double dPhi = abs( myRECOevent.selectedJetPhi - myRECOevent.myMuonCandsHighPt[j]->phi() ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-     double dR = sqrt( ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) * ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) + dPhi * dPhi );
-     if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
-     if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
-     if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
+    double dPhi = fabs( ::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+    double dR = sqrt(::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+    if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
+    if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
   }
   myRECOevent.nHighPtMuonsOutsideJet = nHighPtMuonsOutsideJet;
 
  // myRECOevent.secondGENMuon_selMuondR
   if (myRECOevent.genSecondMuon != NULL) {
-    double dPhi = fabs(myRECOevent.genSecondMuon->phi() - myRECOevent.selectedMuonPhi);
-    if (dPhi > ROOT::Math::Pi()) dPhi -= ROOT::Math::Pi();
+    double dPhi = fabs( ::wrTools::dPhi(myRECOevent.genSecondMuon->phi(), myRECOevent.selectedMuonPhi));
 
-    double secondGENMuon_selMuondR = sqrt(( pow((myRECOevent.genSecondMuon->eta() - myRECOevent.selectedMuonEta), 2.0) + pow( dPhi, 2.0) )); 
+    double secondGENMuon_selMuondR = sqrt(::wrTools::dR2(myRECOevent.genSecondMuon->eta(), myRECOevent.selectedMuonEta, myRECOevent.genSecondMuon->phi(), myRECOevent.selectedMuonPhi));
     myRECOevent.secondGENMuon_selMuondR = secondGENMuon_selMuondR;
   }
 
@@ -3417,20 +3402,15 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
   }
 
   double MaxDR_genDaughter_CandJet = -1.0;
-  double dPhi = 0.;
+  //double dPhi = 0.;
   int nDaughterInSelectedJet = 0;
   double dR = 0.;
   if(m_isMC){
     for(int i = 0; i < int(myRECOevent.genWRDaughters.size()); i++){
-      dPhi=abs(myRECOevent.myMuonJetPairs[0].first->phi-myRECOevent.genWRDaughters[i]->phi()); if (dPhi>ROOT::Math::Pi()) dPhi-=2*ROOT::Math::Pi();
-      if(sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi) > MaxDR_genDaughter_CandJet){
-	MaxDR_genDaughter_CandJet = sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi);
-	if (MaxDR_genDaughter_CandJet>ROOT::Math::Pi()) MaxDR_genDaughter_CandJet-=2*ROOT::Math::Pi();
-      }
-      if(sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi) >ROOT::Math::Pi()){
-	dR = sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi) - 2*ROOT::Math::Pi();
-      }else{
-        dR = sqrt((myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta())*(myRECOevent.myMuonJetPairs[0].first->eta-myRECOevent.genWRDaughters[i]->eta()) + dPhi*dPhi);
+    //  dPhi=fabs(::wrTools::dPhi(myRECOevent.myMuonJetPairs[0].first->phi, myRECOevent.genWRDaughters[i]->phi()));
+      dR = sqrt(::wrTools::dR2(myRECOevent.myMuonJetPairs[0].first->eta, myRECOevent.myMuonJetPairs[0].first->eta, myRECOevent.myMuonJetPairs[0].first->phi, myRECOevent.genWRDaughters[i]->phi()));
+      if( dR > MaxDR_genDaughter_CandJet){
+	MaxDR_genDaughter_CandJet = dR;
       }
       if(dR < 0.4){
 	nDaughterInSelectedJet++;
@@ -3512,9 +3492,9 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   	myRECOevent.myEventMass = myRECOevent.leadAK8JetMuonMassVal;
 
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = abs( myRECOevent.selectedJetPhi - myRECOevent.myMuonCandsHighPt[j]->phi() ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-           double dR = sqrt( ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) * ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) + dPhi * dPhi );
-           if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+         
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
         }
@@ -3549,9 +3529,8 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JECUp = myRECOevent.leadAK8JetMuonMassVal_JECUp;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = abs( myRECOevent.selectedJetPhi - myRECOevent.myMuonCandsHighPt[j]->phi() ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-           double dR = sqrt( ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) * ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) + dPhi * dPhi );
-           if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
         }
@@ -3585,9 +3564,8 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JECDown = myRECOevent.leadAK8JetMuonMassVal_JECDown;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = abs( myRECOevent.selectedJetPhi - myRECOevent.myMuonCandsHighPt[j]->phi() ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-           double dR = sqrt( ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) * ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) + dPhi * dPhi );
-           if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
         }
@@ -3621,9 +3599,8 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JERUp = myRECOevent.leadAK8JetMuonMassVal_JERUp;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = abs( myRECOevent.selectedJetPhi - myRECOevent.myMuonCandsHighPt[j]->phi() ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-           double dR = sqrt( ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) * ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) + dPhi * dPhi );
-           if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
         }
@@ -3657,9 +3634,8 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JERDown = myRECOevent.leadAK8JetMuonMassVal_JERDown;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = abs( myRECOevent.selectedJetPhi - myRECOevent.myMuonCandsHighPt[j]->phi() ); if ( dPhi > ROOT::Math::Pi() ) dPhi -= 2 * ROOT::Math::Pi();
-           double dR = sqrt( ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) * ( myRECOevent.selectedJetEta - myRECOevent.myMuonCandsHighPt[j]->eta() ) + dPhi * dPhi );
-           if ( dR > ROOT::Math::Pi() ) dR -= 2*ROOT::Math::Pi();
+           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
         }
@@ -3843,8 +3819,7 @@ bool cmsWRextension::objectCompareGEN(const edm::Event& iEvent, eventBits& myEve
   if (fat) {
     const reco::GenJet*      fatJet = myEvent.myAK8GenJets[0];
 
-    double dPhi = fabs(mu1->phi() - fatJet->phi());
-    if (dPhi > ROOT::Math::Pi()) dPhi -= 2*ROOT::Math::Pi();
+    double dPhi = fabs(::wrTools::dPhi(mu1->phi(), fatJet->phi()));
 
     myEvent.fatJetMuon1dPhi = dPhi;
     myEvent.fatJetMuon1dR   = sqrt(::wrTools::dR2(mu1->eta(),fatJet->eta(),mu1->phi(),fatJet->phi()));
