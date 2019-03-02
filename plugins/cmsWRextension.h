@@ -190,6 +190,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResPassBoostGEN;
       eventHistos m_eventsPassResFailBoostGEN;
       eventHistos m_eventsFailResPassBoostGEN;
+ 
+      eventHistos m_eventsPassResZMASSRECO;
 
       eventHistos m_eventsFailResFailBoostGEN_boostMod;
       eventHistos m_eventsPassResPassBoostGEN_boostMod;
@@ -201,19 +203,19 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResFailBoostGEN_resMod;
       eventHistos m_eventsFailResPassBoostGEN_resMod;
 
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt150;
-      eventHistos m_eventsPassingFlavorSidebandRECO_noTrig;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt50_noISO;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt150;
+      //eventHistos m_eventsPassingFlavorSidebandRECO_noTrig;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt50_noISO;
 
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_samesign;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_all;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_samesign;
+      //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_all;
 
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_A;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_B;

@@ -1541,7 +1541,7 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   myEvent.subleadMuonPhi           = subleadMuon->phi();
 
   if (!useResMu) {
-    double dPhi = fabs(::wrTools::dPhi(myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi));
+    //double dPhi = fabs(::wrTools::dPhi(myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi));
 
     double dRlsfLep_subleadMuon = sqrt( ::wrTools::dR2(myEvent.lsfLeptonEta, myEvent.subleadMuonEta, myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi ));
 //    if (dRlsfLep_subleadMuon > 2*ROOT::Math::Pi()) dRlsfLep_subleadMuon -= 2*ROOT::Math::Pi();
@@ -1877,7 +1877,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
             jetPhi = myEvent.myElectronJetPairs_JERDown[0].first->phi;
             jetEta = myEvent.myElectronJetPairs_JERDown[0].first->eta;
         }
-        double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+        //double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
         double dR = sqrt(::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
         std::cout << "abs(dR): " << abs(dR) << std::endl;
 
@@ -1905,7 +1905,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
           jetPhi = myEvent.myMuonJetPairs_noLSF_JERDown[0].first->phi;
           jetEta = myEvent.myMuonJetPairs_noLSF_JERDown[0].first->eta;
         }
-        double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+        //double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
         double dR = sqrt(::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
 	std::cout << "abs(dR): " << abs(dR) << std::endl;
 
@@ -1932,7 +1932,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
           jetPhi = myEvent.myMuonJetPairs_JERDown[0].first->phi;
           jetEta = myEvent.myMuonJetPairs_JERDown[0].first->eta;
         }
-        double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+        //double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
         double dR = sqrt(::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
 
         if(abs(dR) > 0.8) continue;
@@ -1983,7 +1983,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
             jetPhi = myEvent.myMuonJetPairs_JERDown[0].first->phi;
             jetEta = myEvent.myMuonJetPairs_JERDown[0].first->eta;
           }
-          double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
+          //double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
           double dR = sqrt( ::wrTools::dR2( jetEta, muEta, jetPhi, muPhi));
 
           myEvent.secondRECOMuonRECOjetDR = dR;
@@ -2326,10 +2326,6 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     std::cout << "NOT ENOUGH MUONS, EXITING RESOLVED JET SELECTION" << std::endl;
     return false;
   }
-  const pat::Muon* mu1 = myEvent.resolvedANAMuons[0];
-  const pat::Muon* mu2 = myEvent.resolvedANAMuons[1];
-
-
   for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK4->begin(); iJet != recoJetsAK4->end(); iJet++) {
     if ( iJet->pt() < 40 ) continue;
     if ( fabs(iJet->eta()) > 2.4) continue;
@@ -2346,16 +2342,13 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     if (NHF > .9) continue;
     if (NEMF > .9) continue;
     if (NumConst <= 1) continue;
-    if (MUF >= .8) continue;
+    if (MUF >= .8) continue; //MAKE SURE THE AREN'T MUONS
     //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
     if (CHF == 0) continue;
     if (CHM == 0) continue;
     //if (CEMF > .99) continue;
     if (CEMF > .90) continue; 
 
-    //CHECK THAT IT DOESN'T OVERLAP A MUON
-//    if (sqrt(::wrTools::dR2(iJet->eta(),mu1->eta(),iJet->phi(),mu1->phi())) <= 0.05) continue;
-//    if (sqrt(::wrTools::dR2(iJet->eta(),mu2->eta(),iJet->phi(),mu2->phi())) <= 0.05) continue;
     resCandJets.push_back(&(*iJet));
     std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
     std::cout << "iJet->muonEnergyFraction(): " << iJet->muonEnergyFraction() << " iJet->chargedEmEnergyFraction(): " << iJet->chargedEmEnergyFraction() << std::endl;
@@ -3375,12 +3368,12 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
     myRECOevent.secondHighPtMuonPt = myRECOevent.my2ndHighPtMuonCand->pt();
     myRECOevent.secondHighPtMuonPhi = myRECOevent.my2ndHighPtMuonCand->phi();
     myRECOevent.secondHighPtMuonEta = myRECOevent.my2ndHighPtMuonCand->eta();
-    double dPhi = fabs( ::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.secondHighPtMuonPhi));
+    //double dPhi = fabs( ::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.secondHighPtMuonPhi));
     double dR = sqrt(::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.secondHighPtMuonEta, myRECOevent.selectedJetPhi, myRECOevent.secondHighPtMuonPhi));
     myRECOevent.selectedJetSecondHighPtMuonDR = dR;
   }
   for(int j=0; j<myRECOevent.muonCands; j++){
-    double dPhi = fabs( ::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+    //double dPhi = fabs( ::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
     double dR = sqrt(::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
     if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
     if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
@@ -3389,7 +3382,7 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
 
  // myRECOevent.secondGENMuon_selMuondR
   if (myRECOevent.genSecondMuon != NULL) {
-    double dPhi = fabs( ::wrTools::dPhi(myRECOevent.genSecondMuon->phi(), myRECOevent.selectedMuonPhi));
+    //double dPhi = fabs( ::wrTools::dPhi(myRECOevent.genSecondMuon->phi(), myRECOevent.selectedMuonPhi));
 
     double secondGENMuon_selMuondR = sqrt(::wrTools::dR2(myRECOevent.genSecondMuon->eta(), myRECOevent.selectedMuonEta, myRECOevent.genSecondMuon->phi(), myRECOevent.selectedMuonPhi));
     myRECOevent.secondGENMuon_selMuondR = secondGENMuon_selMuondR;
@@ -3492,7 +3485,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   	myRECOevent.myEventMass = myRECOevent.leadAK8JetMuonMassVal;
 
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           //double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
          
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
@@ -3529,7 +3522,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JECUp = myRECOevent.leadAK8JetMuonMassVal_JECUp;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           //double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
@@ -3564,7 +3557,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JECDown = myRECOevent.leadAK8JetMuonMassVal_JECDown;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           //double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
@@ -3599,7 +3592,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JERUp = myRECOevent.leadAK8JetMuonMassVal_JERUp;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           //double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
@@ -3634,7 +3627,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 
   	myRECOevent.myEventMass_JERDown = myRECOevent.leadAK8JetMuonMassVal_JERDown;
         for(int j=0; j<myRECOevent.muonCands; j++){
-           double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
+           //double dPhi = fabs(::wrTools::dPhi(myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            double dR = sqrt( ::wrTools::dR2(myRECOevent.selectedJetEta, myRECOevent.myMuonCandsHighPt[j]->eta(), myRECOevent.selectedJetPhi, myRECOevent.myMuonCandsHighPt[j]->phi()));
            if(j==0)myRECOevent.leadAK8JetMuonDR = dR;
            if ( abs(dR) > 0.8) nHighPtMuonsOutsideJet++;
@@ -3970,6 +3963,8 @@ cmsWRextension::beginJob()
     m_eventsPassResFailBoostGEN.book((fs->mkdir("eventsPassResFailBoostGEN")), 3, m_outputTag, 0);
     m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
 
+    m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 3, m_outputTag, 0);
+
 //    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
 //    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
 //    m_eventsPassResFailBoostGEN_resMod.book((fs->mkdir("eventsPassResFailBoostGEN_resMod")), 3, m_outputTag, 0);
@@ -4025,24 +4020,25 @@ cmsWRextension::beginJob()
     m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")), 2, m_outputTag, 0);
     m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")), 2, m_outputTag, 0);
 
+    m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 2, m_outputTag, 0);
+
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag, 0);
     m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag, 0);
-    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  2, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 2, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 2, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  2, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt50_noISO.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50_noISO")),  2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  2, m_outputTag, 1);
+    //m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 2, m_outputTag, 1);
+    //m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 2, m_outputTag, 1);
+    //m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  2, m_outputTag, 1);
+    //m_eventsPassingFlavorSidebandRECOelePt50_noISO.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50_noISO")),  2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_noISO.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 2, m_outputTag, 1);
+    //m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 2, m_outputTag, 1);
+    //m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 2, m_outputTag, 1);
     //ABCD
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 2, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 2, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 2, m_outputTag, 1);
-
     m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 2, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 2, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 2, m_outputTag, 2);
