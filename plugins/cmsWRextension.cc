@@ -453,7 +453,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   //FILL STUFF
+  bool passResZSB = false;
   passesResRECO = (passesResRECO && muonTrigPass && !ZMASSres);
+  passResZSB = (passesResRECO && muonTrigPass && ZMASSres);
+  if(passResZSB) m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
 
   if(passesResRECO)myRECOevent.RECOcategory = 1;
   else if(passesBoostRECO) myRECOevent.RECOcategory = 2;
