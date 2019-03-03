@@ -130,6 +130,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool signalGENidentifier(const edm::Event&, eventBits&);
       bool passZsidebandCutGEN(const edm::Event&, eventBits&);
       bool passResRECO (const edm::Event&, eventBits&);
+      bool passFSBResRECO (const edm::Event&, eventBits&);
       bool passBoostRECO(const edm::Event&, eventBits&);
       bool passExtensionRECO_ZPeak(const edm::Event&, eventBits&);
       void passExtensionRECO_Fast(const edm::Event&, eventBits&);
@@ -144,6 +145,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedMuonSelection(const edm::Event&, eventBits&);
+      bool resolvedFBSleptonSelection(const edm::Event&, eventBits&);
       bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak, bool useResMu);
       int subLeadingMuonZMass_Nominal(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
       int subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
@@ -221,6 +223,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_B;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_C;
       eventHistos m_eventsPassingFlavorSidebandRECOelePt200_D;
+
+      eventHistos m_eventsPassingFlavorSidebandRECOres;
 
       HEEP myHEEP;
       egammaEffi myEgammaEffi;

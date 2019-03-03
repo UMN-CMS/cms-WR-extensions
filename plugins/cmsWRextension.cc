@@ -453,10 +453,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   //FILL STUFF
-  bool passResZSB = false;
   passesResRECO = (passesResRECO && muonTrigPass && !ZMASSres);
-  passResZSB = (passesResRECO && muonTrigPass && ZMASSres);
-  if(passResZSB) m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
+  ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
+  if(ZMASSres) m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
 
   if(passesResRECO)myRECOevent.RECOcategory = 1;
   else if(passesBoostRECO) myRECOevent.RECOcategory = 2;
@@ -2084,6 +2083,51 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
   
   return true;
 }
+bool cmsWRextension::resolvedFBSleptonSelection(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout << "RES FSB LEPTON SELECTION" << std::endl;
+  std::vector<const pat::Electron*> resElecs;
+  std::vector<const pat::Muon*> resMus;
+
+  edm::Handle<std::vector<pat::Muon>> highMuons;
+  iEvent.getByToken(m_highMuonToken, highMuons);
+
+  edm::Handle<std::vector<pat::Electron>> highElectrons;
+  iEvent.getByToken(m_highElectronToken, highElectrons);
+
+  for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
+
+   if( fabs(iMuon->eta()) > 2.4) continue;
+   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53)  && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
+      std::cout<<"RES FSB MUON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
+      std::cout<<"RES FSB MUON CAND WITH Iso: " << iMuon->isolationR03().sumPt/iMuon->pt() << std::endl;
+     
+      resMus.push_back(&(*iMuon));
+    }
+  }
+
+//  myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
+//  if (myEvent.NresolvedANAMuonCands < 2) return false;
+//  myEvent.ResCutProgress++;
+//
+//  std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
+//
+//  std::cout << "high pT lead muon" << std::endl;
+//  //if (resolvedANAMuons[0]->pt() <= 52) return false;  //korea
+//  //if (!resolvedANAMuons[0]->isHighPtMuon(*myEvent.PVertex)) return false;
+//  std::cout << "60 GeV lead muon" << std::endl;
+//  if (resolvedANAMuons[0]->pt() <= 60) return false;
+//  myEvent.ResCutProgress++;
+//  std::cout << "isolation of lead muon" << std::endl;
+//  if (resolvedANAMuons[0]->isolationR03().sumPt/resolvedANAMuons[0]->pt() > 0.1) return false;
+//  myEvent.ResCutProgress++;
+//
+//  myEvent.resolvedANAMuons = resolvedANAMuons;
+//
+//
+//  myEvent.resolvedSubleadMuPt = resolvedANAMuons[1]->pt();
+   
+  return true;
+} 
 bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES LEPTON SELECTION" << std::endl;
   std::vector<const pat::Muon*> resolvedANAMuons;
@@ -2099,7 +2143,7 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
 //  for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
 
-//   if(( iMuon->isLooseMuon() && iMuon->pt() > 10 && fabs(iMuon->eta()) < 2.4)){
+   if( fabs(iMuon->eta()) > 2.4) continue;
    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53)){ // && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
       std::cout<<"RES LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
       std::cout<<"RES LEPTON CAND WITH Iso: " << iMuon->isolationR03().sumPt/iMuon->pt() << std::endl;
@@ -3686,6 +3730,98 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES LEPTON SELECTION CALL" << std::endl;
   if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
   std::cout << "RES JET SELECTION CALL" << std::endl;
+  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
+
+  if (myEvent.myResCandJets.size() < 2) {
+    return false;
+  } else {
+    myEvent.ResCutProgress++;
+    std::sort(myEvent.myResCandJets.begin(), myEvent.myResCandJets.end(), ::wrTools::compareEtCandidatePointer);
+    double dR_pair = sqrt(::wrTools::dR2(myEvent.myResCandJets[0]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.myResCandJets[0]->phi(),myEvent.myResCandJets[1]->phi()));
+    std::cout<< "Jets dR_pair: " << dR_pair << std::endl;
+    if (dR_pair < 0.4) return false;
+     myEvent.resJetDR = dR_pair;
+  }
+  myEvent.ResCutProgress++;
+
+  std::cout << "dR(AK4 jets, subleading muon) SELECTION" << std::endl;
+  double dR_jet1_muon2 = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[1]->eta(),myEvent.myResCandJets[0]->eta(),myEvent.resolvedANAMuons[1]->phi(),myEvent.myResCandJets[0]->phi()));
+  double dR_jet2_muon2 = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[1]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.resolvedANAMuons[1]->phi(),myEvent.myResCandJets[1]->phi()));
+  std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << " dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
+  if (dR_jet1_muon2 < 0.4 || dR_jet2_muon2 < 0.4) return false;
+  myEvent.ResCutProgress++;
+
+  std::cout << "dR between muons" << std::endl;
+  double dR_pair = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[0]->eta(),myEvent.resolvedANAMuons[1]->eta(),myEvent.resolvedANAMuons[0]->phi(),myEvent.resolvedANAMuons[1]->phi()));
+  std::cout << "Muons dR_pair: " << dR_pair << std::endl;
+  if (dR_pair < 0.4) return false;
+  myEvent.ResCutProgress++;
+
+  std::cout << "subleading Muon pT" << std::endl;
+  if (myEvent.resolvedANAMuons[1]->pt() < 53) return false;
+  myEvent.ResCutProgress++;
+
+  std::cout << "subleading Muon ISO" << std::endl;
+  if (myEvent.resolvedANAMuons[1]->isolationR03().sumPt/myEvent.resolvedANAMuons[1]->pt() > 0.1) return false;
+  myEvent.ResCutProgress++;
+
+  std::cout << "RES OBJECT SELECTIONS PASSED" << std::endl;
+
+  const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
+  const pat::Muon* mu2 =  myEvent.resolvedANAMuons[1];
+  const pat::Jet*  jet1 = myEvent.myResCandJets[0];
+  const pat::Jet*  jet2 = myEvent.myResCandJets[1];
+
+  //MLL
+  double mll = (mu1->p4()+mu2->p4()).mass();
+  myEvent.resMLL = mll;
+  if (mll < 200) return false;  // 2017
+//  if (mll < 150) return false;// korea
+//  if (mll < 175) return false;// middle
+  std::cout << "RES MLL PASSED" << std::endl;
+  myEvent.ResCutProgress++;
+
+  //CHECK DR ASSOCIATIONS
+  double dR_pair12 = sqrt(::wrTools::dR2(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi()));
+  std::cout << "RES 12" << dR_pair12<< std::endl;
+  double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi()));
+  std::cout << "RES 21" << dR_pair21<< std::endl;
+  double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi()));
+  std::cout << "RES 22" << dR_pair22<< std::endl;
+  double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi()));
+  std::cout << "RES 11" << dR_pair11<< std::endl;
+
+  if (dR_pair12 < 0.4) return false;
+  if (dR_pair21 < 0.4) return false;
+  if (dR_pair22 < 0.4) return false;
+  if (dR_pair11 < 0.4) return false;
+  std::cout << "RES FOUR OBJECT SEPARATION PASSED" << std::endl;
+  myEvent.ResCutProgress++;
+    
+  //CHECK 4 OBJECT MASS
+  double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
+
+  if (resMass < 600) return false;
+  std::cout << "RES FOUR MASS PASSED" << std::endl;
+  myEvent.ResCutProgress++;
+
+  myEvent.resolvedRECOmass = resMass; 
+
+  myEvent.resSubleadMuJet1dR = dR_pair21;
+  myEvent.resSubleadMuJet2dR = dR_pair22;
+
+  myEvent.resLeadMuJet1dR = dR_pair11;
+  myEvent.resLeadMuJet2dR = dR_pair12;
+
+
+  return true;
+
+}
+bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout << "RES FSB SELECTION CALL" << std::endl;
+  std::cout << "RES FSB LEPTON SELECTION CALL" << std::endl;
+  if ( !resolvedFBSleptonSelection(iEvent, myEvent) ) return false;
+  std::cout << "RES FSB JET SELECTION CALL" << std::endl;
   if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
 
   if (myEvent.myResCandJets.size() < 2) {
