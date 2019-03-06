@@ -1514,6 +1514,7 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   const pat::Muon* subleadMuon;
   const pat::Muon* selMuon;
   if (useResMu) {
+    if(myEvent.resolvedANAMuons.size() < 2) return false;
     if(myEvent.resolvedANAMuons[0] == NULL) return false;
     if(myEvent.resolvedANAMuons[1] == NULL) return false;
     subleadMuon = myEvent.resolvedANAMuons[1];
@@ -2136,6 +2137,9 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
   //CHECK THAT AT LEAST ONE IS ABOVE 60 GEV
   
   if( (leadElec->pt() < 60) && (leadMuon->pt() < 60) ) return false;
+
+  myEvent.resFSBMuon = leadMuon;
+  myEvent.resFSBElec = leadElec;
    
   return true;
 } 
@@ -2405,14 +2409,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     if (CHF == 0) continue;
     if (CHM == 0) continue;
     //if (CEMF > .99) continue;
-    if(m_era == "2016"){
-      if (CEMF > .90) continue; 
-    }else if(m_era == "2017"){
-      if (CEMF > .80) continue;
-    }else if(m_era == "2018"){
-      if (CEMF > .80) continue;
-    }
-
+    if (CEMF > .90) continue; 
 
     resCandJets.push_back(&(*iJet));
     std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
@@ -2433,6 +2430,56 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     std::cout << "resCandJets[i]->muonEnergyFraction(): " << resCandJets[i]->muonEnergyFraction() << std::endl;
   }*/
   myEvent.myResCandJets = resCandJets;
+  return true;
+
+}
+bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout << "STARTING JET SELECTION FOR RESOLVED ANALYSIS" << std::endl;
+  edm::Handle<std::vector<pat::Jet>> recoJetsAK4;
+  iEvent.getByToken(m_AK4recoCHSJetsToken, recoJetsAK4);
+  assert(recoJetsAK4.isValid());
+  std::vector<const pat::Jet*> resFSBCandJets;
+
+  //CHECK FOR THE FSB LEPTONS
+  if (myEvent.resFSBMuon == NULL || myEvent.resFSBElec == NULL ) {
+    std::cout << "NOT ENOUGH LEPTONS, EXITING RESOLVED FSB JET SELECTION" << std::endl;
+    return false;
+  }
+  for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK4->begin(); iJet != recoJetsAK4->end(); iJet++) {
+    if ( iJet->pt() < 40 ) continue;
+    if ( fabs(iJet->eta()) > 2.4) continue;
+    std::cout<<"POSSIBLE JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
+    std::cout << "iJet->muonEnergyFraction(): " << iJet->muonEnergyFraction() << " iJet->chargedEmEnergyFraction(): " << iJet->chargedEmEnergyFraction() << std::endl;
+    double NHF  =                iJet->neutralHadronEnergyFraction();
+    double NEMF =                iJet->neutralEmEnergyFraction();
+    double CHF  =                iJet->chargedHadronEnergyFraction();
+    double CEMF =                iJet->chargedEmEnergyFraction();
+    double NumConst =            iJet->chargedMultiplicity()+iJet->neutralMultiplicity();
+    double MUF      =            iJet->muonEnergyFraction();
+    double CHM      =            iJet->chargedMultiplicity(); 
+    //APPLYING TIGHT QUALITY CUTS
+    if (NHF > .9) continue;
+    if (NEMF > .9) continue;
+    if (NumConst <= 1) continue;
+    if (MUF >= .8) continue; //MAKE SURE THE AREN'T MUONS
+    //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
+    if (CHF == 0) continue;
+    if (CHM == 0) continue;
+    //if (CEMF > .99) continue;
+    if (CEMF > .90) continue; 
+    //MUST BE AWAY FROM LEPTONS
+    
+    resFSBCandJets.push_back(&(*iJet));
+    std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
+    std::cout << "iJet->muonEnergyFraction(): " << iJet->muonEnergyFraction() << " iJet->chargedEmEnergyFraction(): " << iJet->chargedEmEnergyFraction() << std::endl;
+
+  }
+  //ONLY THE FIRST TWO JETS ARE CONSIDERED
+  /*std::sort(resCandJets.begin(), resCandJets.end(), ::wrTools::compareMUFCandidatePointer);
+  for(unsigned int i=0; i < resCandJets.size(); i++){
+    std::cout << "resCandJets[i]->muonEnergyFraction(): " << resCandJets[i]->muonEnergyFraction() << std::endl;
+  }*/
+  myEvent.myResFSBCandJets = resFSBCandJets;
   return true;
 
 }
@@ -2599,9 +2646,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
     //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
     if (CHF == 0) continue;
     if (CHM == 0) continue;
-    if (m_era == "2016"){
-      if (CEMF > .99) continue;
-    }
+    if (CEMF > .99) continue;
     //ANALYSIS SPECIFIC CUTS
    // if (MUF <= .05) continue;
     //JETS PASSING CUTS
@@ -3847,45 +3892,37 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   if (myEvent.myResFSBCandJets.size() < 2) {
     return false;
   } else {
-//    myEvent.ResCutProgress++;
-    std::sort(myEvent.myResCandJets.begin(), myEvent.myResCandJets.end(), ::wrTools::compareEtCandidatePointer);
-    double dR_pair = sqrt(::wrTools::dR2(myEvent.myResCandJets[0]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.myResCandJets[0]->phi(),myEvent.myResCandJets[1]->phi()));
-    std::cout<< "Jets dR_pair: " << dR_pair << std::endl;
+    myEvent.ResFSBCutProgress++;
+    std::sort(myEvent.myResFSBCandJets.begin(), myEvent.myResFSBCandJets.end(), ::wrTools::compareEtCandidatePointer);
+    double dR_pair = sqrt(::wrTools::dR2(myEvent.myResFSBCandJets[0]->eta(),myEvent.myResFSBCandJets[1]->eta(),myEvent.myResFSBCandJets[0]->phi(),myEvent.myResFSBCandJets[1]->phi()));
+    std::cout<< "FSB Jets dR_pair: " << dR_pair << std::endl;
     if (dR_pair < 0.4) return false;
-     myEvent.resJetDR = dR_pair;
+     myEvent.resFSBJetDR = dR_pair;
   }
-  myEvent.ResCutProgress++;
+  myEvent.ResFSBCutProgress++;
 
-  std::cout << "dR(AK4 jets, subleading muon) SELECTION" << std::endl;
-  double dR_jet1_muon2 = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[1]->eta(),myEvent.myResCandJets[0]->eta(),myEvent.resolvedANAMuons[1]->phi(),myEvent.myResCandJets[0]->phi()));
-  double dR_jet2_muon2 = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[1]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.resolvedANAMuons[1]->phi(),myEvent.myResCandJets[1]->phi()));
-  std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << " dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
-  if (dR_jet1_muon2 < 0.4 || dR_jet2_muon2 < 0.4) return false;
-  myEvent.ResCutProgress++;
+  std::cout << "dR(AK4 jets, FSB muon) SELECTION" << std::endl;
+  double dR_jet1_muon = sqrt(::wrTools::dR2(myEvent.resFSBMuon->eta(),myEvent.myResFSBCandJets[0]->eta(),myEvent.resFSBMuon->phi(),myEvent.myResFSBCandJets[0]->phi()));
+  double dR_jet2_muon = sqrt(::wrTools::dR2(myEvent.resFSBMuon->eta(),myEvent.myResFSBCandJets[1]->eta(),myEvent.resFSBMuon->phi(),myEvent.myResFSBCandJets[1]->phi()));
+  std::cout << "dR_jet1_muon: " << dR_jet1_muon << " dR_jet2_muon: " << dR_jet2_muon << std::endl;
+  if (dR_jet1_muon < 0.4 || dR_jet2_muon < 0.4) return false;
+  myEvent.ResFSBCutProgress++;
 
-  std::cout << "dR between muons" << std::endl;
-  double dR_pair = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[0]->eta(),myEvent.resolvedANAMuons[1]->eta(),myEvent.resolvedANAMuons[0]->phi(),myEvent.resolvedANAMuons[1]->phi()));
-  std::cout << "Muons dR_pair: " << dR_pair << std::endl;
+  std::cout << "dR between FSB leptons" << std::endl;
+  double dR_pair = sqrt(::wrTools::dR2(myEvent.resFSBMuon->eta(),myEvent.resFSBElec->eta(),myEvent.resFSBMuon->phi(),myEvent.resFSBElec->phi()));
+  std::cout << "FSB leptons dR_pair: " << dR_pair << std::endl;
   if (dR_pair < 0.4) return false;
-  myEvent.ResCutProgress++;
-
-  std::cout << "subleading Muon pT" << std::endl;
-  if (myEvent.resolvedANAMuons[1]->pt() < 53) return false;
-  myEvent.ResCutProgress++;
-
-  std::cout << "subleading Muon ISO" << std::endl;
-  if (myEvent.resolvedANAMuons[1]->isolationR03().sumPt/myEvent.resolvedANAMuons[1]->pt() > 0.1) return false;
-  myEvent.ResCutProgress++;
+  myEvent.ResFSBCutProgress++;
 
   std::cout << "RES OBJECT SELECTIONS PASSED" << std::endl;
 
-  const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
-  const pat::Muon* mu2 =  myEvent.resolvedANAMuons[1];
-  const pat::Jet*  jet1 = myEvent.myResCandJets[0];
-  const pat::Jet*  jet2 = myEvent.myResCandJets[1];
+  const pat::Muon*     mu   =  myEvent.resFSBMuon;
+  const pat::Electron* el   =  myEvent.resFSBElec;
+  const pat::Jet*  jet1 = myEvent.myResFSBCandJets[0];
+  const pat::Jet*  jet2 = myEvent.myResFSBCandJets[1];
 
   //MLL
-  double mll = (mu1->p4()+mu2->p4()).mass();
+  double mll = (mu->p4()+el->p4()).mass();
   myEvent.resMLL = mll;
   if (mll < 200) return false;  // 2017
 //  if (mll < 150) return false;// korea
@@ -3894,13 +3931,13 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   myEvent.ResCutProgress++;
 
   //CHECK DR ASSOCIATIONS
-  double dR_pair12 = sqrt(::wrTools::dR2(mu1->eta(),jet2->eta(),mu1->phi(),jet2->phi()));
+  double dR_pair12 = sqrt(::wrTools::dR2(mu->eta(),jet2->eta(),mu->phi(),jet2->phi()));
   std::cout << "RES 12" << dR_pair12<< std::endl;
-  double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),jet1->eta(),mu2->phi(),jet1->phi()));
+  double dR_pair21 = sqrt(::wrTools::dR2(el->eta(),jet1->eta(),el->phi(),jet1->phi()));
   std::cout << "RES 21" << dR_pair21<< std::endl;
-  double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),jet2->eta(),mu2->phi(),jet2->phi()));
+  double dR_pair22 = sqrt(::wrTools::dR2(el->eta(),jet2->eta(),el->phi(),jet2->phi()));
   std::cout << "RES 22" << dR_pair22<< std::endl;
-  double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),jet1->eta(),mu1->phi(),jet1->phi()));
+  double dR_pair11 = sqrt(::wrTools::dR2(mu->eta(),jet1->eta(),mu->phi(),jet1->phi()));
   std::cout << "RES 11" << dR_pair11<< std::endl;
 
   if (dR_pair12 < 0.4) return false;
@@ -3908,22 +3945,22 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   if (dR_pair22 < 0.4) return false;
   if (dR_pair11 < 0.4) return false;
   std::cout << "RES FOUR OBJECT SEPARATION PASSED" << std::endl;
-  myEvent.ResCutProgress++;
+  myEvent.ResFSBCutProgress++;
     
   //CHECK 4 OBJECT MASS
-  double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
+  double resMass = (mu->p4() + el->p4() + jet1->p4() + jet2->p4()).mass();
 
   if (resMass < 600) return false;
   std::cout << "RES FOUR MASS PASSED" << std::endl;
-  myEvent.ResCutProgress++;
+  myEvent.ResFSBCutProgress++;
 
-  myEvent.resolvedRECOmass = resMass; 
+  myEvent.resolvedFSBRECOmass = resMass; 
 
-  myEvent.resSubleadMuJet1dR = dR_pair21;
-  myEvent.resSubleadMuJet2dR = dR_pair22;
+  myEvent.resFSBElecJet1dR = dR_pair21;
+  myEvent.resFSBElecJet2dR = dR_pair22;
 
-  myEvent.resLeadMuJet1dR = dR_pair11;
-  myEvent.resLeadMuJet2dR = dR_pair12;
+  myEvent.resFSBMuonJet1dR = dR_pair11;
+  myEvent.resFSBMuonJet2dR = dR_pair12;
 
 
   return true;

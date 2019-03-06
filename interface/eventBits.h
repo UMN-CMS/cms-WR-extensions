@@ -92,6 +92,7 @@ public:
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
   std::vector<const pat::Jet*>      myResCandJets;
+  std::vector<const pat::Jet*>      myResFSBCandJets;
   std::vector<const pat::Electron*> myElectronCandsHighPt200;
   std::vector<const pat::Electron*> myElectronCandsHighPt150;
   std::vector<const pat::Electron*> myElectronCandsHighPt100;
@@ -114,6 +115,10 @@ public:
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF_JECDown;
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF_JERUp;
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_noLSF_JERDown;
+
+  const pat::Muon*                  resFSBMuon;
+  const pat::Electron*              resFSBElec;
+  
 
   const pat::Electron*              myElectronCand;
   const pat::Electron*              myElectronCand_noISO;
@@ -144,6 +149,7 @@ public:
   int cutProgress;
   int ResCutProgress;
   int FSBcutProgress;
+  int ResFSBCutProgress;
   bool passesWR2016;
   int muons10;
   int ak8jets40;
@@ -224,6 +230,13 @@ public:
 
   double resMLL;
   double resolvedSubleadMuPt;
+
+  double resFSBJetDR;
+  double resolvedFSBRECOmass; 
+  double resFSBElecJet1dR;
+  double resFSBElecJet2dR;
+  double resFSBMuonJet1dR;
+  double resFSBMuonJet2dR;
 
   //GEN THINGS
   double muon1muon2dR;
