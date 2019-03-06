@@ -2405,7 +2405,14 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     if (CHF == 0) continue;
     if (CHM == 0) continue;
     //if (CEMF > .99) continue;
-    if (CEMF > .90) continue; 
+    if(m_era == "2016"){
+      if (CEMF > .90) continue; 
+    }else if(m_era == "2017"){
+      if (CEMF > .80) continue;
+    }else if(m_era == "2018"){
+      if (CEMF > .80) continue;
+    }
+
 
     resCandJets.push_back(&(*iJet));
     std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
@@ -2592,7 +2599,9 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
     //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
     if (CHF == 0) continue;
     if (CHM == 0) continue;
-    if (CEMF > .99) continue;
+    if (m_era == "2016"){
+      if (CEMF > .99) continue;
+    }
     //ANALYSIS SPECIFIC CUTS
    // if (MUF <= .05) continue;
     //JETS PASSING CUTS
