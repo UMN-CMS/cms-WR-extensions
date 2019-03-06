@@ -2083,7 +2083,7 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
   
   return true;
 }
-bool cmsWRextension::resolvedFBSleptonSelection(const edm::Event& iEvent, eventBits& myEvent) {
+bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES FSB LEPTON SELECTION" << std::endl;
   std::vector<const pat::Electron*> resElecs;
   std::vector<const pat::Muon*> resMus;
@@ -2094,6 +2094,7 @@ bool cmsWRextension::resolvedFBSleptonSelection(const edm::Event& iEvent, eventB
   edm::Handle<std::vector<pat::Electron>> highElectrons;
   iEvent.getByToken(m_highElectronToken, highElectrons);
 
+  //LOOK FOR MUONS
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
 
    if( fabs(iMuon->eta()) > 2.4) continue;
@@ -2104,27 +2105,37 @@ bool cmsWRextension::resolvedFBSleptonSelection(const edm::Event& iEvent, eventB
       resMus.push_back(&(*iMuon));
     }
   }
+  for(std::vector<pat::Electron>::const_iterator iElec = highElectrons->begin(); iElec != highElectrons->end(); iElec++) {
+    //PHASE SPACE CUTS
+    if( fabs(iElec->eta()) > 2.4) continue; 
+    if( iElec->pt() < 53) continue;
+    //HEEP ID
+    const vid::CutFlowResult* vidResult =  iElec->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+    if(vidResult == NULL) {
+      std::cout << "ERROR CANNOT FIND ELECTRON VID RESULTS" << std::endl;
+      return false;
+    }
+    
+    //how to check if everything passed:
+    const bool heepIDVID = vidResult->cutFlowPassed();
 
-//  myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
-//  if (myEvent.NresolvedANAMuonCands < 2) return false;
-//  myEvent.ResCutProgress++;
-//
-//  std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
-//
-//  std::cout << "high pT lead muon" << std::endl;
-//  //if (resolvedANAMuons[0]->pt() <= 52) return false;  //korea
-//  //if (!resolvedANAMuons[0]->isHighPtMuon(*myEvent.PVertex)) return false;
-//  std::cout << "60 GeV lead muon" << std::endl;
-//  if (resolvedANAMuons[0]->pt() <= 60) return false;
-//  myEvent.ResCutProgress++;
-//  std::cout << "isolation of lead muon" << std::endl;
-//  if (resolvedANAMuons[0]->isolationR03().sumPt/resolvedANAMuons[0]->pt() > 0.1) return false;
-//  myEvent.ResCutProgress++;
-//
-//  myEvent.resolvedANAMuons = resolvedANAMuons;
-//
-//
-//  myEvent.resolvedSubleadMuPt = resolvedANAMuons[1]->pt();
+    if (!heepIDVID) continue;
+
+    resElecs.push_back(&(*iElec));
+  }
+  if (resElecs.size() < 1) return false;
+  if (resMus.size()   < 1) return false;
+
+  if (resElecs.size() > 1) std::sort(resElecs.begin(), resElecs.end(), ::wrTools::compareEtCandidatePointer);
+  if (resMus.size()   > 1) std::sort(resMus.begin(),   resMus.end(),   ::wrTools::compareEtCandidatePointer); 
+
+  //NOW WE TAKE THE LEAD ELECTRON AND MUON AS OUR LEADS
+  const pat::Electron* leadElec = resElecs[0];
+  const pat::Muon*     leadMuon = resMus[0];
+
+  //CHECK THAT AT LEAST ONE IS ABOVE 60 GEV
+  
+  if( (leadElec->pt() < 60) && (leadMuon->pt() < 60) ) return false;
    
   return true;
 } 
@@ -3820,14 +3831,14 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
 bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES FSB SELECTION CALL" << std::endl;
   std::cout << "RES FSB LEPTON SELECTION CALL" << std::endl;
-  if ( !resolvedFBSleptonSelection(iEvent, myEvent) ) return false;
+  if ( !resolvedFSBleptonSelection(iEvent, myEvent) ) return false;
   std::cout << "RES FSB JET SELECTION CALL" << std::endl;
-  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
+  if ( !resolvedFSBJetSelection(iEvent, myEvent) )  return false;
 
-  if (myEvent.myResCandJets.size() < 2) {
+  if (myEvent.myResFSBCandJets.size() < 2) {
     return false;
   } else {
-    myEvent.ResCutProgress++;
+//    myEvent.ResCutProgress++;
     std::sort(myEvent.myResCandJets.begin(), myEvent.myResCandJets.end(), ::wrTools::compareEtCandidatePointer);
     double dR_pair = sqrt(::wrTools::dR2(myEvent.myResCandJets[0]->eta(),myEvent.myResCandJets[1]->eta(),myEvent.myResCandJets[0]->phi(),myEvent.myResCandJets[1]->phi()));
     std::cout<< "Jets dR_pair: " << dR_pair << std::endl;
