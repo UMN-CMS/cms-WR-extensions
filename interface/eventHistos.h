@@ -320,6 +320,22 @@ class eventHistos {
   TH1D* m_resLeadMuParton2dR;
   TH1D* m_resMLL;
   TH1D* m_resolvedSubleadMuPt;
+
+  TH1D* m_resFSBJetDR;
+  TH1D* m_resolvedFSBRECOmass; 
+  TH1D* m_resFSBElecJet1dR;
+  TH1D* m_resFSBElecJet2dR;
+  TH1D* m_resFSBMuonJet1dR;
+  TH1D* m_resFSBMuonJet2dR;
+
+
+  TH1D* m_resFSBElec_pt ;
+  TH1D* m_resFSBElec_phi;
+  TH1D* m_resFSBElec_eta;
+
+  TH1D* m_resFSBMuon_pt ;
+  TH1D* m_resFSBMuon_phi;
+  TH1D* m_resFSBMuon_eta;
 //
   TH1D* m_MET;
   TH1D* m_MET_selJetdPhi;

@@ -1737,6 +1737,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent
 
   if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50)  return true;
 
+
   return false;
 }
 bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event& iEvent, eventBits& myEvent) {
@@ -2148,6 +2149,14 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
   //NOW WE TAKE THE LEAD ELECTRON AND MUON AS OUR LEADS
   const pat::Electron* leadElec = resElecs[0];
   const pat::Muon*     leadMuon = resMus[0];
+
+  myEvent.resFSBElec_pt  = leadElec->pt();
+  myEvent.resFSBElec_phi = leadElec->phi();
+  myEvent.resFSBElec_eta = leadElec->eta();
+
+  myEvent.resFSBMuon_pt  = leadMuon->pt();
+  myEvent.resFSBMuon_phi = leadMuon->phi();
+  myEvent.resFSBMuon_eta = leadMuon->eta();
 
   //CHECK THAT AT LEAST ONE IS ABOVE 60 GEV
   
@@ -3936,14 +3945,15 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   const pat::Jet*  jet1 = myEvent.myResFSBCandJets[0];
   const pat::Jet*  jet2 = myEvent.myResFSBCandJets[1];
 
+
   //MLL
   double mll = (mu->p4()+el->p4()).mass();
-  myEvent.resMLL = mll;
+//  myEvent.resMLL = mll;
   if (mll < 200) return false;  // 2017
 //  if (mll < 150) return false;// korea
 //  if (mll < 175) return false;// middle
   std::cout << "RES MLL PASSED" << std::endl;
-  myEvent.ResCutProgress++;
+  myEvent.ResFSBCutProgress++;
 
   //CHECK DR ASSOCIATIONS
   double dR_pair12 = sqrt(::wrTools::dR2(mu->eta(),jet2->eta(),mu->phi(),jet2->phi()));
@@ -4205,10 +4215,11 @@ cmsWRextension::beginJob()
 //    m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 3, m_outputTag, 1);
 //    m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 3, m_outputTag, 1);
 
-    m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 3, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 3, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 3, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
   }
   if (m_doGen && !m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
@@ -4252,10 +4263,11 @@ cmsWRextension::beginJob()
     //m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 2, m_outputTag, 1);
     //m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 2, m_outputTag, 1);
     //ABCD
-    m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 2, m_outputTag, 2);
+    //m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
   }
   if (m_doReco && m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
