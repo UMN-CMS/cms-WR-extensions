@@ -215,6 +215,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   myRECOevent.outputTag = m_outputTag;
   //booleans to check for 4 different selections
   bool passesResRECO = false;
+  bool passesResFSBRECO = false;
   bool passesResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 //  bool passesResModGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 
@@ -231,6 +232,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   //this bool is true if the event passes the Mmumu Zmass region cut
   bool ZMASS = false;
   bool ZMASSres = false;
+  bool ZMASSFSBres = false;
   //is quality signal event
   bool isGoodSignal = false;
   //these are for the JEC/JER toy regions
@@ -309,8 +311,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
     }
     if (m_doReco || !m_isMC) {
-      passesResRECO = passResRECO(iEvent , myRECOevent);
-      ZMASSres = subLeadingMuonZMass(iEvent, myRECOevent, false, true);
+      passesResRECO    = passResRECO(iEvent , myRECOevent);
+      passesResFSBRECO = passFSBResRECO(iEvent, myRECOevent);
+      ZMASSres         = subLeadingMuonZMass(iEvent, myRECOevent, false, true);
+      ZMASSFSBres      = subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true);
       std::cout << "myRECOevent.myResCandJets.size(): " << myRECOevent.myResCandJets.size() << " myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
       std::cout<<"running preselection reco"<<std::endl;
       if(preSelectBoostReco(iEvent, iSetup, myRECOevent)) {
@@ -453,9 +457,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   //FILL STUFF
-  passesResRECO = (passesResRECO && muonTrigPass && !ZMASSres);
+  passesResRECO    = (passesResRECO    && muonTrigPass && !ZMASSres   );
+  passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres);
   ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
-  if(ZMASSres) m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
+
+  if(ZMASSres)         m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
+  if(passesResFSBRECO) m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
 
   if(passesResRECO)myRECOevent.RECOcategory = 1;
   else if(passesBoostRECO) myRECOevent.RECOcategory = 2;
@@ -1212,65 +1219,65 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
 
   }
   if( electronJetPairs_noISO.size() > 0 ) {
-    std::cout << "PROCESSING NONISO ELECTRON JET PAIRS" << std::endl;
-    myRECOevent.myElectronJetPairs_noISO = electronJetPairs_noISO;
-    std::sort(electronJetPairs_noISO.begin(),electronJetPairs_noISO.end(),::wrTools::comparePairMassPointerTAddJet);
+    std::cout << "##NOT PROCESSING NONISO ELECTRON JET PAIRS### WE DON'T CARE ANY MORE" << std::endl;
+  //  myRECOevent.myElectronJetPairs_noISO = electronJetPairs_noISO;
+  //  std::sort(electronJetPairs_noISO.begin(),electronJetPairs_noISO.end(),::wrTools::comparePairMassPointerTAddJet);
 
-    jetVec_temp.SetPtEtaPhiE( electronJetPairs_noISO[0].first->pT, electronJetPairs_noISO[0].first->eta, electronJetPairs_noISO[0].first->phi, electronJetPairs_noISO[0].first->E );
+  //  jetVec_temp.SetPtEtaPhiE( electronJetPairs_noISO[0].first->pT, electronJetPairs_noISO[0].first->eta, electronJetPairs_noISO[0].first->phi, electronJetPairs_noISO[0].first->E );
 
-    math::XYZTLorentzVector jetVec;
-    jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
+  //  math::XYZTLorentzVector jetVec;
+  //  jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
 
-    myRECOevent.leadAK8JetElectronMassVal_noISO = ( jetVec + electronJetPairs_noISO[0].second->p4() ).mass();
+  //  myRECOevent.leadAK8JetElectronMassVal_noISO = ( jetVec + electronJetPairs_noISO[0].second->p4() ).mass();
 
-    myRECOevent.selectedElectron_noISO_Pt  = electronJetPairs_noISO[0].second->pt();
-    myRECOevent.selectedElectron_noISO_Phi = electronJetPairs_noISO[0].second->phi();
-    myRECOevent.selectedElectron_noISO_Eta = electronJetPairs_noISO[0].second->eta();
+  //  myRECOevent.selectedElectron_noISO_Pt  = electronJetPairs_noISO[0].second->pt();
+  //  myRECOevent.selectedElectron_noISO_Phi = electronJetPairs_noISO[0].second->phi();
+  //  myRECOevent.selectedElectron_noISO_Eta = electronJetPairs_noISO[0].second->eta();
 
-    //NOW WE ACCES THE VIDRESULT AGAIN FOR THE CHOSEN ELECTRON
-    const vid::CutFlowResult* vidResult =  electronJetPairs_noISO[0].second->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+  //  //NOW WE ACCES THE VIDRESULT AGAIN FOR THE CHOSEN ELECTRON
+  //  const vid::CutFlowResult* vidResult =  electronJetPairs_noISO[0].second->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
 
-    if(myRECOevent.selectedElectron_noISO_Eta < 1.4442) {//BARREL
-      myRECOevent.selElectron_noISO_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
-      myRECOevent.selElectron_noISO_barrel_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
-      myRECOevent.selElectron_noISO_barrel_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
-      myRECOevent.selElectron_noISO_barrel_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
-//  NOT SUPPORTED    myRECOevent.selElectron_noISO_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
-      myRECOevent.selElectron_noISO_barrel_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
-      myRECOevent.selElectron_noISO_barrel_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
-      myRECOevent.selElectron_noISO_barrel_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
-      myRECOevent.selElectron_noISO_barrel_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
-    }
-    if(myRECOevent.selectedElectron_noISO_Eta > 1.566) {//ENDCAP
-      myRECOevent.selElectron_noISO_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
-      myRECOevent.selElectron_noISO_endcap_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
-      myRECOevent.selElectron_noISO_endcap_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
-      myRECOevent.selElectron_noISO_endcap_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
-//  NOT SUPPORTED    myRECOevent.selElectron_noISO_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
-      myRECOevent.selElectron_noISO_endcap_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
-      myRECOevent.selElectron_noISO_endcap_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
-      myRECOevent.selElectron_noISO_endcap_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
-      myRECOevent.selElectron_noISO_endcap_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
-    }
-    myRECOevent.selectedJet_EleNoISO_Pt   = electronJetPairs_noISO[0].first->pT;
-    myRECOevent.selectedJet_EleNoISO_Phi  = electronJetPairs_noISO[0].first->phi;
-    myRECOevent.selectedJet_EleNoISO_Eta  = electronJetPairs_noISO[0].first->eta;
-    myRECOevent.selectedJet_EleNoISO_Mass = electronJetPairs_noISO[0].first->SDmass;
+  //  if(myRECOevent.selectedElectron_noISO_Eta < 1.4442) {//BARREL
+  //    myRECOevent.selElectron_noISO_barrel_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+  //    myRECOevent.selElectron_noISO_barrel_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+  //    myRECOevent.selElectron_noISO_barrel_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+  //    myRECOevent.selElectron_noISO_barrel_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+////  NOT SUPPORTED    myRECOevent.selElectron_noISO_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+  //    myRECOevent.selElectron_noISO_barrel_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+  //    myRECOevent.selElectron_noISO_barrel_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+  //    myRECOevent.selElectron_noISO_barrel_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+  //    myRECOevent.selElectron_noISO_barrel_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
+  //  }
+  //  if(myRECOevent.selectedElectron_noISO_Eta > 1.566) {//ENDCAP
+  //    myRECOevent.selElectron_noISO_endcap_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED); 
+  //    myRECOevent.selElectron_noISO_endcap_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+  //    myRECOevent.selElectron_noISO_endcap_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+  //    myRECOevent.selElectron_noISO_endcap_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+////  NOT SUPPORTED    myRECOevent.selElectron_noISO_barrel_E2x5vE5x5          = vidResult->getValueCutUpon(HEEPV70::TRKISO);
+  //    myRECOevent.selElectron_noISO_endcap_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+  //    myRECOevent.selElectron_noISO_endcap_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+  //    myRECOevent.selElectron_noISO_endcap_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+  //    myRECOevent.selElectron_noISO_endcap_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
+  //  }
+  //  myRECOevent.selectedJet_EleNoISO_Pt   = electronJetPairs_noISO[0].first->pT;
+  //  myRECOevent.selectedJet_EleNoISO_Phi  = electronJetPairs_noISO[0].first->phi;
+  //  myRECOevent.selectedJet_EleNoISO_Eta  = electronJetPairs_noISO[0].first->eta;
+  //  myRECOevent.selectedJet_EleNoISO_Mass = electronJetPairs_noISO[0].first->SDmass;
 
-    if(electronJetPairs_noISO[0].first->tau1==0){
-      myRECOevent.selectedJet_EleNoISO_Tau21 = -9999.;
-    }else{
-      myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
-    }
-    additionalMuons(iEvent, myRECOevent, true, false, 0, false);
-    if( myRECOevent.myMuonCands.size() < 1){
-      std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
-      return false;
-    }
-    if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true)){
-        std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
-        return false;
-    }
+  //  if(electronJetPairs_noISO[0].first->tau1==0){
+  //    myRECOevent.selectedJet_EleNoISO_Tau21 = -9999.;
+  //  }else{
+  //    myRECOevent.selectedJet_EleNoISO_Tau21 = (electronJetPairs_noISO[0].first->tau2)/(electronJetPairs_noISO[0].first->tau1);
+  //  }
+  //  additionalMuons(iEvent, myRECOevent, true, false, 0, false);
+  //  if( myRECOevent.myMuonCands.size() < 1){
+  //    std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
+  //    return false;
+  //  }
+  //  if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true)){
+  //      std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
+  //      return false;
+  //  }
   }
 
 
@@ -1708,21 +1715,28 @@ int cmsWRextension::subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventB
     return 0;
   }
 }
-bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent) {
-  if(myEvent.mySubleadMuon == 0) return false;
-
-  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
-  const pat::Electron* selEl;
-
-  selEl   = myEvent.myElectronCand;
+bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool useResLeps) {
+  const pat::Muon* subleadMuon = NULL;
+  const pat::Electron* selEl   = NULL;
+  if (useResLeps) {
+    if ( myEvent.resFSBMuon == NULL ) return false;
+    if ( myEvent.resFSBElec == NULL ) return false;
+    subleadMuon = myEvent.resFSBMuon;
+    selEl       = myEvent.resFSBElec;
+  } else {
+    if ( myEvent.myElectronCand == NULL ) return false;
+    if ( myEvent.mySubleadMuon  == NULL ) return false;
+    selEl = myEvent.myElectronCand;
+    subleadMuon       = myEvent.mySubleadMuon;
+  }
+  if ( subleadMuon == NULL ) return false;
+  if ( selEl       == NULL ) return false;
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
-    return false;
-  }else{
-    return true;
-  }
+  if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50)  return false;
+
+  return true;
 }
 bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event& iEvent, eventBits& myEvent) {
 
@@ -1733,7 +1747,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
+  if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50){
     return true;
   }else{
     return false;
@@ -1748,7 +1762,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECUp(const edm::Event& 
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
+  if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50){
     return true;
   }else{
     return false;
@@ -1763,7 +1777,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECDown(const edm::Event
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
+  if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50){
     return true;
   }else{
     return false;
@@ -1778,7 +1792,7 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERUp(const edm::Event& 
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
+  if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50){
     return true;
   }else{
     return false;
@@ -1793,55 +1807,55 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERDown(const edm::Event
 
   double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
 
-  if(subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50){
+  if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50){
     return true;
   }else{
     return false;
   }
 }
-bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
-  //CHECK IF WE HAVE A SUBLEADING MUON
-  std::cout << "FSB ZMASS" << std::endl;
-  if(myEvent.mySubleadMuon == 0) return true;
-
-  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
-  std::cout << "SUBLEAD MUON SET" << std::endl;
-  const pat::Electron* selEl;
-  const baconhep::TAddJet*  selJet;
-  std::cout << "SUBLEAD MUON SET" << std::endl;
-
-  if (!nonISO) {
-    std::cout << "ISO ZMASS" << std::endl;
-    selEl   = myEvent.myElectronCand;
-    selJet  = myEvent.myElectronJetPairs[0].first;
-    if (selEl == 0)
-      std::cout << "CRAP!" << std::endl;
-    myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
-    myEvent.subleadMuon_selElectronPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
-    myEvent.subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
-    myEvent.subleadMuon_selElectronPt   = (subleadMuon->p4() + selEl->p4()).pt();
-  } else {
-    std::cout << "NONISO ZMASS" << std::endl;
-    selEl   = myEvent.myElectronCand_noISO;
-    selJet  = myEvent.myElectronJetPairs_noISO[0].first;
-    if (selEl == 0)
-      std::cout << "CRAP!" << std::endl;
-    myEvent.subleadMuon_selJetdPhi_EleNonISO      = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
-    myEvent.subleadMuon_selElectronPhi_EleNonISO  = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
-    myEvent.subleadMuon_selElectronMass_EleNonISO = (subleadMuon->p4() + selEl->p4()).mass();
-    myEvent.subleadMuon_selElectronPt_EleNonISO   = (subleadMuon->p4() + selEl->p4()).pt();
-  }
-
-  myEvent.subleadMuonEt           = subleadMuon->et();
-
-  if(nonISO)
-    if (myEvent.subleadMuon_selElectronMass_EleNonISO < 200 && myEvent.subleadMuon_selMuonMass > 50)
-      return true;
-  if(!nonISO)
-    if (myEvent.subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50) 
-      return true;
-  return false;
-}
+//bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool nonISO) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
+//  //CHECK IF WE HAVE A SUBLEADING MUON
+//  std::cout << "FSB ZMASS" << std::endl;
+//  if(myEvent.mySubleadMuon == 0) return true;
+//
+//  const pat::Muon* subleadMuon = myEvent.mySubleadMuon;
+//  std::cout << "SUBLEAD MUON SET" << std::endl;
+//  const pat::Electron* selEl;
+//  const baconhep::TAddJet*  selJet;
+//  std::cout << "SUBLEAD MUON SET" << std::endl;
+//
+//  if (!nonISO) {
+//    std::cout << "ISO ZMASS" << std::endl;
+//    selEl   = myEvent.myElectronCand;
+//    selJet  = myEvent.myElectronJetPairs[0].first;
+//    if (selEl == 0)
+//      std::cout << "CRAP!" << std::endl;
+//    myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+//    myEvent.subleadMuon_selElectronPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
+//    myEvent.subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+//    myEvent.subleadMuon_selElectronPt   = (subleadMuon->p4() + selEl->p4()).pt();
+//  } else {
+//    std::cout << "NONISO ZMASS" << std::endl;
+//    selEl   = myEvent.myElectronCand_noISO;
+//    selJet  = myEvent.myElectronJetPairs_noISO[0].first;
+//    if (selEl == 0)
+//      std::cout << "CRAP!" << std::endl;
+//    myEvent.subleadMuon_selJetdPhi_EleNonISO      = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+//    myEvent.subleadMuon_selElectronPhi_EleNonISO  = fabs(reco::deltaPhi(subleadMuon->phi(),selEl->phi()));
+//    myEvent.subleadMuon_selElectronMass_EleNonISO = (subleadMuon->p4() + selEl->p4()).mass();
+//    myEvent.subleadMuon_selElectronPt_EleNonISO   = (subleadMuon->p4() + selEl->p4()).pt();
+//  }
+//
+//  myEvent.subleadMuonEt           = subleadMuon->et();
+//
+//  if(nonISO)
+//    if (myEvent.subleadMuon_selElectronMass_EleNonISO < 200 && myEvent.subleadMuon_selMuonMass > 50)
+//      return true;
+//  if(!nonISO)
+//    if (myEvent.subleadMuon_selElectronMass < 200 && myEvent.subleadMuon_selMuonMass > 50) 
+//      return true;
+//  return false;
+//}
 //CHECK ADDITIONAL MUONS
 bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion, bool ISO) {
   std::cout << "Round-up of the rag-tag muons" << std::endl;
@@ -4160,6 +4174,7 @@ cmsWRextension::beginJob()
     m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
 
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 3, m_outputTag, 0);
+    m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 0);
 
 //    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
 //    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
@@ -4217,6 +4232,7 @@ cmsWRextension::beginJob()
     m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")), 2, m_outputTag, 0);
 
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 2, m_outputTag, 0);
+    m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 2, m_outputTag, 0);
 
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
