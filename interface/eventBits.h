@@ -238,6 +238,17 @@ public:
   double resFSBMuonJet1dR;
   double resFSBMuonJet2dR;
 
+
+  double resFSBElec_pt ;
+  double resFSBElec_phi;
+  double resFSBElec_eta;
+
+  double resFSBMuon_pt ;
+  double resFSBMuon_phi;
+  double resFSBMuon_eta;
+
+
+
   //GEN THINGS
   double muon1muon2dR;
   double muon1muon2Mass;
