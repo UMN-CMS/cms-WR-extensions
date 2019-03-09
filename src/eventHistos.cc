@@ -392,6 +392,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 void eventHistos::fill(eventBits& event, int systematicRegion) {
  // m_outputTag->SetString("blahblah");
   std::cout << "systematicRegion: " << systematicRegion << std::endl;
+  std::cout << "m_flavor: " << m_flavor << std::endl;
   if(m_flavor == 1) fillGen(event);
   else if(m_flavor == 2) {
     fillReco(event);

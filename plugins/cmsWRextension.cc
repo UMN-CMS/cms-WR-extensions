@@ -457,10 +457,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   //FILL STUFF
+  std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
   passesResRECO    = (passesResRECO    && muonTrigPass && !ZMASSres   );
-  passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres);
+  passesResFSBRECO = (passesResFSBRECO && muonTrigPass && ZMASSFSBres);
   ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
 
+  std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
   if(ZMASSres)         m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
   if(passesResFSBRECO) m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
 
