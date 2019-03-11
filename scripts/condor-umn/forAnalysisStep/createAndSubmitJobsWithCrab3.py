@@ -363,12 +363,31 @@ with open(localInputListFile, 'r') as f:
       if re.match(re.compile(datasetKey),secondaryDatasetName):
         globalTag = tag
         config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
-	if '2016' in tag:
-			config.JobType.pyCfgParams = ['era=2016']
-        elif '2017' in tag:
-			config.JobType.pyCfgParams = ['era=2017']
-	elif '2018' in tag:
-			config.JobType.pyCfgParams = ['era=2018']
+	print "tag: ", tag
+	print "in for loop"
+	if isData:
+		print "isData"
+		if '94X_dataRun2_v10' in tag:
+			print "in 2016"
+			config.JobType.pyCfgParams = ['era=2016','isMC=False']
+        	elif '94X_dataRun2_v11' in tag:
+			config.JobType.pyCfgParams = ['era=2017','isMC=False']
+		elif '102X' in tag:
+			config.JobType.pyCfgParams = ['era=2018','isMC=False']
+	elif isAMCATNLO:
+		if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['era=2016','ISmcatnlo=True']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['era=2017','ISmcatnlo=True']
+                elif '102X_upgrade2018_realistic_v12' in tag:
+                        config.JobType.pyCfgParams = ['era=2018','ISmcatnlo=True']
+	else:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['era=2016']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['era=2017']
+                elif '102X_upgrade2018_realistic_v12' in tag:
+                        config.JobType.pyCfgParams = ['era=2018']
     if globalTag=='':
       print 'WARNING: Using default global tag as specified in template cfg (are you sure it\'s the right one?)'
     else:
