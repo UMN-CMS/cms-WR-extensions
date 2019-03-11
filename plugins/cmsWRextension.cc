@@ -271,7 +271,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     iEvent.getByToken(m_PUInfoToken,hPileupInfoProduct);
     assert(hPileupInfoProduct.isValid());
     std::vector<float> puWeights;
-    puWeights = myEventInfo.PUweight(hPileupInfoProduct);
+    if (m_era == "2016") {
+      puWeights = myEventInfo.PUweight(hPileupInfoProduct, "2016");
+    }else if(m_era == "2017") {
+      puWeights = myEventInfo.PUweight(hPileupInfoProduct, "2017");
+    }else if(m_era == "2018") {
+      puWeights = myEventInfo.PUweight(hPileupInfoProduct, "2018");
+    }
     myRECOevent.puWeight = puWeights[0];
     myRECOevent.puWeight_Up = puWeights[1];
     myRECOevent.puWeight_Down = puWeights[2];

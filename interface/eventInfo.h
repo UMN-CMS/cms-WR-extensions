@@ -23,7 +23,7 @@ class eventInfo {
   eventInfo();
   ~eventInfo();
   bool PVselection(edm::Handle<std::vector<reco::Vertex>> vertices);
-  std::vector<float> PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct);
+  std::vector<float> PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct, std::string era);
 
   int 	 nVtx		;
   int    nPU            ;
@@ -39,6 +39,21 @@ class eventInfo {
   TH1F* fPUWeightHist	;
   TH1F* fPUWeightHist_up;
   TH1F* fPUWeightHist_down;
+
+  TH1F* fPUDataHist2016;
+  TH1F* fPUDataHist2016_up;
+  TH1F* fPUDataHist2016_down;
+  TH1F* fPUMCHist2016;
+
+  TH1F* fPUDataHist2017;
+  TH1F* fPUDataHist2017_up;
+  TH1F* fPUDataHist2017_down;
+  TH1F* fPUMCHist2017;
+
+  TH1F* fPUDataHist2018;
+  TH1F* fPUDataHist2018_up;
+  TH1F* fPUDataHist2018_down;
+  TH1F* fPUMCHist2018;
 
 };
 
