@@ -20,6 +20,12 @@ eventInfo::eventInfo () {
   fPUDataHist2016_up  = (TH1F*) lFile2016->Get("pileup_plus");
   fPUDataHist2016_down  = (TH1F*) lFile2016->Get("pileup_minus");
 
+  fPUDataHist2016->SetDirectory(0);
+  fPUDataHist2016_up->SetDirectory(0);
+  fPUDataHist2016_down->SetDirectory(0);
+
+  lFile2016->Close();
+
   fPUDataHist2016->Scale(1./fPUDataHist2016->Integral());
   fPUDataHist2016_up->Scale(1./fPUDataHist2016_up->Integral());
   fPUDataHist2016_down->Scale(1./fPUDataHist2016_down->Integral());
@@ -42,6 +48,12 @@ eventInfo::eventInfo () {
   fPUDataHist2017  = (TH1F*) lFile2017->Get("Pu");
   fPUDataHist2017_up  = (TH1F*) lFile2017->Get("Pu_up");
   fPUDataHist2017_down  = (TH1F*) lFile2017->Get("Pu_down");
+
+  fPUDataHist2017->SetDirectory(0);
+  fPUDataHist2017_up->SetDirectory(0);
+  fPUDataHist2017_down->SetDirectory(0);
+
+  lFile2017->Close();
 
   fPUDataHist2017->Scale(1./fPUDataHist2017->Integral());
   fPUDataHist2017_up->Scale(1./fPUDataHist2017_up->Integral());
@@ -66,6 +78,12 @@ eventInfo::eventInfo () {
   fPUDataHist2018_up  = (TH1F*) lFile2018->Get("pileup_plus");
   fPUDataHist2018_down  = (TH1F*) lFile2018->Get("pileup_minus");
 
+  fPUDataHist2018->SetDirectory(0);
+  fPUDataHist2018_up->SetDirectory(0);
+  fPUDataHist2018_down->SetDirectory(0);
+
+  lFile2018->Close();
+
   fPUDataHist2018->Scale(1./fPUDataHist2018->Integral());
   fPUDataHist2018_up->Scale(1./fPUDataHist2018_up->Integral());
   fPUDataHist2018_down->Scale(1./fPUDataHist2018_down->Integral());
@@ -81,7 +99,6 @@ eventInfo::eventInfo () {
   fPUDataHist2018->Divide(fPUMCHist2018);
   fPUDataHist2018_up->Divide(fPUMCHist2018);
   fPUDataHist2018_down->Divide(fPUMCHist2018);
-
 
 
   nPU = -1;

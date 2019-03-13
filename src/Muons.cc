@@ -12,22 +12,22 @@
 
 Muons::Muons () {
 
-  std::string iMuon_ID_BCDEF="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/EfficienciesAndSF_BCDEF.root";
+  std::string iMuon_ID_BCDEF="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/RunBCDEF_SF_ID.root";
   TFile *lFile_BCDEF = TFile::Open(iMuon_ID_BCDEF.c_str());
-  Muon_LooseID_BCDEF = (TH2D*) lFile_BCDEF->Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA");
+  Muon_LooseID_BCDEF = (TH2D*) lFile_BCDEF->Get("NUM_LooseID_DEN_genTracks_eta_pt");
   Muon_LooseID_BCDEF->SetDirectory(0);
 
-  Muon_HighPT_BCDEF = (TH2D*) lFile_BCDEF->Get("MC_NUM_HighPtID_DEN_genTracks_PAR_newpt_eta/efficienciesDATA/abseta_pair_ne_DATA");
+  Muon_HighPT_BCDEF = (TH2D*) lFile_BCDEF->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt");
   Muon_HighPT_BCDEF->SetDirectory(0);
 
   lFile_BCDEF->Close();
 
-  std::string iMuon_ID_GH="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/EfficienciesAndSF_BCDEF.root";
+  std::string iMuon_ID_GH="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/RunGH_SF_ID.root";
   TFile *lFile_GH = TFile::Open(iMuon_ID_GH.c_str());
-  Muon_LooseID_GH = (TH2D*) lFile_GH->Get("MC_NUM_LooseID_DEN_genTracks_PAR_pt_eta/efficienciesDATA/pt_abseta_DATA");
+  Muon_LooseID_GH = (TH2D*) lFile_GH->Get("NUM_LooseID_DEN_genTracks_eta_pt");
   Muon_LooseID_GH->SetDirectory(0);
 
-  Muon_HighPT_GH = (TH2D*) lFile_GH->Get("MC_NUM_HighPtID_DEN_genTracks_PAR_newpt_eta/efficienciesDATA/abseta_pair_ne_DATA");
+  Muon_HighPT_GH = (TH2D*) lFile_GH->Get("NUM_HighPtID_DEN_genTracks_eta_pair_newTuneP_probe_pt");
   Muon_HighPT_GH->SetDirectory(0);
 
   lFile_GH->Close();
@@ -36,13 +36,45 @@ Muons::Muons () {
   float lumi_BCDEF = 19.721;
   float lumi_total = lumi_GH + lumi_BCDEF; 
 
-  Muon_LooseID_eff = (TH2D*) Muon_LooseID_GH->Clone("pt_abseta_DATA_muid_ave");
-  Muon_LooseID_eff->Scale(lumi_GH / lumi_total);
-  Muon_LooseID_eff->Add(Muon_LooseID_BCDEF, lumi_BCDEF/lumi_total);
+  Muon_LooseID_eff2016 = (TH2D*) Muon_LooseID_GH->Clone("pt_abseta_DATA_muid_ave");
+  Muon_LooseID_eff2016->Scale(lumi_GH / lumi_total);
+  Muon_LooseID_eff2016->Add(Muon_LooseID_BCDEF, lumi_BCDEF/lumi_total);
 
-  Muon_HighPT_eff = (TH2D*) Muon_HighPT_GH->Clone("pt_abseta_DATA_muid_highPT_ave");
-  Muon_HighPT_eff->Scale(lumi_GH / lumi_total);
-  Muon_HighPT_eff->Add(Muon_HighPT_BCDEF, lumi_BCDEF/lumi_total);
+  Muon_HighPT_eff2016 = (TH2D*) Muon_HighPT_GH->Clone("pt_abseta_DATA_muid_highPT_ave");
+  Muon_HighPT_eff2016->Scale(lumi_GH / lumi_total);
+  Muon_HighPT_eff2016->Add(Muon_HighPT_BCDEF, lumi_BCDEF/lumi_total);
+
+
+//Trigger SF filles - 2016
+  std::string iMuon_Trig_BCDEF = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/EfficienciesAndSF_RunBtoF.root";
+  TFile *lFile_Trig_BCDEF = TFile::Open(iMuon_Trig_BCDEF.c_str());
+  Muon_Trig_BCDEF = (TH1F*) lFile_Trig_BCDEF->Get("Mu50_OR_TkMu50_PtBins/pt_ratio");
+  Muon_Trig_BCDEF->SetDirectory(0);
+  lFile_Trig_BCDEF->Close();
+
+  std::string iMuon_Trig_GH = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/EfficienciesAndSF_RunGtoH.root";
+  TFile *lFile_Trig_GH = TFile::Open(iMuon_Trig_GH.c_str());
+  Muon_Trig_GH = (TH1F*) lFile_Trig_GH->Get("Mu50_OR_TkMu50_PtBins/pt_ratio");
+  Muon_Trig_GH->SetDirectory(0);
+  lFile_Trig_GH->Close();
+
+  Muon_Trig_SF2016 = (TH1F*) Muon_Trig_GH->Clone("pt_SF_trig_ave");
+  Muon_Trig_SF2016->Scale(lumi_GH / lumi_total);
+  Muon_Trig_SF2016->Add(Muon_Trig_BCDEF, lumi_BCDEF/lumi_total);
+
+//Trigger SF files - 2017
+  std::string iMuon_Trig_BtoF = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root";
+  TFile *lFile_Trig_BtoF = TFile::Open(iMuon_Trig_BtoF.c_str());
+  Muon_Trig_SF2017 = (TH1F*) lFile_Trig_BtoF->Get("Mu50_PtBins/pt_ratio");
+  Muon_Trig_SF2017->SetDirectory(0);
+  lFile_Trig_BtoF->Close();
+
+//Trigger SF files - 2018
+  std::string iMuon_Trig_2018 = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root";
+  TFile *lFile_Trig_2018 = TFile::Open(iMuon_Trig_2018.c_str());
+  Muon_Trig_SF2018 = (TH1F*) lFile_Trig_2018->Get("Mu50_OR_OldMu100_OR_TkMu100_PtBins/pt_ratio");
+  Muon_Trig_SF2018->SetDirectory(0);
+  lFile_Trig_2018->Close(); 
 }
 
 std::vector<double> Muons::MuonLooseIDweight(double MuonPt, double MuonEta) {
@@ -65,9 +97,9 @@ std::vector<double> Muons::MuonLooseIDweight(double MuonPt, double MuonEta) {
     muEtaForId = std::abs(MuonEta);
   }
 
-  muidweight = Muon_LooseID_eff->GetBinContent(Muon_LooseID_eff->FindBin(muPtForId, muEtaForId));
-  muidweightUp = muidweight + sqrt(pow(Muon_LooseID_eff->GetBinError(Muon_LooseID_eff->FindBin(muPtForId, muEtaForId)),2) + pow((.01),2));
-  muidweightDown = muidweight - sqrt(pow(Muon_LooseID_eff->GetBinError(Muon_LooseID_eff->FindBin(muPtForId, muEtaForId)),2) + pow((.01),2));
+  muidweight = Muon_LooseID_eff2016->GetBinContent(Muon_LooseID_eff2016->FindBin(muPtForId, muEtaForId));
+  muidweightUp = muidweight + sqrt(pow(Muon_LooseID_eff2016->GetBinError(Muon_LooseID_eff2016->FindBin(muPtForId, muEtaForId)),2) + pow((.01),2));
+  muidweightDown = muidweight - sqrt(pow(Muon_LooseID_eff2016->GetBinError(Muon_LooseID_eff2016->FindBin(muPtForId, muEtaForId)),2) + pow((.01),2));
 
   std::cout << "muidweight: " << muidweight << std::endl;
   std::cout << "muidweightUp: " << muidweightUp << std::endl;
@@ -101,9 +133,9 @@ std::vector<double> Muons::MuonHighPTIDweight(double MuonPt, double MuonEta) {
     muEtaForId = std::abs(MuonEta);
   }
 
-  muidweight = Muon_HighPT_eff->GetBinContent(Muon_HighPT_eff->FindBin(muEtaForId, muPtForId));
-  muidweightUp = muidweight + sqrt(pow(Muon_HighPT_eff->GetBinError(Muon_HighPT_eff->FindBin(muEtaForId, muPtForId)),2) + pow((.01),2) + pow((.005),2));
-  muidweightDown = muidweight - sqrt(pow(Muon_HighPT_eff->GetBinError(Muon_HighPT_eff->FindBin(muEtaForId, muPtForId)),2) + pow((.01),2) + pow((.005),2));
+  muidweight = Muon_HighPT_eff2016->GetBinContent(Muon_HighPT_eff2016->FindBin(muEtaForId, muPtForId));
+  muidweightUp = muidweight + sqrt(pow(Muon_HighPT_eff2016->GetBinError(Muon_HighPT_eff2016->FindBin(muEtaForId, muPtForId)),2) + pow((.01),2) + pow((.005),2));
+  muidweightDown = muidweight - sqrt(pow(Muon_HighPT_eff2016->GetBinError(Muon_HighPT_eff2016->FindBin(muEtaForId, muPtForId)),2) + pow((.01),2) + pow((.005),2));
 
   std::vector<double> muWeights;
   muWeights.push_back(muidweight);
@@ -111,4 +143,36 @@ std::vector<double> Muons::MuonHighPTIDweight(double MuonPt, double MuonEta) {
   muWeights.push_back(muidweightDown);
 
   return muWeights;
+}
+
+std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era){
+
+  double muPtForId = 0.;
+
+  if(MuonPt > 1300){
+    muPtForId = 1299;
+  }else{
+    muPtForId = MuonPt;
+  }
+
+  if(era == "2016"){
+    muTrigWeight = Muon_Trig_SF2016->GetBinContent(Muon_Trig_SF2016->FindBin(muPtForId));
+    muTrigWeightUp = muTrigWeight + Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
+    muTrigWeightDown = muTrigWeight - Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
+  }else if(era == "2017"){
+    muTrigWeight = Muon_Trig_SF2017->GetBinContent(Muon_Trig_SF2017->FindBin(muPtForId));
+    muTrigWeightUp = muTrigWeight + Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
+    muTrigWeightDown = muTrigWeight - Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
+  }else if(era == "2018"){
+    muTrigWeight = Muon_Trig_SF2018->GetBinContent(Muon_Trig_SF2018->FindBin(muPtForId));
+    muTrigWeightUp = muTrigWeight + Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
+    muTrigWeightDown = muTrigWeight - Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
+  }
+
+  std::vector<double> muTrigWeights;
+  muTrigWeights.push_back(muTrigWeight);
+  muTrigWeights.push_back(muTrigWeightUp);
+  muTrigWeights.push_back(muTrigWeightDown);
+
+  return muTrigWeights;
 }

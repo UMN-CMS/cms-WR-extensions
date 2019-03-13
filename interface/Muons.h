@@ -19,10 +19,15 @@ class Muons {
   Muons();
   std::vector<double> MuonLooseIDweight(double MuonPt, double MuonEta);
   std::vector<double> MuonHighPTIDweight(double MuonPt, double MuonEta);
+  std::vector<double> MuonTriggerWeight(double MuonPt, std::string era);
 
   double muidweight;
   double muidweightUp;
   double muidweightDown;
+
+  double muTrigWeight;
+  double muTrigWeightUp;
+  double muTrigWeightDown;
 
   private:
 /*  void fillGen(eventBits& event);
@@ -32,11 +37,17 @@ class Muons {
 
   TH2D* Muon_LooseID_BCDEF;
   TH2D* Muon_LooseID_GH;
-  TH2D* Muon_LooseID_eff;
+  TH2D* Muon_LooseID_eff2016;
   TH2D* Muon_HighPT_BCDEF;
   TH2D* Muon_HighPT_GH;
-  TH2D* Muon_HighPT_eff;
+  TH2D* Muon_HighPT_eff2016;
 
+  TH1F* Muon_Trig_BCDEF;
+  TH1F* Muon_Trig_GH;
+  TH1F* Muon_Trig_SF2016;
+
+  TH1F* Muon_Trig_SF2017;
+  TH1F* Muon_Trig_SF2018;
 };
 
 #endif

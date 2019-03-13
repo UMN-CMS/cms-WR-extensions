@@ -203,6 +203,10 @@ public:
   double Muon_LooseID_WeightUp;
   double Muon_LooseID_WeightDown;
 
+  double Muon_Trig_Weight;
+  double Muon_Trig_WeightUp;
+  double Muon_Trig_WeightDown;
+
   double HEEP_SF        ;
   double HEEP_SF_Up     ;
   double HEEP_SF_Down   ;
