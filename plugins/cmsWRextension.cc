@@ -332,16 +332,45 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
             ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, false, false);
             if(m_isMC && addMuons) {
               std::vector<double> Muon_LooseID_Weights;
-              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
-//              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta());
+	      if(m_era == "2016") {
+                Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2016");
+              }else if(m_era == "2017"){
+                Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2017");
+              }else if(m_era == "2018"){
+                Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2018");
+	      }
               myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
               myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
               myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
               std::vector<double> Muon_HighPtID_Weights;
-              Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
+	      std::vector<double> Muon_LooseTkIso_Weights;
+	      if(m_era == "2016") {
+                Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+		Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+              }else if(m_era == "2017"){
+                Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+                Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+              }else if(m_era == "2018"){
+                Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+                Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+	      }
               myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
               myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
               myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+	      myRECOevent.Muon_LooseTkIso_Weight = Muon_LooseTkIso_Weights[0];
+              myRECOevent.Muon_LooseTkIso_WeightUp = Muon_LooseTkIso_Weights[1];
+              myRECOevent.Muon_LooseTkIso_WeightDown = Muon_LooseTkIso_Weights[2];
+	      std::vector<double> Muon_Trig_Weights;
+	      if(m_era == "2016") { 
+	        Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2016");
+	      }else if(m_era == "2017"){
+		Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2017");
+	      }else if(m_era == "2018"){
+		Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2018");
+	      }
+	      myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+              myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+              myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
               setEventWeight(iEvent, myRECOevent);
             }
             if ((m_isMC || m_flavorSideband) && addMuons){
@@ -376,16 +405,45 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 //            std::cout << "addMuons: " << addMuons << ", ZMASS: " << ZMASS << std::endl;
             if(m_isMC && addMuons) {
               std::vector<double> Muon_LooseID_Weights;
-              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
-//              Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta());
+              if(m_era == "2016") {
+                Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2016");
+              }else if(m_era == "2017"){
+                Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2017");
+              }else if(m_era == "2018"){
+                Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2018");
+              }
               myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
               myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
               myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
               std::vector<double> Muon_HighPtID_Weights;
-              Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
+	      std::vector<double> Muon_LooseTkIso_Weights;
+              if(m_era == "2016") {
+                Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+                Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+              }else if(m_era == "2017"){
+                Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+                Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+              }else if(m_era == "2018"){
+                Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+                Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+              }
               myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
               myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
               myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+              myRECOevent.Muon_LooseTkIso_Weight = Muon_LooseTkIso_Weights[0];
+              myRECOevent.Muon_LooseTkIso_WeightUp = Muon_LooseTkIso_Weights[1];
+              myRECOevent.Muon_LooseTkIso_WeightDown = Muon_LooseTkIso_Weights[2];
+              std::vector<double> Muon_Trig_Weights;
+              if(m_era == "2016") {
+                Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2016");
+              }else if(m_era == "2017"){
+                Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2017");
+              }else if(m_era == "2018"){
+                Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2018");
+              }
+              myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+              myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+              myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
               setEventWeight(iEvent, myRECOevent);
             }
             if(ZMASS && muonTrigPass && addMuons) {
@@ -549,15 +607,45 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
       if(m_isMC && (addMuons || addMuons_JECUp || addMuons_JECDown || addMuons_JERUp || addMuons_JERDown)) {
 	std::vector<double> Muon_LooseID_Weights;
-        Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+        if(m_era == "2016") {
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2016");
+        }else if(m_era == "2017"){
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2017");
+        }else if(m_era == "2018"){
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2018");
+        }
         myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
         myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
         myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
 	std::vector<double> Muon_HighPtID_Weights;
-        Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
+	std::vector<double> Muon_LooseTkIso_Weights;
+        if(m_era == "2016") {
+          Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+          Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+        }else if(m_era == "2017"){
+          Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+          Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+        }else if(m_era == "2018"){
+          Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+          Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+        }
 	myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
         myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
         myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+        myRECOevent.Muon_LooseTkIso_Weight = Muon_LooseTkIso_Weights[0];
+        myRECOevent.Muon_LooseTkIso_WeightUp = Muon_LooseTkIso_Weights[1];
+        myRECOevent.Muon_LooseTkIso_WeightDown = Muon_LooseTkIso_Weights[2];
+        std::vector<double> Muon_Trig_Weights;
+        if(m_era == "2016") {
+          Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2016");
+        }else if(m_era == "2017"){
+          Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2017");
+        }else if(m_era == "2018"){
+          Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2018");
+        }
+        myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+        myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+        myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
         setEventWeight(iEvent, myRECOevent);
       }
       //Fill histograms individually
@@ -617,15 +705,45 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
       if(m_isMC && (addMuons || addMuons_JECUp || addMuons_JECDown || addMuons_JERUp || addMuons_JERDown)) {
         std::vector<double> Muon_LooseID_Weights;
-        Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+        if(m_era == "2016") {
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2016");
+        }else if(m_era == "2017"){
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2017");
+        }else if(m_era == "2018"){
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2018");
+        }
         myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
         myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
         myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
         std::vector<double> Muon_HighPtID_Weights;
-        Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta());
+	std::vector<double> Muon_LooseTkIso_Weights;
+        if(m_era == "2016") {
+          Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+          Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2016");
+        }else if(m_era == "2017"){
+          Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+          Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2017");
+        }else if(m_era == "2018"){
+          Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+          Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.myMuonCand->pt(), myRECOevent.myMuonCand->eta(), "2018");
+        }
         myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
         myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
         myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+        myRECOevent.Muon_LooseTkIso_Weight = Muon_LooseTkIso_Weights[0];
+        myRECOevent.Muon_LooseTkIso_WeightUp = Muon_LooseTkIso_Weights[1];
+        myRECOevent.Muon_LooseTkIso_WeightDown = Muon_LooseTkIso_Weights[2];
+        std::vector<double> Muon_Trig_Weights;
+        if(m_era == "2016") {
+          Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2016");
+        }else if(m_era == "2017"){
+          Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2017");
+        }else if(m_era == "2018"){
+          Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.myMuonCand->pt(), "2018");
+        }
+        myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+        myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+        myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
         setEventWeight(iEvent, myRECOevent);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF.size() > 0 && muonTrigPass && addMuons && ZMASS_Nom==1){
@@ -696,7 +814,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
       if(m_isMC && (myRECOevent.myElectronJetPairs.size() > 0 || myRECOevent.myElectronJetPairs_JECUp.size() > 0 || myRECOevent.myElectronJetPairs_JECDown.size() > 0 || myRECOevent.myElectronJetPairs_JERUp.size() > 0 || myRECOevent.myElectronJetPairs_JERDown.size() > 0) && (addMuons || addMuons_JECUp || addMuons_JECDown || addMuons_JERUp || addMuons_JERDown) ){
         std::vector<double> Muon_LooseID_Weights;
-        Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+        if(m_era == "2016") {
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2016");
+        }else if(m_era == "2017"){
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2017");
+        }else if(m_era == "2018"){
+          Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2018");
+        }
         myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
         myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
         myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
@@ -828,7 +952,7 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       myEvent.count = 1;
   }
 
-  myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight;
+  myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight;
 
 }
 void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent) {
@@ -1292,7 +1416,13 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
 
   if(m_isMC && electronJetPairs.size() > 0) {
     std::vector<double> Muon_LooseID_Weights;
-    Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta());
+    if(m_era == "2016") {
+      Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2016");
+    }else if(m_era == "2017"){
+      Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2017");
+    }else if(m_era == "2018"){
+      Muon_LooseID_Weights = myMuons.MuonLooseIDweight(myRECOevent.mySubleadMuon->pt(), myRECOevent.mySubleadMuon->eta(), "2018");
+    }
     myRECOevent.Muon_LooseID_Weight = Muon_LooseID_Weights[0];
     myRECOevent.Muon_LooseID_WeightUp = Muon_LooseID_Weights[1];
     myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];

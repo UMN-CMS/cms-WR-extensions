@@ -17,8 +17,9 @@
 class Muons {
   public:
   Muons();
-  std::vector<double> MuonLooseIDweight(double MuonPt, double MuonEta);
-  std::vector<double> MuonHighPTIDweight(double MuonPt, double MuonEta);
+  std::vector<double> MuonLooseIDweight(double MuonPt, double MuonEta, std::string era);
+  std::vector<double> MuonHighPTIDweight(double MuonPt, double MuonEta, std::string era);
+  std::vector<double> MuonLooseTkIso(double MuonPt, double MuonEta, std::string era);
   std::vector<double> MuonTriggerWeight(double MuonPt, std::string era);
 
   double muidweight;
@@ -41,6 +42,18 @@ class Muons {
   TH2D* Muon_HighPT_BCDEF;
   TH2D* Muon_HighPT_GH;
   TH2D* Muon_HighPT_eff2016;
+
+  TH2D* Muon_LooseID_BtoF2017;
+  TH2D* Muon_HighPT_BtoF2017;
+  TH2D* Muon_LooseID_AtoD2018;
+  TH2D* Muon_HighPT_AtoD2018;
+
+  TH2D* Muon_HighPT_ISO_BCDEF;
+  TH2D* Muon_HighPT_ISO_GH;
+  TH2D* Muon_HighPT_ISO_eff2016;
+
+  TH2D* Muon_HighPT_ISO_BtoF2017;
+  TH2D* Muon_HighPT_ISO_AtoD2018;
 
   TH1F* Muon_Trig_BCDEF;
   TH1F* Muon_Trig_GH;

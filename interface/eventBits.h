@@ -203,6 +203,10 @@ public:
   double Muon_LooseID_WeightUp;
   double Muon_LooseID_WeightDown;
 
+  double Muon_LooseTkIso_Weight;
+  double Muon_LooseTkIso_WeightUp;
+  double Muon_LooseTkIso_WeightDown;
+
   double Muon_Trig_Weight;
   double Muon_Trig_WeightUp;
   double Muon_Trig_WeightDown;
