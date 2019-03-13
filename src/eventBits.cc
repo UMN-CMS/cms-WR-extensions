@@ -58,6 +58,10 @@ eventBits::eventBits() {
   Muon_HighPtID_WeightUp = -10000.0;
   Muon_HighPtID_WeightDown = -10000.0;
 
+  Muon_HighPtID2nd_Weight = -10000.0;
+  Muon_HighPtID2nd_WeightUp = -10000.0;
+  Muon_HighPtID2nd_WeightDown = -10000.0;
+
   Muon_LooseID_Weight = -10000.0;
   Muon_LooseID_WeightUp = -10000.0;
   Muon_LooseID_WeightDown = -10000.0;
@@ -65,6 +69,10 @@ eventBits::eventBits() {
   Muon_LooseTkIso_Weight = -10000.0;
   Muon_LooseTkIso_WeightUp = -10000.0;
   Muon_LooseTkIso_WeightDown = -10000.0;
+
+  Muon_LooseTkIso2nd_Weight = -10000.0;
+  Muon_LooseTkIso2nd_WeightUp = -10000.0;
+  Muon_LooseTkIso2nd_WeightDown = -10000.0;
 
   Muon_Trig_Weight = -10000.0;
   Muon_Trig_WeightUp = -10000.0;

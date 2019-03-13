@@ -167,8 +167,11 @@ class cmsWRextension : public edm::EDAnalyzer {
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
+      void setEventWeight_Resolved(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent);
+      void setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent);
+
       double PUPPIweight(double puppipt, double puppieta);
       void loadCMSSWPath();
       // ----------member data ---------------------------

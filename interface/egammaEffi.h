@@ -24,13 +24,15 @@
 class egammaEffi {
   public:
   egammaEffi();
-  void Initialize();
-  std::vector<double> ScaleFactor(double ElectronEta, double ElectronPt);
+  void Initialize(std::string era);
+  std::vector<double> ScaleFactor(double ElectronEta, double ElectronPt, std::string era);
 
 
 
   private:
   TH2D* m_egamma_sf;
+  TH2D* m_egamma_sf2017;
+  TH2D* m_egamma_sf2018;
 
   int m_nEtaBins;
   int m_nPtBins;

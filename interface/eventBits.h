@@ -199,6 +199,10 @@ public:
   double Muon_HighPtID_WeightUp;
   double Muon_HighPtID_WeightDown;
 
+  double Muon_HighPtID2nd_Weight;
+  double Muon_HighPtID2nd_WeightUp;
+  double Muon_HighPtID2nd_WeightDown;
+
   double Muon_LooseID_Weight;
   double Muon_LooseID_WeightUp;
   double Muon_LooseID_WeightDown;
@@ -206,6 +210,10 @@ public:
   double Muon_LooseTkIso_Weight;
   double Muon_LooseTkIso_WeightUp;
   double Muon_LooseTkIso_WeightDown;
+
+  double Muon_LooseTkIso2nd_Weight;
+  double Muon_LooseTkIso2nd_WeightUp;
+  double Muon_LooseTkIso2nd_WeightDown;
 
   double Muon_Trig_Weight;
   double Muon_Trig_WeightUp;
