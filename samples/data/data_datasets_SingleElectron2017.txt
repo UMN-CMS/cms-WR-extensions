@@ -1,0 +1,7 @@
+                              DATASET                                                                                                    ||MAX EVENTS||JOBS PER LUMI||XSEC IN PB||LEGEND||COLOR CODE||
+=======================================================================================================================================================================================================
+/SingleElectron/Run2017B-31Mar2018-v1/MINIAOD -1 30 NA 2017_Data_SingleElectron 794
+/SingleElectron/Run2017C-31Mar2018-v1/MINIAOD -1 30 NA 2017_Data_SingleElectron 794
+/SingleElectron/Run2017D-31Mar2018-v1/MINIAOD -1 30 NA 2017_Data_SingleElectron 794
+/SingleElectron/Run2017E-31Mar2018-v1/MINIAOD -1 30 NA 2017_Data_SingleElectron 794
+/SingleElectron/Run2017F-31Mar2018-v1/MINIAOD -1 30 NA 2017_Data_SingleElectron 794
