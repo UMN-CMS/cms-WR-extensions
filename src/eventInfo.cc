@@ -14,7 +14,7 @@
 
 eventInfo::eventInfo () {
 
-  std::string PU_Data2016="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/pileUp_Cert_271036-284044_13TeV_Collisions16_JSON.root";
+  std::string PU_Data2016="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/pileUp_Cert_271036-284044_13TeV_Collisions16_JSON.root";
   TFile *lFile2016 = TFile::Open(PU_Data2016.c_str());
   fPUDataHist2016  = (TH1F*) lFile2016->Get("pileup");
   fPUDataHist2016_up  = (TH1F*) lFile2016->Get("pileup_plus");
@@ -43,7 +43,7 @@ eventInfo::eventInfo () {
   fPUDataHist2016_up->Divide(fPUMCHist2016);
   fPUDataHist2016_down->Divide(fPUMCHist2016);
 
-  std::string PU_Data2017="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/pileUp_Cert_294927-306462_13TeV_Collisions17_JSON.root";
+  std::string PU_Data2017="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2017/pileUp_Cert_294927-306462_13TeV_Collisions17_JSON.root";
   TFile *lFile2017 = TFile::Open(PU_Data2017.c_str());
   fPUDataHist2017  = (TH1F*) lFile2017->Get("Pu");
   fPUDataHist2017_up  = (TH1F*) lFile2017->Get("Pu_up");
@@ -72,7 +72,7 @@ eventInfo::eventInfo () {
   fPUDataHist2017_up->Divide(fPUMCHist2017);
   fPUDataHist2017_down->Divide(fPUMCHist2017);
 
-  std::string PU_Data2018="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/pileUp_Cert_314472-325175_13TeV_Collisions18_JSON.root";
+  std::string PU_Data2018="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2018/pileUp_Cert_314472-325175_13TeV_Collisions18_JSON.root";
   TFile *lFile2018 = TFile::Open(PU_Data2018.c_str());
   fPUDataHist2018  = (TH1F*) lFile2018->Get("pileup");
   fPUDataHist2018_up  = (TH1F*) lFile2018->Get("pileup_plus");
