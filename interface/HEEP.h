@@ -24,25 +24,11 @@
 class HEEP {
   public:
   HEEP();
-  void Initialize();
-  std::vector<double> ScaleFactor(double ElectronEta);
+  std::vector<double> ScaleFactor(double ElectronEt, double ElectronEta, std::string era);
 
 
 
   private:
-/*  void fillGen(eventBits& event);
-  void fillReco(eventBits& event);
-  void fillWeight(eventBits& event);
-  void fillCutProgress(eventBits& event);*/
-
-  TGraphAsymmErrors* HEEPsf;
-
-  double eta[28];
-  double sf[28];
-  double etaEhigh[28];
-  double etaElow[28];
-  double sfEhigh[28];
-  double sfElow[28]; 
 
 };
 

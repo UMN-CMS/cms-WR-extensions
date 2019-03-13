@@ -12,47 +12,55 @@
 
 HEEP::HEEP () {
 
-  std::string iHEEP_SF="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/HEEP_SF.root";
-  TFile *lFile = TFile::Open(iHEEP_SF.c_str());
-  HEEPsf = (TGraphAsymmErrors*) lFile->Get("SF_Eta");
-  lFile->Close();
 
 }
 
-void HEEP::Initialize() {
-
-  for(int i=0; i < HEEPsf->GetN(); i++){
-     HEEPsf->GetPoint(i, eta[i], sf[i]);
-
-     sfEhigh[i] = HEEPsf->GetErrorYhigh(i);
-     sfElow[i] = HEEPsf->GetErrorYlow(i);
-
-     etaEhigh[i] = HEEPsf->GetErrorXhigh(i);
-     etaElow[i] = HEEPsf->GetErrorXlow(i);
-
-     std::cout << "eta: " << eta[i] << " +" << etaEhigh[i] << " -" << etaElow[i] << std::endl;
-  }
-}
-
-std::vector<double> HEEP::ScaleFactor(double ElectronEta) {
+std::vector<double> HEEP::ScaleFactor(double ElectronEt, double ElectronEta, std::string era) {
 
   double scaleFactor = 0.;
   double scaleFactor_Up = 0.;
   double scaleFactor_Down = 0.;
 
   std::cout << "ElectronEta: " << ElectronEta << std::endl;
-  for(int i=0; i<HEEPsf->GetN(); i++){
-     std::cout << "i: " << i << std::endl;
-     std::cout << "(eta[i] - etaElow[i]): " << (eta[i] - etaElow[i]) << std::endl;
-     std::cout << "(eta[i] + etaEhigh[i]): " << (eta[i] + etaEhigh[i]) << std::endl;
-     if((eta[i] - etaElow[i]) < ElectronEta && ElectronEta < (eta[i] + etaEhigh[i])){
-	std::cout << "MADE IT" << std::endl;
-	scaleFactor = sf[i];
-	scaleFactor_Up = sf[i] + sfEhigh[i];
-	scaleFactor_Down = sf[i] - sfElow[i];
-	break;
-     }
+  if(era == "2016"){
+    if(abs(ElectronEta) < 1.4442){
+      scaleFactor = 0.971;
+      double error = sqrt(pow(0.001,2) + pow(TMath::Min(1.+(ElectronEt-90.)*0.0022,.03),2));
+      scaleFactor_Up = scaleFactor + error;
+      scaleFactor_Down = scaleFactor - error;
+    }else{
+      scaleFactor = 0.983;
+      double error = sqrt(pow(0.001,2) + pow(TMath::Min(1.+(ElectronEt-90.)*0.0143,.04),2));
+      scaleFactor_Up = scaleFactor + error;
+      scaleFactor_Down = scaleFactor - error;
+    }
+  }else if(era == "2017"){
+    if(abs(ElectronEta) < 1.4442){
+      scaleFactor = 0.967;
+      double error = sqrt(pow(0.001,2) + pow(TMath::Min(1.+(ElectronEt-90.)*0.0022,.03),2));
+      scaleFactor_Up = scaleFactor + error;
+      scaleFactor_Down = scaleFactor - error;
+    }else{
+      scaleFactor = 0.973;
+      double error = sqrt(pow(0.002,2) + pow(TMath::Min(1.+(ElectronEt-90.)*0.0143,.04),2));
+      scaleFactor_Up = scaleFactor + error;
+      scaleFactor_Down = scaleFactor - error;
+    }
+  }else if(era == "2018"){
+//Using 2017 for now
+    if(abs(ElectronEta) < 1.4442){
+      scaleFactor = 0.967;
+      double error = sqrt(pow(0.001,2) + pow(TMath::Min(1.+(ElectronEt-90.)*0.0022,.03),2));
+      scaleFactor_Up = scaleFactor + error;
+      scaleFactor_Down = scaleFactor - error;
+    }else{
+      scaleFactor = 0.973;
+      double error = sqrt(pow(0.002,2) + pow(TMath::Min(1.+(ElectronEt-90.)*0.0143,.04),2));
+      scaleFactor_Up = scaleFactor + error;
+      scaleFactor_Down = scaleFactor - error;
+    }
   }
+
   std::vector<double> HEEPweights;
   HEEPweights.push_back(scaleFactor);
   HEEPweights.push_back(scaleFactor_Up);
