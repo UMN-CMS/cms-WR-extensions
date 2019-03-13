@@ -64,7 +64,7 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
@@ -140,12 +140,16 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
 muonPaths = cms.vstring("HLT_Mu50_v", "HLT_TkMu50_v")
+electronPaths = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Photon175_v")
 if options.era == '2016':
 	muonPaths = cms.vstring("HLT_Mu50_v", "HLT_TkMu50_v")
+	electronPaths = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v")
 elif options.era == '2017':
 	muonPaths = cms.vstring("HLT_Mu50_v")
+	electronPaths = cms.vstring("HLT_Ele35_WPTight_Gsf_v","HLT_Photon200_v")
 elif options.era == '2018':
 	muonPaths = cms.vstring("HLT_Mu50", "HLT_OldMu100", "HLT_TkMu100")
+	electronPaths = cms.vstring("HLT_Ele32WPTight_Gsf_v","HLT_Photon200_v")
 
 process.analysis = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
@@ -174,9 +178,8 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               trigObjs = cms.InputTag("selectedPatTrigger"),
                               muonPathsToPass = muonPaths,
                               muonFiltersToPass = cms.vstring(""),
-			                  #electronPathsToPass = cms.vstring("HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v"),
-			                  electronPathsToPass = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v"),
-			                  electronFiltersToPass = cms.vstring(""),
+			      electronPathsToPass = electronPaths,
+			      electronFiltersToPass = cms.vstring(""),
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True),
