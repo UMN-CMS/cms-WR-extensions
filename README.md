@@ -75,7 +75,7 @@ cd ..
 
 mkdir ExoAnalysis
 cd ExoAnalysis/
-git clone git@github.com:UMN-CMS/cmsWRextensions.git
+git clone git@github.com:UMN-CMS/cmsWRextensions.git -b tweaksFor104X
 cd ..
 
 git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v1
