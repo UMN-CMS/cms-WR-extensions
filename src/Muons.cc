@@ -6,7 +6,7 @@
 #include <iostream>
 ////LOCAL CLASSES
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
-
+#include "ExoAnalysis/cmsWRextensions/interface/RoccoR.h"
 
 
 
@@ -135,6 +135,12 @@ Muons::Muons () {
   Muon_Trig_SF2018 = (TH1F*) lFile_Trig_2018->Get("Mu50_OR_OldMu100_OR_TkMu100_PtBins/pt_ratio");
   Muon_Trig_SF2018->SetDirectory(0);
   lFile_Trig_2018->Close(); 
+
+//Rochester Method
+  rc2016.init(edm::FileInPath("ExoAnalysis/cmsWRextensions/data/2016/RoccoR2016.txt").fullPath());
+  rc2017.init(edm::FileInPath("ExoAnalysis/cmsWRextensions/data/2017/RoccoR2017.txt").fullPath());
+  rc2018.init(edm::FileInPath("ExoAnalysis/cmsWRextensions/data/2018/RoccoR2018.txt").fullPath());
+
 }
 
 std::vector<double> Muons::MuonLooseIDweight(double MuonPt, double MuonEta, std::string era) {
@@ -303,3 +309,77 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era){
 
   return muTrigWeights;
 }
+
+std::vector<double> Muons::RochesterMethod_DataScale(const pat::Muon* Mu, std::string era){
+
+  double dtSF = 0.;
+  double rndm = gRandom->Rndm();
+
+  if(era == "2016"){
+    dtSF = rc2016.kScaleDT(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), 0, 0);
+  }else if(era == "2017"){
+    dtSF = rc2017.kScaleDT(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), 0, 0);
+  }else if(era == "2018"){
+    dtSF = rc2018.kScaleDT(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), 0, 0);
+  }
+
+  std::cout << "dtSF: " <<  dtSF << std::endl;
+
+  std::vector<double> Weights;
+  Weights.push_back(dtSF);
+  Weights.push_back(0.);
+  Weights.push_back(0.);
+
+  return Weights;
+
+
+}
+
+std::vector<double> Muons::RochesterMethod_MCSmear(const pat::Muon* Mu, std::string era){
+
+  double mcSF = 0.;
+  double Stat = 0.;
+  double Zpt = 0.;
+  double Ewk = 0.;
+  double deltaM = 0.;
+  double Ewk2 = 0.;
+  double TotalError = 0.;
+  double rndm = gRandom->Rndm();
+
+  if(era == "2016"){
+    mcSF = rc2016.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 0, 0);
+    Stat = rc2016.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 1, 99);
+    Zpt = rc2016.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 2, 0);
+    Ewk = rc2016.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 3, 0);
+    deltaM = rc2016.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 4, 0);
+    Ewk2 = rc2016.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 5, 0);
+  }else if(era == "2017"){
+    mcSF = rc2017.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 0, 0);
+    Stat = rc2017.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 1, 99);
+    Zpt = rc2017.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 2, 0);
+    Ewk = rc2017.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 3, 0);
+    deltaM = rc2017.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 4, 0);
+    Ewk2 = rc2017.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 5, 0);
+  }else if(era == "2018"){
+    mcSF = rc2018.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 0, 0);
+    Stat = rc2018.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 1, 99);
+    Zpt = rc2018.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 2, 0);
+    Ewk = rc2018.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 3, 0);
+    deltaM = rc2018.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 4, 0);
+    Ewk2 = rc2018.kSmearMC(Mu->charge(), Mu->pt(), Mu->eta(), Mu->phi(), Mu->innerTrack()->hitPattern().trackerLayersWithMeasurement(), rndm, 5, 0);
+  }
+
+  std::cout << "mcSF: " <<  mcSF << std::endl;
+  std::cout << "Stat: " << Stat << " Zpt: " << Zpt << " Ewk: " << Ewk << " deltaM: " << deltaM << " Ewk2: " << Ewk2 << std::endl;
+  TotalError = sqrt(pow(mcSF-Stat,2)+pow(mcSF-Zpt,2)+pow(mcSF-Ewk,2)+pow(mcSF-deltaM,2)+pow(mcSF-Ewk2,2));
+   
+  std::vector<double> Weights;
+  Weights.push_back(mcSF);
+  Weights.push_back(mcSF+TotalError);
+  Weights.push_back(mcSF-TotalError);
+
+  return Weights;
+
+
+}
+

@@ -645,6 +645,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.Muon_LooseTkIso2nd_Weight = Muon_LooseTkIso2nd_Weights[0];
     myRECOevent.Muon_LooseTkIso2nd_WeightUp = Muon_LooseTkIso2nd_Weights[1];
     myRECOevent.Muon_LooseTkIso2nd_WeightDown = Muon_LooseTkIso2nd_Weights[2];
+
+    if(!m_isMC){
+      std::vector<double> LeadMuonDataScale = myMuons.RochesterMethod_DataScale(myRECOevent.resolvedANAMuons[0], m_era);
+    }
+    std::vector<double> LeadMuonMCSmear = myMuons.RochesterMethod_MCSmear(myRECOevent.resolvedANAMuons[0], m_era);
+    std::cout << "LeadMuonMCSmear[0]: " << LeadMuonMCSmear[0] << " LeadMuonMCSmear[1]: " << LeadMuonMCSmear[1] << " LeadMuonMCSmear[2]: " << LeadMuonMCSmear[2] << std::endl;
+
+
     setEventWeight_Resolved(iEvent, myRECOevent);
   }else if(passesBoostRECO){
     std::vector<double> Muon_HighPtID_Weights;
@@ -1691,7 +1699,7 @@ bool cmsWRextension::preSelectBoostReco(const edm::Event& iEvent, const edm::Eve
     math::XYZTLorentzVector jetVec;
     jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
  
-    double eventMass = ( jetVec + myRECOevent.myMuonCand->p4() ).mass();
+    double eventMass = ( jetVec + myRECOevent.myMuonCand->p4()*myRECOevent.leadBoostMuonScale[0] ).mass();
 
 //    if( eventMass < 200 ) continue;
 
@@ -1851,17 +1859,23 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
 //  std::cout << "Have 2nd muon" << std::endl;
   const pat::Muon* subleadMuon;
   const pat::Muon* selMuon;
+  double leadMuScale = 0.;
+  double secondMuScale = 0.;
   if (useResMu) {
     if(myEvent.resolvedANAMuons.size() < 2) return false;
     if(myEvent.resolvedANAMuons[0] == NULL) return false;
     if(myEvent.resolvedANAMuons[1] == NULL) return false;
     subleadMuon = myEvent.resolvedANAMuons[1];
     selMuon     = myEvent.resolvedANAMuons[0];
+    secondMuScale = myEvent.secondResMuonScale[0];
+    leadMuScale   = myEvent.leadResMuonScale[0];
   } else { 
     if(myEvent.mySubleadMuon == NULL) return false;
     if(myEvent.myMuonCand    == NULL) return false;
     subleadMuon = myEvent.mySubleadMuon;
     selMuon     = myEvent.myMuonCand;
+    secondMuScale = myEvent.secondBoostMuonScale[0];
+    leadMuScale   = myEvent.leadBoostMuonScale[0];
   }
   if (!useResMu) {
     const baconhep::TAddJet*  selJet;
@@ -1874,7 +1888,7 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
     myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
   }
   myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
-  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4() + selMuon->p4()).mass();
+  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4()*secondMuScale + selMuon->p4()*leadMuScale).mass();
   myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
   myEvent.subleadMuonPt		  = subleadMuon->pt();
   myEvent.subleadMuonEt           = subleadMuon->et();
@@ -2049,21 +2063,24 @@ int cmsWRextension::subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventB
 bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool useResLeps) {
   const pat::Muon* subleadMuon = NULL;
   const pat::Electron* selEl   = NULL;
+  double leadMuScale = 0.;
   if (useResLeps) {
     if ( myEvent.resFSBMuon == NULL ) return false;
     if ( myEvent.resFSBElec == NULL ) return false;
     subleadMuon = myEvent.resFSBMuon;
     selEl       = myEvent.resFSBElec;
+    leadMuScale   = myEvent.leadResMuonScale[0];
   } else {
     if ( myEvent.myElectronCand == NULL ) return false;
     if ( myEvent.mySubleadMuon  == NULL ) return false;
     selEl = myEvent.myElectronCand;
     subleadMuon       = myEvent.mySubleadMuon;
+    leadMuScale   = myEvent.secondBoostMuonScale[0];
   }
   if ( subleadMuon == NULL ) return false;
   if ( selEl       == NULL ) return false;
 
-  double subleadMuon_selElectronMass = (subleadMuon->p4() + selEl->p4()).mass();
+  double subleadMuon_selElectronMass = (subleadMuon->p4()*leadMuScale + selEl->p4()).mass();
 
   if(subleadMuon_selElectronMass < 200 && subleadMuon_selElectronMass > 50)  return true;
 
@@ -2368,6 +2385,16 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
   }*/
 
+  if(myEvent.mySubleadMuon !=0){
+    if(m_isMC){
+      myEvent.secondBoostMuonScale = myMuons.RochesterMethod_MCSmear(myEvent.mySubleadMuon, m_era);
+    }
+    else{
+      myEvent.secondBoostMuonScale = myMuons.RochesterMethod_DataScale(myEvent.mySubleadMuon, m_era);
+    }
+
+  }
+
   if(myEvent.mySubleadMuon == 0)return false;
 
   return true;
@@ -2476,6 +2503,13 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
   if (resElecs.size() > 1) std::sort(resElecs.begin(), resElecs.end(), ::wrTools::compareEtCandidatePointer);
   if (resMus.size()   > 1) std::sort(resMus.begin(),   resMus.end(),   ::wrTools::compareEtCandidatePointer); 
 
+  if(m_isMC){
+    myEvent.leadFSBMuonScale = myMuons.RochesterMethod_MCSmear(resMus[0], m_era);
+  }
+  else{
+    myEvent.leadFSBMuonScale = myMuons.RochesterMethod_DataScale(resMus[0], m_era);
+  }  
+
   //NOW WE TAKE THE LEAD ELECTRON AND MUON AS OUR LEADS
   const pat::Electron* leadElec = resElecs[0];
   const pat::Muon*     leadMuon = resMus[0];
@@ -2490,7 +2524,7 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
 
   //CHECK THAT AT LEAST ONE IS ABOVE 60 GEV
   
-  if( (leadElec->pt() < 60) && (leadMuon->pt() < 60) ) return false;
+  if( (leadElec->pt()*myEvent.leadFSBMuonScale[0] < 60) && (leadMuon->pt() < 60) ) return false;
 
   myEvent.resFSBMuon = leadMuon;
   myEvent.resFSBElec = leadElec;
@@ -2544,11 +2578,20 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
 
   std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
 
+  if(m_isMC){
+    myEvent.leadResMuonScale = myMuons.RochesterMethod_MCSmear(resolvedANAMuons[0], m_era);
+    myEvent.secondResMuonScale = myMuons.RochesterMethod_MCSmear(resolvedANAMuons[1], m_era);
+  }
+  else{
+    myEvent.leadResMuonScale = myMuons.RochesterMethod_DataScale(resolvedANAMuons[0], m_era);
+    myEvent.secondResMuonScale = myMuons.RochesterMethod_DataScale(resolvedANAMuons[1], m_era);
+  }
+
   std::cout << "high pT lead muon" << std::endl;
   //if (resolvedANAMuons[0]->pt() <= 52) return false;  //korea
   //if (!resolvedANAMuons[0]->isHighPtMuon(*myEvent.PVertex)) return false;
   std::cout << "60 GeV lead muon" << std::endl;
-  if (resolvedANAMuons[0]->pt() <= 60) return false;
+  if (resolvedANAMuons[0]->pt()*myEvent.leadResMuonScale[0] <= 60) return false;
   myEvent.ResCutProgress++;
   std::cout << "isolation of lead muon" << std::endl;
   if (resolvedANAMuons[0]->isolationR03().sumPt/resolvedANAMuons[0]->pt() > 0.1) return false;
@@ -2721,6 +2764,13 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   if (myEvent.muonCands < 1) {
     return false;
   } else {
+    if(m_isMC){
+      myEvent.leadBoostMuonScale = myMuons.RochesterMethod_MCSmear(highPTMuons[0], m_era);
+    }
+    else{
+      myEvent.leadBoostMuonScale = myMuons.RochesterMethod_DataScale(highPTMuons[0], m_era);
+    }
+
     myEvent.myMuonCandsHighPt = highPTMuons;
     //We select the lead muon in the event
     myEvent.myMuonCand = highPTMuons[0];
@@ -3815,7 +3865,7 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
   math::XYZTLorentzVector JetVector;
   JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-  myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).mass();
+  myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   myRECOevent.leadAK8JetMuonPtVal   = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).pt();
   myRECOevent.leadAK8JetMuonEtaVal  = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).eta();
   myRECOevent.leadAK8JetMuonPhiVal  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs[0].first->phi, myRECOevent.myMuonJetPairs[0].second->phi())));
@@ -4177,7 +4227,7 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   myEvent.ResCutProgress++;
 
   std::cout << "subleading Muon pT" << std::endl;
-  if (myEvent.resolvedANAMuons[1]->pt() < 53) return false;
+  if (myEvent.resolvedANAMuons[1]->pt()*myEvent.secondResMuonScale[0] < 53) return false;
   myEvent.ResCutProgress++;
 
   std::cout << "subleading Muon ISO" << std::endl;
@@ -4188,11 +4238,15 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
 
   const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
   const pat::Muon* mu2 =  myEvent.resolvedANAMuons[1];
+//  TLorentzVector mu1;
+//  mu1.SetPtEtaPhiM(myEvent.resolvedANAMuons[0]->pt()*myEvent.leadResMuonScale[0], myEvent.resolvedANAMuons[0]->eta(),myEvent.resolvedANAMuons[0]->phi(),myEvent.resolvedANAMuons[0]->mass());
+//  TLorentzVector mu2;
+//  mu2.SetPtEtaPhiM(myEvent.resolvedANAMuons[1]->pt()*myEvent.secondResMuonScale[0], myEvent.resolvedANAMuons[1]->eta(), myEvent.resolvedANAMuons[1]->phi(), myEvent.resolvedANAMuons[1]->mass());
   const pat::Jet*  jet1 = myEvent.myResCandJets[0];
   const pat::Jet*  jet2 = myEvent.myResCandJets[1];
 
   //MLL
-  double mll = (mu1->p4()+mu2->p4()).mass();
+  double mll = (mu1->p4()*myEvent.leadResMuonScale[0]+mu2->p4()*myEvent.secondResMuonScale[0]).mass();
   myEvent.resMLL = mll;
   if (mll < 200) return false;  // 2017
 //  if (mll < 150) return false;// korea
@@ -4218,7 +4272,7 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   myEvent.ResCutProgress++;
     
   //CHECK 4 OBJECT MASS
-  double resMass = (mu1->p4() + mu2->p4() + jet1->p4() + jet2->p4()).mass();
+  double resMass = (mu1->p4()*myEvent.leadResMuonScale[0] + mu2->p4()*myEvent.secondResMuonScale[0] + jet1->p4() + jet2->p4()).mass();
 
   if (resMass < 600) return false;
   std::cout << "RES FOUR MASS PASSED" << std::endl;
@@ -4277,7 +4331,7 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
 
 
   //MLL
-  double mll = (mu->p4()+el->p4()).mass();
+  double mll = (mu->p4()*myEvent.leadFSBMuonScale[0]+el->p4()).mass();
 //  myEvent.resMLL = mll;
   if (mll < 200) return false;  // 2017
 //  if (mll < 150) return false;// korea
@@ -4303,7 +4357,7 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   myEvent.ResFSBCutProgress++;
     
   //CHECK 4 OBJECT MASS
-  double resMass = (mu->p4() + el->p4() + jet1->p4() + jet2->p4()).mass();
+  double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1->p4() + jet2->p4()).mass();
 
   if (resMass < 600) return false;
   std::cout << "RES FOUR MASS PASSED" << std::endl;

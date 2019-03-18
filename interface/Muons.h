@@ -6,6 +6,8 @@
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "CommonTools/Utils/interface/TFileDirectory.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/PatCandidates/interface/Muon.h"
+#include "ExoAnalysis/cmsWRextensions/interface/RoccoR.h"
 //ROOT CLASSES
 #include "TH2D.h"
 #include "TObjString.h"
@@ -21,6 +23,8 @@ class Muons {
   std::vector<double> MuonHighPTIDweight(double MuonPt, double MuonEta, std::string era);
   std::vector<double> MuonLooseTkIso(double MuonPt, double MuonEta, std::string era);
   std::vector<double> MuonTriggerWeight(double MuonPt, std::string era);
+  std::vector<double> RochesterMethod_DataScale(const pat::Muon* Mu, std::string era);
+  std::vector<double> RochesterMethod_MCSmear(const pat::Muon* Mu, std::string era);
 
   double muidweight;
   double muidweightUp;
@@ -61,6 +65,11 @@ class Muons {
 
   TH1F* Muon_Trig_SF2017;
   TH1F* Muon_Trig_SF2018;
+
+  RoccoR rc2016;
+  RoccoR rc2017;
+  RoccoR rc2018;
+
 };
 
 #endif

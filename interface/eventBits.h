@@ -118,6 +118,12 @@ public:
 
   const pat::Muon*                  resFSBMuon;
   const pat::Electron*              resFSBElec;
+
+  std::vector<double> leadResMuonScale;
+  std::vector<double> secondResMuonScale;
+  std::vector<double> leadBoostMuonScale;
+  std::vector<double> secondBoostMuonScale;
+  std::vector<double> leadFSBMuonScale;
   
 
   const pat::Electron*              myElectronCand;
