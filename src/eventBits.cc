@@ -215,6 +215,10 @@ eventBits::eventBits() {
   leadAK8JetMuonMassVal_JERUp = -10000.0;
   leadAK8JetMuonMassVal_JERDown = -10000.0;
   leadAK8JetMuonPtVal = -10000.0;
+  leadAK8JetMuonMassVal_MuResolUp = -10000.0;
+  leadAK8JetMuonMassVal_MuResolDown = -10000.0;
+  leadAK8JetMuonMassVal_noLSF_MuResolUp = -10000.0;
+  leadAK8JetMuonMassVal_noLSF_MuResolDown = -10000.0;
   leadAK8JetMuonEtaVal = -10000.0;
 
   leadAK8JetElectronMassVal = -10000.0;

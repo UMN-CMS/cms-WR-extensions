@@ -421,6 +421,11 @@ public:
   double leadAK8JetMuonPhiVal_JECUp;
   double leadAK8JetMuonPhiVal_JECDown;
 
+  double leadAK8JetMuonMassVal_MuResolUp;
+  double leadAK8JetMuonMassVal_MuResolDown;
+  double leadAK8JetMuonMassVal_noLSF_MuResolUp;
+  double leadAK8JetMuonMassVal_noLSF_MuResolDown;
+
   double leadAK8JetMuonMassVal_JERUp;
   double leadAK8JetMuonMassVal_JERDown;
   double leadAK8JetMuonMassVal_noLSF_JERUp;

@@ -42,13 +42,19 @@ class eventHistos {
   void fillCombine_JERDown(eventBits& event);
   void fillCombine_PUUp(eventBits& event);
   void fillCombine_PUDown(eventBits& event);
-  void fillCombine_MuHPtUp(eventBits& event);
-  void fillCombine_MuHPtDown(eventBits& event);
+  void fillCombine_MuIDUp(eventBits& event);
+  void fillCombine_MuIDDown(eventBits& event);
   void fillCombine_MuLUp(eventBits& event);
   void fillCombine_MuLDown(eventBits& event);
   void fillCombine_HEEPUp(eventBits& event);
   void fillCombine_HEEPDown(eventBits& event);
- 
+  void fillCombine_MuIsoUp(eventBits& event);
+  void fillCombine_MuIsoDown(eventBits& event); 
+  void fillCombine_MuTrigUp(eventBits& event);
+  void fillCombine_MuTrigDown(eventBits& event);
+  void fillCombine_MuResolUp(eventBits& event);
+  void fillCombine_MuResolDown(eventBits& event);
+
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
   int m_FSB;
@@ -195,15 +201,30 @@ class eventHistos {
   TH1D* m_leadAK8JetMuonMass_noLSF_PUUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_PUDown;
 
-  TH1D* m_leadAK8JetMuonMass_MuHPtUp;
-  TH1D* m_leadAK8JetMuonMass_MuHPtDown;
-  TH1D* m_leadAK8JetMuonMass_noLSF_MuHPtUp;
-  TH1D* m_leadAK8JetMuonMass_noLSF_MuHPtDown;
+  TH1D* m_leadAK8JetMuonMass_MuIDUp;
+  TH1D* m_leadAK8JetMuonMass_MuIDDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIDUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIDDown;
 
   TH1D* m_leadAK8JetMuonMass_MuLUp;
   TH1D* m_leadAK8JetMuonMass_MuLDown;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuLUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuLDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuIsoUp;
+  TH1D* m_leadAK8JetMuonMass_MuIsoDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIsoUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIsoDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuTrigUp;
+  TH1D* m_leadAK8JetMuonMass_MuTrigDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuTrigUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuTrigDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuResolUp;
+  TH1D* m_leadAK8JetMuonMass_MuResolDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuResolUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuResolDown;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;

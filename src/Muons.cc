@@ -282,8 +282,8 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era){
 
   double muPtForId = 0.;
 
-  if(MuonPt > 1300){
-    muPtForId = 1299;
+  if(MuonPt > 800){
+    muPtForId = 799;
   }else{
     muPtForId = MuonPt;
   }
@@ -301,6 +301,9 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era){
     muTrigWeightUp = muTrigWeight + Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
     muTrigWeightDown = muTrigWeight - Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
   }
+
+  std::cout << "muTrigWeight: " << muTrigWeight << std::endl;
+  std::cout << "muPtForId: " << muPtForId << std::endl;
 
   std::vector<double> muTrigWeights;
   muTrigWeights.push_back(muTrigWeight);

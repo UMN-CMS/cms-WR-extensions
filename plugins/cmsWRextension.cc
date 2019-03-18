@@ -564,6 +564,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.Muon_LooseTkIso2nd_Weight = Muon_LooseTkIso2nd_Weights[0];
     myRECOevent.Muon_LooseTkIso2nd_WeightUp = Muon_LooseTkIso2nd_Weights[1];
     myRECOevent.Muon_LooseTkIso2nd_WeightDown = Muon_LooseTkIso2nd_Weights[2];
+    myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+    myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+    myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
     setEventWeight_Resolved(iEvent, myRECOevent);
 
     m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
@@ -603,6 +606,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.egamma_SF = egamma_SF[0];
     myRECOevent.egamma_SF_Up = egamma_SF[1];
     myRECOevent.egamma_SF_Down = egamma_SF[2];
+    myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+    myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+    myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
     setEventWeight_ResolvedFSB(iEvent, myRECOevent);
 
     m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
@@ -645,12 +651,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.Muon_LooseTkIso2nd_Weight = Muon_LooseTkIso2nd_Weights[0];
     myRECOevent.Muon_LooseTkIso2nd_WeightUp = Muon_LooseTkIso2nd_Weights[1];
     myRECOevent.Muon_LooseTkIso2nd_WeightDown = Muon_LooseTkIso2nd_Weights[2];
-
-    if(!m_isMC){
-      std::vector<double> LeadMuonDataScale = myMuons.RochesterMethod_DataScale(myRECOevent.resolvedANAMuons[0], m_era);
-    }
-    std::vector<double> LeadMuonMCSmear = myMuons.RochesterMethod_MCSmear(myRECOevent.resolvedANAMuons[0], m_era);
-    std::cout << "LeadMuonMCSmear[0]: " << LeadMuonMCSmear[0] << " LeadMuonMCSmear[1]: " << LeadMuonMCSmear[1] << " LeadMuonMCSmear[2]: " << LeadMuonMCSmear[2] << std::endl;
+    myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+    myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+    myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
 
 
     setEventWeight_Resolved(iEvent, myRECOevent);
@@ -740,6 +743,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if ((m_doReco || !m_isMC) && m_doFast){
     std::cout << "RUNNING CONDENSED ANALYSIS FOR HIGGS COMBINE" << std::endl;
     if(preSelectReco_Fast(iEvent, iSetup, myRECOevent)) {
+      std::cout<< "starting passExtensionRECO_Fast" << std::endl;
       passExtensionRECO_Fast(iEvent, myRECOevent);
       if (m_doTrig){
         muonTrigPass = passMuonTrig(iEvent, myRECOevent);
@@ -816,8 +820,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassingExtensionRECO.fill(myRECOevent, 7.);
         m_eventsPassingExtensionRECO.fill(myRECOevent, 8.);
         m_eventsPassingExtensionRECO.fill(myRECOevent, 9.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 10.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 11.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 14.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 15.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 16.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 17.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 18.);
+        m_eventsPassingExtensionRECO.fill(myRECOevent, 19.);
       }
       if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JECUp == 1){
         m_eventsPassingExtensionRECO.fill(myRECOevent, 2.);
@@ -911,8 +919,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 7.);
         m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 8.);
         m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 9.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 10.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 11.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 14.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 15.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 16.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 17.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 18.);
+        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 19.);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==1){
         m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 2.);
@@ -2771,6 +2783,7 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
       myEvent.leadBoostMuonScale = myMuons.RochesterMethod_DataScale(highPTMuons[0], m_era);
     }
 
+    std::cout << "myEvent.leadBoostMuonScale.size(): " << myEvent.leadBoostMuonScale.size() << std::endl;
     myEvent.myMuonCandsHighPt = highPTMuons;
     //We select the lead muon in the event
     myEvent.myMuonCand = highPTMuons[0];
@@ -3847,7 +3860,7 @@ bool cmsWRextension::passExtensionRECO_ZPeak(const edm::Event& iEvent, eventBits
   math::XYZTLorentzVector JetVector;
   JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-  myRECOevent.leadAK8JetMuonMassVal_noLSF = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()).mass();
+  myRECOevent.leadAK8JetMuonMassVal_noLSF = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
 
   return true;
 }
@@ -3978,7 +3991,11 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   	math::XYZTLorentzVector JetVector;
   	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-  	myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonMassVal = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
+	if(m_isMC){
+          myRECOevent.leadAK8JetMuonMassVal_MuResolUp = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()*myRECOevent.leadBoostMuonScale[1]).mass();
+          myRECOevent.leadAK8JetMuonMassVal_MuResolDown = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()*myRECOevent.leadBoostMuonScale[2]).mass();
+        }
   	myRECOevent.leadAK8JetMuonPtVal   = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).pt();
   	myRECOevent.leadAK8JetMuonEtaVal  = (JetVector + myRECOevent.myMuonJetPairs[0].second->p4()).eta();
   	myRECOevent.leadAK8JetMuonPhiVal  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs[0].first->phi, myRECOevent.myMuonJetPairs[0].second->phi())));
@@ -4018,7 +4035,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
   	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-  	myRECOevent.leadAK8JetMuonMassVal_JECUp = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonMassVal_JECUp = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JECUp   = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).pt();
   	myRECOevent.leadAK8JetMuonEtaVal_JECUp  = (JetVector + myRECOevent.myMuonJetPairs_JECUp[0].second->p4()).eta();
   	myRECOevent.leadAK8JetMuonPhiVal_JECUp  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JECUp[0].first->phi, myRECOevent.myMuonJetPairs_JECUp[0].second->phi())));
@@ -4053,7 +4070,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
   	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-  	myRECOevent.leadAK8JetMuonMassVal_JECDown = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonMassVal_JECDown = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JECDown   = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).pt();
   	myRECOevent.leadAK8JetMuonEtaVal_JECDown  = (JetVector + myRECOevent.myMuonJetPairs_JECDown[0].second->p4()).eta();
   	myRECOevent.leadAK8JetMuonPhiVal_JECDown  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JECDown[0].first->phi, myRECOevent.myMuonJetPairs_JECDown[0].second->phi())));
@@ -4088,7 +4105,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
   	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-  	myRECOevent.leadAK8JetMuonMassVal_JERUp = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonMassVal_JERUp = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JERUp   = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).pt();
   	myRECOevent.leadAK8JetMuonEtaVal_JERUp  = (JetVector + myRECOevent.myMuonJetPairs_JERUp[0].second->p4()).eta();
   	myRECOevent.leadAK8JetMuonPhiVal_JERUp  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JERUp[0].first->phi, myRECOevent.myMuonJetPairs_JERUp[0].second->phi())));
@@ -4123,7 +4140,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
   	JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-  	myRECOevent.leadAK8JetMuonMassVal_JERDown = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).mass();
+  	myRECOevent.leadAK8JetMuonMassVal_JERDown = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   	myRECOevent.leadAK8JetMuonPtVal_JERDown   = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).pt();
   	myRECOevent.leadAK8JetMuonEtaVal_JERDown  = (JetVector + myRECOevent.myMuonJetPairs_JERDown[0].second->p4()).eta();
   	myRECOevent.leadAK8JetMuonPhiVal_JERDown  = (fabs(reco::deltaPhi(myRECOevent.myMuonJetPairs_JERDown[0].first->phi, myRECOevent.myMuonJetPairs_JERDown[0].second->phi())));
@@ -4158,7 +4175,11 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
         JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-        myRECOevent.leadAK8JetMuonMassVal_noLSF = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()).mass();
+        myRECOevent.leadAK8JetMuonMassVal_noLSF = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
+	if(m_isMC){
+          myRECOevent.leadAK8JetMuonMassVal_noLSF_MuResolUp = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()*myRECOevent.leadBoostMuonScale[1]).mass();
+          myRECOevent.leadAK8JetMuonMassVal_noLSF_MuResolDown = (JetVector + myRECOevent.myMuonJetPairs_noLSF[0].second->p4()*myRECOevent.leadBoostMuonScale[2]).mass();
+	}
   }
   if(myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0){
         JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JECUp[0].first->E);
@@ -4166,7 +4187,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
         JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-        myRECOevent.leadAK8JetMuonMassVal_noLSF_JECUp = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JECUp[0].second->p4()).mass();
+        myRECOevent.leadAK8JetMuonMassVal_noLSF_JECUp = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JECUp[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   }
   if(myRECOevent.myMuonJetPairs_noLSF_JECDown.size() > 0){
         JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JECDown[0].first->E);
@@ -4174,7 +4195,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
         JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-        myRECOevent.leadAK8JetMuonMassVal_noLSF_JECDown = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JECDown[0].second->p4()).mass();
+        myRECOevent.leadAK8JetMuonMassVal_noLSF_JECDown = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JECDown[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   }
   if(myRECOevent.myMuonJetPairs_noLSF_JERUp.size() > 0){
         JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JERUp[0].first->E);
@@ -4182,7 +4203,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
         JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-        myRECOevent.leadAK8JetMuonMassVal_noLSF_JERUp = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JERUp[0].second->p4()).mass();
+        myRECOevent.leadAK8JetMuonMassVal_noLSF_JERUp = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JERUp[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
 }
   if(myRECOevent.myMuonJetPairs_noLSF_JERDown.size() > 0){
         JetVector_temp.SetPtEtaPhiE(myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->pT,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->eta,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->phi,myRECOevent.myMuonJetPairs_noLSF_JERDown[0].first->E);
@@ -4190,7 +4211,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
         math::XYZTLorentzVector JetVector;
         JetVector.SetXYZT(JetVector_temp.X(),JetVector_temp.Y(),JetVector_temp.Z(),JetVector_temp.T());
 
-        myRECOevent.leadAK8JetMuonMassVal_noLSF_JERDown = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JERDown[0].second->p4()).mass();
+        myRECOevent.leadAK8JetMuonMassVal_noLSF_JERDown = (JetVector + myRECOevent.myMuonJetPairs_noLSF_JERDown[0].second->p4()*myRECOevent.leadBoostMuonScale[0]).mass();
   }
 
 }
