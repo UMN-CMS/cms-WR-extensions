@@ -42,8 +42,8 @@ class eventHistos {
   void fillCombine_JERDown(eventBits& event);
   void fillCombine_PUUp(eventBits& event);
   void fillCombine_PUDown(eventBits& event);
-  void fillCombine_MuIDUp(eventBits& event);
-  void fillCombine_MuIDDown(eventBits& event);
+  void fillCombine_MuBoostIDUp(eventBits& event);
+  void fillCombine_MuBoostIDDown(eventBits& event);
   void fillCombine_MuLUp(eventBits& event);
   void fillCombine_MuLDown(eventBits& event);
   void fillCombine_HEEPUp(eventBits& event);
@@ -54,6 +54,10 @@ class eventHistos {
   void fillCombine_MuTrigDown(eventBits& event);
   void fillCombine_MuResolUp(eventBits& event);
   void fillCombine_MuResolDown(eventBits& event);
+  void fillCombine_MuResIDUp(eventBits& event);
+  void fillCombine_MuResIDDown(eventBits& event);
+  void fillCombine_MuResIsoUp(eventBits& event);
+  void fillCombine_MuResIsoDown(eventBits& event);
 
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
@@ -225,6 +229,17 @@ class eventHistos {
   TH1D* m_leadAK8JetMuonMass_MuResolDown;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuResolUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuResolDown;
+
+  TH1D* m_resolvedRECOmass_MuResIsoUp;
+  TH1D* m_resolvedRECOmass_MuResIsoDown;
+  TH1D* m_resolvedRECOmass_MuResIDUp;
+  TH1D* m_resolvedRECOmass_MuResIDDown;
+  TH1D* m_resolvedRECOmass_MuTrigUp;
+  TH1D* m_resolvedRECOmass_MuTrigDown;
+  TH1D* m_resolvedRECOmass_PUUp;
+  TH1D* m_resolvedRECOmass_PUDown;
+  TH1D* m_resolvedRECOmass_MuResolUp;
+  TH1D* m_resolvedRECOmass_MuResolDown;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;

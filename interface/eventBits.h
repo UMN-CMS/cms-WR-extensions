@@ -249,6 +249,9 @@ public:
   double resLeadMuJet1dR;
   double resLeadMuJet2dR;
 
+  double resolvedRECOmass_MuResolUp;
+  double resolvedRECOmass_MuResolDown;
+
 
   double resMLL;
   double resolvedSubleadMuPt;

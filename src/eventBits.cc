@@ -99,6 +99,9 @@ eventBits::eventBits() {
   resLeadMuJet1dR = -10000.0; 
   resLeadMuJet2dR = -10000.0;  
 
+  resolvedRECOmass_MuResolUp = -10000.0;
+  resolvedRECOmass_MuResolDown = -10000.0;
+
   resFSBElec_pt  = -10000.0;
   resFSBElec_phi = -10000.0;
   resFSBElec_eta = -10000.0;

@@ -318,6 +318,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if (m_doReco || !m_isMC) {
       passesResRECO    = passResRECO(iEvent , myRECOevent);
       passesResFSBRECO = passFSBResRECO(iEvent, myRECOevent);
+      std::cout << "Outside subLeadingMuonZMass" << std::endl;
       ZMASSres         = subLeadingMuonZMass(iEvent, myRECOevent, false, true);
       ZMASSFSBres      = subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true);
       std::cout << "myRECOevent.myResCandJets.size(): " << myRECOevent.myResCandJets.size() << " myRECOevent.resolvedANAMuons.size(): " << myRECOevent.resolvedANAMuons.size() << std::endl;
@@ -328,6 +329,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         if(myRECOevent.myMuonJetPairs.size() > 0){
           if(passBoostRECO(iEvent, myRECOevent)) {
             addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
+	    std::cout << "Outside subLeadingMuonZMass Boost" << std::endl;
             ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, false, false);
             if(m_isMC && addMuons) {
               std::vector<double> Muon_LooseID_Weights;
@@ -738,6 +740,123 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if(m_isSignal && !isGoodSignal) return; //IGNORE EVENT
     }
     passesResRECO = passResRECO(iEvent , myRECOevent);
+    passesResFSBRECO = passFSBResRECO(iEvent, myRECOevent);
+    ZMASSres         = subLeadingMuonZMass(iEvent, myRECOevent, false, true);
+    ZMASSFSBres      = subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true);
+
+    passesResRECO    = (passesResRECO    && muonTrigPass && !ZMASSres   );
+    passesResFSBRECO = (passesResFSBRECO && muonTrigPass && ZMASSFSBres);
+    ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
+
+    if(ZMASSres){
+      std::vector<double> Muon_HighPtID_Weights;
+      std::vector<double> Muon_LooseTkIso_Weights;
+      std::vector<double> Muon_HighPtID2nd_Weights;
+      std::vector<double> Muon_LooseTkIso2nd_Weights;
+      std::vector<double> Muon_Trig_Weights;
+      Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.resolvedANAMuons[0]->pt(), myRECOevent.resolvedANAMuons[0]->eta(), m_era);
+      Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.resolvedANAMuons[0]->pt(), myRECOevent.resolvedANAMuons[0]->eta(), m_era);
+      Muon_HighPtID2nd_Weights = myMuons.MuonHighPTIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta(), m_era);
+      Muon_LooseTkIso2nd_Weights = myMuons.MuonLooseTkIso(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta(), m_era);
+      Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.resolvedANAMuons[0]->pt(), m_era);
+
+      myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
+      myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
+      myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+      myRECOevent.Muon_LooseTkIso_Weight = Muon_LooseTkIso_Weights[0];
+      myRECOevent.Muon_LooseTkIso_WeightUp = Muon_LooseTkIso_Weights[1];
+      myRECOevent.Muon_LooseTkIso_WeightDown = Muon_LooseTkIso_Weights[2];
+      myRECOevent.Muon_HighPtID2nd_Weight = Muon_HighPtID2nd_Weights[0];
+      myRECOevent.Muon_HighPtID2nd_WeightUp = Muon_HighPtID2nd_Weights[1];
+      myRECOevent.Muon_HighPtID2nd_WeightDown = Muon_HighPtID2nd_Weights[2];
+      myRECOevent.Muon_LooseTkIso2nd_Weight = Muon_LooseTkIso2nd_Weights[0];
+      myRECOevent.Muon_LooseTkIso2nd_WeightUp = Muon_LooseTkIso2nd_Weights[1];
+      myRECOevent.Muon_LooseTkIso2nd_WeightDown = Muon_LooseTkIso2nd_Weights[2];
+      myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+      myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+      myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
+      setEventWeight_Resolved(iEvent, myRECOevent);
+
+      m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
+
+    }
+    if(passesResFSBRECO){
+      std::vector<double> Muon_HighPtID_Weights;
+      std::vector<double> Muon_LooseTkIso_Weights;
+      std::vector<double> Muon_Trig_Weights;
+      std::vector<double> HEEP_SF;
+      std::vector<double> egamma_SF;
+      Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.resFSBMuon_pt, myRECOevent.resFSBMuon_eta, m_era);
+      Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.resFSBMuon_pt, myRECOevent.resFSBMuon_eta, m_era);
+      Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.resFSBMuon_pt, m_era);
+      egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.resFSBElec->superCluster()->eta(), myRECOevent.resFSBElec_pt, m_era);
+
+      HEEP_SF = myHEEP.ScaleFactor(myRECOevent.resFSBElec->et(), myRECOevent.resFSBElec_eta, m_era);
+      myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
+      myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
+      myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+      myRECOevent.Muon_LooseTkIso_Weight = Muon_LooseTkIso_Weights[0];
+      myRECOevent.Muon_LooseTkIso_WeightUp = Muon_LooseTkIso_Weights[1];
+      myRECOevent.Muon_LooseTkIso_WeightDown = Muon_LooseTkIso_Weights[2];
+      myRECOevent.HEEP_SF = HEEP_SF[0];
+      myRECOevent.HEEP_SF_Up = HEEP_SF[1];
+      myRECOevent.HEEP_SF_Down = HEEP_SF[2];
+      myRECOevent.egamma_SF = egamma_SF[0];
+      myRECOevent.egamma_SF_Up = egamma_SF[1];
+      myRECOevent.egamma_SF_Down = egamma_SF[2];
+      myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+      myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+      myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
+      setEventWeight_ResolvedFSB(iEvent, myRECOevent);
+
+      m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
+    }
+
+    if(passesResRECO){
+      std::vector<double> Muon_HighPtID_Weights;
+      std::vector<double> Muon_LooseTkIso_Weights;
+      std::vector<double> Muon_HighPtID2nd_Weights;
+      std::vector<double> Muon_LooseTkIso2nd_Weights;
+      std::vector<double> Muon_Trig_Weights;
+
+      Muon_HighPtID_Weights = myMuons.MuonHighPTIDweight(myRECOevent.resolvedANAMuons[0]->pt(), myRECOevent.resolvedANAMuons[0]->eta(), m_era);
+      Muon_LooseTkIso_Weights = myMuons.MuonLooseTkIso(myRECOevent.resolvedANAMuons[0]->pt(), myRECOevent.resolvedANAMuons[0]->eta(), m_era);
+      Muon_HighPtID2nd_Weights = myMuons.MuonHighPTIDweight(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta(), m_era);
+      Muon_LooseTkIso2nd_Weights = myMuons.MuonLooseTkIso(myRECOevent.resolvedANAMuons[1]->pt(), myRECOevent.resolvedANAMuons[1]->eta(), m_era);
+      Muon_Trig_Weights = myMuons.MuonTriggerWeight(myRECOevent.resolvedANAMuons[0]->pt(), m_era);
+
+      myRECOevent.Muon_HighPtID_Weight = Muon_HighPtID_Weights[0];
+      myRECOevent.Muon_HighPtID_WeightUp = Muon_HighPtID_Weights[1];
+      myRECOevent.Muon_HighPtID_WeightDown = Muon_HighPtID_Weights[2];
+      myRECOevent.Muon_LooseTkIso_Weight = Muon_LooseTkIso_Weights[0];
+      myRECOevent.Muon_LooseTkIso_WeightUp = Muon_LooseTkIso_Weights[1];
+      myRECOevent.Muon_LooseTkIso_WeightDown = Muon_LooseTkIso_Weights[2];
+      myRECOevent.Muon_HighPtID2nd_Weight = Muon_HighPtID2nd_Weights[0];
+      myRECOevent.Muon_HighPtID2nd_WeightUp = Muon_HighPtID2nd_Weights[1];
+      myRECOevent.Muon_HighPtID2nd_WeightDown = Muon_HighPtID2nd_Weights[2];
+      myRECOevent.Muon_LooseTkIso2nd_Weight = Muon_LooseTkIso2nd_Weights[0];
+      myRECOevent.Muon_LooseTkIso2nd_WeightUp = Muon_LooseTkIso2nd_Weights[1];
+      myRECOevent.Muon_LooseTkIso2nd_WeightDown = Muon_LooseTkIso2nd_Weights[2];
+      myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
+      myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
+      myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
+
+      setEventWeight_Resolved(iEvent, myRECOevent);
+
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 6);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 7);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 20);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 21);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 22);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 23);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 16);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 17);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 18);
+      m_eventsPassResFailBoostRECO.fill(myRECOevent, 19);
+//Add JEC/JER fills
+    }
+
   }
 
   if ((m_doReco || !m_isMC) && m_doFast){
@@ -1874,19 +1993,25 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
   double leadMuScale = 0.;
   double secondMuScale = 0.;
   if (useResMu) {
+    std::cout << "check #0.1" << std::endl;    
     if(myEvent.resolvedANAMuons.size() < 2) return false;
     if(myEvent.resolvedANAMuons[0] == NULL) return false;
     if(myEvent.resolvedANAMuons[1] == NULL) return false;
     subleadMuon = myEvent.resolvedANAMuons[1];
     selMuon     = myEvent.resolvedANAMuons[0];
+    std::cout << "check #1" << std::endl;
     secondMuScale = myEvent.secondResMuonScale[0];
+    std::cout << "check #2" << std::endl;
     leadMuScale   = myEvent.leadResMuonScale[0];
   } else { 
+    std::cout << "check #0.2" << std::endl;
     if(myEvent.mySubleadMuon == NULL) return false;
     if(myEvent.myMuonCand    == NULL) return false;
     subleadMuon = myEvent.mySubleadMuon;
     selMuon     = myEvent.myMuonCand;
+    std::cout << "check #3" << std::endl;
     secondMuScale = myEvent.secondBoostMuonScale[0];
+    std::cout << "check #4" << std::endl;
     leadMuScale   = myEvent.leadBoostMuonScale[0];
   }
   if (!useResMu) {
@@ -1899,6 +2024,7 @@ bool cmsWRextension::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& my
 
     myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
   }
+  std::cout << "check #5" << std::endl;
   myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
   myEvent.subleadMuon_selMuonMass = (subleadMuon->p4()*secondMuScale + selMuon->p4()*leadMuScale).mass();
   myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
@@ -2073,24 +2199,30 @@ int cmsWRextension::subLeadingMuonZMass_JERDown(const edm::Event& iEvent, eventB
   }
 }
 bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent, eventBits& myEvent, bool useResLeps) {
+  std::cout << "Inside subLeadingMuonZMass_FlavorSideband" << std::endl;
   const pat::Muon* subleadMuon = NULL;
   const pat::Electron* selEl   = NULL;
   double leadMuScale = 0.;
   if (useResLeps) {
+    std::cout << "check #1.1" << std::endl;
     if ( myEvent.resFSBMuon == NULL ) return false;
     if ( myEvent.resFSBElec == NULL ) return false;
     subleadMuon = myEvent.resFSBMuon;
     selEl       = myEvent.resFSBElec;
-    leadMuScale   = myEvent.leadResMuonScale[0];
+    std::cout << "check #1.2" << std::endl;
+    leadMuScale   = myEvent.leadFSBMuonScale[0];
   } else {
+    std::cout << "check #1.3" << std::endl;
     if ( myEvent.myElectronCand == NULL ) return false;
     if ( myEvent.mySubleadMuon  == NULL ) return false;
     selEl = myEvent.myElectronCand;
     subleadMuon       = myEvent.mySubleadMuon;
+    std::cout << "check #1.4" << std::endl;
     leadMuScale   = myEvent.secondBoostMuonScale[0];
   }
   if ( subleadMuon == NULL ) return false;
   if ( selEl       == NULL ) return false;
+  std::cout << "check #1.5" << std::endl;
 
   double subleadMuon_selElectronMass = (subleadMuon->p4()*leadMuScale + selEl->p4()).mass();
 
@@ -4294,12 +4426,16 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
     
   //CHECK 4 OBJECT MASS
   double resMass = (mu1->p4()*myEvent.leadResMuonScale[0] + mu2->p4()*myEvent.secondResMuonScale[0] + jet1->p4() + jet2->p4()).mass();
+  double resMass_Up = (mu1->p4()*myEvent.leadResMuonScale[1] + mu2->p4()*myEvent.secondResMuonScale[1] + jet1->p4() + jet2->p4()).mass();
+  double resMass_Down = (mu1->p4()*myEvent.leadResMuonScale[2] + mu2->p4()*myEvent.secondResMuonScale[2] + jet1->p4() + jet2->p4()).mass();
 
   if (resMass < 600) return false;
   std::cout << "RES FOUR MASS PASSED" << std::endl;
   myEvent.ResCutProgress++;
 
   myEvent.resolvedRECOmass = resMass; 
+  myEvent.resolvedRECOmass_MuResolUp = resMass_Up;
+  myEvent.resolvedRECOmass_MuResolDown = resMass_Down;
 
   myEvent.resSubleadMuJet1dR = dR_pair21;
   myEvent.resSubleadMuJet2dR = dR_pair22;
@@ -4680,6 +4816,8 @@ cmsWRextension::beginJob()
     m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 5, m_outputTag, false);
     m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 5, m_outputTag, false);
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt200")),  5, m_outputTag, true);
+    m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")), 5, m_outputTag, false);
+
   }
 }
 
