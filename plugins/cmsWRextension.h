@@ -131,6 +131,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passZsidebandCutGEN(const edm::Event&, eventBits&);
       bool passResRECO (const edm::Event&, eventBits&);
       bool passFSBResRECO (const edm::Event&, eventBits&);
+      std::vector<bool> passResRECO_Fast (const edm::Event&, eventBits&);
+      std::vector<bool> passFSBResRECO_Fast (const edm::Event&, eventBits&);
       bool passBoostRECO(const edm::Event&, eventBits&);
       bool passExtensionRECO_ZPeak(const edm::Event&, eventBits&);
       void passExtensionRECO_Fast(const edm::Event&, eventBits&);
@@ -292,6 +294,8 @@ class cmsWRextension : public edm::EDAnalyzer {
 
       JME::JetResolution resolution;
       JME::JetResolutionScaleFactor resolution_sf;
+      JME::JetResolution resolution_AK4;
+      JME::JetResolutionScaleFactor resolution_sf_AK4;
 
       TRandom3* r;
 

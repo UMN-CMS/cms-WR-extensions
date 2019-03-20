@@ -58,6 +58,14 @@ class eventHistos {
   void fillCombine_MuResIDDown(eventBits& event);
   void fillCombine_MuResIsoUp(eventBits& event);
   void fillCombine_MuResIsoDown(eventBits& event);
+  void fillCombine_AK4JECUp(eventBits& event);
+  void fillCombine_AK4JECDown(eventBits& event);
+  void fillCombine_AK4JERUp(eventBits& event);
+  void fillCombine_AK4JERDown(eventBits& event);
+  void fillCombine_FSBResMuIDUp(eventBits& event);
+  void fillCombine_FSBResMuIDDown(eventBits& event);
+  void fillCombine_FSBResMuIsoUp(eventBits& event);
+  void fillCombine_FSBResMuIsoDown(eventBits& event);
 
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
@@ -240,6 +248,10 @@ class eventHistos {
   TH1D* m_resolvedRECOmass_PUDown;
   TH1D* m_resolvedRECOmass_MuResolUp;
   TH1D* m_resolvedRECOmass_MuResolDown;
+  TH1D* m_resolvedRECOmass_JECUp;
+  TH1D* m_resolvedRECOmass_JECDown;
+  TH1D* m_resolvedRECOmass_JERUp;
+  TH1D* m_resolvedRECOmass_JERDown;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;
@@ -364,6 +376,22 @@ class eventHistos {
   TH1D* m_resFSBMuonJet1dR;
   TH1D* m_resFSBMuonJet2dR;
 
+  TH1D* m_resolvedFSBRECOmass_JECUp;
+  TH1D* m_resolvedFSBRECOmass_JECDown;
+  TH1D* m_resolvedFSBRECOmass_JERUp;
+  TH1D* m_resolvedFSBRECOmass_JERDown;
+  TH1D* m_resolvedFSBRECOmass_PUUp;
+  TH1D* m_resolvedFSBRECOmass_PUDown;
+  TH1D* m_resolvedFSBRECOmass_MuIDUp;
+  TH1D* m_resolvedFSBRECOmass_MuIDDown;
+  TH1D* m_resolvedFSBRECOmass_MuIsoUp;
+  TH1D* m_resolvedFSBRECOmass_MuIsoDown;
+  TH1D* m_resolvedFSBRECOmass_HEEPUp;
+  TH1D* m_resolvedFSBRECOmass_HEEPDown;
+  TH1D* m_resolvedFSBRECOmass_MuTrigUp;
+  TH1D* m_resolvedFSBRECOmass_MuTrigDown;
+  TH1D* m_resolvedFSBRECOmass_MuResolUp;
+  TH1D* m_resolvedFSBRECOmass_MuResolDown;
 
   TH1D* m_resFSBElec_pt ;
   TH1D* m_resFSBElec_phi;

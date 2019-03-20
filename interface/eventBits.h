@@ -91,8 +91,6 @@ public:
 
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
-  std::vector<const pat::Jet*>      myResCandJets;
-  std::vector<const pat::Jet*>      myResFSBCandJets;
   std::vector<const pat::Electron*> myElectronCandsHighPt200;
   std::vector<const pat::Electron*> myElectronCandsHighPt150;
   std::vector<const pat::Electron*> myElectronCandsHighPt100;
@@ -103,6 +101,18 @@ public:
   std::vector<const pat::Muon*>     resolvedANAMuons;
   std::vector<const pat::Muon*>     myMuonCands;
   const pat::MET*                   myMET;
+
+  std::vector<const baconhep::TAddJet*>      myResCandJets;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JECUp;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JECDown;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JERUp;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JERDown;
+
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JECUp;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JECDown;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JERUp;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JERDown;
 
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt;
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JECUp;
@@ -252,6 +262,10 @@ public:
   double resolvedRECOmass_MuResolUp;
   double resolvedRECOmass_MuResolDown;
 
+  double resolvedRECOmass_JECUp;
+  double resolvedRECOmass_JECDown;
+  double resolvedRECOmass_JERUp;
+  double resolvedRECOmass_JERDown;
 
   double resMLL;
   double resolvedSubleadMuPt;
@@ -263,6 +277,12 @@ public:
   double resFSBMuonJet1dR;
   double resFSBMuonJet2dR;
 
+  double resolvedFSBRECOmass_JECUp;
+  double resolvedFSBRECOmass_JECDown;
+  double resolvedFSBRECOmass_JERUp;
+  double resolvedFSBRECOmass_JERDown;
+  double resolvedFSBRECOmass_MuResolUp;
+  double resolvedFSBRECOmass_MuResolDown;
 
   double resFSBElec_pt ;
   double resFSBElec_phi;

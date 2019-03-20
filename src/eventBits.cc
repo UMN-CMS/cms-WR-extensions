@@ -102,6 +102,19 @@ eventBits::eventBits() {
   resolvedRECOmass_MuResolUp = -10000.0;
   resolvedRECOmass_MuResolDown = -10000.0;
 
+  resolvedRECOmass_JECUp   = -10000.0;
+  resolvedRECOmass_JECDown   = -10000.0;
+  resolvedRECOmass_JERUp   = -10000.0;
+  resolvedRECOmass_JERDown   = -10000.0;
+
+  resolvedFSBRECOmass = -10000.0;
+  resolvedFSBRECOmass_JECUp = -10000.0;
+  resolvedFSBRECOmass_JECDown = -10000.0;
+  resolvedFSBRECOmass_JERUp = -10000.0;
+  resolvedFSBRECOmass_JERDown = -10000.0;
+  resolvedFSBRECOmass_MuResolUp = -10000.0;
+  resolvedFSBRECOmass_MuResolDown = -10000.0;
+
   resFSBElec_pt  = -10000.0;
   resFSBElec_phi = -10000.0;
   resFSBElec_eta = -10000.0;
