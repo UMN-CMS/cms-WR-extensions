@@ -27,5 +27,5 @@
 /DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM                    -1 1 2.198+0.001307-0.001307DYJetsToLL ROOT.kGreen+3
 /DYJetsToLL_M-50_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM                   -1 1 0.6304+0.0005996-0.0005996DYJetsToLL ROOT.kGreen+3
 /DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM                  -1 1 0.1514+0.0001884-0.0001884DYJetsToLL ROOT.kGreen+3
-/DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v2/MINIAODSIM                   -1 1 0.003565+0.000005548-0.000005548DYJetsToLL ROOT.kGreen+3
+/DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM                   -1 1 0.003565+0.000005548-0.000005548DYJetsToLL ROOT.kGreen+3
 /TT_TuneCUETP8M2T4_13TeV-powheg-pythia8/RunIISummer16MiniAODv3-PUMoriond17_94X_mcRun2_asymptotic_v3-v1/MINIAODSIM             -1   1        831.76+40.25-45.63 TTJets_inc   ROOT.kGray
