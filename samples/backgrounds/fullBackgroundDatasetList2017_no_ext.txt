@@ -6,7 +6,7 @@
 /DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v2/MINIAODSIM                     -1 2 0.003565+0.0000118-0.0000118 DYJetsToLL ROOT.kGreen+3 
 /DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v2/MINIAODSIM                      -1 2 5.678+0.02079-0.02079 DYJetsToLL ROOT.kGreen+3 
 /DYJetsToLL_M-50_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v2/MINIAODSIM                      -1 2 1.367+0.005233-0.005233 DYJetsToLL ROOT.kGreen+3 
-/DYJetsToLL_M-50_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM                     -1 2 0.6304+0.002427-0.002427 DYJetsToLL ROOT.kGreen+3 
+/DYJetsToLL_M-50_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v2/MINIAODSIM                     -1 2 0.6304+0.002427-0.002427 DYJetsToLL ROOT.kGreen+3 
 /TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM                                           -1 1 831.7587+1.363-1.363 TTJets_inc ROOT.kGray
 /TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_new_pmx_94X_mc2017_realistic_v14-v1/MINIAODSIM                                          -1 1 831.7619+5.428-5.428 TTJets_inc ROOT.kGray
 /WW_TuneCP5_13TeV-pythia8/RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1/MINIAODSIM                                                           -1 1 75.82+0.1123-0.1123 DiBoson ROOT.kRed-2
