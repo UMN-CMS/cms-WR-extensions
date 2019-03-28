@@ -3105,22 +3105,14 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     //if (CEMF > .99) continue;
     if (CEMF > .90) continue; 
 
-    std::cout << "check #1" << std::endl;
     fJetUnc->setJetEta(iJet->eta());
-    std::cout << "check #2" << std::endl;
     fJetUnc->setJetPt(iJet->pt());
     jetUNC =              fJetUnc->getUncertainty(true);
-    std::cout << "check #3" << std::endl;
     JME::JetParameters parameters = {{JME::Binning::JetPt, iJet->pt()}, {JME::Binning::JetEta, iJet->eta()}, {JME::Binning::Rho, TMath::Min(rho,44.30)}};
-    std::cout << "check #4" << std::endl;
     sigma_MC = resolution_AK4.getResolution(parameters);
-    std::cout << "check #5" << std::endl;
     sf = resolution_sf_AK4.getScaleFactor(parameters);
-    std::cout << "check #6" << std::endl;
     sfUp = resolution_sf_AK4.getScaleFactor(parameters, Variation::UP);
-    std::cout << "check #7" << std::endl;
     sfDown = resolution_sf_AK4.getScaleFactor(parameters, Variation::DOWN);
-    std::cout << "check #2" << std::endl;
     x1 = r->Gaus();
     x2 = r->Gaus();
     x3 = r->Gaus();
@@ -3145,7 +3137,6 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     jetEJERDown = iJet->energy()*jetEnergySmearFactorDown;
 
 
-    std::cout << "check #3" << std::endl;
     if(jetCorrPtSmear > 40){
       baconhep::TAddJet* pAddJet = new baconhep::TAddJet();
 
@@ -3158,7 +3149,6 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
       std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
 
     }
-    std::cout << "check #4" << std::endl;
     if(jetPtJESUp > 40){
       baconhep::TAddJet* pAddJet_JECUp = new baconhep::TAddJet();
 
@@ -3169,7 +3159,6 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 
       resCandJets_JECUp.push_back(pAddJet_JECUp);
     }
-    std::cout << "check #5" << std::endl;
     if(jetPtJESDown > 40){
       baconhep::TAddJet* pAddJet_JECDown = new baconhep::TAddJet();
 
@@ -3180,7 +3169,6 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 
       resCandJets_JECDown.push_back(pAddJet_JECDown);
     }
-    std::cout << "check #6" << std::endl;
     if(jetPtJERUp > 40){
       baconhep::TAddJet* pAddJet_JERUp = new baconhep::TAddJet();
 
@@ -3242,7 +3230,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
           fJetUnc = new JetCorrectionUncertainty(Form("%s/2016/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
         }else if(m_era == "2017"){
           fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
-        }else if(m_era == " 2018"){
+        }else if(m_era == "2018"){
           fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V8_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
         }
   }else{
