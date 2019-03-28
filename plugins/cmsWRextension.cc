@@ -3015,7 +3015,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 	  fJetUnc = new JetCorrectionUncertainty(Form("%s/2016/Summer16_07Aug2017_V11_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
 	}else if(m_era == "2017"){
           fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
-	}else if(m_era == " 2018"){
+	}else if(m_era == "2018"){
           fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V8_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
 	}
   }else{
@@ -3054,17 +3054,46 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     std::cout << "NOT ENOUGH MUONS, EXITING RESOLVED JET SELECTION" << std::endl;
     return false;
   }
+  double NHF  =                0.;
+  double NEMF =                0.;
+  double CHF  =                0.;
+  double CEMF =                0.;
+  double NumConst =            0.;
+  double MUF      =            0.;
+  double CHM      =            0.;
+  double jetUNC =              0.;
+  float sigma_MC = 0.;
+  float sf = 0.;
+  float sfUp = 0.;
+  float sfDown = 0.;
+  double x1 = 0.;
+  double x2 = 0.;
+  double x3 = 0.;
+  double jetEnergySmearFactor = 1.0;
+  double jetEnergySmearFactorUp = 1.0;
+  double jetEnergySmearFactorDown = 1.0;
+  double jetCorrPtSmear = 0.;
+  double jetPtJESUp =            0.;
+  double jetPtJESDown =          0.;
+  double jetPtJERUp = 0.;
+  double jetPtJERDown = 0.;
+  double jetCorrESmear = 0.;
+  double jetEJESUp = 0.;
+  double jetEJESDown = 0.;
+  double jetEJERUp = 0.;
+  double jetEJERDown = 0.;
+
   for(std::vector<pat::Jet>::const_iterator iJet = recoJetsAK4->begin(); iJet != recoJetsAK4->end(); iJet++) {
     if ( fabs(iJet->eta()) > 2.4) continue;
     std::cout<<"POSSIBLE JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
     std::cout << "iJet->muonEnergyFraction(): " << iJet->muonEnergyFraction() << " iJet->chargedEmEnergyFraction(): " << iJet->chargedEmEnergyFraction() << std::endl;
-    double NHF  =                iJet->neutralHadronEnergyFraction();
-    double NEMF =                iJet->neutralEmEnergyFraction();
-    double CHF  =                iJet->chargedHadronEnergyFraction();
-    double CEMF =                iJet->chargedEmEnergyFraction();
-    double NumConst =            iJet->chargedMultiplicity()+iJet->neutralMultiplicity();
-    double MUF      =            iJet->muonEnergyFraction();
-    double CHM      =            iJet->chargedMultiplicity(); 
+    NHF  =                iJet->neutralHadronEnergyFraction();
+    NEMF =                iJet->neutralEmEnergyFraction();
+    CHF  =                iJet->chargedHadronEnergyFraction();
+    CEMF =                iJet->chargedEmEnergyFraction();
+    NumConst =            iJet->chargedMultiplicity()+iJet->neutralMultiplicity();
+    MUF      =            iJet->muonEnergyFraction();
+    CHM      =            iJet->chargedMultiplicity(); 
     //APPLYING TIGHT QUALITY CUTS
     if (NHF > .9) continue;
     if (NEMF > .9) continue;
@@ -3076,38 +3105,47 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     //if (CEMF > .99) continue;
     if (CEMF > .90) continue; 
 
-    fJetUnc->setJetPt(iJet->pt());
+    std::cout << "check #1" << std::endl;
     fJetUnc->setJetEta(iJet->eta());
-    double jetUNC =              fJetUnc->getUncertainty(true);
+    std::cout << "check #2" << std::endl;
+    fJetUnc->setJetPt(iJet->pt());
+    jetUNC =              fJetUnc->getUncertainty(true);
+    std::cout << "check #3" << std::endl;
     JME::JetParameters parameters = {{JME::Binning::JetPt, iJet->pt()}, {JME::Binning::JetEta, iJet->eta()}, {JME::Binning::Rho, TMath::Min(rho,44.30)}};
-    float sigma_MC = resolution_AK4.getResolution(parameters);
-    float sf = resolution_sf_AK4.getScaleFactor(parameters);
-    float sfUp = resolution_sf_AK4.getScaleFactor(parameters, Variation::UP);
-    float sfDown = resolution_sf_AK4.getScaleFactor(parameters, Variation::DOWN);
-    double x1 = r->Gaus();
-    double x2 = r->Gaus();
-    double x3 = r->Gaus();
-    double jetEnergySmearFactor = 1.0;
-    double jetEnergySmearFactorUp = 1.0;
-    double jetEnergySmearFactorDown = 1.0;
+    std::cout << "check #4" << std::endl;
+    sigma_MC = resolution_AK4.getResolution(parameters);
+    std::cout << "check #5" << std::endl;
+    sf = resolution_sf_AK4.getScaleFactor(parameters);
+    std::cout << "check #6" << std::endl;
+    sfUp = resolution_sf_AK4.getScaleFactor(parameters, Variation::UP);
+    std::cout << "check #7" << std::endl;
+    sfDown = resolution_sf_AK4.getScaleFactor(parameters, Variation::DOWN);
+    std::cout << "check #2" << std::endl;
+    x1 = r->Gaus();
+    x2 = r->Gaus();
+    x3 = r->Gaus();
+    jetEnergySmearFactor = 1.0;
+    jetEnergySmearFactorUp = 1.0;
+    jetEnergySmearFactorDown = 1.0;
     if(m_isMC){
       jetEnergySmearFactor = 1.0 + sqrt(sf*sf - 1.0)*sigma_MC*x1;
       jetEnergySmearFactorUp = 1.0 + sqrt(sfUp*sfUp - 1.0)*sigma_MC*x2;
       jetEnergySmearFactorDown = 1.0 + sqrt(sfDown*sfDown - 1.0)*sigma_MC*x3;
     }
-    double jetCorrPtSmear = iJet->pt()*jetEnergySmearFactor;
-    double jetPtJESUp =            iJet->pt()*jetEnergySmearFactor*(1+jetUNC);
-    double jetPtJESDown =          iJet->pt()*jetEnergySmearFactor*(1-jetUNC);
-    double jetPtJERUp = iJet->pt()*jetEnergySmearFactorUp;
-    double jetPtJERDown = iJet->pt()*jetEnergySmearFactorDown;
+    jetCorrPtSmear = iJet->pt()*jetEnergySmearFactor;
+    jetPtJESUp =            iJet->pt()*jetEnergySmearFactor*(1+jetUNC);
+    jetPtJESDown =          iJet->pt()*jetEnergySmearFactor*(1-jetUNC);
+    jetPtJERUp = iJet->pt()*jetEnergySmearFactorUp;
+    jetPtJERDown = iJet->pt()*jetEnergySmearFactorDown;
 
-    double jetCorrESmear = iJet->energy()*jetEnergySmearFactor;
-    double jetEJESUp = iJet->energy()*jetEnergySmearFactor*(1+jetUNC);
-    double jetEJESDown = iJet->energy()*jetEnergySmearFactor*(1-jetUNC);
-    double jetEJERUp = iJet->energy()*jetEnergySmearFactorUp;
-    double jetEJERDown = iJet->energy()*jetEnergySmearFactorDown;
+    jetCorrESmear = iJet->energy()*jetEnergySmearFactor;
+    jetEJESUp = iJet->energy()*jetEnergySmearFactor*(1+jetUNC);
+    jetEJESDown = iJet->energy()*jetEnergySmearFactor*(1-jetUNC);
+    jetEJERUp = iJet->energy()*jetEnergySmearFactorUp;
+    jetEJERDown = iJet->energy()*jetEnergySmearFactorDown;
 
 
+    std::cout << "check #3" << std::endl;
     if(jetCorrPtSmear > 40){
       baconhep::TAddJet* pAddJet = new baconhep::TAddJet();
 
@@ -3120,6 +3158,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
       std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
 
     }
+    std::cout << "check #4" << std::endl;
     if(jetPtJESUp > 40){
       baconhep::TAddJet* pAddJet_JECUp = new baconhep::TAddJet();
 
@@ -3130,6 +3169,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 
       resCandJets_JECUp.push_back(pAddJet_JECUp);
     }
+    std::cout << "check #5" << std::endl;
     if(jetPtJESDown > 40){
       baconhep::TAddJet* pAddJet_JECDown = new baconhep::TAddJet();
 
@@ -3140,6 +3180,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 
       resCandJets_JECDown.push_back(pAddJet_JECDown);
     }
+    std::cout << "check #6" << std::endl;
     if(jetPtJERUp > 40){
       baconhep::TAddJet* pAddJet_JERUp = new baconhep::TAddJet();
 
