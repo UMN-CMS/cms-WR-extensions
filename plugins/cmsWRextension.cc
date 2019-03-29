@@ -537,7 +537,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   //FILL STUFF
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
   passesResRECO    = (passesResRECO    && muonTrigPass && !ZMASSres   );
-  passesResFSBRECO = (passesResFSBRECO && muonTrigPass && ZMASSFSBres);
+  passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres);
   ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
 
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
@@ -816,7 +816,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
     }
 
-    if((passesResFSBRECOAllRegions[0]||passesResFSBRECOAllRegions[1]||passesResFSBRECOAllRegions[2]||passesResFSBRECOAllRegions[3]||passesResFSBRECOAllRegions[4]) && muonTrigPass && ZMASSFSBres){
+    if((passesResFSBRECOAllRegions[0]||passesResFSBRECOAllRegions[1]||passesResFSBRECOAllRegions[2]||passesResFSBRECOAllRegions[3]||passesResFSBRECOAllRegions[4]) && muonTrigPass && !ZMASSFSBres){
       std::vector<double> Muon_HighPtID_Weights;
       std::vector<double> Muon_LooseTkIso_Weights;
       std::vector<double> Muon_Trig_Weights;
@@ -5108,6 +5108,7 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   //CHECK 4 OBJECT MASS
   double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
 
+  std::cout << "resMass: " << resMass << std::endl;
   if (resMass < 600) return false;
   std::cout << "RES FOUR MASS PASSED" << std::endl;
   myEvent.ResFSBCutProgress++;
@@ -5531,7 +5532,7 @@ cmsWRextension::beginJob()
     m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
 
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 3, m_outputTag, 0);
-    m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 0);
+    m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
 
 //    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
 //    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
