@@ -523,12 +523,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         //ABCD BIN DEFINITION
         if (passFSBbin(myRECOevent, false, 200)) {
 //          bool ABorCD = passABCD(myRECOevent, true); //SIGMAIETAIETA
-          bool ACorBD = passABCD(myRECOevent, false); //TRACKISO
+          //bool ACorBD = passABCD(myRECOevent, false); //TRACKISO
          // if (!ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_A.fill(myRECOevent, 1); 
          // if ( ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_B.fill(myRECOevent, 1); 
          // if (!ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_C.fill(myRECOevent, 1); 
          // if ( ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_D.fill(myRECOevent, 1); 
-          if ( ACorBD ) m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+          m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
         }
       }
       std::cout << "DONE WITH FSB" << std::endl;
