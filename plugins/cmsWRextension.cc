@@ -521,7 +521,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 //          m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
 //        }
         //ABCD BIN DEFINITION
-        if (passFSBbin(myRECOevent, false, 200)) {
+        if (passFSBbin(myRECOevent, true, 200)) {
 //          bool ABorCD = passABCD(myRECOevent, true); //SIGMAIETAIETA
           //bool ACorBD = passABCD(myRECOevent, false); //TRACKISO
          // if (!ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_A.fill(myRECOevent, 1); 
