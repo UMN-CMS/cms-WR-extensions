@@ -521,14 +521,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 //          m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
 //        }
         //ABCD BIN DEFINITION
-        if (passFSBbin(myRECOevent, false, 200)) {
+        if (passFSBbin(myRECOevent, true, 200)) {
 //          bool ABorCD = passABCD(myRECOevent, true); //SIGMAIETAIETA
-          bool ACorBD = passABCD(myRECOevent, false); //TRACKISO
+//          bool ACorBD = passABCD(myRECOevent, false); //TRACKISO
          // if (!ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_A.fill(myRECOevent, 1); 
          // if ( ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_B.fill(myRECOevent, 1); 
          // if (!ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_C.fill(myRECOevent, 1); 
          // if ( ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_D.fill(myRECOevent, 1); 
-          if ( ACorBD ) m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+          m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
         }
       }
       std::cout << "DONE WITH FSB" << std::endl;
@@ -1243,6 +1243,7 @@ bool cmsWRextension::passABCD(eventBits& myEvent, bool AvB /*versus AvC */) {
   return false;            
 }                                                                               
 bool cmsWRextension::passFSBbin(eventBits& myEvent, bool ISO, int ptCut) {
+  std::cout << "inside passFSBbin" << std::endl;
   //LOGIC IS REPEATED FOR ISO AND NONISO SELECTIONS
   if (ISO) {
     std::cout << "myEvent.myElectronJetPairs.size(): " << myEvent.myElectronJetPairs.size() << std::endl;
@@ -1250,6 +1251,8 @@ bool cmsWRextension::passFSBbin(eventBits& myEvent, bool ISO, int ptCut) {
     if (myEvent.myElectronJetPairs.size() < 1)  return false;  //NO PAIRS MEANS IT COULD NOT PASS
     if (myEvent.selectedElectronPt >= ptCut) return true;
   } else {
+    std::cout << "myEvent.myElectronJetPairs_noISO.size(): " << myEvent.myElectronJetPairs_noISO.size() << std::endl;
+    std::cout << "myEvent.selectedElectron_noISO_Pt: " << myEvent.selectedElectron_noISO_Pt << std::endl;
     if (myEvent.myElectronJetPairs_noISO.size() < 1) return false;
     if (myEvent.selectedElectron_noISO_Pt >= ptCut) return true;
   }
@@ -1651,6 +1654,8 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
 
     //BUILD PAIRS OF AK8 JETS WITH THE LEAD ELECTRON
     for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
+       std::cout << "Looping over Jets" << std::endl;
+       std::cout << "fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())): " << fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) << std::endl;
        if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
 
        jetVec_temp.SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
@@ -1659,6 +1664,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
  
        double eventMass = ( jetVec + myRECOevent.myElectronCand->p4() ).mass();
+       std::cout << "eventMass: " << eventMass << std::endl;
 
        if( eventMass < 200 ) continue;
 
@@ -5559,7 +5565,7 @@ cmsWRextension::beginJob()
     //m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 3, m_outputTag, 2);
     //m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 3, m_outputTag, 2);
     //m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 1);
   }
   if (m_doGen && !m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
