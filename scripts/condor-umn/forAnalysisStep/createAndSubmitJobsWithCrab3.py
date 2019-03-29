@@ -27,6 +27,7 @@ from httplib import HTTPException
 #    https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD
 globalTagsByDataset = {}
 # latest miniaod v2
+#globalTagsByDataset['RunIISummer16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 globalTagsByDataset['RunIISummer16MiniAODv3*'] = '94X_mcRun2_asymptotic_v3'
 globalTagsByDataset['Run2016B-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016C-17Jul2018*'] = '94X_dataRun2_v10'
@@ -213,11 +214,13 @@ config.JobType.psetName    = '' # overridden per dataset
 # need to execute the user_script
 #config.JobType.scriptExe = 'user_script.sh'
 config.JobType.maxMemoryMB = 7000
+config.JobType.priority = 100
 config.Data.inputDataset = '' # overridden per dataset
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'FileBased' #LumiBased for data
 config.Data.unitsPerJob = 1 # overridden per dataset
 config.Data.totalUnits = -1 # overridden per dataset
+config.Data.allowNonValidInputDataset = True
 # no publishing
 config.Data.publication = False
 config.Data.outputDatasetTag = 'WR' #overridden for data
@@ -259,23 +262,44 @@ with open(localInputListFile, 'r') as f:
     if '#' in split[0]: # skip comments
       continue
 
-    dataset = split[0]
-    nUnits = int(split[1]) #also used for total lumis for data
-    nUnitsPerJob = int(split[2])
-    datasetNoSlashes = dataset[1:len(dataset)].replace('/','__')
+    if("WR_datasets" in options.inputList):
+	print "Running on private signals"
+	dataset= split[0].split("/")[1]
+	print "dataset: ", dataset
+
+	InputFileList = "../../../samples/signals/" + dataset + ".txt"
+
+	config.Data.userInputFiles = open(InputFileList).readlines()
+    	nUnits = 20
+    	nUnitsPerJob = 1
+    	datasetName = InputFileList.split('/')[5][:-4]
+    	print "datasetName: ", datasetName
+    	thisWorkDir = workDir+'/'+datasetName
+    	isData = 'Run201' in datasetName
+    	makeDirAndCheck(thisWorkDir)
+	config.Data.outputPrimaryDataset = datasetName
+	secondaryDatasetName = split[0].split("/")[2]
+	print "secondaryDatasetName: ", secondaryDatasetName
+	outputFile = dataset
+    else:
+    	dataset = split[0]
+    	nUnits = int(split[1]) #also used for total lumis for data
+    	nUnitsPerJob = int(split[2])
+    	datasetNoSlashes = dataset[1:len(dataset)].replace('/','__')
     # datasetNameNoSlashes looks like SinglePhoton__Run2015D-PromptReco-v3
     # so split to just get Run2015D-PromptReco-v3
     # and use that as the outputDatasetTag to get it into the EOS path
-    primaryDatasetName = datasetNoSlashes.split('__')[0]
-    secondaryDatasetName = datasetNoSlashes.split('__')[1]
-    datasetName = datasetNoSlashes
-    datasetName = datasetName.split('__')[0]+'__'+datasetName.split('__')[1] # get rid of part after last slash
-    thisWorkDir = workDir+'/'+datasetName
-    isData = 'Run201' in datasetName
-    if not isData:
-      datasetName=datasetName.split('__')[0]
-    else:
-      config.Data.outputDatasetTag=secondaryDatasetName
+    	primaryDatasetName = datasetNoSlashes.split('__')[0]
+    	secondaryDatasetName = datasetNoSlashes.split('__')[1]
+        print "secondaryDatasetName: ", secondaryDatasetName
+    	datasetName = datasetNoSlashes
+    	datasetName = datasetName.split('__')[0]+'__'+datasetName.split('__')[1] # get rid of part after last slash
+   	thisWorkDir = workDir+'/'+datasetName
+   	isData = 'Run201' in datasetName
+    	if not isData:
+      	    datasetName=datasetName.split('__')[0]
+    	else:
+      	    config.Data.outputDatasetTag=secondaryDatasetName
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if isData:
       config.JobType.pyCfgParams = ['isMC=False']
@@ -308,36 +332,37 @@ with open(localInputListFile, 'r') as f:
     if 'backup' in dataset:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
-    config.Data.inputDataset = dataset
+    if("WR_datasets" not in options.inputList):
+    	config.Data.inputDataset = dataset
     #print 'make dir:',thisWorkDir
-    makeDirAndCheck(thisWorkDir)
-    outputFileNames = []
-    outputFileNames.append(dataset[1:dataset.find('_Tune')])
-    outputFileNames.append(dataset[1:dataset.find('_13TeV')])
-    outputFileNames.append(dataset.split('/')[1])
+    	makeDirAndCheck(thisWorkDir)
+    	outputFileNames = []
+    	outputFileNames.append(dataset[1:dataset.find('_Tune')])
+    	outputFileNames.append(dataset[1:dataset.find('_13TeV')])
+    	outputFileNames.append(dataset.split('/')[1])
     # get the one with the shortest filename
-    outputFile = sorted(outputFileNames, key=len)[0]
-    if isData:
-      outputFile = outputFile + '_' + config.Data.outputDatasetTag 
-    if 'ext' in dataset:
-      extN = dataset[dataset.find('_ext')+4]
-      outputFile = outputFile+'_ext'+extN
-    if 'backup' in dataset:
-      outputFile = outputFile+'_backup'
-    storagePath=config.Data.outLFNDirBase+primaryDatasetName+'/'+config.Data.outputDatasetTag+'/'+'YYMMDD_hhmmss/0000/'+outputFile+'_999.root'
+    	outputFile = sorted(outputFileNames, key=len)[0]
+    	if isData:
+      	    outputFile = outputFile + '_' + config.Data.outputDatasetTag 
+    	if 'ext' in dataset:
+      	    extN = dataset[dataset.find('_ext')+4]
+      	    outputFile = outputFile+'_ext'+extN
+    	if 'backup' in dataset:
+    	    outputFile = outputFile+'_backup'
+    	storagePath=config.Data.outLFNDirBase+primaryDatasetName+'/'+config.Data.outputDatasetTag+'/'+'YYMMDD_hhmmss/0000/'+outputFile+'_999.root'
     #print 'will store (example):',storagePath
     #print '\twhich has length:',len(storagePath)
-    if len(storagePath) > 255:
-      print
-      print 'we might have a problem with output path lengths too long (if we want to run crab over these).'
-      print 'example output will look like:'
-      print storagePath
-      print 'which has length:',len(storagePath)
-      print 'cowardly refusing to submit the jobs; exiting'
-      exit(-2)
-    else:
-      print
-      print 'will use storage path like:',storagePath
+    	if len(storagePath) > 255:
+   	   print
+    	   print 'we might have a problem with output path lengths too long (if we want to run crab over these).'
+   	   print 'example output will look like:'
+   	   print storagePath
+   	   print 'which has length:',len(storagePath)
+   	   print 'cowardly refusing to submit the jobs; exiting'
+   	   exit(-2)
+   	else:
+   	   print
+   	   print 'will use storage path like:',storagePath
 
     if not os.path.isfile(options.cmsswCfg):
       # try relative path
