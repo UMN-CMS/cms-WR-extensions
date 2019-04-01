@@ -106,6 +106,7 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "Text file contain list of datasets:"
     print "Directory where the dataset ROOTs are stored:"
     print "Destination directory to put combined files in:"
+    print "Samples year"
     print "OPTIONAL: Lumi adjustment factor (35.9 fb-1 scaling default)"
     print "=========="
     print "EXAMPLE:"
@@ -113,7 +114,7 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 1.0"
     print ""
     exit(0)
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     print "inputs not understood, try --help/-h"
     exit(1)
 #proceed with input parsing
@@ -122,10 +123,16 @@ backgroundsList = sys.argv[1]
 backgroundsROOToutputDir = sys.argv[2]
 backgroundsROOTdestination = sys.argv[3]
 eventsWeightsDir = backgroundsROOToutputDir
-lumiAdjust = sys.argv[4]
+year = sys.argv[4]
+lumiAdjust = sys.argv[5]
 #in case you want to compare with only a fraction of the 2016 data *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
 #lumiAdjust *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
-integratedLuminosity = 35900.0
+if(year=="2016"):
+    integratedLuminosity = 35900.0
+elif(year=="2017"):
+    integratedLuminosity = 41500.0
+elif(year=="2018"):
+    integratedLuminosity = 59970.0
 integratedLuminosity *= float(lumiAdjust)
 
 with open(backgroundsList) as f:
@@ -139,7 +146,7 @@ for line in lines:
         lineNum+=1
         continue
     xsec = 0.0
-    if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0]):
+    if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0] or "EGamma" in line.split()[0]):
         name = line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/")[2]
         colors[name] = int(line.split()[5].strip())
         print "Found: "+name
@@ -168,27 +175,90 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT300to500_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT500to700_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT700to1000_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT1500to2000_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'WW_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
           'WZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
           'ZZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
+          'WW_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
+          'WZ_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
+          'ZZ_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
           'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8': ROOT.kRed,
           'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
           'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
           'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
           'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
+          'ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8': ROOT.kRed,
+          'ST_t-channel_top_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8': ROOT.kRed,
+          'ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8': ROOT.kRed,
+          'ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8': ROOT.kRed,
+          'ST_s-channel_4f_leptonDecays_TuneCP5_PSweights_13TeV-amcatnlo-pythia8': ROOT.kRed,
+          'ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8': ROOT.kRed,
+          'ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8': ROOT.kRed,
+	  'ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-madgraph-pythia8': ROOT.kRed,
+          'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia': ROOT.kRed,
+          'ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1': ROOT.kRed,
+          'ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1': ROOT.kRed,
           'DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+	  'DYJetsToLL_M-50_HT-100to200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
           'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Wpt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
           'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8': ROOT.kGray,
+          'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGray,
+          'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8': ROOT.kGray,
           'SingleElectron--Run2016B-03Feb2017_ver2-v2'          : 794,
           'SingleElectron--Run2016C-03Feb2017-v1'               : 794,
           'SingleElectron--Run2016D-03Feb2017-v1'               : 794,
@@ -197,6 +267,31 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'SingleElectron--Run2016G-03Feb2017-v1'               : 794,
           'SingleElectron--Run2016H-03Feb2017_ver2-v1'          : 794,
           'SingleElectron--Run2016H-03Feb2017_ver3-v1'          : 794,
+          'SingleElectron--Run2017B-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017C-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017D-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017E-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017F-31Mar2018-v1'          : 794,
+          'EGamma--Run2018A-17Sep2018-v2'          : 794,
+          'EGamma--Run2018B-17Sep2018-v1'          : 794,
+          'EGamma--Run2018C-17Sep2018-v1'          : 794,
+          'EGamma--Run2018D-PromptReco-v2'          : 794,
+          'SingleMuon--Run2016B-17Jul2018_ver2-v1'          : 794,
+          'SingleMuon--Run2016C-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016D-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016E-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016F-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016G-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016H-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2017B-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017C-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017D-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017E-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017F-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2018A-17Sep2018-v2'          : 794,
+          'SingleMuon--Run2018B-17Sep2018-v1'          : 794,
+          'SingleMuon--Run2018C-17Sep2018-v1'          : 794,
+          'SingleMuon--Run2018D-PromptReco-v2'          : 794,
           'WR_M-5000_ToLNu_M-1650'                              : ROOT.kBlack,
           'WR_M-5000_ToLNu_M-1000'                              : ROOT.kBlack,
           'WR_M-5000_ToLNu_M-500'                              : ROOT.kBlack,
@@ -242,7 +337,7 @@ for background,xsec in xsecs.items():
     backgroundEventsWeight = eventsWeightsDir+background+".root"
     print backgroundEventsWeight
     weight = 1.0
-    if ("SingleElectron" not in background and "SingleMuon" not in background):  #MC ONLY
+    if ("SingleElectron" not in background and "SingleMuon" not in background and "EGamma" not in background):  #MC ONLY
         weight *= integratedLuminosity
         weight *= xsecs[background]
         print "Lumi*xsec="+str(weight)

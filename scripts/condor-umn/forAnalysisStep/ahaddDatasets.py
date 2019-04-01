@@ -38,7 +38,7 @@ for line in lines:
         continue
     dataset_fullpath = line.split()[0].strip()  #first entry in row is dataset's full path
     datasetPrefix = dataset_fullpath.split("/")[1]
-    if ("SingleElectron" in datasetPrefix or "SingleMuon" in datasetPrefix):
+    if ("SingleElectron" in datasetPrefix or "SingleMuon" in datasetPrefix or "EGamma" in datasetPrefix):
         datasetFlavor = datasetPrefix + "--" + dataset_fullpath.split("/")[2]
         datasets.append(datasetFlavor)
     else:
@@ -52,7 +52,7 @@ for dataset in datasets:
     removePrevious = "rm "+ahaddOut
     print removePrevious
     subprocess.call(removePrevious, shell=True)
-    if("SingleElectron" in dataset or "SingleMuon" in dataset): #DATA
+    if("SingleElectron" in dataset or "SingleMuon" in dataset or "EGamma" in dataset): #DATA
         ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset.split("--")[0]+"/"+dataset.split("--")[1]+"*/*/*/*.root"
     else:
         ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*.root"
