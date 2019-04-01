@@ -408,6 +408,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           }
         }
         std::cout << "Inside preselection region" << std::endl;
+	std::cout << "myRECOevent myMuonJetPairs_noLSF size(): " << myRECOevent.myMuonJetPairs_noLSF.size() << std::endl;
         if(myRECOevent.myMuonJetPairs_noLSF.size() > 0){
           std::cout << "Inside ZPeak preselection" << std::endl;
           if(passExtensionRECO_ZPeak(iEvent, myRECOevent)) {
@@ -536,9 +537,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   //FILL STUFF
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
+  ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
   passesResRECO    = (passesResRECO    && muonTrigPass && !ZMASSres   );
   passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres);
-  ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
+  std::cout << "passesResRECO: " << passesResRECO << "muonTrigPass: " << muonTrigPass << "ZMASSres: " << ZMASSres << std::endl;
+  std::cout << "ZMASSres: " << ZMASSres << std::endl;
 
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
   if(ZMASSres){
@@ -757,8 +760,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     ZMASSFSBres      = subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true);
 
     std::cout << "passesResRECOAllRegions[4]: " << passesResRECOAllRegions[4] << std::endl;
-
-    ZMASSres = (passesResRECOAllRegions[0] && muonTrigPass && ZMASSres);
 
     if((passesResRECOAllRegions[0]||passesResRECOAllRegions[1]||passesResRECOAllRegions[2]||passesResRECOAllRegions[3]||passesResRECOAllRegions[4]) && muonTrigPass && ZMASSres){
       std::vector<double> Muon_HighPtID_Weights;
@@ -1311,17 +1312,17 @@ void cmsWRextension::setEventWeight_Resolved(const edm::Event& iEvent, eventBits
         myEvent.weight = eventInfo->weight()*myEvent.puWeight;
         std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
         myEvent.count = 1;
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight;
       }
       else {
         myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+        myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight;
       }
   } else {
       myEvent.weight = 1;
       myEvent.count = 1;
   }
-
-  myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight;
 
 }
 void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent) {
@@ -1332,17 +1333,15 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
         myEvent.weight = eventInfo->weight()*myEvent.puWeight;
         std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
         myEvent.count = 1;
-      }
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight;      }
       else {
         myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-      }
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight;      }
   } else {
       myEvent.weight = 1;
       myEvent.count = 1;
   }
-
-  myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight;
 
 }
 void cmsWRextension::setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent){
@@ -1352,17 +1351,15 @@ void cmsWRextension::setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventB
       if(!m_amcatnlo) {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
-      }
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight;      }
       else {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-      }
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight;      }
   } else {
       myEvent.FSBweight = 1;
       myEvent.count = 1;
   }
-
-  myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight;
 
 }
 void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent) {
@@ -1372,17 +1369,17 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
       if(!m_amcatnlo) {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight;
       }
       else {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight;
       }
   } else {
       myEvent.FSBweight = 1;
       myEvent.count = 1;
   }
-
-  myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight;
 
 }
 void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent) {
@@ -1392,17 +1389,17 @@ void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBit
       if(!m_amcatnlo) {
         myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
+	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight;
       }
       else {
         myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight;
       }
   } else {
       myEvent.FSBweight_noISO = 1;
       myEvent.count = 1;
   }
-
-  myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight;
 
 }
 bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
@@ -4771,10 +4768,11 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   //MLL
   double mll = (mu1->p4()*myEvent.leadResMuonScale[0]+mu2->p4()*myEvent.secondResMuonScale[0]).mass();
   myEvent.resMLL = mll;
-  if (mll < 200) return false;  // 2017
+//  if (mll < 200) return false;  // 2017
 //  if (mll < 150) return false;// korea
 //  if (mll < 175) return false;// middle
-  std::cout << "RES MLL PASSED" << std::endl;
+  std::cout << "resMLL: " << myEvent.resMLL << std::endl;
+//  std::cout << "RES MLL PASSED" << std::endl;
   myEvent.ResCutProgress++;
 
   //CHECK DR ASSOCIATIONS
@@ -4853,7 +4851,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 
   double mll = (mu1->p4()*myEvent.leadResMuonScale[0]+mu2->p4()*myEvent.secondResMuonScale[0]).mass();
   myEvent.resMLL = mll;
-  if (mll < 200) return FalseReturn;  // 2017
+//  if (mll < 200) return FalseReturn;  // 2017
 
 
   if(myEvent.myResCandJets.size() > 1){

@@ -214,7 +214,7 @@ config.JobType.psetName    = '' # overridden per dataset
 # need to execute the user_script
 #config.JobType.scriptExe = 'user_script.sh'
 config.JobType.maxMemoryMB = 7000
-config.JobType.priority = 100
+config.JobType.priority = 200
 config.Data.inputDataset = '' # overridden per dataset
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'FileBased' #LumiBased for data
@@ -302,6 +302,7 @@ with open(localInputListFile, 'r') as f:
       	    config.Data.outputDatasetTag=secondaryDatasetName
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if isData:
+      config.JobType.priority = 300
       config.JobType.pyCfgParams = ['isMC=False']
       if '2016' in datasetName:
       	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
