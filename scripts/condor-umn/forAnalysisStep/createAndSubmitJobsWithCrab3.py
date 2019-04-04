@@ -48,9 +48,9 @@ globalTagsByDataset['Run2017G-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017H-31Mar2018*'] = '94X_dataRun2_v11'
 
 globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v12'
-globalTagsByDataset['Run2018A-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018B-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018C-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018A-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018B-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018C-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
 globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v11'
 
 def crabSubmit(config):
@@ -282,6 +282,7 @@ with open(localInputListFile, 'r') as f:
 	print "secondaryDatasetName: ", secondaryDatasetName
 	outputFile = dataset
     else:
+        print "RUNNING ON NORMAL STUFF"
     	dataset = split[0]
     	nUnits = int(split[1]) #also used for total lumis for data
     	nUnitsPerJob = int(split[2])
@@ -294,6 +295,7 @@ with open(localInputListFile, 'r') as f:
         print "secondaryDatasetName: ", secondaryDatasetName
     	datasetName = datasetNoSlashes
     	datasetName = datasetName.split('__')[0]+'__'+datasetName.split('__')[1] # get rid of part after last slash
+    	print "datasetName: ", datasetName
    	thisWorkDir = workDir+'/'+datasetName
    	isData = 'Run201' in datasetName
     	if not isData:
@@ -386,6 +388,8 @@ with open(localInputListFile, 'r') as f:
     # for MC it will look like DYJetsToLL_M-100to200_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8__RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     # so split to just get RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     for datasetKey,tag in globalTagsByDataset.iteritems():
+#      print "Key:  "+datasetKey
+#      print "Name: "+secondaryDatasetName
       if re.match(re.compile(datasetKey),secondaryDatasetName):
         globalTag = tag
         config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
@@ -481,12 +485,12 @@ with open(localInputListFile, 'r') as f:
     #crabSubmit(config)
     # workaround for cmssw multiple-loading problem
     # submit in subprocess
-    q = Queue()
-    p = Process(target=crabSubmit, args=(config,))
-    p.start()
-    p.join()
-    if q.get()==-1:
-      exit(-1)
+#    q = Queue()
+#    p = Process(target=crabSubmit, args=(config,))
+#    p.start()
+#    p.join()
+#    if q.get()==-1:
+#      exit(-1)
     
 print 'Done!' 
 exit(0)
