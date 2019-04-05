@@ -32,6 +32,7 @@ def saveHists(weight,backgroundName,file,directory="",prefix="",filter=""):
             saveHists(weight,backgroundName,dir,directory=newDir, prefix=prefix,filter=filter)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
+	    if hist.Integral() == 0: continue
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
@@ -130,9 +131,12 @@ lumiAdjust = sys.argv[5]
 if(year=="2016"):
     integratedLuminosity = 35900.0
 elif(year=="2017"):
-    integratedLuminosity = 41500.0
+    integratedLuminosity = 13000.0
+#    integratedLuminosity = 41500.0
 elif(year=="2018"):
-    integratedLuminosity = 59970.0
+    integratedLuminosity = 25000.0
+#    integratedLuminosity = 31930.0
+#    integratedLuminosity = 59970.0
 integratedLuminosity *= float(lumiAdjust)
 
 with open(backgroundsList) as f:
@@ -361,13 +365,14 @@ for plot,stack in stackList.items():
     stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     pos = 1
     print stack
-    #print stack.GetName()
+    print "Hist name: ", plot.split("/")[-1][:-5]
     for hist in stack:
         print hist.__class__.__name__
         #myHist = copy.deepcopy(hist)
     #    print "Adding"
         print "STACK TIME"
         print hist.GetName()
+	print "Integral: ", hist.Integral()
         #hist.SetFillColor(pos)
         hist.Draw("HIST")
         stackHist.Add(hist)

@@ -168,7 +168,8 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
 	elif(year=="2017"):
 	    weight *= 41500.0
 	elif(year=="2018"):
-	    weight *= 59970.0
+            weight *= 31930.0
+#	    weight *= 59970.0
         weight *= 1.0 #pb just for plotting purposes
        # weight *= 0.9820342339793464  #FUDGE FACTOR BASED ON ROOT FILES NEEDING RESKIMMED FOR ELECTRON FLAVOR SIDEBAND (127 OUT OF 7069)
        # weight *= 0.65                #FUDGE FACTOR FOR MUON DATA BASED ON Z PEAK SIDEBAND DISAGREEMENT
@@ -226,6 +227,7 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
             print "NOT USING SILLY SCALE FACTOR"
             sys.stdout.flush()
             scaleFactor = 1.0
+#	scaleFactor /= (10000*10000)
         newHist.Scale(scaleFactor)
         newHist.SetLineColor(ROOT.kBlack)
         newHist.SetLineStyle(1)
@@ -235,7 +237,6 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
         newHist.GetYaxis().SetLabelSize(.05)
         newHist.GetYaxis().SetTitleSize(.05)
 	newHist.GetXaxis().SetLabelOffset(100)
-
         if (newHist.GetMaximum() > backgroundCombined.GetMaximum()) :
             newHist.SetMaximum(newHist.GetMaximum()*1.3)
             backgroundStack.SetMaximum(newHist.GetMaximum()*1.3)
@@ -260,6 +261,7 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
             newHist.Draw("e")
         backgroundStack.Draw("HIST same")
 	newHist.Draw("esame")
+
 	print "Data Integral: ", newHist.Integral()
 	print "MC Integral: ", backgroundStack.GetStack().Last().Integral()
 #        if(dataType == "MC"):
@@ -267,6 +269,20 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
 #        else:
 #            newHist.Draw("esame")
         allMC=backgroundStack.GetStack().Last().Clone()
+        if (backgroundStack.GetName() == "resolvedFSBRECOmass"):
+            newHist.GetXaxis().SetRangeUser(500,3000)
+            newHist.GetYaxis().SetRangeUser(0.2,newHist.GetMaximum()*4)
+	elif(backgroundStack.GetName() == "leadAK8JetElectronMass"):
+	    newHist.GetXaxis().SetRangeUser(200, 3000)
+	    newHist.GetYaxis().SetRangeUser(0.2,newHist.GetMaximum()*4)
+        elif(backgroundStack.GetName() == "leadAK8JetMuonMass_noLSF"):
+            newHist.GetXaxis().SetRangeUser(200, 3000)
+            newHist.GetYaxis().SetRangeUser(0.2,newHist.GetMaximum()*4)
+        elif(backgroundStack.GetName() == "resolvedRECOmass"):
+            newHist.GetXaxis().SetRangeUser(500,3500)
+            newHist.GetYaxis().SetRangeUser(0.2,newHist.GetMaximum()*4)
+
+        c.Modified()
 
 	herr = allMC.Clone('herr')
 
@@ -306,15 +322,78 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
         if(dataType == "MC"):
             legend3.AddEntry(newHist, "Signal MC M_WR "+str(massPoint[0])+" M_NR "+str(massPoint[1]))
         else:
-            legend3.AddEntry(newHist, "2016 Data", "L")
+	    if(year=="2016"):
+              legend3.AddEntry(newHist, "2016 Data", "L")
+            elif(year=="2017"):
+              legend3.AddEntry(newHist, "2017 Data", "L")
+            elif(year=="2018"):
+              legend3.AddEntry(newHist, "2018 Data", "L")
 	print "backgrounds: ", backgrounds
 
 	count=1
         for bg in backgrounds:
 	    print "bg: ", bg
 	    print "backgroundPlotNames[bg]: ", backgroundPlotNames[bg]
-            if count < 4: legend.AddEntry(backgroundPlotNames[bg], bg, "F")
-	    elif count > 3: legend2.AddEntry(backgroundPlotNames[bg], bg, "F")
+	    NonZeroIntegral = False
+	    for ith in range(0,backgroundStack.GetStack().GetEntriesFast()):
+		if backgroundPlotNames[bg][0][:3] in backgroundStack.GetStack()[ith].GetName():
+		    NonZeroIntegral = True
+	    if not NonZeroIntegral:
+		print "Integral is 0 for ", bg
+		continue
+	    if(bg=="TTJets_inc"):
+              if count < 4: legend.AddEntry(backgroundPlotNames[bg][0], "t#bar{t}", "F")
+	      elif count > 3: legend2.AddEntry(backgroundPlotNames[bg][0], "t#bar{t}", "F")
+	    elif(bg=="WJetsToLNu"):
+	      NonZeroSample = False
+	      for i in range(len(backgroundPlotNames[bg])):
+		for ith in range(0,backgroundStack.GetStack().GetEntriesFast()):
+		    if backgroundPlotNames[bg][i] in backgroundStack.GetStack()[ith].GetName() and not NonZeroSample:
+			NonZeroSample = True
+			print "Found WJets in Stack"
+			if count < 4: legend.AddEntry(backgroundPlotNames[bg][i], "W+jets", "F")
+              		elif count > 3: legend2.AddEntry(backgroundPlotNames[bg][i], "W+jets", "F")
+			continue
+	    elif(bg=="DYJetsToLL"):
+              NonZeroSample = False
+              for i in range(len(backgroundPlotNames[bg])):
+                for ith in range(0,backgroundStack.GetStack().GetEntriesFast()):
+                    if backgroundPlotNames[bg][i] in backgroundStack.GetStack()[ith].GetName() and not NonZeroSample:
+                        NonZeroSample = True
+                        print "Found DY in Stack"
+			if count < 4: legend.AddEntry(backgroundPlotNames[bg][i], "DY+jets", "F")
+			elif count > 3: legend2.AddEntry(backgroundPlotNames[bg][i], "DY+jets", "F")
+			continue
+	    elif(bg=="SingleTop"):
+              NonZeroSample = False
+              for i in range(len(backgroundPlotNames[bg])):
+                for ith in range(0,backgroundStack.GetStack().GetEntriesFast()):
+                    if backgroundPlotNames[bg][i] in backgroundStack.GetStack()[ith].GetName() and not NonZeroSample:
+                        NonZeroSample = True
+                        print "Found ST in Stack"
+			if count < 4: legend.AddEntry(backgroundPlotNames[bg][i], "single-t", "F")
+			elif count > 3: legend2.AddEntry(backgroundPlotNames[bg][i], "single-t", "F")
+			continue
+	    elif(bg=="DiBoson"):
+              NonZeroSample = False
+              for i in range(len(backgroundPlotNames[bg])):
+                for ith in range(0,backgroundStack.GetStack().GetEntriesFast()):
+                    if backgroundPlotNames[bg][i] in backgroundStack.GetStack()[ith].GetName() and not NonZeroSample:
+                        NonZeroSample = True
+                        print "Found VV in Stack"
+			if count < 4: legend.AddEntry(backgroundPlotNames[bg][i], "VV", "F")
+			if count > 3: legend2.AddEntry(backgroundPlotNames[bg][i], "VV", "F")
+			continue
+	    else:
+              NonZeroSample = False
+              for i in range(len(backgroundPlotNames[bg])):
+                for ith in range(0,backgroundStack.GetStack().GetEntriesFast()):
+                    if backgroundPlotNames[bg][i] in backgroundStack.GetStack()[ith].GetName() and not NonZeroSample:
+                        NonZeroSample = True
+                        print "Found QCD in Stack"
+			if count < 4: legend.AddEntry(backgroundPlotNames[bg][i], bg, "F")
+			elif count > 3: legend2.AddEntry(backgroundPlotNames[bg][i], bg, "F")
+			continue
 	    count = count+1
 
 	legend3.AddEntry(herr,"MC uncert. (stat.)","fl")
@@ -331,10 +410,12 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
         if(year=="2016"):
             lumi = 35.9
         elif(year=="2017"):
-            lumi = 41.5
+            lumi = 13.1
+#            lumi = 41.5
         elif(year=="2018"):
-            lumi = 59.97
-        tag1 = ROOT.TLatex(0.72,0.92,"%.1f fb^{-1} (13 TeV)"%lumi)
+            lumi = 31.93
+#            lumi = 59.97
+        tag1 = ROOT.TLatex(0.72,0.92,"%.2f fb^{-1} (13 TeV)"%lumi)
         tag1.SetNDC(); tag1.SetTextFont(42)
         tag1.SetTextSize(0.045)
         tag2 = ROOT.TLatex(0.17,0.92,"CMS")
@@ -359,6 +440,14 @@ def drawHist(hist,bgStacks,stackPlotRelPath,outpathDir,prefix,year,name,postfix,
         ratio.GetYaxis().SetNdivisions(504)
         ratio.GetYaxis().SetTitle("Data/Simulation")
         ratio.GetXaxis().SetTitle(allMC.GetXaxis().GetTitle())
+        if (backgroundStack.GetName() == "resolvedFSBRECOmass"):
+	    ratio.GetXaxis().SetTitle("m_{e#mujj} (GeV)")
+        elif(backgroundStack.GetName() == "leadAK8JetElectronMass"):
+            ratio.GetXaxis().SetTitle("m_{ej} (GeV)")
+	elif(backgroundStack.GetName() == "leadAK8JetMuonMass_noLSF"):
+            ratio.GetXaxis().SetTitle("m_{#muj} (GeV)")
+        elif(backgroundStack.GetName() == "resolvedFSBRECOmass"):
+            ratio.GetXaxis().SetTitle("m_{#mu#mujj} (GeV)")
         ratio.GetXaxis().SetTitleSize(0.14)
         ratio.GetXaxis().SetTitleOffset(1.0)
         ratio.GetXaxis().SetLabelOffset(0.005)
@@ -453,8 +542,11 @@ for line in lines:
     fullBGname = cleanLine.split()[0]
     legendName = cleanLine.split()[4]
     backgroundName = fullBGname.split("/")[1]
-    backgroundPlotNames[legendName] = backgroundName
+    backgroundPlotNames.setdefault(legendName, []).append(backgroundName)
+#    backgroundPlotNames[legendName] = backgroundName
     backgrounds.add(legendName)
+
+print "First backgrounds: ", backgrounds
 
 if nonStack:
     saveHistsTDir(inputStackDir,backgroundStacks,outputDir,"",prefix, year,"backgrounds", 1, flavor, setLogY)
