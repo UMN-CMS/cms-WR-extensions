@@ -353,6 +353,9 @@ class eventHistos {
   TH1D* m_subleadMuon_selMuonPt;
 
   TH1D* m_dRmuon2;
+  //
+  TH1D* m_genZmass;
+  TH1D* m_genZpt;
   //RESOLVED ANA   
   TH1D* m_resJetDR;
   TH1D* m_resolvedRECOmass;

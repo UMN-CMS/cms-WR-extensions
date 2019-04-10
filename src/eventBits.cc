@@ -35,6 +35,8 @@ eventBits::eventBits() {
   NR = NULL;
   WR = NULL;
 
+  myZ = NULL;
+
   secondElectronCand = NULL;
 
   PVertex = NULL;
@@ -91,6 +93,9 @@ eventBits::eventBits() {
   secondInDecayMuon = -10000.0;
 
   mydRlsfLep_subleadMuon = -10000.0;
+  //
+  genZmass = -10000.0;
+  genZpt   = -10000.0;
   //RES ANALYSIS
   resJetDR           = -10000.0; 
   resolvedRECOmass   = -10000.0; 

@@ -306,6 +306,9 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selElectron_noISO_endcap_dxy               =  m_histoFolder.make<TH1D>("selElectron_noISO_endcap_dxy"             ,";selected nonISO Electron endcap dxy"             , 100, 0.0, .05); 
 
     m_dRlsfLep_subleadMuon                       =  m_histoFolder.make<TH1D>("dRlsfLep_subleadMuon" , ";delta R between lsf lepton and subleading Muon", 100, 0.0, 1.0); 
+    //GEN Z
+    m_genZmass                                   =  m_histoFolder.make<TH1D>("genZmass",";Gen Z Mass (GeV);" , 50, 0.0, 1000);
+    m_genZpt                                     =  m_histoFolder.make<TH1D>("genZpt",  ";Gen Z Pt (GeV);"   , 50, 0.0, 1000);
   //RESOLVED ANA   
     m_resJetDR                   = m_histoFolder.make<TH1D>("resJetDR"                ,";resolved jets deltaR", 80, 0.0, 8.0);
     m_resolvedRECOmass           = m_histoFolder.make<TH1D>("resolvedRECOmass"        ,";resolved RECO 4-object mass", 60, 0.0, 6000);
@@ -638,6 +641,11 @@ void eventHistos::fillGen(eventBits& event) {
 
 
   m_genLSF                  ->   Fill(event.myGenLSF, weight);
+
+
+  //Z STUFF
+  m_genZmass        -> Fill(event.genZpt, weight);
+  m_genZpt          -> Fill(event.genZmass, weight);
 
   m_firstPartonJetEtHadronic->Fill(event.firstPartonJetEtHadronicVal, weight);
   m_secondPartonJetEtHadronic->Fill(event.secondPartonJetEtHadronicVal, weight);

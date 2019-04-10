@@ -168,6 +168,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool sameSign(eventBits& myEvent, bool noISO);
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
+      bool ZFinder(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_Resolved(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent);
@@ -266,6 +267,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_isMC;
       bool m_doTrig;
       bool m_doFast;
+      bool m_checkZ;
       double m_MCL;    //MASS UPPER AND LOWER CUTS
       double m_MCU;
 
