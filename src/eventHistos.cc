@@ -705,8 +705,9 @@ void eventHistos::fillReco(eventBits& event) {
     weight = event.weight;
 
   std::cout << "fillRECO" << std::endl;
-  std::cout << "event.weight: " << event.weight << std::endl;
   std::cout << "event.leadAK8JetMuonMassVal: " << event.leadAK8JetMuonMassVal << std::endl;
+  std::cout << "weight: " << weight << std::endl;
+  std::cout << "event.leadAK8JetElectronMassVal: " << event.leadAK8JetElectronMassVal << std::endl;
   m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, weight);
   m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, weight);
   m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, weight);

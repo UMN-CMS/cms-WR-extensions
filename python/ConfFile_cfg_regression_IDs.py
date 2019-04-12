@@ -64,12 +64,12 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(1000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 process.source = cms.Source ("PoolSource",
 	  fileNames = cms.untracked.vstring (options.inputFiles),
- 	  #skipEvents = cms.untracked.uint32(1200)
+# 	  skipEvents = cms.untracked.uint32(31200)
 )
 
 process.options = cms.untracked.PSet(
