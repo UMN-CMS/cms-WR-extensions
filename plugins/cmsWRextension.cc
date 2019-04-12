@@ -127,6 +127,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true)),
   m_doTrig (iConfig.getUntrackedParameter<bool>("doTrig",false)),
   m_doFast (iConfig.getUntrackedParameter<bool>("doFast",false)),
+  m_checkZ (iConfig.getUntrackedParameter<bool>("checkZ",false)),
   m_jettiness (iConfig.getUntrackedParameter<std::string>("jettinessPUPPI")),
   JECUName   (iConfig.getUntrackedParameter<std::string>("jecUncName","")),
   //m_MCL (iConfig.getUntrackedParameter<double>("MCL", 400)),
@@ -542,6 +543,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres);
   std::cout << "passesResRECO: " << passesResRECO << "muonTrigPass: " << muonTrigPass << "ZMASSres: " << ZMASSres << std::endl;
   std::cout << "ZMASSres: " << ZMASSres << std::endl;
+
+  if(m_checkZ) {
+    if(ZFinder(iEvent,myRECOevent)) {
+      std::cout << "FILLING GEN Z STUFF" << std::endl;
+      myRECOevent.genZmass = myRECOevent.myZ->mass();
+      myRECOevent.genZpt   = myRECOevent.myZ->pt();
+    }
+  }
 
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
   if(ZMASSres){
@@ -3923,6 +3932,29 @@ double cmsWRextension::PUPPIweight(double puppipt, double puppieta){
 //
 //
 //}
+bool cmsWRextension::ZFinder(const edm::Event& iEvent, eventBits& myEvent)
+{
+  std::cout << "LOOKING FOR A Z BOSON" << std::endl;
+  edm::Handle<std::vector<reco::GenParticle>> genParticles;
+  iEvent.getByToken(m_genParticleToken, genParticles);
+  const reco::GenParticle* genZcand = NULL;
+  int nFound = 0;
+  for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
+    if(!iParticle->isHardProcess()) continue;
+    if(iParticle->status() == 21) continue;
+    if(iParticle->pdgId() != 23) continue;
+    std::cout << "FOUND A Z BOSON" << std::endl;
+    nFound++;
+    genZcand = &(*iParticle);
+  }
+  std::cout << "FOUND Zs:" << nFound << std::endl;
+  if(nFound == 1) {
+    myEvent.myZ = genZcand;
+    
+    return true;
+  }
+  return false;
+}
 bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 {
   edm::Handle<std::vector<reco::GenParticle>> genParticles;

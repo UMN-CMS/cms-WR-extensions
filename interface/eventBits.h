@@ -150,6 +150,8 @@ public:
   const reco::Candidate*            NR;
   const reco::Candidate*            WR;
 
+  const reco::GenParticle*          myZ;
+
   const reco::GenParticle*          genSecondMuon;
 
   const reco::Vertex*               PVertex;
@@ -250,6 +252,10 @@ public:
   double egamma_SF_noISO      ;
 
   double myGenLSF;
+
+  //GEN Z
+  double genZmass;
+  double genZpt;
 
   //RESOLVED ANA   
   double resJetDR;
