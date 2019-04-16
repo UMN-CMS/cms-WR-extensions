@@ -195,6 +195,9 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResFailBoostRECO;
       eventHistos m_eventsFailResPassBoostRECO;
 
+      eventHistos m_eventPassResLowMassCRRECO;
+      eventHistos m_eventPassBoostLowMassCRRECO;
+
       eventHistos m_eventsFailResFailBoostGEN;
       eventHistos m_eventsPassResPassBoostGEN;
       eventHistos m_eventsPassResFailBoostGEN;

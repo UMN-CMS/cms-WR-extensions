@@ -96,7 +96,11 @@ eventBits::eventBits() {
   //
   genZmass = -10000.0;
   genZpt   = -10000.0;
+
+  boostedRECOmassAbove600 = false;
+
   //RES ANALYSIS
+  resolvedRECOmassAbove600 = false;
   resJetDR           = -10000.0; 
   resolvedRECOmass   = -10000.0; 
   resSubleadMuJet1dR = -10000.0; 

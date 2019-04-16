@@ -257,7 +257,11 @@ public:
   double genZmass;
   double genZpt;
 
+  bool boostedRECOmassAbove600;
+
   //RESOLVED ANA   
+  bool resolvedRECOmassAbove600;
+
   double resJetDR;
   double resolvedRECOmass;
   double resSubleadMuJet1dR;
