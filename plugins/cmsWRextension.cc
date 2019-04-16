@@ -530,7 +530,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
          // if ( ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_B.fill(myRECOevent, 1); 
          // if (!ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_C.fill(myRECOevent, 1); 
          // if ( ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_D.fill(myRECOevent, 1); 
-          m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+          if(myRECOevent.boostedFSBRECOmassAbove600){
+            m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+	  }else{
+            m_eventsPassingFlavorSidebandLowMassCRRECOelePt200.fill(myRECOevent, 1);
+	  }
         }
       }
       std::cout << "DONE WITH FSB" << std::endl;
@@ -553,7 +557,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
 
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
-  if(ZMASSres && myRECOevent.resolvedRECOmassAbove600){
+  if(ZMASSres){
     std::vector<double> Muon_HighPtID_Weights;
     std::vector<double> Muon_LooseTkIso_Weights;
     std::vector<double> Muon_HighPtID2nd_Weights;
@@ -637,7 +641,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
     setEventWeight_ResolvedFSB(iEvent, myRECOevent);
 
-    m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
+    if(myRECOevent.resolvedFSBRECOmassAbove600){
+      m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
+    }else{
+      m_eventsPassResFSBLowMassCRRECO.fill(  myRECOevent, 1);
+    }
   }
 
   if(passesResRECO){
@@ -860,6 +868,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       setEventWeight_ResolvedFSB(iEvent, myRECOevent);
 
       if(passesResFSBRECOAllRegions[0]){
+        std::cout << "PASSING FSB" << std::endl;
         m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 6);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 7);
@@ -920,6 +929,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       setEventWeight_Resolved(iEvent, myRECOevent);
 
       if(passesResRECOAllRegions[0]){
+        std::cout << "PASSING SR" << std::endl;
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 6);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 7);
@@ -1676,7 +1686,8 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        double eventMass = ( jetVec + myRECOevent.myElectronCand->p4() ).mass();
        std::cout << "eventMass: " << eventMass << std::endl;
 
-       if( eventMass < 600 ) continue;
+       if( eventMass < 600 ) {myRECOevent.boostedFSBRECOmassAbove600 = false;}
+       else {myRECOevent.boostedFSBRECOmassAbove600 = true;}
 
        std::cout << "FOUND CAND DIOBJECT WITH ISO ELE" << std::endl;
 
@@ -1940,8 +1951,6 @@ bool cmsWRextension::preSelectBoostReco(const edm::Event& iEvent, const edm::Eve
     jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
 
     double eventMass = ( jetVec + myRECOevent.myMuonCand->p4() ).mass();
-
-    if( eventMass < 600 ) continue; 
 
     muonJetPairs_noLSF.push_back(std::make_pair( (*iJet) , myRECOevent.myMuonCand ));
 
@@ -4926,8 +4935,6 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double resMass_Up = (mu1->p4()*myEvent.leadResMuonScale[1] + mu2->p4()*myEvent.secondResMuonScale[1] + jet1 + jet2).mass();
     double resMass_Down = (mu1->p4()*myEvent.leadResMuonScale[2] + mu2->p4()*myEvent.secondResMuonScale[2] + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
-    myEvent.ResCutProgress++;
 
     myEvent.resolvedRECOmass = resMass;
     myEvent.resolvedRECOmass_MuResolUp = resMass_Up;
@@ -5152,9 +5159,8 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
 
   std::cout << "resMass: " << resMass << std::endl;
-  if (resMass < 600) return false;
-  std::cout << "RES FOUR MASS PASSED" << std::endl;
-  myEvent.ResFSBCutProgress++;
+  if (resMass < 600){ myEvent.resolvedFSBRECOmassAbove600 = false;}
+  else { myEvent.resolvedFSBRECOmassAbove600 = true;}
 
   myEvent.resolvedFSBRECOmass = resMass; 
 
@@ -5233,8 +5239,6 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     double resMass_Up = (mu->p4()*myEvent.leadFSBMuonScale[1] + el->p4() + jet1 + jet2).mass();
     double resMass_Down = (mu->p4()*myEvent.leadFSBMuonScale[2] + el->p4() + jet1 + jet2).mass();
 
-
-    if (resMass < 600) nominalPass = false;
 
     myEvent.resolvedFSBRECOmass = resMass;
     myEvent.resolvedFSBRECOmass_MuResolUp = resMass_Up;
@@ -5579,6 +5583,7 @@ cmsWRextension::beginJob()
 
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 3, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
 
 //    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
 //    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
@@ -5613,6 +5618,7 @@ cmsWRextension::beginJob()
     //m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 3, m_outputTag, 2);
     //m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 1);
+    m_eventsPassingFlavorSidebandLowMassCRRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandLowMassCRRECOelePt200")), 3, m_outputTag, 1);
   }
   if (m_doGen && !m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
@@ -5641,6 +5647,7 @@ cmsWRextension::beginJob()
 
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 2, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 2, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 2, m_outputTag, 1);
 
     //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag, false);
     //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
@@ -5664,6 +5671,7 @@ cmsWRextension::beginJob()
     //m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 2, m_outputTag, 2);
     //m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
     m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
+    m_eventsPassingFlavorSidebandLowMassCRRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandLowMassCRRECOelePt200")), 2, m_outputTag, 2);
   }
   if (m_doReco && m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;

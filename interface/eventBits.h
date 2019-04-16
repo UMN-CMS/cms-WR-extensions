@@ -258,9 +258,11 @@ public:
   double genZpt;
 
   bool boostedRECOmassAbove600;
+  bool boostedFSBRECOmassAbove600;
 
   //RESOLVED ANA   
   bool resolvedRECOmassAbove600;
+  bool resolvedFSBRECOmassAbove600;
 
   double resJetDR;
   double resolvedRECOmass;
