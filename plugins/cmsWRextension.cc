@@ -548,7 +548,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   std::cout << "passesResRECO: " << passesResRECO << "muonTrigPass: " << muonTrigPass << "ZMASSres: " << ZMASSres << std::endl;
   std::cout << "ZMASSres: " << ZMASSres << std::endl;
 
-  if(m_checkZ) {
+  if(m_checkZ && m_isMC) {
     if(ZFinder(iEvent,myRECOevent)) {
       std::cout << "FILLING GEN Z STUFF" << std::endl;
       myRECOevent.genZmass = myRECOevent.myZ->mass();
