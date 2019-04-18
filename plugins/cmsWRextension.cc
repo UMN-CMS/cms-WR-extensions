@@ -546,9 +546,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   if(m_checkZ) {
     if(ZFinder(iEvent,myRECOevent)) {
-      std::cout << "FILLING GEN Z STUFF" << std::endl;
-      myRECOevent.genZmass = myRECOevent.myZ->mass();
-      myRECOevent.genZpt   = myRECOevent.myZ->pt();
+      std::cout << "PASSED Z GEN" << std::endl;
     }
   }
 
@@ -3948,22 +3946,44 @@ bool cmsWRextension::ZFinder(const edm::Event& iEvent, eventBits& myEvent)
   edm::Handle<std::vector<reco::GenParticle>> genParticles;
   iEvent.getByToken(m_genParticleToken, genParticles);
   const reco::GenParticle* genZcand = NULL;
+  std::vector<const reco::GenParticle*> genZdaughters;
   int nFound = 0;
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
     if(!iParticle->isHardProcess()) continue;
     if(iParticle->status() == 21) continue;
-    if(iParticle->pdgId() != 23) continue;
-    std::cout << "FOUND A Z BOSON" << std::endl;
-    nFound++;
-    genZcand = &(*iParticle);
+    if(iParticle->pdgId() != 23 && iParticle->mother()->pdgId() != 23) continue;
+    if(iParticle->pdgId() == 23) {
+      std::cout << "FOUND A Z BOSON" << std::endl;
+      nFound++;
+      genZcand = &(*iParticle);
+      continue;
+    }
+    std::cout << "FOUND Z DAUGHTER" << std::endl; 
+    genZdaughters.push_back(&(*(iParticle)));
   }
   std::cout << "FOUND Zs:" << nFound << std::endl;
-  if(nFound == 1) {
-    myEvent.myZ = genZcand;
-    
-    return true;
+  if(nFound != 1) {
+    return false;
   }
-  return false;
+  myEvent.myZ = genZcand;
+
+  //AS A CROSS-CHECK WE NOW GET THE Z DAUGHTERS
+  std::cout << "FOUND NZ DAUGHTERS: " << genZdaughters.size() << std::endl;
+  if(genZdaughters.size() != 2) return false; 
+
+  double ZdaughterPt   = (genZdaughters[0]->p4() + genZdaughters[1]->p4()).pt();
+  double ZdaughterMass = (genZdaughters[0]->p4() + genZdaughters[1]->p4()).mass();
+
+  double ZptDiff   = genZcand->pt()   - ZdaughterPt;
+  double ZmassDiff = genZcand->mass() - ZdaughterMass;
+
+  std::cout << "Z kinematic diff (pt):   " << ZptDiff   << std::endl;
+  std::cout << "Z kinematic diff (mass): " << ZmassDiff << std::endl;
+
+  myEvent.genZmass = myEvent.myZ->mass();
+  myEvent.genZpt   = ZdaughterPt;
+
+  return true;
 }
 bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 {
@@ -5442,7 +5462,7 @@ bool cmsWRextension::objectCompareGEN(const edm::Event& iEvent, eventBits& myEve
 }
 bool cmsWRextension::passZsidebandCutGEN(const edm::Event& iEvent, eventBits& myEvent) {
   //TRUE MEANS IT IS _NOT_ IN THE Z SIDEBAND
-  if (myEvent.muon1muon2Mass < 0.0) {
+  if (myEvent.muon1muon2Mass < 50.0) {
     return false; 
     //YOU PROBABLY DON'T EVEN HAVE TWO MUONS!
   }

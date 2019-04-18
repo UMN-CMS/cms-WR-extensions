@@ -356,6 +356,7 @@ class eventHistos {
   //
   TH1D* m_genZmass;
   TH1D* m_genZpt;
+  TH2D* m_genZptVSreco;
   //RESOLVED ANA   
   TH1D* m_resJetDR;
   TH1D* m_resolvedRECOmass;
