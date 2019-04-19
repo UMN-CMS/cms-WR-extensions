@@ -551,6 +551,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if(m_checkZ && m_isMC) {
     if(ZFinder(iEvent,myRECOevent)) {
       std::cout << "PASSED Z GEN" << std::endl;
+      std::cout << "ZPT:   " <<   myRECOevent.genZpt << std::endl;
+      std::cout << "ZMASS: " << myRECOevent.genZmass  << std::endl;
     }
   }
 
@@ -3958,11 +3960,15 @@ bool cmsWRextension::ZFinder(const edm::Event& iEvent, eventBits& myEvent)
   std::vector<const reco::GenParticle*> genZdaughters;
   int nFound = 0;
   for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
+    if(iParticle->pdgId() == 23) {
+      std::cout << "FOUND A Z BOSON IN STATE: " << iParticle->status()<< std::endl;
+    }
     if(!iParticle->isHardProcess()) continue;
     if(iParticle->status() == 21) continue;
     if(iParticle->pdgId() != 23 && iParticle->mother()->pdgId() != 23) continue;
     if(iParticle->pdgId() == 23) {
       std::cout << "FOUND A Z BOSON" << std::endl;
+      std::cout << "STATUS: " << iParticle->status() << std::endl;
       nFound++;
       genZcand = &(*iParticle);
       continue;
@@ -3972,26 +3978,37 @@ bool cmsWRextension::ZFinder(const edm::Event& iEvent, eventBits& myEvent)
   }
   std::cout << "FOUND Zs:" << nFound << std::endl;
   if(nFound != 1) {
-    return false;
+    std::cout << "NO Z FOUND:" << std::endl;
+    for(std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
+      if(iParticle->pdgId() == 23)  std::cout << "BAD Z FOUND" << std::endl;
+      if(iParticle->status() == 22) std::cout << "EXCHANGE PARTICLE: " << iParticle->pdgId() << std::endl;
+      if(!iParticle->isHardProcess()) continue;
+      std::cout << "PDGID: " << iParticle->pdgId() << " STATUS: " << iParticle->status() << " MOTHER: " << iParticle->mother()->pdgId() << std::endl;
+      if(abs(iParticle->pdgId()) == 11 || abs(iParticle->pdgId()) == 13 || abs(iParticle->pdgId()) == 15) {
+        genZdaughters.push_back(&(*iParticle));
+      }
+    }
+    
+  } else {
+    myEvent.myZ = genZcand;
   }
-  myEvent.myZ = genZcand;
-
-  //AS A CROSS-CHECK WE NOW GET THE Z DAUGHTERS
+    //AS A CROSS-CHECK WE NOW GET THE Z DAUGHTERS
   std::cout << "FOUND NZ DAUGHTERS: " << genZdaughters.size() << std::endl;
   if(genZdaughters.size() != 2) return false; 
 
   double ZdaughterPt   = (genZdaughters[0]->p4() + genZdaughters[1]->p4()).pt();
   double ZdaughterMass = (genZdaughters[0]->p4() + genZdaughters[1]->p4()).mass();
 
-  double ZptDiff   = genZcand->pt()   - ZdaughterPt;
-  double ZmassDiff = genZcand->mass() - ZdaughterMass;
+  if(nFound == 1) {
+    double ZptDiff   = genZcand->pt()   - ZdaughterPt;
+    double ZmassDiff = genZcand->mass() - ZdaughterMass;
 
-  std::cout << "Z kinematic diff (pt):   " << ZptDiff   << std::endl;
-  std::cout << "Z kinematic diff (mass): " << ZmassDiff << std::endl;
+    std::cout << "Z kinematic diff (pt):   " << ZptDiff   << std::endl;
+    std::cout << "Z kinematic diff (mass): " << ZmassDiff << std::endl;
+  }
 
-  myEvent.genZmass = myEvent.myZ->mass();
+  myEvent.genZmass = ZdaughterMass;
   myEvent.genZpt   = ZdaughterPt;
-
   return true;
 }
 bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
