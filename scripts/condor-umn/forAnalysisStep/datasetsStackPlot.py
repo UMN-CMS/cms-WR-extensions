@@ -112,7 +112,7 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 1.0"
+    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 2016 1.0"
     print ""
     exit(0)
 if len(sys.argv) != 6:
@@ -367,7 +367,8 @@ for plot,stack in stackList.items():
     print stack
     print "Hist name: ", plot.split("/")[-1][:-5]
     for hist in stack:
-        print hist.__class__.__name__
+        histType = hist.__class__.__name__
+        print histType 
         #myHist = copy.deepcopy(hist)
     #    print "Adding"
         print "STACK TIME"
@@ -375,7 +376,10 @@ for plot,stack in stackList.items():
 	print "Integral: ", hist.Integral()
         #hist.SetFillColor(pos)
         hist.Draw("HIST")
-        stackHist.Add(hist)
+        if "TH2" in histType:
+            stackHist.Add(hist,"nostack")
+        elif "TH1" in histType:
+            stackHist.Add(hist)
         if pos == 9:
             pos+=2
         else:
