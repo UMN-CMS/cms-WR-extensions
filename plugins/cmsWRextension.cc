@@ -328,6 +328,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
    //   passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
       }
     }
+    if(m_checkZ && m_isMC) {
+      if(ZFinder(iEvent,myRECOevent)) {
+        std::cout << "PASSED Z GEN" << std::endl;
+        std::cout << "ZPT:   " <<   myRECOevent.genZpt << std::endl;
+        std::cout << "ZMASS: " << myRECOevent.genZmass  << std::endl;
+      }
+    }
     if (m_doReco || !m_isMC) {
       passesResRECO    = passResRECO(iEvent , myRECOevent);
       passesResFSBRECO = passFSBResRECO(iEvent, myRECOevent);
@@ -548,13 +555,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   std::cout << "passesResRECO: " << passesResRECO << "muonTrigPass: " << muonTrigPass << "ZMASSres: " << ZMASSres << std::endl;
   std::cout << "ZMASSres: " << ZMASSres << std::endl;
 
-  if(m_checkZ && m_isMC) {
-    if(ZFinder(iEvent,myRECOevent)) {
-      std::cout << "PASSED Z GEN" << std::endl;
-      std::cout << "ZPT:   " <<   myRECOevent.genZpt << std::endl;
-      std::cout << "ZMASS: " << myRECOevent.genZmass  << std::endl;
-    }
-  }
 
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
   if(ZMASSres){
