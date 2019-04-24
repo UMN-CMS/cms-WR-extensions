@@ -149,7 +149,7 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 1.0"
+    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 2016 1.0"
     print ""
     exit(0)
 if len(sys.argv) != 6:
@@ -406,29 +406,44 @@ for background,xsec in xsecs.items():
 
 #c = ROOT.TCanvas("c","c",1000,1000)
 for plot,stack in stackList.items():
-    stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     pos = 1
+    dummy = 0
+    histType = stack[0].__class__.__name__
+    # For 2D just add the histos together
+    # So make a clone of 0th one to add rest to
+    if "TH2" in histType:
+        dummy = stack[0].Clone()
+    # For 1D add the histos to a stack
+    # So make a dummy stack
+    elif "TH1" in histType:
+        dummy = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
+    #stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     print stack
     print "plot: ", plot
     print "Hist name: ", plot.split("/")[-1][:-5]
     for hist in stack:
-        print hist.__class__.__name__
+        # For 2D, skip the 0th hist since dummy is a clone
+        if "TH2" in histType and pos == 1:
+            pos+=1
+            continue
+        print histType 
         #myHist = copy.deepcopy(hist)
     #    print "Adding"
-        print "STACK TIME"
+        print "ADDING..."
         print hist.GetName()
 	print "Integral: ", hist.Integral()
         #hist.SetFillColor(pos)
         hist.Draw("HIST")
-        stackHist.Add(hist)
+        dummy.Add(hist)
         if pos == 9:
             pos+=2
         else:
             pos+=1
     ROOT.gStyle.SetPalette(55)
 #stackHist.Draw()
-    print "THIS MANY HISTS"
-    print stackHist.GetNhists()
+    if "TH1" in histType:
+        print "THIS MANY HISTS IN STACK"
+        print dummy.GetNhists()
 #c.BuildLegend()
 #c.SaveAs(plot)
-    stackHist.SaveAs(plot)
+    dummy.SaveAs(plot)

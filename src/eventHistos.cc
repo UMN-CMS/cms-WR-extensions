@@ -309,6 +309,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     //GEN Z
     m_genZmass                                   =  m_histoFolder.make<TH1D>("genZmass",";Gen Z Mass (GeV);" , 50, 0.0, 1000);
     m_genZpt                                     =  m_histoFolder.make<TH1D>("genZpt",  ";Gen Z Pt (GeV);"   , 50, 0.0, 1000);
+
+    m_genZptVSreco                               =  m_histoFolder.make<TH2D>("genZptVSreco", "Gen Z Pt versus reco mumu pt;  RECO mumu pt (GeV) ; GEN Z pt (GeV)" , 50, 0.0, 1000, 50, 0.0, 1000);
   //RESOLVED ANA   
     m_resJetDR                   = m_histoFolder.make<TH1D>("resJetDR"                ,";resolved jets deltaR", 80, 0.0, 8.0);
     m_resolvedRECOmass           = m_histoFolder.make<TH1D>("resolvedRECOmass"        ,";resolved RECO 4-object mass", 60, 0.0, 6000);
@@ -644,8 +646,10 @@ void eventHistos::fillGen(eventBits& event) {
 
 
   //Z STUFF
-  m_genZmass        -> Fill(event.genZpt, weight);
-  m_genZpt          -> Fill(event.genZmass, weight);
+  m_genZmass        -> Fill(event.genZmass, weight);
+  m_genZpt          -> Fill(event.genZpt  , weight);
+
+  m_genZptVSreco    -> Fill(event.subleadMuon_selMuonPt, event.genZpt, weight);
 
   m_firstPartonJetEtHadronic->Fill(event.firstPartonJetEtHadronicVal, weight);
   m_secondPartonJetEtHadronic->Fill(event.secondPartonJetEtHadronicVal, weight);
