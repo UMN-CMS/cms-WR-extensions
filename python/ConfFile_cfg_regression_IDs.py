@@ -41,6 +41,14 @@ options.register( 'era',
                   VarParsing.multiplicity.singleton,
                   VarParsing.varType.string,
                   "Year of Run II")
+
+options.register( 'isSignal',
+                  False,
+                  VarParsing.multiplicity.singleton,
+                  VarParsing.varType.bool,
+                  "True when running over signal MC samples"
+               )
+
 options.parseArguments()
 
 #LOCAL VARIABLE DEFINITIONS
@@ -69,7 +77,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
 
 process.source = cms.Source ("PoolSource",
 	  fileNames = cms.untracked.vstring (options.inputFiles),
-# 	  skipEvents = cms.untracked.uint32(31200)
+# 	  skipEvents = cms.untracked.uint32(9000)
 )
 
 process.options = cms.untracked.PSet(
@@ -131,6 +139,16 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 #process.heepIdExample = cms.EDAnalyzer("HEEPV70PATExample",
 #                                       eles=cms.InputTag("slimmedElectrons"),
 #                                       )
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+process.printTree = cms.EDAnalyzer("ParticleTreeDrawer",
+                                   src = cms.InputTag("prunedGenParticles"),    
+                                   printP4 = cms.untracked.bool(False),
+                                   printPtEtaPhi = cms.untracked.bool(False),
+                                   printVertex = cms.untracked.bool(False),
+                                   printStatus = cms.untracked.bool(False),
+                                   printIndex = cms.untracked.bool(True),
+#                                   status = cms.untracked.vint32( 3 )
+                                   )
 
 #process.p = cms.Path(
 #    process.heepSequence*
@@ -183,7 +201,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True),
-                              isSignal = cms.untracked.bool(False),
+                              isSignal = cms.untracked.bool(options.isSignal),
                               doFast = cms.untracked.bool(options.doFast),
                               checkZ = cms.untracked.bool(True),
                               isMC = cms.untracked.bool(options.isMC),
@@ -209,4 +227,4 @@ process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons
 process.heepElectrons.src = cms.InputTag('selectedElectrons')
 
 process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
-                           * process.muonSelectionSeq * process.analysis)
+                           * process.muonSelectionSeq * process.analysis )#* process.printTree)

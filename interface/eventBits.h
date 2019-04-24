@@ -146,6 +146,8 @@ public:
 
   const reco::GenParticle*          firstMuon;
   const reco::GenParticle*          secondMuon;
+  const reco::GenParticle*          firstElectron;
+  const reco::GenParticle*          secondElectron;
 
   const reco::Candidate*            NR;
   const reco::Candidate*            WR;

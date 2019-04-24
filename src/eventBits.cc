@@ -29,6 +29,9 @@ eventBits::eventBits() {
   firstMuon = NULL;
   secondMuon = NULL;
 
+  firstElectron = NULL;
+  secondElectron = NULL;
+
   resFSBMuon = NULL;
   resFSBElec = NULL;
 

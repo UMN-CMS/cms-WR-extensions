@@ -109,32 +109,47 @@ Muons::Muons () {
   std::string iMuon_Trig_BCDEF = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/EfficienciesAndSF_RunBtoF.root";
   TFile *lFile_Trig_BCDEF = TFile::Open(iMuon_Trig_BCDEF.c_str());
   Muon_Trig_BCDEF = (TH1F*) lFile_Trig_BCDEF->Get("Mu50_OR_TkMu50_PtBins/pt_ratio");
+  Muon_Trig_DataEff_BCDEF = (TH1F*) lFile_Trig_BCDEF->Get("Mu50_OR_TkMu50_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_BCDEF->SetDirectory(0);
+  Muon_Trig_DataEff_BCDEF->SetDirectory(0);
   lFile_Trig_BCDEF->Close();
 
   std::string iMuon_Trig_GH = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/EfficienciesAndSF_RunGtoH.root";
   TFile *lFile_Trig_GH = TFile::Open(iMuon_Trig_GH.c_str());
   Muon_Trig_GH = (TH1F*) lFile_Trig_GH->Get("Mu50_OR_TkMu50_PtBins/pt_ratio");
+  Muon_Trig_DataEff_GH = (TH1F*) lFile_Trig_GH->Get("Mu50_OR_TkMu50_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_GH->SetDirectory(0);
+  Muon_Trig_DataEff_GH->SetDirectory(0);
   lFile_Trig_GH->Close();
 
   Muon_Trig_SF2016 = (TH1F*) Muon_Trig_GH->Clone("pt_SF_trig_ave");
   Muon_Trig_SF2016->Scale(lumi_GH / lumi_total);
   Muon_Trig_SF2016->Add(Muon_Trig_BCDEF, lumi_BCDEF/lumi_total);
 
+  Muon_Trig_DataEff2016 = (TH1F*) Muon_Trig_DataEff_GH->Clone("pt_dataEff_trig_ave");
+  Muon_Trig_DataEff2016->Scale(lumi_GH / lumi_total);
+  Muon_Trig_DataEff2016->Add(Muon_Trig_DataEff_BCDEF, lumi_BCDEF/lumi_total);
+
 //Trigger SF files - 2017
   std::string iMuon_Trig_BtoF = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2017/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root";
   TFile *lFile_Trig_BtoF = TFile::Open(iMuon_Trig_BtoF.c_str());
   Muon_Trig_SF2017 = (TH1F*) lFile_Trig_BtoF->Get("Mu50_PtBins/pt_ratio");
+  Muon_Trig_DataEff2017 = (TH1F*) lFile_Trig_BtoF->Get("Mu50_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_SF2017->SetDirectory(0);
+  Muon_Trig_DataEff2017->SetDirectory(0);
   lFile_Trig_BtoF->Close();
 
 //Trigger SF files - 2018
   std::string iMuon_Trig_2018 = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2018/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root";
   TFile *lFile_Trig_2018 = TFile::Open(iMuon_Trig_2018.c_str());
   Muon_Trig_SF2018 = (TH1F*) lFile_Trig_2018->Get("Mu50_OR_OldMu100_OR_TkMu100_PtBins/pt_ratio");
+  Muon_Trig_DataEff2018 = (TH1F*) lFile_Trig_2018->Get("Mu50_OR_OldMu100_OR_TkMu100_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_SF2018->SetDirectory(0);
+  Muon_Trig_DataEff2018->SetDirectory(0);
   lFile_Trig_2018->Close(); 
+
+//Trigger Data Efficiency files (for weighting signal samples) - 2016
+
 
 //Rochester Method
   rc2016.init(edm::FileInPath("ExoAnalysis/cmsWRextensions/data/2016/RoccoR2016.txt").fullPath());
@@ -278,7 +293,7 @@ std::vector<double> Muons::MuonLooseTkIso(double MuonPt, double MuonEta, std::st
 
 }
 
-std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era){
+std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era, bool isSignal){
 
   double muPtForId = 0.;
 
@@ -289,17 +304,35 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era){
   }
 
   if(era == "2016"){
-    muTrigWeight = Muon_Trig_SF2016->GetBinContent(Muon_Trig_SF2016->FindBin(muPtForId));
-    muTrigWeightUp = muTrigWeight + Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
-    muTrigWeightDown = muTrigWeight - Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
+    if(isSignal){
+      muTrigWeight = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_DataEff2016->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_DataEff2016->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId));
+    }else{
+      muTrigWeight = Muon_Trig_SF2016->GetBinContent(Muon_Trig_SF2016->FindBin(muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
+    }
   }else if(era == "2017"){
-    muTrigWeight = Muon_Trig_SF2017->GetBinContent(Muon_Trig_SF2017->FindBin(muPtForId));
-    muTrigWeightUp = muTrigWeight + Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
-    muTrigWeightDown = muTrigWeight - Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
+    if(isSignal){
+      muTrigWeight = Muon_Trig_DataEff2017->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_DataEff2017->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_DataEff2017->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId));
+    }else{
+      muTrigWeight = Muon_Trig_SF2017->GetBinContent(Muon_Trig_SF2017->FindBin(muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
+    }
   }else if(era == "2018"){
-    muTrigWeight = Muon_Trig_SF2018->GetBinContent(Muon_Trig_SF2018->FindBin(muPtForId));
-    muTrigWeightUp = muTrigWeight + Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
-    muTrigWeightDown = muTrigWeight - Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
+    if(isSignal){
+      muTrigWeight = Muon_Trig_DataEff2018->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_DataEff2018->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_DataEff2018->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId));
+    }else{
+      muTrigWeight = Muon_Trig_SF2018->GetBinContent(Muon_Trig_SF2018->FindBin(muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
+    }
   }
 
   std::cout << "muTrigWeight: " << muTrigWeight << std::endl;

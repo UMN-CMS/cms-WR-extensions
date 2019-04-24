@@ -22,7 +22,7 @@ class Muons {
   std::vector<double> MuonLooseIDweight(double MuonPt, double MuonEta, std::string era);
   std::vector<double> MuonHighPTIDweight(double MuonPt, double MuonEta, std::string era);
   std::vector<double> MuonLooseTkIso(double MuonPt, double MuonEta, std::string era);
-  std::vector<double> MuonTriggerWeight(double MuonPt, std::string era);
+  std::vector<double> MuonTriggerWeight(double MuonPt, std::string era, bool isSignal);
   std::vector<double> RochesterMethod_DataScale(const pat::Muon* Mu, std::string era);
   std::vector<double> RochesterMethod_MCSmear(const pat::Muon* Mu, std::string era);
 
@@ -63,8 +63,15 @@ class Muons {
   TH1F* Muon_Trig_GH;
   TH1F* Muon_Trig_SF2016;
 
+  TH1F* Muon_Trig_DataEff_BCDEF;
+  TH1F* Muon_Trig_DataEff_GH;
+  TH1F* Muon_Trig_DataEff2016;
+
   TH1F* Muon_Trig_SF2017;
   TH1F* Muon_Trig_SF2018;
+
+  TH1F* Muon_Trig_DataEff2017;
+  TH1F* Muon_Trig_DataEff2018;
 
   RoccoR rc2016;
   RoccoR rc2017;
