@@ -9,6 +9,8 @@ import collections
 Style options mostly from CMS's tdrStyle.C
 """
 import numpy as np
+import array
+
 def customPalette(zeropoint = 0.5):
     Number = 3;
     Red    = np.array([0  ,  100,  110],dtype=float)/255.
@@ -18,7 +20,7 @@ def customPalette(zeropoint = 0.5):
     nb=100;
     ROOT.TColor.CreateGradientColorTable(Number,Length,Red,Green,Blue,nb)
 
-def saveHists(weight,backgroundName,file,directory="",prefix="",filter=""):
+def saveHists(weight,backgroundName,file,resolvedTTbarSF,directory="",prefix="",filter=""):
     ROOT.gROOT.SetBatch(True)
     hists1d = ["TH1D", "TH1F", "TH1"]
     hists2d = ["TH2D", "TH2F", "TH2"]
@@ -29,7 +31,7 @@ def saveHists(weight,backgroundName,file,directory="",prefix="",filter=""):
             newDir=directory+"/"+key.GetName()
             if(not (os.path.isdir(newDir))):
                 subprocess.call(["mkdir", newDir])
-            saveHists(weight,backgroundName,dir,directory=newDir, prefix=prefix,filter=filter)
+            saveHists(weight,backgroundName,dir,resolvedTTbarSF,directory=newDir, prefix=prefix,filter=filter)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
 	    if hist.Integral() == 0: continue
@@ -37,7 +39,7 @@ def saveHists(weight,backgroundName,file,directory="",prefix="",filter=""):
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
        #     hist.SetFillColor(color)
-            addHist(weight,backgroundName,hist,directory+"/"+key.GetName()+".root", width=1000, height=1000, drawoptions = drawoptions)
+            addHist(weight,backgroundName,hist,resolvedTTbarSF,directory+"/"+key.GetName()+".root", width=1000, height=1000, drawoptions = drawoptions)
 
 def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
     ROOT.gROOT.SetBatch(True)
@@ -73,27 +75,62 @@ def getEventsWeight(file,directory="",prefix="",filter="",inFolder = False):
 
    
 
-def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""):
+def addHist(weight,backgroundName,hist,resolvedTTbarSF,name,width=500,height=500, drawoptions=""):
     global stackList
     global colors
     ROOT.gStyle.SetPalette(55)
     hist.SetTitle(backgroundName)
     hist.Scale(weight)
+#### RESOLVED FSB CR BINNING ###
+#    binBoundaries = [0, 50, 100, 150, 200, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600]
+#### BOOSTED FSB CR BINNING  ###
+#    binBoundaries = [0, 50, 100, 150, 200, 275, 300, 325, 350, 375, 475, 500, 525, 550, 575, 600]
+#### RESOLVED SR CR BINNING ####
+    binBoundaries = [0, 50, 100, 150, 200, 275, 300, 325, 350, 375, 400, 425, 450, 475, 500, 525, 550, 575, 600]
+    binBoundariesArray = array.array('d', binBoundaries)
+#    hist_temp = hist.Rebin(2, hist.GetName(), binBoundariesArray)
+    print "number of bins before Rebin: ", hist.GetXaxis().GetNbins()    
+#    hist_temp = hist.Rebin(16, hist.GetName(), binBoundariesArray)
     hist.SetFillColor(colors[backgroundName])
     hist.SetLineColor(colors[backgroundName])
     print "ADDING HIST"
     print backgroundName
-    print hist.GetName()
+    print "hist.GetName: ", hist.GetName()
+    histName = hist.GetName()
     hist.SetName(backgroundName)
+    if "Mass" in histName or "resolved" in histName:
+	    print "REBINNING"
+	    hist_temp = hist.Rebin(18, backgroundName, binBoundariesArray)
+    	    print "number of bins after Rebin: ", hist_temp.GetXaxis().GetNbins()
     if name not in stackList:
         print "New Plot!"
         stackList[name] = []
         ROOT.gStyle.SetPalette(55)
-        stackList[name].append(copy.deepcopy(hist))
+#	if "resolvedRECOmass" in histName and "TT" in backgroundName:
+#	    for i in range(0,hist_temp.GetXaxis().GetNbins()):
+#		ttbarSF = resolvedTTbarSF.GetBinContent(resolvedTTbarSF.FindBin(hist_temp.GetBinCenter(i)))
+#		print "ttbarSF:" , ttbarSF
+#		print "hist_temp.GetBinContent(i): ", hist_temp.GetBinContent(i)
+#		print "hist_temp.GetBinContent(i)*ttbarSF: ", hist_temp.GetBinContent(i)*ttbarSF
+#		hist_temp.SetBinContent(i, hist_temp.GetBinContent(i)*ttbarSF)
+	if "Mass" in histName or "resolved" in histName:
+            stackList[name].append(copy.deepcopy(hist_temp))
+	else:
+            stackList[name].append(copy.deepcopy(hist))
     else:
         print "Stacking!"
         ROOT.gStyle.SetPalette(55)
-        stackList[name].append(copy.deepcopy(hist))
+#        if "resolvedRECOmass" in histName and "TT" in backgroundName:
+#            for i in range(0,hist_temp.GetXaxis().GetNbins()):
+#                ttbarSF = resolvedTTbarSF.GetBinContent(resolvedTTbarSF.FindBin(hist_temp.GetBinCenter(i)))
+#                print "ttbarSF:" , ttbarSF
+#                print "hist_temp.GetBinContent(i): ", hist_temp.GetBinContent(i)
+#                print "hist_temp.GetBinContent(i)*ttbarSF: ", hist_temp.GetBinContent(i)*ttbarSF
+#                hist_temp.SetBinContent(i, hist_temp.GetBinContent(i)*ttbarSF)
+        if "Mass" in histName or "resolved" in histName:
+            stackList[name].append(copy.deepcopy(hist_temp))
+        else:
+            stackList[name].append(copy.deepcopy(hist))
     #hist.SetLineWidth(2)
 
 
@@ -131,12 +168,12 @@ lumiAdjust = sys.argv[5]
 if(year=="2016"):
     integratedLuminosity = 35900.0
 elif(year=="2017"):
-    integratedLuminosity = 13000.0
-#    integratedLuminosity = 41500.0
+#    integratedLuminosity = 13000.0
+    integratedLuminosity = 41500.0
 elif(year=="2018"):
-    integratedLuminosity = 25000.0
+#    integratedLuminosity = 25000.0
 #    integratedLuminosity = 31930.0
-#    integratedLuminosity = 59970.0
+    integratedLuminosity = 59970.0
 integratedLuminosity *= float(lumiAdjust)
 
 with open(backgroundsList) as f:
@@ -263,14 +300,13 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8': ROOT.kGray,
           'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGray,
           'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8': ROOT.kGray,
-          'SingleElectron--Run2016B-03Feb2017_ver2-v2'          : 794,
-          'SingleElectron--Run2016C-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016D-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016E-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016F-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016G-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016H-03Feb2017_ver2-v1'          : 794,
-          'SingleElectron--Run2016H-03Feb2017_ver3-v1'          : 794,
+          'SingleElectron--Run2016B-17Jul2018_ver2-v1'          : 794,
+          'SingleElectron--Run2016C-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016D-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016E-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016F-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016G-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016H-17Jul2018-v1'          : 794,
           'SingleElectron--Run2017B-31Mar2018-v1'          : 794,
           'SingleElectron--Run2017C-31Mar2018-v1'          : 794,
           'SingleElectron--Run2017D-31Mar2018-v1'          : 794,
@@ -333,6 +369,11 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
 stackList = collections.OrderedDict()
 stackList.clear()
 
+FileResolvedTTbarSF = "../../../Output/2016_Samples_doFast/TTbarSF_Resolved.root"
+fResolvedTTbarSF = ROOT.TFile.Open(FileResolvedTTbarSF, "read")
+ResolvedTTbarSF = fResolvedTTbarSF.Get("ttbarSF")
+ResolvedTTbarSF.SetDirectory(0)
+fResolvedTTbarSF.Close()
 
 
 for background,xsec in xsecs.items():
@@ -353,10 +394,13 @@ for background,xsec in xsecs.items():
             continue
         print "Found # events:"+str(eventsWeight)
         weight /= eventsWeight
+	if "tW" in background and (year == "2017" or year == "2018"):
+	    print "Reducing ST weight"
+	    weight /= 35.1316
         print "DONE CALCULATING"
     print "Scale: "+str(weight)
  #   saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOToutputDir)
-    saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOTdestination)
+    saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),ResolvedTTbarSF,directory=backgroundsROOTdestination)
 
 #Loop over stacks and make save stackhists
 
@@ -365,6 +409,7 @@ for plot,stack in stackList.items():
     stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     pos = 1
     print stack
+    print "plot: ", plot
     print "Hist name: ", plot.split("/")[-1][:-5]
     for hist in stack:
         print hist.__class__.__name__
