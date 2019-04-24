@@ -398,7 +398,7 @@ for plot,stack in stackList.items():
 #stackHist.Draw()
     if "TH1" in histType:
         print "THIS MANY HISTS IN STACK"
-        print stackHist.GetNhists()
+        print dummy.GetNhists()
 #c.BuildLegend()
 #c.SaveAs(plot)
     dummy.SaveAs(plot)
