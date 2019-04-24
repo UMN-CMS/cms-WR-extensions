@@ -5033,7 +5033,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JECUp[0]->pT,myEvent.myResCandJets_JECUp[0]->eta,myEvent.myResCandJets_JECUp[0]->phi,myEvent.myResCandJets_JECUp[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JECUp[1]->pT,myEvent.myResCandJets_JECUp[1]->eta,myEvent.myResCandJets_JECUp[1]->phi,myEvent.myResCandJets_JECUp[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JECUp[1]->pT,myEvent.myResCandJets_JECUp[1]->eta,myEvent.myResCandJets_JECUp[1]->phi,myEvent.myResCandJets_JECUp[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5065,7 +5065,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JECDown[0]->pT,myEvent.myResCandJets_JECDown[0]->eta,myEvent.myResCandJets_JECDown[0]->phi,myEvent.myResCandJets_JECDown[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JECDown[1]->pT,myEvent.myResCandJets_JECDown[1]->eta,myEvent.myResCandJets_JECDown[1]->phi,myEvent.myResCandJets_JECDown[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JECDown[1]->pT,myEvent.myResCandJets_JECDown[1]->eta,myEvent.myResCandJets_JECDown[1]->phi,myEvent.myResCandJets_JECDown[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5098,7 +5098,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JERUp[0]->pT,myEvent.myResCandJets_JERUp[0]->eta,myEvent.myResCandJets_JERUp[0]->phi,myEvent.myResCandJets_JERUp[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JERUp[1]->pT,myEvent.myResCandJets_JERUp[1]->eta,myEvent.myResCandJets_JERUp[1]->phi,myEvent.myResCandJets_JERUp[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JERUp[1]->pT,myEvent.myResCandJets_JERUp[1]->eta,myEvent.myResCandJets_JERUp[1]->phi,myEvent.myResCandJets_JERUp[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5130,7 +5130,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JERDown[0]->pT,myEvent.myResCandJets_JERDown[0]->eta,myEvent.myResCandJets_JERDown[0]->phi,myEvent.myResCandJets_JERDown[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JERDown[1]->pT,myEvent.myResCandJets_JERDown[1]->eta,myEvent.myResCandJets_JERDown[1]->phi,myEvent.myResCandJets_JERDown[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResCandJets_JERDown[1]->pT,myEvent.myResCandJets_JERDown[1]->eta,myEvent.myResCandJets_JERDown[1]->phi,myEvent.myResCandJets_JERDown[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5188,7 +5188,7 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   TLorentzVector* jet1Vec_temp = new TLorentzVector();
   TLorentzVector* jet2Vec_temp = new TLorentzVector();
   jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets[0]->pT,myEvent.myResFSBCandJets[0]->eta,myEvent.myResFSBCandJets[0]->phi,myEvent.myResFSBCandJets[0]->E);
-  jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets[1]->pT,myEvent.myResFSBCandJets[1]->eta,myEvent.myResFSBCandJets[1]->phi,myEvent.myResFSBCandJets[1]->E);
+  jet2Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets[1]->pT,myEvent.myResFSBCandJets[1]->eta,myEvent.myResFSBCandJets[1]->phi,myEvent.myResFSBCandJets[1]->E);
 
   math::XYZTLorentzVector jet1;
   math::XYZTLorentzVector jet2;
@@ -5285,7 +5285,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets[0]->pT,myEvent.myResFSBCandJets[0]->eta,myEvent.myResFSBCandJets[0]->phi,myEvent.myResFSBCandJets[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets[1]->pT,myEvent.myResFSBCandJets[1]->eta,myEvent.myResFSBCandJets[1]->phi,myEvent.myResFSBCandJets[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets[1]->pT,myEvent.myResFSBCandJets[1]->eta,myEvent.myResFSBCandJets[1]->phi,myEvent.myResFSBCandJets[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5327,7 +5327,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JECUp[0]->pT,myEvent.myResFSBCandJets_JECUp[0]->eta,myEvent.myResFSBCandJets_JECUp[0]->phi,myEvent.myResFSBCandJets_JECUp[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JECUp[1]->pT,myEvent.myResFSBCandJets_JECUp[1]->eta,myEvent.myResFSBCandJets_JECUp[1]->phi,myEvent.myResFSBCandJets_JECUp[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JECUp[1]->pT,myEvent.myResFSBCandJets_JECUp[1]->eta,myEvent.myResFSBCandJets_JECUp[1]->phi,myEvent.myResFSBCandJets_JECUp[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5359,7 +5359,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JECDown[0]->pT,myEvent.myResFSBCandJets_JECDown[0]->eta,myEvent.myResFSBCandJets_JECDown[0]->phi,myEvent.myResFSBCandJets_JECDown[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JECDown[1]->pT,myEvent.myResFSBCandJets_JECDown[1]->eta,myEvent.myResFSBCandJets_JECDown[1]->phi,myEvent.myResFSBCandJets_JECDown[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JECDown[1]->pT,myEvent.myResFSBCandJets_JECDown[1]->eta,myEvent.myResFSBCandJets_JECDown[1]->phi,myEvent.myResFSBCandJets_JECDown[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5391,7 +5391,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JERUp[0]->pT,myEvent.myResFSBCandJets_JERUp[0]->eta,myEvent.myResFSBCandJets_JERUp[0]->phi,myEvent.myResFSBCandJets_JERUp[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JERUp[1]->pT,myEvent.myResFSBCandJets_JERUp[1]->eta,myEvent.myResFSBCandJets_JERUp[1]->phi,myEvent.myResFSBCandJets_JERUp[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JERUp[1]->pT,myEvent.myResFSBCandJets_JERUp[1]->eta,myEvent.myResFSBCandJets_JERUp[1]->phi,myEvent.myResFSBCandJets_JERUp[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
@@ -5423,7 +5423,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
     jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JERDown[0]->pT,myEvent.myResFSBCandJets_JERDown[0]->eta,myEvent.myResFSBCandJets_JERDown[0]->phi,myEvent.myResFSBCandJets_JERDown[0]->E);
-    jet1Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JERDown[1]->pT,myEvent.myResFSBCandJets_JERDown[1]->eta,myEvent.myResFSBCandJets_JERDown[1]->phi,myEvent.myResFSBCandJets_JERDown[1]->E);
+    jet2Vec_temp->SetPtEtaPhiE(myEvent.myResFSBCandJets_JERDown[1]->pT,myEvent.myResFSBCandJets_JERDown[1]->eta,myEvent.myResFSBCandJets_JERDown[1]->phi,myEvent.myResFSBCandJets_JERDown[1]->E);
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
