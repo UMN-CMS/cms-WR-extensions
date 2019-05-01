@@ -29,6 +29,7 @@ globalTagsByDataset = {}
 # latest miniaod v2
 #globalTagsByDataset['RunIISummer16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 globalTagsByDataset['RunIISummer16MiniAODv3*'] = '94X_mcRun2_asymptotic_v3'
+globalTagsByDataset['suoh-CMSSW_9_4_6_patch1'] = '94X_mcRun2_asymptotic_v3'
 globalTagsByDataset['Run2016B-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016C-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016D-17Jul2018*'] = '94X_dataRun2_v10'
@@ -293,6 +294,10 @@ with open(localInputListFile, 'r') as f:
     	primaryDatasetName = datasetNoSlashes.split('__')[0]
     	secondaryDatasetName = datasetNoSlashes.split('__')[1]
         print "secondaryDatasetName: ", secondaryDatasetName
+#	if datasetNoSlashes.split('__').size() < 2:
+#	    TypeOfFile = "NULL"
+#	else:
+#	    TypeOfFile = datasetNoSlashes.split('__')[3]
     	datasetName = datasetNoSlashes
     	datasetName = datasetName.split('__')[0]+'__'+datasetName.split('__')[1] # get rid of part after last slash
     	print "datasetName: ", datasetName
@@ -303,6 +308,11 @@ with open(localInputListFile, 'r') as f:
     	else:
       	    config.Data.outputDatasetTag=secondaryDatasetName
     # must pass isMC=false flag to cmsRun now (defaults to true)
+#    if "USER" in TypeOfFile:
+#      print "Running on Korean private samples"
+        privateSamples = False
+#       privateSamples = True
+#      config.Data.inputDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader'
     if isData:
 #      config.JobType.priority = 500
       config.JobType.pyCfgParams = ['isMC=False']
@@ -311,7 +321,7 @@ with open(localInputListFile, 'r') as f:
       elif '2017' in datasetName:
      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
       elif '2018' in datasetName:
-      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'
     #Handle the ext1 vs non ext case specially
     if not isData:
       isAMCATNLO = 'amcatnlo' in datasetName
@@ -412,6 +422,14 @@ with open(localInputListFile, 'r') as f:
                 elif '102X_upgrade2018_realistic_v12' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2018','ISmcatnlo=True']
           else:
+	     if privateSamples:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isSignal=True']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isSignal=True']
+                elif '102X_upgrade2018_realistic_v12' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isSignal=True']
+	     else:
                 if '94X_mcRun2_asymptotic_v3' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2016']
                 elif '94X_mc2017_realistic_v17' in tag:
@@ -436,6 +454,14 @@ with open(localInputListFile, 'r') as f:
                 elif '102X_upgrade2018_realistic_v12' in tag:
                         config.JobType.pyCfgParams = ['era=2018','ISmcatnlo=True']
 	  else:
+	     if privateSamples:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['era=2016','isSignal=True']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['era=2017','isSignal=True']
+                elif '102X_upgrade2018_realistic_v12' in tag:
+                        config.JobType.pyCfgParams = ['era=2018','isSignal=True']
+	     else:
                 if '94X_mcRun2_asymptotic_v3' in tag:
                         config.JobType.pyCfgParams = ['era=2016']
                 elif '94X_mc2017_realistic_v17' in tag:
