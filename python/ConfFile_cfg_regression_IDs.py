@@ -164,10 +164,10 @@ if options.era == '2016':
 	electronPaths = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v")
 elif options.era == '2017':
 	muonPaths = cms.vstring("HLT_Mu50_v")
-	electronPaths = cms.vstring("HLT_Ele35_WPTight_Gsf_v","HLT_Photon200_v")
+	electronPaths = cms.vstring("HLT_Ele35_WPTight_Gsf_v","HLT_Photon200_v","HLT_Ele115_CaloIdVT_GsfTrkIdT_v")
 elif options.era == '2018':
 	muonPaths = cms.vstring("HLT_Mu50", "HLT_OldMu100", "HLT_TkMu100")
-	electronPaths = cms.vstring("HLT_Ele32WPTight_Gsf_v","HLT_Photon200_v")
+	electronPaths = cms.vstring("HLT_Ele32WPTight_Gsf_v","HLT_Photon200_v","HLT_Ele115_CaloIdVT_GsfTrkIdT_v")
 
 process.analysis = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
