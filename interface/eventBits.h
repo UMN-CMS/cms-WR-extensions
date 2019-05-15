@@ -99,6 +99,7 @@ public:
   std::vector<const pat::Electron*> myElectronCandsHighPt200_noISO;
   std::vector<const pat::Muon*>     myMuonCandsHighPt;
   std::vector<const pat::Muon*>     resolvedANAMuons;
+  std::vector<const pat::Electron*> resolvedANAElectrons;
   std::vector<const pat::Muon*>     myMuonCands;
   const pat::MET*                   myMET;
 
@@ -168,6 +169,7 @@ public:
   int neutrinoDecays;
   int cutProgress;
   int ResCutProgress;
+  int ResElecCutProgress;
   int FSBcutProgress;
   int ResFSBCutProgress;
   bool passesWR2016;
@@ -180,6 +182,7 @@ public:
 
   int    muonCands;
   int    NresolvedANAMuonCands;
+  int    NresolvedANAElectronCands;
   int    electronCands50;
   int    electronCands100;
   int    electronCands150;

@@ -2558,6 +2558,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     myEvent.myMuonCands = allMuons; 
   }
   if(myEvent.muons10 < 1) return false;  //The leading muon should also pass these cuts, so an additional muon would mean 2 or more
+  if(myEvent.muons10 > 2) return false;  //too many muons!
 
   if(flavorSideband==true) {
     myEvent.mySubleadMuon = allMuons.at(0);
@@ -2774,10 +2775,9 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
   return true;
 } 
 bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& myEvent) {
-  std::cout << "RES LEPTON SELECTION" << std::endl;
+  std::cout << "RES MUON SELECTION" << std::endl;
   std::vector<const pat::Muon*> resolvedANAMuons;
   std::vector<const pat::Muon*> resolvedLooseMuons;
-  std::vector<const pat::Muon*> resolvedHighPtMuons;
 
   edm::Handle<std::vector<pat::Muon>> highMuons;
   iEvent.getByToken(m_highMuonToken, highMuons);
@@ -2797,22 +2797,6 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
 //      resolvedHighPtMuons.push_back(&(*iMuon));
     }
   }
-
-/*  for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
-     if(( iMuon->isLooseMuon() && iMuon->pt() > 10 && fabs(iMuon->eta()) < 2.4)){
-       if(resolvedHighPtMuons.size() > 0){
-	 if(fabs(reco::deltaPhi((iMuon)->phi(), resolvedHighPtMuons[0]->phi())) > 0.01){
-           resolvedLooseMuons.push_back(&(*iMuon));
-
-	 }
-       }
-     }
-  }
-
-  if(resolvedHighPtMuons.size() > 0 && resolvedLooseMuons.size() > 0){
-    resolvedANAMuons.push_back(resolvedHighPtMuons[0]);
-    resolvedANAMuons.push_back(resolvedLooseMuons[0]);
-  }*/
 
   myEvent.NresolvedANAMuonCands = resolvedANAMuons.size();
   if (myEvent.NresolvedANAMuonCands < 2) return false;
@@ -2846,22 +2830,54 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
    
   return true;
 }
+bool cmsWRextension::resolvedElectronSelection(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout << "RES ELECTRON SELECTION" << std::endl;
+  std::vector<const pat::Electron*> resolvedANAElectrons;
+
+  edm::Handle<std::vector<pat::Electron>> highElectrons;
+  iEvent.getByToken(m_highElectronToken, highElectrons);
+
+  for(std::vector<pat::Electron>::const_iterator iElectron = highElectrons->begin(); iElectron != highElectrons->end(); iElectron++) {
+   if( fabs(iElectron->eta()) > 2.4) continue;
+   if( iElectron->pt() < 53 ) continue;
+
+   resolvedANAElectrons.push_back(&(*iElectron));
+  }
+
+  myEvent.NresolvedANAElectronCands = resolvedANAElectrons.size();
+  if (myEvent.NresolvedANAElectronCands < 2) return false;
+  //HERE IS THE VETO PARAMETER//
+  //myEvent.NresolvedANAElectronCands
+  // RIGHT HERE /\     //
+  myEvent.ResCutProgress++;
+
+  std::sort(resolvedANAElectrons.begin(), resolvedANAElectrons.end(), ::wrTools::compareEtCandidatePointer);
+
+  if(m_isMC){
+  }
+  else{
+  }
+
+  std::cout << "high pT lead electron" << std::endl;
+  std::cout << "60 GeV lead electron" << std::endl;
+  if (resolvedANAElectrons[0]->pt()/**myEvent.leadResElectronScale[0]*/ <= 60) return false;
+  myEvent.ResElecCutProgress++;
+
+  myEvent.resolvedANAElectrons = resolvedANAElectrons;
+
+  myEvent.resolvedSubleadMuPt = resolvedANAElectrons[1]->pt();
+   
+  return true;
+}
 
 bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEvent) {  //Flavor sideband
   std::cout<<"STARTING ELECTRON SELECTION"<<std::endl;
   std::vector<const pat::Electron*> highPTelectrons200;
-  std::vector<const pat::Electron*> highPTelectrons150;
-  std::vector<const pat::Electron*> highPTelectrons100;
-  std::vector<const pat::Electron*> highPTelectrons50;
-
-  std::vector<const pat::Electron*> highPTelectrons200_noISO;
-  std::vector<const pat::Electron*> highPTelectrons50_noISO;   //MUST FAIL HEEP TRACK ISO
 
   edm::Handle<std::vector<pat::TriggerObjectStandAlone> > trigObjsHandle;
   if(m_doTrig) {
     iEvent.getByToken(m_trigObjsToken, trigObjsHandle);
   }
-
 
   std::cout << "Looking for a few good electrons" << std::endl;
   edm::Handle<std::vector<pat::Electron>> highElectrons;
@@ -2892,20 +2908,14 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&  
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true     
     ) {
-        if (iElec->pt() < 50) {
+        if (iElec->pt() < 200) {
           myEvent.nAdditionalHEEP_noISO++;    
-        }
-        if (iElec->pt() >= 200){
-          highPTelectrons200_noISO.push_back(&(*iElec));
-        }
-        if (iElec->pt() >= 50){
-          highPTelectrons50_noISO.push_back(&(*iElec));
         }
     }
     if (heepIDVID) {
       //PHASE SPACE CUTS
       std::cout << "Electron pT: " << iElec->pt() << std::endl;
-      if( iElec->pt() < 50){
+      if( iElec->pt() < 200){
         myEvent.nAdditionalHEEP++;
       }
 
@@ -2913,52 +2923,18 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
 	std::cout << "iElec->pt(): " << iElec->pt() << std::endl;
         highPTelectrons200.push_back(&(*iElec));
       }
-      if (iElec->pt() >= 150){
-        highPTelectrons150.push_back(&(*iElec));
-      }
-      if (iElec->pt() >= 100){
-        highPTelectrons100.push_back(&(*iElec));
-      }
-      if (iElec->pt() >= 50){
-        highPTelectrons50.push_back(&(*iElec));
-      }
     }
     //std::cout<<"ELECTRON CAND WITH PT,ETA,PHI: "<<iElec->pt()<<","<<iElec->eta()<<","<<iElec->phi()<<std::endl;
   }
       //if( iLep->pt() > 200 ) highPTMuons.push_back(&(*iLep));
   //COLLECT MUONS INTO HIGHPT AND ALLPT WITHIN ACCEPTANCE
+  //USE THIS FOR LEPTON VETOES
   myEvent.electronCands200 = highPTelectrons200.size();
-  myEvent.electronCands150 = highPTelectrons150.size();
-  myEvent.electronCands100 = highPTelectrons100.size();
-  myEvent.electronCands50  = highPTelectrons50.size();
-
-  myEvent.electronCands200_noISO = highPTelectrons200_noISO.size();
-  myEvent.electronCands50_noISO  = highPTelectrons50_noISO.size();
-  if (myEvent.electronCands200_noISO > 0) {
-    std::sort(highPTelectrons200_noISO.begin(),highPTelectrons200_noISO.end(),::wrTools::compareEtCandidatePointer);
-    myEvent.myElectronCandsHighPt200_noISO = highPTelectrons200_noISO;
-  }
-  if (myEvent.electronCands50_noISO > 0) {
-    std::sort(highPTelectrons50_noISO.begin(),highPTelectrons50_noISO.end(),::wrTools::compareEtCandidatePointer);
-    myEvent.myElectronCandsHighPt50_noISO = highPTelectrons50_noISO;
-    myEvent.myElectronCand_noISO = highPTelectrons50_noISO[0];
-  }
+  //UP HERE /\ //
   if (myEvent.electronCands200 > 0) {
     std::sort(highPTelectrons200.begin(),highPTelectrons200.end(),::wrTools::compareEtCandidatePointer); 
     myEvent.myElectronCandsHighPt200 = highPTelectrons200;
-  }
-  if (myEvent.electronCands150 > 0) {
-    std::sort(highPTelectrons150.begin(),highPTelectrons150.end(),::wrTools::compareEtCandidatePointer); 
-    myEvent.myElectronCandsHighPt150 = highPTelectrons150;
-  }
-  if (myEvent.electronCands100 > 0) {
-    std::sort(highPTelectrons100.begin(),highPTelectrons100.end(),::wrTools::compareEtCandidatePointer); 
-    myEvent.myElectronCandsHighPt100 = highPTelectrons100;
-  }
-  if (myEvent.electronCands50 > 0) {
-    std::sort(highPTelectrons50.begin(),highPTelectrons50.end(),::wrTools::compareEtCandidatePointer); 
-    myEvent.myElectronCandsHighPt50 =  highPTelectrons50;
-    myEvent.myElectronCand = highPTelectrons50[0];
+    myEvent.myElectronCand = highPTelectrons200[0];
     return true;  //NOT CURRENTLY USED
   }
   return false;//NOT CURRENTLY USED

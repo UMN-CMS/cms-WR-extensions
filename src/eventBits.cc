@@ -50,8 +50,15 @@ eventBits::eventBits() {
 
   count = 0;
 
+  NresolvedANAMuonCands = -10000.0;
+  NresolvedANAElectronCands = -10000.0;
+
   cutProgress = -1;
+  ResCutProgress = -1;
+  ResElecCutProgress = -1;
   FSBcutProgress = -1;
+  ResFSBCutProgress = -1;
+
 
   nSecondElectronCands = -10000.0;
 
