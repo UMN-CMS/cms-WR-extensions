@@ -183,6 +183,7 @@ public:
   int    muonCands;
   int    NresolvedANAMuonCands;
   int    NresolvedANAElectronCands;
+  int    NresolvedANAFSBLeptonCands;
   int    electronCands50;
   int    electronCands100;
   int    electronCands150;

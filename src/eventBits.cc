@@ -52,6 +52,7 @@ eventBits::eventBits() {
 
   NresolvedANAMuonCands = -10000.0;
   NresolvedANAElectronCands = -10000.0;
+  NresolvedANAFSBLeptonCands = -10000.0;
 
   cutProgress = -1;
   ResCutProgress = -1;

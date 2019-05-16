@@ -230,6 +230,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool passesResFSBRECO = false;
   bool passesResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
 //  bool passesResModGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
+  bool tooManyResElectrons = false;
+  bool tooManyResMuons = false;
+  bool tooManyResFSBLeptons = false;
 
   bool passesBoostRECO = false;
   bool passesBoostGEN = false; //this tracks with our current analysis effort
@@ -342,6 +345,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if (m_doReco || !m_isMC) {
       passesResRECO    = passResRECO(iEvent , myRECOevent);
       passesResFSBRECO = passFSBResRECO(iEvent, myRECOevent);
+      if(myRECOevent.NresolvedANAElectronCands > 1)  tooManyResElectrons = true;
+      if(myRECOevent.NresolvedANAMuonCands > 2)      tooManyResMuons = true;
+      if(myRECOevent.NresolvedANAFSBLeptonCands > 2) tooManyResFSBLeptons = true;
+
       std::cout << "Outside subLeadingMuonZMass" << std::endl;
       ZMASSres         = subLeadingMuonZMass(iEvent, myRECOevent, false, true);
       ZMASSFSBres      = subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, true);
@@ -553,9 +560,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   //FILL STUFF
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
-  ZMASSres = (passesResRECO && muonTrigPass && ZMASSres);
-  passesResRECO    = (passesResRECO    && muonTrigPass && !ZMASSres   );
-  passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres);
+  bool tooManyResLeptons = tooManyResElectrons || tooManyResMuons;
+  ZMASSres =         (passesResRECO    && muonTrigPass &&  ZMASSres    && !tooManyResLeptons);
+  passesResRECO    = (passesResRECO    && muonTrigPass && !ZMASSres    && !tooManyResLeptons);
+  passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres && !tooManyResFSBLeptons);
   std::cout << "passesResRECO: " << passesResRECO << "muonTrigPass: " << muonTrigPass << "ZMASSres: " << ZMASSres << std::endl;
   std::cout << "ZMASSres: " << ZMASSres << std::endl;
 
@@ -2765,6 +2773,8 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
   myEvent.resFSBMuon_phi = leadMuon->phi();
   myEvent.resFSBMuon_eta = leadMuon->eta();
 
+  myEvent.NresolvedANAFSBLeptonCands = resElecs.size() + resMus.size();
+
   //CHECK THAT AT LEAST ONE IS ABOVE 60 GEV
   
   if( (leadElec->pt()*myEvent.leadFSBMuonScale[0] < 60) && (leadMuon->pt() < 60) ) return false;
@@ -2840,6 +2850,13 @@ bool cmsWRextension::resolvedElectronSelection(const edm::Event& iEvent, eventBi
   for(std::vector<pat::Electron>::const_iterator iElectron = highElectrons->begin(); iElectron != highElectrons->end(); iElectron++) {
    if( fabs(iElectron->eta()) > 2.4) continue;
    if( iElectron->pt() < 53 ) continue;
+   const vid::CutFlowResult* vidResult =  iElectron->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+   if(vidResult == NULL) {
+     std::cout << "ERROR CANNOT FIND ELECTRON VID RESULTS" << std::endl;
+     return false;
+   }
+   const bool heepIDVID = vidResult->cutFlowPassed();
+   if (!heepIDVID) continue;
 
    resolvedANAElectrons.push_back(&(*iElectron));
   }
@@ -4811,6 +4828,7 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES SELECTION CALL" << std::endl;
   std::cout << "RES LEPTON SELECTION CALL" << std::endl;
   if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
+  resolvedElectronSelection(iEvent, myEvent);
   std::cout << "RES JET SELECTION CALL" << std::endl;
   if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
 
