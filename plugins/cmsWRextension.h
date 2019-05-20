@@ -145,7 +145,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion, bool ISO);
       bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
-      bool additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion);
+      bool additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, int JetCorrectionRegion);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedMuonSelection(const edm::Event&, eventBits&);
       bool resolvedElectronSelection(const edm::Event&, eventBits&);

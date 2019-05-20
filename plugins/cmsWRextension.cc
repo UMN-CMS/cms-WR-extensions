@@ -238,11 +238,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool tooManyResMuons = false;            //MORE THAN TWO
   bool tooManyResFSBLeptons = false;       //MORE THAN TWO TOTAL
 
-  bool tooManyBoostTightElectrons = false; //MORE THAN ONE
-  bool tooManyBoostTightMuons = false;     //MORE THAN ONE
-  bool tooManyBoostLooseElectrons = false; //ANY 
-  bool tooManyBoostLooseMuons = false;     //MORE THAN ONE
-
 
 //////
   bool passesBoostRECO = false;
@@ -2660,27 +2655,27 @@ bool cmsWRextension::additionalElectrons(const edm::Event& iEvent, eventBits& my
 
   if(!isFSB){
     if(JetCorrectionRegion == 0){
-      selJet = myEvent.myMuonJetPairs.first;
+      selJet = myEvent.myMuonJetPairs[0].first;
     }else if(JetCorrectionRegion == 1){
-      selJet = myEvent.myMuonJetPairs_JECUp.first;
+      selJet = myEvent.myMuonJetPairs_JECUp[0].first;
     }else if(JetCorrectionRegion == 2){
-      selJet = myEvent.myMuonJetPairs_JECDown.first;
+      selJet = myEvent.myMuonJetPairs_JECDown[0].first;
     }else if(JetCorrectionRegion == 3){
-      selJet = myEvent.myMuonJetPairs_JERUp.first;
+      selJet = myEvent.myMuonJetPairs_JERUp[0].first;
     }else if(JetCorrectionRegion == 4){
-      selJet = myEvent.myMuonJetPairs_JERDown.first;
+      selJet = myEvent.myMuonJetPairs_JERDown[0].first;
     }
   }else{
     if(JetCorrectionRegion == 0){
-      selJet = myEvent.myElectronJetPairs.first;
+      selJet = myEvent.myElectronJetPairs[0].first;
     }else if(JetCorrectionRegion == 1){
-      selJet = myEvent.myElectronJetPairs_JECUp.first;
+      selJet = myEvent.myElectronJetPairs_JECUp[0].first;
     }else if(JetCorrectionRegion == 2){
-      selJet = myEvent.myElectronJetPairs_JECDown.first;
+      selJet = myEvent.myElectronJetPairs_JECDown[0].first;
     }else if(JetCorrectionRegion == 3){
-      selJet = myEvent.myElectronJetPairs_JERUp.first;
+      selJet = myEvent.myElectronJetPairs_JERUp[0].first;
     }else if(JetCorrectionRegion == 4){
-      selJet = myEvent.myElectronJetPairs_JERDown.first;
+      selJet = myEvent.myElectronJetPairs_JERDown[0].first;
     }
   }
 
