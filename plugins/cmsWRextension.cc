@@ -196,6 +196,10 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 
 
   r = new TRandom3(1988);
+
+/*  prefweight_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProb"));
+  prefweightup_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbUp"));
+  prefweightdown_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbDown"));*/
 }
 
 cmsWRextension::~cmsWRextension() {
@@ -299,6 +303,27 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     myRECOevent.puWeight_Down = puWeights[2];
   }
 
+  //EE prefiring corrections
+/*  if(m_era == "2016" || m_era == "2017"){
+    edm::Handle< double > theprefweight;
+    iEvent.getByToken(prefweight_token, theprefweight ) ;
+    myRECOevent._prefiringweight =(*theprefweight);
+
+    edm::Handle< double > theprefweightup;
+    iEvent.getByToken(prefweightup_token, theprefweightup ) ;
+    myRECOevent._prefiringweightup =(*theprefweightup);
+
+    edm::Handle< double > theprefweightdown;
+    iEvent.getByToken(prefweightdown_token, theprefweightdown ) ;
+    myRECOevent._prefiringweightdown =(*theprefweightdown);
+  }else{*/
+    myRECOevent._prefiringweight = 1.;
+    myRECOevent._prefiringweightup = 1.;
+    myRECOevent._prefiringweightdown = 1.;
+//  }
+
+  std::cout << "myRECOevent._prefiringweight: " << myRECOevent._prefiringweight << std::endl;
+
   // this goes through the logic descend the proper eventweight depending on source (data/mc type)
   myRECOevent.Muon_HighPtID_Weight = 1;
   myRECOevent.Muon_LooseID_Weight = 1;
@@ -352,6 +377,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         myRECOevent.cutProgress++;
         if(myRECOevent.myMuonJetPairs.size() > 0){
           if(passBoostRECO(iEvent, myRECOevent)) {
+	    m_eventsPassJetSelection.fill(  myRECOevent, 1);
             addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
 	    std::cout << "Outside subLeadingMuonZMass Boost" << std::endl;
             ZMASS = subLeadingMuonZMass(iEvent, myRECOevent, false, false);
@@ -1339,12 +1365,12 @@ void cmsWRextension::setEventWeight_Resolved(const edm::Event& iEvent, eventBits
         myEvent.weight = eventInfo->weight()*myEvent.puWeight;
         std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
         myEvent.count = 1;
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight;
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;
       }
       else {
         myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-        myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight;
+        myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;
       }
   } else {
       myEvent.weight = 1;
@@ -1360,11 +1386,11 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
         myEvent.weight = eventInfo->weight()*myEvent.puWeight;
         std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
         myEvent.count = 1;
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight;      }
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;      }
       else {
         myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight;      }
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;      }
   } else {
       myEvent.weight = 1;
       myEvent.count = 1;
@@ -1378,11 +1404,11 @@ void cmsWRextension::setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventB
       if(!m_amcatnlo) {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight;      }
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight;      }
       else {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight;      }
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight;      }
   } else {
       myEvent.FSBweight = 1;
       myEvent.count = 1;
@@ -1396,12 +1422,12 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
       if(!m_amcatnlo) {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight;
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
       }
       else {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight;
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
       }
   } else {
       myEvent.FSBweight = 1;
@@ -1416,12 +1442,12 @@ void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBit
       if(!m_amcatnlo) {
         myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
-	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight;
+	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
       }
       else {
         myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight;
+	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
       }
   } else {
       myEvent.FSBweight_noISO = 1;
@@ -4030,6 +4056,10 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
         myEvent.genSecondMuon = &(*iParticle);
       }
     }
+    if(abs(iParticle->pdgId()) == 9900014 || iParticle->pdgId() == 9900012 || iParticle->pdgId() == 9900016){
+      std::cout << "iParticle->E: " << iParticle->energy() << std::endl;
+      myEvent.NRenergy = iParticle->energy();
+    }
     if(abs(iParticle->pdgId()) == 11) {
       nElectrons++;
       genLeptons.push_back(&(*iParticle));
@@ -4479,6 +4509,7 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
   myRECOevent.selectedJetMass = myRECOevent.myMuonJetPairs[0].first->SDmass*myRECOevent.myMuonJetPairs[0].first->SDmassCorr;
   myRECOevent.selectedJetLSF3 = myRECOevent.myMuonJetPairs[0].first->lsfC_3;
   myRECOevent.selectedJetMaxSubJetCSV = myRECOevent.myMuonJetPairs[0].first->maxSubJetCSV;
+  myRECOevent.selectedJetEnergy =  myRECOevent.myMuonJetPairs[0].first->E;
 
   int nHighPtMuonsOutsideJet = 0;
   if(myRECOevent.muonCands > 1){
@@ -5632,6 +5663,7 @@ cmsWRextension::beginJob()
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 3, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
+    m_eventsPassJetSelection.book((fs->mkdir("eventsPassJetSelection")), 3, m_outputTag, 1);
 
 //    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
 //    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
