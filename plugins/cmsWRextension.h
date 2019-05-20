@@ -180,46 +180,45 @@ class cmsWRextension : public edm::EDAnalyzer {
       void loadCMSSWPath();
       // ----------member data ---------------------------
       eventHistos m_allEvents;
-      eventHistos m_eventsPassingWR2016;
-      eventHistos m_eventsPassingExtensionGEN;
-      eventHistos m_eventsPassingExtensionRECO;
-      eventHistos m_eventsPassingExtensionRECO2016VETO;
-      eventHistos m_eventsPassingExtensionRECO2016VETO_noTrig;
-      eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
-      eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
-      eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
-      eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
-      eventHistos m_eventsPassingWR2016RECO;
+//      eventHistos m_eventsPassingWR2016;
+//      eventHistos m_eventsPassingExtensionGEN;
+//      eventHistos m_eventsPassingExtensionRECO;
+//      eventHistos m_eventsPassingExtensionRECO2016VETO;
+//      eventHistos m_eventsPassingExtensionRECO2016VETO_noTrig;
+//      eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
+//      eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
+//      eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
+//      eventHistos m_eventsPassingWR2016RECO;
+      eventHistos m_eventsFailResFailBoostGEN;
+      eventHistos m_eventsPassResPassBoostGEN;
+      eventHistos m_eventsPassResFailBoostGEN;
+      eventHistos m_eventsFailResPassBoostGEN;
 
       eventHistos m_eventsFailResFailBoostRECO;
       eventHistos m_eventsPassResPassBoostRECO;
       eventHistos m_eventsPassResFailBoostRECO;
       eventHistos m_eventsFailResPassBoostRECO;
 
-      eventHistos m_eventPassResLowMassCRRECO;
-      eventHistos m_eventPassBoostLowMassCRRECO;
-
-      eventHistos m_eventsFailResFailBoostGEN;
-      eventHistos m_eventsPassResPassBoostGEN;
-      eventHistos m_eventsPassResFailBoostGEN;
-      eventHistos m_eventsFailResPassBoostGEN;
- 
+      eventHistos m_eventsPassResLowMassCRRECO;
       eventHistos m_eventsPassResZMASSRECO;
       eventHistos m_eventsPassResFSBRECO;
       eventHistos m_eventsPassResFSBLowMassCRRECO;
       eventHistos m_eventsPassJetSelection;
 
-      eventHistos m_eventsPassingFlavorSidebandLowMassCRRECOelePt200;
+      eventHistos m_eventsPassBoostFSBLowMassCRRECO;
+      eventHistos m_eventsPassBoostFSBRECO;
+      eventHistos m_eventsPassBoostLowMassCRRECO;
+      eventHistos m_eventsPassBoostZMASSRECO;
 
-      eventHistos m_eventsFailResFailBoostGEN_boostMod;
-      eventHistos m_eventsPassResPassBoostGEN_boostMod;
-      eventHistos m_eventsPassResFailBoostGEN_boostMod;
-      eventHistos m_eventsFailResPassBoostGEN_boostMod;
-
-      eventHistos m_eventsFailResFailBoostGEN_resMod;
-      eventHistos m_eventsPassResPassBoostGEN_resMod;
-      eventHistos m_eventsPassResFailBoostGEN_resMod;
-      eventHistos m_eventsFailResPassBoostGEN_resMod;
+//      eventHistos m_eventsFailResFailBoostGEN_boostMod;
+//      eventHistos m_eventsPassResPassBoostGEN_boostMod;
+//      eventHistos m_eventsPassResFailBoostGEN_boostMod;
+//      eventHistos m_eventsFailResPassBoostGEN_boostMod;
+//
+//      eventHistos m_eventsFailResFailBoostGEN_resMod;
+//      eventHistos m_eventsPassResPassBoostGEN_resMod;
+//      eventHistos m_eventsPassResFailBoostGEN_resMod;
+//      eventHistos m_eventsFailResPassBoostGEN_resMod;
 
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
@@ -231,16 +230,15 @@ class cmsWRextension : public edm::EDAnalyzer {
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_samesign;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_all;
 
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_A;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_B;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_C;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_D;
-
-      eventHistos m_eventsPassingFlavorSidebandRECOres;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_A;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_B;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_C;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_D;
+//
+//      eventHistos m_eventsPassingFlavorSidebandRECOres;
 
       HEEP myHEEP;
       egammaEffi myEgammaEffi;
