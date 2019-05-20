@@ -229,11 +229,18 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool passesResRECO = false;
   bool passesResFSBRECO = false;
   bool passesResGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
-//  bool passesResModGEN = false;  //these two track with a recreation of the past resolved 2016 analysis
-  bool tooManyResElectrons = false;
-  bool tooManyResMuons = false;
-  bool tooManyResFSBLeptons = false;
+//  LEPTON VETOES
+  bool tooManyResElectrons = false;        //MORE THAN TWO
+  bool tooManyResMuons = false;            //MORE THAN TWO
+  bool tooManyResFSBLeptons = false;       //MORE THAN TWO TOTAL
 
+  bool tooManyBoostTightElectrons = false; //MORE THAN ONE
+  bool tooManyBoostTightMuons = false;     //MORE THAN ONE
+  bool tooManyBoostLooseElectrons = false; //ANY 
+  bool tooManyBoostLooseMuons = false;     //MORE THAN ONE
+
+
+//////
   bool passesBoostRECO = false;
   bool passesBoostGEN = false; //this tracks with our current analysis effort
 //  bool passesBoostModGEN = false; //this tracks with our current analysis effort
@@ -331,8 +338,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         passZSBGEN        = passZsidebandCutGEN (iEvent, myRECOevent); 
         passesResGEN      = passResGEN          (iEvent, myRECOevent);
         passesBoostGEN    = passBoostGEN        (iEvent, myRECOevent);
-   //   passesResModGEN   = passResTightGEN     (iEvent, myRECOevent);
-   //   passesBoostModGEN = passBoostTightGEN   (iEvent, myRECOevent);
       }
     }
     if(m_checkZ && m_isMC) {
@@ -413,15 +418,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
                 if(muonTrigPass && m_doTrig){
 		  std::cout << "triggers are passed" << std::endl;
                   myRECOevent.cutProgress++;
-          	if(myRECOevent.nHighPtMuonsOutsideJet == 1){
-		    std::cout << "one high pt muon outside jet" <<std::endl;
-                    myRECOevent.cutProgress++;
-                    passesBoostRECO = true;             
-                    std::cout << "myRECOevent.weight: " << myRECOevent.weight << std::endl;
-                    m_eventsPassingExtensionRECO2016VETO.fill(myRECOevent, 1);
-          	}
+          	  if(myRECOevent.nHighPtMuonsOutsideJet == 1){
+		      std::cout << "one high pt muon outside jet" <<std::endl;
+                      myRECOevent.cutProgress++;
+                      passesBoostRECO = true;             
+                      
+                      std::cout << "myRECOevent.weight: " << myRECOevent.weight << std::endl;
+          	  }
                 }
-                m_eventsPassingExtensionRECO2016VETO_noTrig.fill(myRECOevent, 1);
               }
             }
           }
@@ -479,10 +483,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
               myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
               setEventWeight(iEvent, myRECOevent);
             }
-            if(ZMASS && muonTrigPass && addMuons) {
-              std::cout<< "FILLING ZPeak Region" << std::endl;
-              m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 1);
-            }
           }
         }
       }
@@ -491,74 +491,24 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.FSBcutProgress++;
 
       if(passFlavorSideband(iEvent, myRECOevent)) {
-//        std::cout << "Inside FSB" << std::endl;
-//        bool ss = false;
-//        bool ss_noISO = false;
-//        if (myRECOevent.electronCands200  > 0 && myRECOevent.myElectronJetPairs.size() > 0){
-//          ss = sameSign(myRECOevent, false);
-//        }
-//        if (myRECOevent.electronCands200_noISO  > 0 && myRECOevent.myElectronJetPairs_noISO.size() > 0){
-//          ss_noISO = sameSign(myRECOevent, true);
-//        }
-
         std::cout << "PASSES THE FLAVOR SIDEBAND" << std::endl;
         if (m_doTrig){
           if (passElectronTrig(iEvent, myRECOevent)){
             std::cout<< "EVENT PASSES ELECTRON TRIGGERS" << std::endl;
-//            if (passFSBbin(myRECOevent, true, 50)) {
-//              m_eventsPassingFlavorSidebandRECOelePt50.fill(myRECOevent, 1);
-//            }
-//            if (!m_doFast) {
-//              if (passFSBbin(myRECOevent, true, 100)) {
-//                m_eventsPassingFlavorSidebandRECOelePt100.fill(myRECOevent, 1);
-//              }
-//              if (passFSBbin(myRECOevent, true, 150)) {
-//                m_eventsPassingFlavorSidebandRECOelePt150.fill(myRECOevent, 1);
-//              }
-//              if (passFSBbin(myRECOevent, true, 200)) {
-//                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt200_all" << std::endl;
-//                m_eventsPassingFlavorSidebandRECOelePt200_all.fill(myRECOevent, 1);
-//                if (ss) m_eventsPassingFlavorSidebandRECOelePt200_samesign.fill(myRECOevent, 1);
-//                else m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
-//              }
-//              if (passFSBbin(myRECOevent, false, 200)) {
-//                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt200_noISO" << std::endl;
-//                if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.fill(myRECOevent, 1);
-//                else m_eventsPassingFlavorSidebandRECOelePt200_noISO.fill(myRECOevent, 1);
-//              }
-//              if (passFSBbin(myRECOevent, false, 50)) {
-//                std::cout << "FILLING m_eventsPassingFlavorSidebandRECOelePt50_noISO" << std::endl;
-//                m_eventsPassingFlavorSidebandRECOelePt50_noISO.fill(myRECOevent, 1);
-//              }
-//            }
           }
         }
-//        if (passFSBbin(myRECOevent, false, 200)) {
-//          if (ss_noISO) m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.fill(myRECOevent, 1);
-//          else m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.fill(myRECOevent, 1);
-//        }
-//        if (passFSBbin(myRECOevent, true, 50) && !m_doFast) {
-//          m_eventsPassingFlavorSidebandRECO_noTrig.fill(myRECOevent, 1);
-//        }
-        //ABCD BIN DEFINITION
         if (passFSBbin(myRECOevent, true, 200)) {
-//          bool ABorCD = passABCD(myRECOevent, true); //SIGMAIETAIETA
-//          bool ACorBD = passABCD(myRECOevent, false); //TRACKISO
-         // if (!ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_A.fill(myRECOevent, 1); 
-         // if ( ABorCD && !ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_B.fill(myRECOevent, 1); 
-         // if (!ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_C.fill(myRECOevent, 1); 
-         // if ( ABorCD &&  ACorBD) m_eventsPassingFlavorSidebandRECOelePt200_D.fill(myRECOevent, 1); 
           if(myRECOevent.boostedFSBRECOmassAbove600){
-            m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
+            m_eventsPassBoostFSBRECO.fill(myRECOevent, 1);
 	  }else{
-            m_eventsPassingFlavorSidebandLowMassCRRECOelePt200.fill(myRECOevent, 1);
+            m_eventsPassBoostFSBLowMassCRRECO.fill(myRECOevent, 1);
 	  }
         }
       }
       std::cout << "DONE WITH FSB" << std::endl;
     }
   }
-  //FILL STUFF
+  //BOOLEANS STUFF
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
   bool tooManyResLeptons = tooManyResElectrons || tooManyResMuons;
   ZMASSres =         (passesResRECO    && muonTrigPass &&  ZMASSres    && !tooManyResLeptons);
@@ -566,7 +516,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres && !tooManyResFSBLeptons);
   std::cout << "passesResRECO: " << passesResRECO << "muonTrigPass: " << muonTrigPass << "ZMASSres: " << ZMASSres << std::endl;
   std::cout << "ZMASSres: " << ZMASSres << std::endl;
-
+  if(ZMASS && muonTrigPass && addMuons) {
+    std::cout<< "FILLING ZPeak Region" << std::endl;
+    m_eventsPassBoostZMASSRECO.fill(myRECOevent, 1);
+  }
 
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
   if(ZMASSres){
@@ -742,15 +695,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   if(passesResRECO)myRECOevent.RECOcategory = 1;
   else if(passesBoostRECO) myRECOevent.RECOcategory = 2;
-
+//////////////////////////////////////////////////////////////////FILLING FOR NOT FAST ANALYSIS/////////////////////////////////////////////////////////
+//FILLS BEFORE HERE MUST BE MOVED/////////////////////////////////////////
   std::cout << "passesResRECO: " << passesResRECO << " passesBoostRECO: " << passesBoostRECO << std::endl;
   if (!passesResRECO && !passesBoostRECO)    m_eventsFailResFailBoostRECO.fill(myRECOevent, 1);
   if ( passesResRECO &&  passesBoostRECO && myRECOevent.resolvedRECOmassAbove600 && myRECOevent.boostedRECOmassAbove600)    m_eventsPassResPassBoostRECO.fill(myRECOevent, 1);
   if ( passesResRECO && !passesBoostRECO && myRECOevent.resolvedRECOmassAbove600)    m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
   if (!passesResRECO &&  passesBoostRECO && myRECOevent.boostedRECOmassAbove600)    m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
 
-  if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600) m_eventPassResLowMassCRRECO.fill(myRECOevent, 1);
-  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedRECOmassAbove600) m_eventPassBoostLowMassCRRECO.fill(myRECOevent, 1);
+  if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600) m_eventsPassResLowMassCRRECO.fill(myRECOevent, 1);
+  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedRECOmassAbove600) m_eventsPassBoostLowMassCRRECO.fill(myRECOevent, 1);
 
 
   if (passPreSelectGen && passZSBGEN) {
@@ -760,21 +714,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     if ( passesResGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN.fill(myRECOevent, 1);
     if (!passesResGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN.fill(myRECOevent, 1);
     //res unchanged
-//    if (!passesResGEN && !passesBoostModGEN)    m_eventsFailResFailBoostGEN_boostMod.fill(myRECOevent, 1);
-//    if ( passesResGEN &&  passesBoostModGEN)    m_eventsPassResPassBoostGEN_boostMod.fill(myRECOevent, 1);
-//    if ( passesResGEN && !passesBoostModGEN)    m_eventsPassResFailBoostGEN_boostMod.fill(myRECOevent, 1);
-//    if (!passesResGEN &&  passesBoostModGEN)    m_eventsFailResPassBoostGEN_boostMod.fill(myRECOevent, 1);
-//    //boosted unchanged
-//    if (!passesResModGEN && !passesBoostGEN)    m_eventsFailResFailBoostGEN_resMod.fill(myRECOevent, 1);
-//    if ( passesResModGEN &&  passesBoostGEN)    m_eventsPassResPassBoostGEN_resMod.fill(myRECOevent, 1);
-//    if ( passesResModGEN && !passesBoostGEN)    m_eventsPassResFailBoostGEN_resMod.fill(myRECOevent, 1);
-//    if (!passesResModGEN &&  passesBoostGEN)    m_eventsFailResPassBoostGEN_resMod.fill(myRECOevent, 1);
   }
- // if(passResGEN) m_eventsPassingWR2016.fill(myRECOevent, 1);
- // if(passBoostGEN) m_eventsPassingExtensionGEN.fill(myRECOevent, 1);
-
   //THIS PART OF THE CODE RUNS THE ANALYSIS IN FAST MODE.  THE GOAL HERE IS TO PRODUCE ALL THE NECESSARY INFORMATION FOR HIGGS COMBINE
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   if (m_doFast){
     if (m_isMC && m_doGen) {
 
@@ -970,7 +912,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
 
   }
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   if ((m_doReco || !m_isMC) && m_doFast){
     std::cout << "RUNNING CONDENSED ANALYSIS FOR HIGGS COMBINE" << std::endl;
     if(preSelectReco_Fast(iEvent, iSetup, myRECOevent)) {
@@ -1046,29 +988,29 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       std::cout << "myRECOevent.myAddJetCandsHighPt.size(): " << myRECOevent.myAddJetCandsHighPt.size() << "myRECOevent.myMuonCandsHighPt.size(): " << myRECOevent.myMuonCandsHighPt.size() << "myRECOevent.myMuonJetPairs.size(): " << myRECOevent.myMuonJetPairs.size() << "muonTrigPass: " << muonTrigPass << "addMuons: " << addMuons << "ZMASS_Nom: " << ZMASS_Nom << "myRECOevent.nHighPtMuonsOutsideJet: " << myRECOevent.nHighPtMuonsOutsideJet << std::endl;
       if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && addMuons && ZMASS_Nom==2 && myRECOevent.nHighPtMuonsOutsideJet == 1){
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 1.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 6.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 7.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 8.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 9.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 14.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 15.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 16.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 17.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 18.);
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 19.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 1.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 6.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 7.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 8.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 9.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 14.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 15.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 16.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 17.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 18.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 19.);
       }
       if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JECUp == 1){
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 2.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 2.);
       }
       if(myRECOevent.myAddJetCandsHighPt_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECDown.size() > 0 && muonTrigPass && addMuons_JECDown && ZMASS_JECDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JECDown == 1){
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 3.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 3.);
       }
       if(myRECOevent.myAddJetCandsHighPt_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERUp.size() > 0 && muonTrigPass && addMuons_JERUp && ZMASS_JERUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JERUp == 1){
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 4.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 4.);
       }
       if(myRECOevent.myAddJetCandsHighPt_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERDown.size() > 0 && muonTrigPass && addMuons_JERDown && ZMASS_JERDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JERDown == 1){
-        m_eventsPassingExtensionRECO.fill(myRECOevent, 5.);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 5.);
       }
       ZMASS_Nom = 0;
       ZMASS_JECUp = 0;
@@ -1145,29 +1087,29 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         setEventWeight(iEvent, myRECOevent);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF.size() > 0 && muonTrigPass && addMuons && ZMASS_Nom==1){
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 1);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 6.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 7.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 8.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 9.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 14.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 15.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 16.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 17.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 18.);
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 19.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 1);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 6.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 7.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 8.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 9.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 14.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 15.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 16.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 17.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 18.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 19.);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==1){
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 2.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 2.);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECDown.size() > 0 && muonTrigPass && addMuons_JECDown && ZMASS_JECDown==1){
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 3.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 3.);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JERUp.size() > 0 && muonTrigPass && addMuons_JERUp && ZMASS_JERUp==1){
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 4.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 4.);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JERDown.size() > 0 && muonTrigPass && addMuons_JERDown && ZMASS_JERDown==1){
-        m_eventsPassingExtensionRECO2016VETOZMASS.fill(myRECOevent, 5.);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 5.);
       }
     }
 
@@ -1237,26 +1179,26 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         setEventWeight_FSB(iEvent, myRECOevent);
       }
       if(myRECOevent.myElectronJetPairs.size() > 0 && electronTrigPass && !ZMASS_FSB && addMuons){
-        std::cout << "doFast FILLING m_eventsPassingFlavorSidebandRECOelePt200_all" << std::endl;
-	m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 1);
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 6);
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 7);
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 10);
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 11);
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 12);
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 13);
+        std::cout << "doFast FILLING m_eventsPassBoostFSBRECO_all" << std::endl;
+	m_eventsPassBoostFSBRECO.fill(myRECOevent, 1);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 6);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 7);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 10);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 11);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 12);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 13);
       }
       if(myRECOevent.myElectronJetPairs_JECUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JECUp && addMuons_JECUp){
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 2);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 2);
       }
       if(myRECOevent.myElectronJetPairs_JECDown.size() > 0 && electronTrigPass && !ZMASS_FSB_JECDown && addMuons_JECDown){
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 3);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 3);
       }
       if(myRECOevent.myElectronJetPairs_JERUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JERUp && addMuons_JERUp){
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 4);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 4);
       }
       if(myRECOevent.myElectronJetPairs_JERDown.size() > 0 && electronTrigPass && !ZMASS_FSB_JERDown && addMuons_JERDown){
-        m_eventsPassingFlavorSidebandRECOelePt200.fill(myRECOevent, 5);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 5);
       }
     }
   }
@@ -5627,127 +5569,66 @@ cmsWRextension::beginJob()
   //flavor 3
 
     m_allEvents.book((fs->mkdir("allEvents")), 3, m_outputTag, 0);
-    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 3, m_outputTag, 0);
-    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 3, m_outputTag, 0);
-    m_eventsPassingExtensionGEN.book((fs->mkdir("eventsPassingExtensionGEN")), 3, m_outputTag, 0);
-    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 3, m_outputTag, 0);
-    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 3, m_outputTag, 0);
-    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 3, m_outputTag, 0);
+    m_eventsFailResFailBoostGEN.book((fs->mkdir("eventsFailResFailBoostGEN")), 3, m_outputTag, 0);
+    m_eventsPassResPassBoostGEN.book((fs->mkdir("eventsPassResPassBoostGEN")), 3, m_outputTag, 0);
+    m_eventsPassResFailBoostGEN.book((fs->mkdir("eventsPassResFailBoostGEN")), 3, m_outputTag, 0);
+    m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
 
     m_eventsFailResFailBoostRECO.book((fs->mkdir("eventsFailResFailBoostRECO")), 3, m_outputTag, 0);
     m_eventsPassResPassBoostRECO.book((fs->mkdir("eventsPassResPassBoostRECO")), 3, m_outputTag, 0);
     m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")), 3, m_outputTag, 0);
     m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")), 3, m_outputTag, 0);
 
-    m_eventPassResLowMassCRRECO.book((fs->mkdir("eventPassResLowMassCRRECO")), 3, m_outputTag, 0);
-    m_eventPassBoostLowMassCRRECO.book((fs->mkdir("eventPassBoostLowMassCRRECO")), 3, m_outputTag, 0);
-
-    m_eventsFailResFailBoostGEN.book((fs->mkdir("eventsFailResFailBoostGEN")), 3, m_outputTag, 0);
-    m_eventsPassResPassBoostGEN.book((fs->mkdir("eventsPassResPassBoostGEN")), 3, m_outputTag, 0);
-    m_eventsPassResFailBoostGEN.book((fs->mkdir("eventsPassResFailBoostGEN")), 3, m_outputTag, 0);
-    m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 3, m_outputTag, 0);
-
+    m_eventsPassResLowMassCRRECO.book((fs->mkdir("eventsPassResLowMassCRRECO")), 3, m_outputTag, 0);
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 3, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
-
-//    m_eventsFailResFailBoostGEN_resMod.book((fs->mkdir("eventsFailResFailBoostGEN_resMod")), 3, m_outputTag, 0);
-//    m_eventsPassResPassBoostGEN_resMod.book((fs->mkdir("eventsPassResPassBoostGEN_resMod")), 3, m_outputTag, 0);
-//    m_eventsPassResFailBoostGEN_resMod.book((fs->mkdir("eventsPassResFailBoostGEN_resMod")), 3, m_outputTag, 0);
-//    m_eventsFailResPassBoostGEN_resMod.book((fs->mkdir("eventsFailResPassBoostGEN_resMod")), 3, m_outputTag, 0);
-//
-//    m_eventsFailResFailBoostGEN_boostMod.book((fs->mkdir("eventsFailResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
-//    m_eventsPassResPassBoostGEN_boostMod.book((fs->mkdir("eventsPassResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
-//    m_eventsPassResFailBoostGEN_boostMod.book((fs->mkdir("eventsPassResFailBoostGEN_boostMod")), 3, m_outputTag, 0);
-//    m_eventsFailResPassBoostGEN_boostMod.book((fs->mkdir("eventsFailResPassBoostGEN_boostMod")), 3, m_outputTag, 0);
-
-    //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 3, m_outputTag, false);
-    //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 3, m_outputTag, false);
-    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 3, m_outputTag, 0);
-    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 3, m_outputTag, 0);
-//    m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  3, m_outputTag, 1);
-//    m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 3, m_outputTag, 1);
-//    m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 3, m_outputTag, 1);
-//    m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  3, m_outputTag, 1);
-//    m_eventsPassingFlavorSidebandRECOelePt50_noISO.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50_noISO")),  3, m_outputTag, 2);
-    //ABCD
-//    m_eventsPassingFlavorSidebandRECOelePt200_noISO.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO")), 3, m_outputTag, 2);
-//    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 3, m_outputTag, 2);
-//    m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig")), 3, m_outputTag, 2);
-//    m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig")), 3, m_outputTag, 2);
-//    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 3, m_outputTag, 1);
-//    m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 3, m_outputTag, 1);
-//    m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 3, m_outputTag, 1);
-
-    //m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 3, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 3, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 3, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 3, m_outputTag, 1);
-    m_eventsPassingFlavorSidebandLowMassCRRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandLowMassCRRECOelePt200")), 3, m_outputTag, 1);
+    m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 3, m_outputTag, 0);
+    m_eventsPassBoostZMASSRECO.book((fs->mkdir("eventsPassBoostZMASSRECO")), 3, m_outputTag, 0);
+    m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 3, m_outputTag, 1);
+    m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 3, m_outputTag, 1);
   }
   if (m_doGen && !m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 1" << std::endl;
   //flavor 1
     m_allEvents.book((fs->mkdir("allEvents")), 1, m_outputTag, 0);
-    m_eventsPassingWR2016.book((fs->mkdir("eventsPassingWR2016")), 1, m_outputTag, 0);
-    m_eventsPassingExtensionGEN.book((fs->mkdir("eventsPassingExtensionGEN")), 1, m_outputTag, 0);
+    m_eventsFailResFailBoostGEN.book((fs->mkdir("eventsFailResFailBoostGEN")), 1, m_outputTag, 0);
+    m_eventsPassResPassBoostGEN.book((fs->mkdir("eventsPassResPassBoostGEN")), 1, m_outputTag, 0);
+    m_eventsPassResFailBoostGEN.book((fs->mkdir("eventsPassResFailBoostGEN")), 1, m_outputTag, 0);
+    m_eventsFailResPassBoostGEN.book((fs->mkdir("eventsFailResPassBoostGEN")), 1, m_outputTag, 0);
 
   }
   if (!m_doGen && m_doReco && !m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 2" << std::endl;
   //flavor 2
     m_allEvents.book((fs->mkdir("allEvents")), 2, m_outputTag, 0);
-    m_eventsPassingWR2016RECO.book((fs->mkdir("eventsPassingWR2016RECO")), 2, m_outputTag, 0);
-    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 2, m_outputTag, 0);
-    m_eventsPassingExtensionRECO2016VETO.book((fs->mkdir("eventsPassingExtensionRECO2016VETO")), 2, m_outputTag, 0);
-    m_eventsPassingExtensionRECO2016VETO_noTrig.book((fs->mkdir("eventsPassingExtensionRECO2016VETO_noTrig")), 2, m_outputTag, 0);
-
     m_eventsFailResFailBoostRECO.book((fs->mkdir("eventsFailResFailBoostRECO")), 2, m_outputTag, 0);
     m_eventsPassResPassBoostRECO.book((fs->mkdir("eventsPassResPassBoostRECO")), 2, m_outputTag, 0);
     m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")), 2, m_outputTag, 0);
     m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")), 2, m_outputTag, 0);
 
-    m_eventPassResLowMassCRRECO.book((fs->mkdir("eventPassResLowMassCRRECO")), 2, m_outputTag, 0);
-    m_eventPassBoostLowMassCRRECO.book((fs->mkdir("eventPassBoostLowMassCRRECO")), 2, m_outputTag, 0);    
-
+    m_eventsPassResLowMassCRRECO.book((fs->mkdir("eventsPassResLowMassCRRECO")), 2, m_outputTag, 0);
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 2, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 2, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 2, m_outputTag, 1);
 
-    //m_eventsPassingExtensionRECO2016VETOMASSMETCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSMETCUT"), 2, m_outputTag, false);
-    //m_eventsPassingExtensionRECO2016VETOMASSCUT.book(fs->mkdir("eventsPassingExtensionRECO2016VETOMASSCUT"), 2, m_outputTag, false);
-    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 2, m_outputTag, 0);
-    m_eventsPassingExtensionRECO2016VETOSINGLEMUON.book((fs->mkdir("eventsPassingExtensionRECO2016VETOSINGLEMUON")), 2, m_outputTag, 0);
-    //m_eventsPassingFlavorSidebandRECOelePt50.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50")),  2, m_outputTag, 1);
-    //m_eventsPassingFlavorSidebandRECOelePt100.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt100")), 2, m_outputTag, 1);
-    //m_eventsPassingFlavorSidebandRECOelePt150.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt150")), 2, m_outputTag, 1);
-    //m_eventsPassingFlavorSidebandRECO_noTrig.book((fs->mkdir( "eventsPassingFlavorSidebandRECO_noTrig")),  2, m_outputTag, 1);
-    //m_eventsPassingFlavorSidebandRECOelePt50_noISO.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt50_noISO")),  2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_noISO.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO")), 2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign")), 2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig")), 2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig")), 2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200")), 2, m_outputTag, 1);
-    //m_eventsPassingFlavorSidebandRECOelePt200_samesign.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_samesign")), 2, m_outputTag, 1);
-    //m_eventsPassingFlavorSidebandRECOelePt200_all.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_all")), 2, m_outputTag, 1);
-    //ABCD
-    //m_eventsPassingFlavorSidebandRECOelePt200_A.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_A")), 2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_B.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_B")), 2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_C.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_C")), 2, m_outputTag, 2);
-    //m_eventsPassingFlavorSidebandRECOelePt200_D.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandRECOelePt200_D")), 2, m_outputTag, 2);
-    m_eventsPassingFlavorSidebandLowMassCRRECOelePt200.book((fs->mkdir("eventsPassingFlavorSidebandLowMassCRRECOelePt200")), 2, m_outputTag, 2);
+    m_eventsPassBoostZMASSRECO.book((fs->mkdir("eventsFailResPassBoostRECO2016VETOZMASS")), 2, m_outputTag, 0);
+    m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 2, m_outputTag, 0);    
+    m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 2, m_outputTag, 2);
+    m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 2, m_outputTag, 2);
   }
   if (m_doReco && m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
     m_allEvents.book((fs->mkdir("allEvents")), 5, m_outputTag, false);
-    m_eventsPassingExtensionRECO.book((fs->mkdir("eventsPassingExtensionRECO")), 5, m_outputTag, false);
-    m_eventsPassingExtensionRECO2016VETOZMASS.book((fs->mkdir("eventsPassingExtensionRECO2016VETOZMASS")), 5, m_outputTag, false);
-    m_eventsPassingFlavorSidebandRECOelePt200.book((fs->mkdir( "eventsPassingFlavorSidebandRECOelePt200")),  5, m_outputTag, true);
-    m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")), 5, m_outputTag, false);
-    m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 5, m_outputTag, false);
-    m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 5, m_outputTag, true);
+
+    m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")),            5, m_outputTag, false);
+    m_eventsPassBoostZMASSRECO.book((fs->mkdir("eventsPassBoostZMASSRECO")),                5, m_outputTag, false);
+    m_eventsPassBoostFSBRECO.book((fs->mkdir( "eventsPassBoostFSBRECO")),                   5, m_outputTag, true);
+    m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")),            5, m_outputTag, false);
+    m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")),                    5, m_outputTag, false);
+    m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")),                        5, m_outputTag, true);
+
+
 
   }
 }
