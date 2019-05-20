@@ -203,6 +203,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResZMASSRECO;
       eventHistos m_eventsPassResFSBRECO;
       eventHistos m_eventsPassResFSBLowMassCRRECO;
+      eventHistos m_eventsPassJetSelection;
 
       eventHistos m_eventsPassBoostFSBLowMassCRRECO;
       eventHistos m_eventsPassBoostFSBRECO;
@@ -264,6 +265,9 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_trigObjsToken;
       edm::EDGetToken m_PUInfoToken;
       edm::EDGetToken m_rhoLabel;
+      edm::EDGetTokenT< double > prefweight_token;
+      edm::EDGetTokenT< double > prefweightup_token;
+      edm::EDGetTokenT< double > prefweightdown_token;
       bool m_wantHardProcessMuons;
       bool m_doGen;
       bool m_amcatnlo;

@@ -67,6 +67,10 @@ eventBits::eventBits() {
   puWeight_Up = -10000.0;
   puWeight_Down = -10000.0;
 
+  _prefiringweight = -10000.0;
+  _prefiringweightup = -10000.0;
+  _prefiringweightdown = -10000.0;
+
   Muon_HighPtID_Weight = -10000.0;
   Muon_HighPtID_WeightUp = -10000.0;
   Muon_HighPtID_WeightDown = -10000.0;
@@ -300,6 +304,7 @@ eventBits::eventBits() {
   selectedJetTau21= -10000.0;
   selectedJetLSF3= -10000.0;
   selectedJetMaxSubJetCSV= -10000.0;
+  selectedJetEnergy = -10000.0;
 
   selectedElectron_noISO_Pt = -10000.0;
   selectedElectron_noISO_Phi = -10000.0;
@@ -346,6 +351,8 @@ eventBits::eventBits() {
   mynPartons         = -1;
   nAdditionalHEEP    = -1;
   nHighPtMuonsOutsideJet = -1;
+
+  NRenergy = -10000.0;
 
   myEventFlavor      = -1;
 

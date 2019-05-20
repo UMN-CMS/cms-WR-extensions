@@ -207,6 +207,8 @@ public:
   int    nHighPtMuonsOutsideJet_JERUp;
   int    nHighPtMuonsOutsideJet_JERDown;
 
+  double NRenergy;
+
   int    nSecondElectronCands;
 
   int    myEventFlavor  ;
@@ -218,6 +220,10 @@ public:
   float  puWeight	;
   float  puWeight_Up    ;
   float  puWeight_Down  ;
+
+  double _prefiringweight;
+  double _prefiringweightup;
+  double _prefiringweightdown;
 
   double Muon_HighPtID_Weight;
   double Muon_HighPtID_WeightUp;
@@ -528,6 +534,7 @@ public:
   double selectedJetTau21;
   double selectedJetLSF3;
   double selectedJetMaxSubJetCSV;
+  double selectedJetEnergy;
 
   double mydRlsfLep_subleadMuon;
 
