@@ -389,6 +389,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         myRECOevent.cutProgress++;
         if(myRECOevent.myMuonJetPairs.size() > 0){
           if(passBoostRECO(iEvent, myRECOevent)) {
+	    std::cout << "Filling m_eventsPassJetSelection" << std::endl;
 	    m_eventsPassJetSelection.fill(  myRECOevent, 1);
             addMuons = additionalMuons(iEvent, myRECOevent, false, false, 0, false);
 	    std::cout << "Outside subLeadingMuonZMass Boost" << std::endl;
@@ -717,17 +718,33 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 //PASSES RES
   if ( passesResRECO && !passesBoostRECO && myRECOevent.resolvedRECOmassAbove600)                                           m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
 //PASSES BOOST
-  if (!passesResRECO &&  passesBoostRECO && myRECOevent.boostedRECOmassAbove600)                                            m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
+  if (!passesResRECO &&  passesBoostRECO && myRECOevent.boostedRECOmassAbove600){
+     std::cout << "m_eventsFailResPassBoostRECO" << std::endl;
+     m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
+  }
 //BOOST SIDEBANDS
-  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedRECOmassAbove600)                                           m_eventsPassBoostLowMassCRRECO.fill(myRECOevent, 1);
-  if (!passesResRECO &&  passesBoostRECO && ZMASSboost)                                                                     m_eventsPassBoostZMASSRECO.fill(myRECOevent, 1);
-  if (!passesResRECO &&  passesBoostRECO &&  myRECOevent.boostedFSBRECOmassAbove600)                                        m_eventsPassBoostFSBRECO.fill(myRECOevent, 1);
-  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedFSBRECOmassAbove600)                                        m_eventsPassBoostFSBLowMassCRRECO.fill(myRECOevent, 1);
+  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedRECOmassAbove600){
+     std::cout << "m_eventsPassBoostLowMassCRRECO" << std::endl;
+     m_eventsPassBoostLowMassCRRECO.fill(myRECOevent, 1);
+  }
+  if (!passesResRECO &&  passesBoostRECO && ZMASSboost){
+     std::cout << "m_eventsPassBoostZMASSRECO" << std::endl;
+     m_eventsPassBoostZMASSRECO.fill(myRECOevent, 1);
+  }
+  if (!passesResRECO &&  passesBoostRECO &&  myRECOevent.boostedFSBRECOmassAbove600){
+     std::cout << "m_eventsPassBoostFSBRECO" << std::endl;
+     m_eventsPassBoostFSBRECO.fill(myRECOevent, 1);
+  }
+  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedFSBRECOmassAbove600){
+     std::cout << "m_eventsPassBoostFSBLowMassCRRECO" << std::endl;
+     m_eventsPassBoostFSBLowMassCRRECO.fill(myRECOevent, 1);
+  }
 //RES SIDEBANDS                              
   if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600)                                          m_eventsPassResLowMassCRRECO.fill(myRECOevent, 1);
   if ( passesResRECO && !passesBoostRECO &&  myRECOevent.resolvedFSBRECOmassAbove600)                                       m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
   if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedFSBRECOmassAbove600)                                       m_eventsPassResFSBLowMassCRRECO.fill(  myRECOevent, 1);
   if ( passesResRECO && !passesBoostRECO && ZMASSres)                                                                       m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
+  std::cout << "Done filling RECO stuff" << std::endl;
 
 /////////////////////////GEN STUFF////////////////////////////////////////////////////////////////////////////////////////////
   if (passPreSelectGen && passZSBGEN) {
@@ -5656,9 +5673,12 @@ cmsWRextension::beginJob()
 
     m_eventsPassResLowMassCRRECO.book((fs->mkdir("eventsPassResLowMassCRRECO")), 3, m_outputTag, 0);
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 3, m_outputTag, 0);
+    m_eventsPassBoostZMASSRECO.book((fs->mkdir("eventsFailResPassBoostRECO2016VETOZMASS")), 3, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
+    m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 3, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
-    m_eventsPassJetSelection.book((fs->mkdir("eventsPassJetSelection")), 3, m_outputTag, 1);
+    m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 3, m_outputTag, 1);
+    m_eventsPassJetSelection.book((fs->mkdir("eventsPassJetSelection")), 3, m_outputTag, 0);
 
   }
   if (m_doGen && !m_doReco && !m_doFast) {
