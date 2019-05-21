@@ -30,6 +30,7 @@ globalTagsByDataset = {}
 #globalTagsByDataset['RunIISummer16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 globalTagsByDataset['RunIISummer16MiniAODv3*'] = '94X_mcRun2_asymptotic_v3'
 globalTagsByDataset['suoh-CMSSW_9_4_6_patch1'] = '94X_mcRun2_asymptotic_v3'
+globalTagsByDataset['shjeon-CMSSW_9_4_6_patch1'] = '94X_mcRun2_asymptotic_v3'
 globalTagsByDataset['Run2016B-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016C-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016D-17Jul2018*'] = '94X_dataRun2_v10'
@@ -184,8 +185,8 @@ shutil.copy2(options.inputList,localInputListFile)
 # check if we have a proxy
 proc = subprocess.Popen(['voms-proxy-info','--all'],stderr=subprocess.PIPE,stdout=subprocess.PIPE)
 out,err = proc.communicate()
-#print 'output----->',output
-#print 'err------>',err
+print 'output----->',out
+print 'err------>',err
 if 'Proxy not found' in err or 'timeleft  : 00:00:00' in out:
   # get a proxy
   print 'you have no valid proxy; let\'s get one via voms-proxy-init:'
@@ -294,10 +295,11 @@ with open(localInputListFile, 'r') as f:
     	primaryDatasetName = datasetNoSlashes.split('__')[0]
     	secondaryDatasetName = datasetNoSlashes.split('__')[1]
         print "secondaryDatasetName: ", secondaryDatasetName
-#	if datasetNoSlashes.split('__').size() < 2:
-#	    TypeOfFile = "NULL"
-#	else:
-#	    TypeOfFile = datasetNoSlashes.split('__')[3]
+	print "datasetNoSlashes.split('__'): ", datasetNoSlashes.split('__')
+	if len(datasetNoSlashes.split('__')) < 4:
+	    TypeOfFile = "NULL"
+	else:
+	    TypeOfFile = datasetNoSlashes.split('__')[3]
     	datasetName = datasetNoSlashes
     	datasetName = datasetName.split('__')[0]+'__'+datasetName.split('__')[1] # get rid of part after last slash
     	print "datasetName: ", datasetName
@@ -308,11 +310,14 @@ with open(localInputListFile, 'r') as f:
     	else:
       	    config.Data.outputDatasetTag=secondaryDatasetName
     # must pass isMC=false flag to cmsRun now (defaults to true)
-#    if "USER" in TypeOfFile:
-#      print "Running on Korean private samples"
-        privateSamples = False
-#       privateSamples = True
-#      config.Data.inputDBS = 'https://cmsweb.cern.ch/dbs/prod/phys03/DBSReader'
+    if "USER" in TypeOfFile:
+      print "Running on Korean private samples"
+#       privateSamples = False
+      privateSamples = True
+      config.Data.inputDBS = 'phys03'
+      config.Data.ignoreLocality = True
+      config.Site.whitelist = ['T2*']
+    else: privateSamples = False
     if isData:
 #      config.JobType.priority = 500
       config.JobType.pyCfgParams = ['isMC=False']
@@ -346,6 +351,7 @@ with open(localInputListFile, 'r') as f:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
     if("WR_datasets" not in options.inputList):
+	print "inputDataset: ", dataset
     	config.Data.inputDataset = dataset
     #print 'make dir:',thisWorkDir
     	makeDirAndCheck(thisWorkDir)
@@ -404,6 +410,9 @@ with open(localInputListFile, 'r') as f:
         globalTag = tag
         config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
 	print "tag: ", tag
+ 	print "options.doFast: ", options.doFast
+	print "isData: ", isData
+	print "privateSamples: ", privateSamples 
         if options.doFast:
           if isData:
                 print "isData"
@@ -424,18 +433,18 @@ with open(localInputListFile, 'r') as f:
           else:
 	     if privateSamples:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isSignal=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isSignal=True','isMC=True']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isSignal=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isSignal=True','isMC=True']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isSignal=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isSignal=True','isMC=True']
 	     else:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2016']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2017']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2018']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True']
 	else:
 	  if isData:
 		print "isData"
@@ -456,23 +465,24 @@ with open(localInputListFile, 'r') as f:
 	  else:
 	     if privateSamples:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['era=2016','isSignal=True']
+                        config.JobType.pyCfgParams = ['era=2016','isSignal=True','isMC=True']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['era=2017','isSignal=True']
+                        config.JobType.pyCfgParams = ['era=2017','isSignal=True','isMC=True']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['era=2018','isSignal=True']
+                        config.JobType.pyCfgParams = ['era=2018','isSignal=True','isMC=True']
 	     else:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['era=2016']
+                        config.JobType.pyCfgParams = ['era=2016','isMC=True']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['era=2017']
+                        config.JobType.pyCfgParams = ['era=2017','isMC=True']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['era=2018']
+                        config.JobType.pyCfgParams = ['era=2018','isMC=True']
     if globalTag=='':
       print 'WARNING: Using default global tag as specified in template cfg (are you sure it\'s the right one?)'
     else:
       print 'INFO: Overriding global tag to:',globalTag,'for dataset:',datasetName
 
+    print "config.JobType.pyCfgParams: ", config.JobType.pyCfgParams
     # substitute the output filename at the end
     config_txt += '\nprocess.TFileService.fileName = "'+outputFile+'.root"\n'
     # substitute the global tag name at the end if needed, and feed it into rootTupleEvent
