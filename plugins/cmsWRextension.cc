@@ -238,6 +238,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool tooManyResMuons = false;            //MORE THAN TWO
   bool tooManyResFSBLeptons = false;       //MORE THAN TWO TOTAL
 
+  bool tooManyBoostElectrons = false;
+  bool tooManyBoostMuons = false;
+  bool tooManyBoostMuonsInJet = false;
+  bool tooManyBoostElectronsInJet = false;
+  bool tooManyBoostFSBLeptons = false;
 
 //////
   bool passesBoostRECO = false;
@@ -530,7 +535,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       std::cout << "DONE WITH FSB" << std::endl;
     }
   }
-  //BOOLEANS STUFF
+  //BOOLEANS STUFF////////////////////////////////////////////////
+
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
   bool tooManyResLeptons = tooManyResElectrons || tooManyResMuons;
   ZMASSres =         (passesResRECO    && muonTrigPass &&  ZMASSres    && !tooManyResLeptons);
@@ -538,8 +544,23 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   passesResFSBRECO = (passesResFSBRECO && muonTrigPass && !ZMASSFSBres && !tooManyResFSBLeptons);
   std::cout << "passesResRECO: " << passesResRECO << "muonTrigPass: " << muonTrigPass << "ZMASSres: " << ZMASSres << std::endl;
   std::cout << "ZMASSres: " << ZMASSres << std::endl;
-
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << std::endl;
+  //BOOST MUON SELECTIONS
+  if( myRECOevent.electronCands200     > 0)  tooManyBoostElectrons      = true;
+  if( myRECOevent.muonCands            > 1)  tooManyBoostMuons          = true;
+  if( myRECOevent.muons10              > 2)  tooManyBoostMuonsInJet     = true;
+  if( myRECOevent.nSecondElectronCands > 0)  tooManyBoostElectronsInJet = true;
+
+  bool tooManyBoostLeptons = tooManyBoostElectrons || tooManyBoostMuons || tooManyBoostMuonsInJet || tooManyBoostElectronsInJet;
+  //BOOST FSB
+  if(myRECOevent.electronCands200     > 1 ||
+     myRECOevent.muonCands            > 0 ||
+     myRECOevent.muons10              > 1 ||
+     myRECOevent.nSecondElectronCands > 0
+  ) {
+    tooManyBoostFSBLeptons = true;
+  }
+  ///////////////////////////////////////////////////////
   if(ZMASSres){
     std::vector<double> Muon_HighPtID_Weights;
     std::vector<double> Muon_LooseTkIso_Weights;
@@ -718,24 +739,25 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 //PASSES RES
   if ( passesResRECO && !passesBoostRECO && myRECOevent.resolvedRECOmassAbove600)                                           m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
 //PASSES BOOST
-  if (!passesResRECO &&  passesBoostRECO && myRECOevent.boostedRECOmassAbove600){
+  if (!passesResRECO &&  passesBoostRECO && myRECOevent.boostedRECOmassAbove600 && !tooManyBoostLeptons){
      std::cout << "m_eventsFailResPassBoostRECO" << std::endl;
      m_eventsFailResPassBoostRECO.fill(myRECOevent, 1);
   }
 //BOOST SIDEBANDS
-  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedRECOmassAbove600){
+  bool tooManyBoostTightLeptons = tooManyBoostElectrons || tooManyBoostMuons;
+  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedRECOmassAbove600 && !tooManyBoostTightLeptons){
      std::cout << "m_eventsPassBoostLowMassCRRECO" << std::endl;
      m_eventsPassBoostLowMassCRRECO.fill(myRECOevent, 1);
   }
-  if (!passesResRECO &&  passesBoostRECO && ZMASSboost){
+  if (!passesResRECO &&  passesBoostRECO && ZMASSboost && !tooManyBoostTightLeptons){
      std::cout << "m_eventsPassBoostZMASSRECO" << std::endl;
      m_eventsPassBoostZMASSRECO.fill(myRECOevent, 1);
   }
-  if (!passesResRECO &&  passesBoostRECO &&  myRECOevent.boostedFSBRECOmassAbove600){
+  if (!passesResRECO &&  passesBoostRECO &&  myRECOevent.boostedFSBRECOmassAbove600 && !tooManyBoostFSBLeptons){
      std::cout << "m_eventsPassBoostFSBRECO" << std::endl;
      m_eventsPassBoostFSBRECO.fill(myRECOevent, 1);
   }
-  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedFSBRECOmassAbove600){
+  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedFSBRECOmassAbove600 && !tooManyBoostFSBLeptons){
      std::cout << "m_eventsPassBoostFSBLowMassCRRECO" << std::endl;
      m_eventsPassBoostFSBLowMassCRRECO.fill(myRECOevent, 1);
   }
