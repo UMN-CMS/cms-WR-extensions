@@ -548,10 +548,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   //BOOST MUON SELECTIONS
   if( myRECOevent.electronCands200     > 0)  tooManyBoostElectrons      = true;
   if( myRECOevent.muonCands            > 1)  tooManyBoostMuons          = true;
-  if( myRECOevent.muons10              > 2)  tooManyBoostMuonsInJet     = true;
+//  if( myRECOevent.muons10              > 2)  tooManyBoostMuonsInJet     = true;
   if( myRECOevent.nSecondElectronCands > 0)  tooManyBoostElectronsInJet = true;
 
-  bool tooManyBoostLeptons = tooManyBoostElectrons || tooManyBoostMuons || tooManyBoostMuonsInJet || tooManyBoostElectronsInJet;
+//  bool tooManyBoostLeptons = tooManyBoostElectrons || tooManyBoostMuons || tooManyBoostMuonsInJet || tooManyBoostElectronsInJet;
+  bool tooManyBoostLeptons = tooManyBoostElectrons || tooManyBoostMuons || tooManyBoostElectronsInJet;
+
   //BOOST FSB
   if(myRECOevent.electronCands200     > 1 ||
      myRECOevent.muonCands            > 0 ||

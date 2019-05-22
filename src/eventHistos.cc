@@ -50,7 +50,9 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_nTops          = m_histoFolder.make<TH1D>("nTops"        , "; # Tops; Events per #"        ,                                                       10, -.5, 9.5);
     m_nBs            = m_histoFolder.make<TH1D>("nBs"          , "; # Bs; Events per #"          ,                                                       10, -.5, 9.5);
     m_nPartons       = m_histoFolder.make<TH1D>("nPartons"     , "; # Partons; Events per #"     ,                                                       10, -.5, 9.5);
-                                                                                     
+    
+    m_NRenergy	     = m_histoFolder.make<TH1D>("NRenergy"     , "; NR Energy; Energy (GeV)"     ,                                                       50, -.5, 5000.0);
+                                                                                 
     m_eventFlavor    = m_histoFolder.make<TH1D>("eventFlavor"       , "; Event Flavor; # Events with flavor"       ,                                                       10, -.5, 9.5);
 
 
@@ -191,6 +193,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedJetMaxDRGenDaughters  =                 m_histoFolder.make<TH1D>("selectedJetMaxDRGenDaughters"  ,"Selected Jet Max DR GenDaughters; Max #Delta R_{Selected Jet, WR Daughters}", 30, 0.0, 4.0);
     m_selectedJetLSF3   =                 m_histoFolder.make<TH1D>("selectedJetLSF3"   ,"Selected Jet LSF_{3}; Jet LSF_{3};"   ,40,0.0,1.0 );
     m_selectedJetMaxSubJetCSV   =                 m_histoFolder.make<TH1D>("selectedJetMaxSubJetCSV"   ,"Selected Jet Max Subjet CSV; Max Subjet CSV;"   ,40,0.0,1.0 );
+    m_selectedJetEnergy   =                 m_histoFolder.make<TH1D>("selectedJetEnergy"   ,"Selected Jet energy; Energy;"   ,50,0.0,5000.0 );
 
 
     m_DrDaughters =                  m_histoFolder.make<TH1D>("DrDaughters" , "DR WR DAughters; #DeltaR W_{R} Daughters", 30, 0.0, 4.0);
@@ -345,6 +348,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_resFSBMuon_phi             = m_histoFolder.make<TH1D>("resFSBMuon_phi", ";resolved FSB muon phi"     , 80, -4.0, 4.0);
     m_resFSBMuon_eta             = m_histoFolder.make<TH1D>("resFSBMuon_eta", ";resolved FSB muon eta"     , 80, -4.0, 4.0);
     
+    m_genE_v_recoE				 =  m_histoFolder.make<TH2D>("genE_v_recoE"  , "Neutrino genE vs recoE"         , 50, 0.0, 5000, 50, 0.0, 5000);
+
 //2D LSF PLOTS
     m_genLSF_v_recoLSF                           =  m_histoFolder.make<TH2D>("genLSF_v_recoLSF"  , "genLSF vs recoLSF"         , 20, 0.0, 1.0, 20, 0.0, 1.0);
     m_recoLSF_v_selJetPt                         =  m_histoFolder.make<TH2D>("recoLSF_v_selJetPt", "recoLSF vs selected Jet Pt", 20, 0.0, 2000, 20, 0.0, 1.0);
@@ -571,6 +576,7 @@ void eventHistos::fillCutProgress(eventBits& event) {
 }
 void eventHistos::fillWeight(eventBits& event) {
   std::cout << "Filling Weights" << std::endl;
+  std::cout << "event.count: " << event.count << std::endl;
   m_eventsWeight->Fill(0.5, event.count);
   std::cout << "Done Filling Weight" << std::endl;
 }
@@ -599,6 +605,8 @@ void eventHistos::fillGen(eventBits& event) {
   m_nTops          ->Fill(event.mynTops        , weight) ;
   m_nBs            ->Fill(event.mynBs          , weight) ;
   m_nPartons       ->Fill(event.mynPartons     , weight) ;
+
+  m_NRenergy	   ->Fill(event.NRenergy       , weight) ;
 
   m_RECOpasses     ->Fill(event.RECOcategory) ;
 
@@ -788,8 +796,10 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
   m_selectedJetMaxDRGenDaughters->Fill(event.MaxDR_genDaughter_CandJet, weight);
   m_selectedJetLSF3->Fill(event.selectedJetLSF3, weight);
+  m_selectedJetEnergy->Fill(event.selectedJetEnergy, weight);
   m_recoLSF_v_selJetPt  ->Fill(event.selectedJetPt,event.selectedJetLSF3, weight);
   m_genLSF_v_recoLSF ->Fill(event.myGenLSF,event.selectedJetLSF3, weight);
+  m_genE_v_recoE->Fill(event.NRenergy, event.selectedJetEnergy, weight);
   m_selectedJetMaxSubJetCSV->Fill(event.selectedJetMaxSubJetCSV, weight);
 
   m_dRlsfLep_subleadMuon -> Fill(event.mydRlsfLep_subleadMuon, weight);
@@ -1137,7 +1147,7 @@ void eventHistos::fillCombine_HEEPDown(eventBits& event) {
     weight = 1.;
   }
   m_leadAK8JetElectronMass_HEEPDown->Fill(event.leadAK8JetElectronMassVal, weight);
-  m_resolvedFSBRECOmass_HEEPUp->Fill(event.resolvedFSBRECOmass, weight);
+  m_resolvedFSBRECOmass_HEEPDown->Fill(event.resolvedFSBRECOmass, weight);
 }
 void eventHistos::fillCombine_MuIsoUp(eventBits& event) {
   double weight = 0.0;
