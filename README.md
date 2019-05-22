@@ -73,6 +73,8 @@ cd HEEP
 git checkout HEEPV70  #this is currently the default branch for now but may change in the future
 cd ..
 
+git cms-merge-topic lathomas:L1Prefiring_M
+
 mkdir ExoAnalysis
 cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git -b tweaksFor104X
