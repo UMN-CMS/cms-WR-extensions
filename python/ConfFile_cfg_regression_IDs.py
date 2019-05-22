@@ -226,5 +226,23 @@ process.heepIDVarValueMaps.elesMiniAOD  = 'selectedElectrons'
 process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
 process.heepElectrons.src = cms.InputTag('selectedElectrons')
 
+####EE L1 Prefiring Correction ####
+from PhysicsTools.PatUtils.l1ECALPrefiringWeightProducer_cfi import l1ECALPrefiringWeightProducer
+if options.era == '2016':
+  process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
+      DataEra = cms.string("2016BtoH"),
+      UseJetEMPt = cms.bool(False),
+      PrefiringRateSystematicUncty = cms.double(0.2),
+      SkipWarnings = False)
+elif options.era == '2017':
+  process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
+      DataEra = cms.string("2017BtoF"), #Use 2016BtoH for 2016
+      UseJetEMPt = cms.bool(False),
+      PrefiringRateSystematicUncty = cms.double(0.2),
+      SkipWarnings = False)
+
+
+#process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
+#                           * process.muonSelectionSeq * process.analysis )#* process.printTree)
 process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
-                           * process.muonSelectionSeq * process.analysis )#* process.printTree)
+                           * process.muonSelectionSeq * process.prefiringweight * process.analysis )#* process.printTree)

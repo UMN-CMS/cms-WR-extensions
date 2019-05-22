@@ -197,9 +197,9 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
 
   r = new TRandom3(1988);
 
-/*  prefweight_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProb"));
+  prefweight_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProb"));
   prefweightup_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbUp"));
-  prefweightdown_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbDown"));*/
+  prefweightdown_token = consumes< double >(edm::InputTag("prefiringweight:nonPrefiringProbDown"));
 }
 
 cmsWRextension::~cmsWRextension() {
@@ -319,7 +319,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
 
   //EE prefiring corrections
-/*  if(m_era == "2016" || m_era == "2017"){
+  if(m_era == "2016" || m_era == "2017"){
     edm::Handle< double > theprefweight;
     iEvent.getByToken(prefweight_token, theprefweight ) ;
     myRECOevent._prefiringweight =(*theprefweight);
@@ -331,11 +331,11 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     edm::Handle< double > theprefweightdown;
     iEvent.getByToken(prefweightdown_token, theprefweightdown ) ;
     myRECOevent._prefiringweightdown =(*theprefweightdown);
-  }else{*/
+  }else{
     myRECOevent._prefiringweight = 1.;
     myRECOevent._prefiringweightup = 1.;
     myRECOevent._prefiringweightdown = 1.;
-//  }
+  }
 
   std::cout << "myRECOevent._prefiringweight: " << myRECOevent._prefiringweight << std::endl;
 
@@ -3676,6 +3676,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetu
       	pAddJet->tau2 = iJet->userFloat(m_jettiness + std::string(":tau2"));
       	pAddJet->pT   = jetCorrPtSmear;
       	pAddJet->E    = jetCorrESmear;
+	pAddJet->UncorrectedE = iJet->energy();
       	pAddJet->eta  = iJet->eta();
       	pAddJet->phi  = iJet->phi();
       	pAddJet->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
@@ -4552,6 +4553,7 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
   myRECOevent.selectedJetLSF3 = myRECOevent.myMuonJetPairs[0].first->lsfC_3;
   myRECOevent.selectedJetMaxSubJetCSV = myRECOevent.myMuonJetPairs[0].first->maxSubJetCSV;
   myRECOevent.selectedJetEnergy =  myRECOevent.myMuonJetPairs[0].first->E;
+  myRECOevent.selectedJetEnergyUncorr =  myRECOevent.myMuonJetPairs[0].first->UncorrectedE;
 
   int nHighPtMuonsOutsideJet = 0;
   if(myRECOevent.muonCands > 1){
