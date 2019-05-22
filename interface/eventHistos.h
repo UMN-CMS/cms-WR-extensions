@@ -142,6 +142,7 @@ class eventHistos {
   TH1D* m_dRlsfLep_subleadMuon;
   TH2D* m_recoLSF_v_selJetPt;
   TH2D* m_genLSF_v_recoLSF;
+  TH2D* m_genE_v_recoE;
   TH2D* m_lsfLepDR_v_recoLSF;
   TH2D* m_lsfLepDR_v_selJetPt;
 
@@ -305,6 +306,10 @@ class eventHistos {
   TH1D* m_selectedJetMaxDRGenDaughters;
   TH1D* m_selectedJetLSF3;
   TH1D* m_selectedJetMaxSubJetCSV;
+  TH1D* m_selectedJetEnergy;
+  TH1D* m_selectedJetEnergyUncorr;
+
+  TH1D* m_NRenergy;
 
   TH1D* m_DrDaughters;
   TH1D* m_nWRDaughters;

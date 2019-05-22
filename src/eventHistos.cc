@@ -194,6 +194,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_selectedJetLSF3   =                 m_histoFolder.make<TH1D>("selectedJetLSF3"   ,"Selected Jet LSF_{3}; Jet LSF_{3};"   ,40,0.0,1.0 );
     m_selectedJetMaxSubJetCSV   =                 m_histoFolder.make<TH1D>("selectedJetMaxSubJetCSV"   ,"Selected Jet Max Subjet CSV; Max Subjet CSV;"   ,40,0.0,1.0 );
     m_selectedJetEnergy   =                 m_histoFolder.make<TH1D>("selectedJetEnergy"   ,"Selected Jet energy; Energy;"   ,50,0.0,5000.0 );
+    m_selectedJetEnergyUncorr   =                 m_histoFolder.make<TH1D>("selectedJetEnergyUncorr"   ,"Selected Jet energy; Energy;"   ,50,0.0,5000.0 );
 
 
     m_DrDaughters =                  m_histoFolder.make<TH1D>("DrDaughters" , "DR WR DAughters; #DeltaR W_{R} Daughters", 30, 0.0, 4.0);
@@ -797,6 +798,7 @@ void eventHistos::fillReco(eventBits& event) {
   m_selectedJetMaxDRGenDaughters->Fill(event.MaxDR_genDaughter_CandJet, weight);
   m_selectedJetLSF3->Fill(event.selectedJetLSF3, weight);
   m_selectedJetEnergy->Fill(event.selectedJetEnergy, weight);
+  m_selectedJetEnergyUncorr->Fill(event.selectedJetEnergyUncorr, weight);
   m_recoLSF_v_selJetPt  ->Fill(event.selectedJetPt,event.selectedJetLSF3, weight);
   m_genLSF_v_recoLSF ->Fill(event.myGenLSF,event.selectedJetLSF3, weight);
   m_genE_v_recoE->Fill(event.NRenergy, event.selectedJetEnergy, weight);

@@ -305,6 +305,7 @@ eventBits::eventBits() {
   selectedJetLSF3= -10000.0;
   selectedJetMaxSubJetCSV= -10000.0;
   selectedJetEnergy = -10000.0;
+  selectedJetEnergyUncorr = -10000.0;
 
   selectedElectron_noISO_Pt = -10000.0;
   selectedElectron_noISO_Phi = -10000.0;

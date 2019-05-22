@@ -535,6 +535,7 @@ public:
   double selectedJetLSF3;
   double selectedJetMaxSubJetCSV;
   double selectedJetEnergy;
+  double selectedJetEnergyUncorr;
 
   double mydRlsfLep_subleadMuon;
 
