@@ -247,6 +247,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 //////
   bool passesBoostRECO = false;
   bool passesBoostGEN = false; //this tracks with our current analysis effort
+  bool passesBoostFSBRECO = false;
 //  bool passesBoostModGEN = false; //this tracks with our current analysis effort
   //various pass/fail bits
   bool passGenCounter = false;
@@ -530,12 +531,20 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
           }
         }
         if (passFSBbin(myRECOevent, true, 200)) {
+          passesBoostFSBRECO = true;
         }
       }
       std::cout << "DONE WITH FSB" << std::endl;
     }
   }
   //BOOLEANS STUFF////////////////////////////////////////////////
+  bool inTheFailBox = false;
+  bool inTheOppoBox = false;
+  if (passesBoostFSBRECO) {
+    if (::wrTools::InTheHEMfailBox(myRECOevent.selectedJetEta, myRECOevent.selectedJetPhi, 0.8) )       inTheFailBox = true;
+    if (::wrTools::InTheHEMfailBox(-1*myRECOevent.selectedJetEta, -1*myRECOevent.selectedJetPhi, 0.8) ) inTheOppoBox = true;
+
+  }
 
   std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
   bool tooManyResLeptons = tooManyResElectrons || tooManyResMuons;
@@ -755,13 +764,21 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
      std::cout << "m_eventsPassBoostZMASSRECO" << std::endl;
      m_eventsPassBoostZMASSRECO.fill(myRECOevent, 1);
   }
-  if (!passesResRECO &&  passesBoostRECO &&  myRECOevent.boostedFSBRECOmassAbove600 && !tooManyBoostFSBLeptons){
+  if (passesBoostFSBRECO &&  myRECOevent.boostedFSBRECOmassAbove600 && !tooManyBoostFSBLeptons){
      std::cout << "m_eventsPassBoostFSBRECO" << std::endl;
      m_eventsPassBoostFSBRECO.fill(myRECOevent, 1);
   }
-  if (!passesResRECO &&  passesBoostRECO && !myRECOevent.boostedFSBRECOmassAbove600 && !tooManyBoostFSBLeptons){
+  if (passesBoostFSBRECO && !myRECOevent.boostedFSBRECOmassAbove600 && !tooManyBoostFSBLeptons){
      std::cout << "m_eventsPassBoostFSBLowMassCRRECO" << std::endl;
      m_eventsPassBoostFSBLowMassCRRECO.fill(myRECOevent, 1);
+  }
+  if (passesBoostFSBRECO && !myRECOevent.boostedFSBRECOmassAbove600 && inTheFailBox) {
+     std::cout << "m_eventsPassBoostFSBLowMassCRRECO_FailBox" << std::endl;
+     m_eventsPassBoostFSBLowMassCRRECO_failBox.fill(myRECOevent, 1);
+  }
+  if (passesBoostFSBRECO && !myRECOevent.boostedFSBRECOmassAbove600 && inTheOppoBox) {
+     std::cout << "m_eventsPassBoostFSBLowMassCRRECO_OppoBox" << std::endl;
+     m_eventsPassBoostFSBLowMassCRRECO_oppoBox.fill(myRECOevent, 1);
   }
 //RES SIDEBANDS                              
   if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600)                                          m_eventsPassResLowMassCRRECO.fill(myRECOevent, 1);
@@ -5704,6 +5721,8 @@ cmsWRextension::beginJob()
     m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 3, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 3, m_outputTag, 1);
+    m_eventsPassBoostFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_failBox")), 3, m_outputTag, 1);
+    m_eventsPassBoostFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_oppoBox")), 3, m_outputTag, 1);
     m_eventsPassJetSelection.book((fs->mkdir("eventsPassJetSelection")), 3, m_outputTag, 0);
 
   }
@@ -5735,6 +5754,8 @@ cmsWRextension::beginJob()
     m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 2, m_outputTag, 0);    
     m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 2, m_outputTag, 2);
     m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 2, m_outputTag, 2);
+    m_eventsPassBoostFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_failBox")), 2, m_outputTag, 2);
+    m_eventsPassBoostFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_oppoBox")), 2, m_outputTag, 2);
   }
   if (m_doReco && m_doFast) {
     std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;

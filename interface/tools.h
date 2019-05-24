@@ -46,8 +46,8 @@ namespace wrTools {
  std::vector<const pat::TriggerObjectStandAlone*> getMatchedObjs(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const float maxDeltaR=0.1);
  bool checkFilters(const float eta,const float phi,const std::vector<pat::TriggerObjectStandAlone>& trigObjs,const std::vector<std::string>& filterNames,const float maxDeltaR=0.1);
  void printCutFlowResult(vid::CutFlowResult &cutflow);
-
-
+ double HEMfailBox(bool upper_lower, bool eta_phi);
+ bool InTheHEMfailBox(double eta, double phi, double radius);
 
 };
 
