@@ -240,6 +240,13 @@ elif options.era == '2017':
       UseJetEMPt = cms.bool(False),
       PrefiringRateSystematicUncty = cms.double(0.2),
       SkipWarnings = False)
+elif options.era == '2018':
+  process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
+      DataEra = cms.string("2018AtoD"), #Use 2016BtoH for 2016
+      UseJetEMPt = cms.bool(False),
+      PrefiringRateSystematicUncty = cms.double(0.2),
+      SkipWarnings = False)
+
 
 
 #process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
