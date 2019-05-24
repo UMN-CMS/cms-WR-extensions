@@ -194,4 +194,20 @@ namespace wrTools {
     }//end loop over filter lables
     return passAnyFilter;
   }
+  double HEMfailBox(bool upper_lower, bool eta_phi) {
+    if( upper_lower &&  eta_phi ) return -3.00; //UPPER ETA
+    if(!upper_lower && !eta_phi ) return -0.87; //LOWER PHI
+    if( upper_lower && !eta_phi ) return -1.57; //UPPER PHI
+    if(!upper_lower &&  eta_phi ) return -1.30; //LOWER ETA
+    return -1000;
+  }
+  bool InTheHEMfailBox(double eta, double phi, double radius=0.0) {
+    //THIS APPROXIMATELY WORKS... AND IS SIMPLY AND FAST
+    if (   eta >= (HEMfailBox(true, true)  - radius)  && eta <= (HEMfailBox(false, true)  + radius) ) { //WITHIN ETA
+      if ( phi >= (HEMfailBox(true, false) - radius)  && phi <= (HEMfailBox(false, false) + radius) ) { //WITHIN PHI
+        return true;
+      }
+    }
+    return false;
+  }
 }
