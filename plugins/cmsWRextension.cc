@@ -5263,8 +5263,8 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   double dR_jet1_muon = sqrt(::wrTools::dR2(myEvent.resFSBMuon->eta(),myEvent.myResFSBCandJets[0]->eta,myEvent.resFSBMuon->phi(),myEvent.myResFSBCandJets[0]->phi));
   double dR_jet2_muon = sqrt(::wrTools::dR2(myEvent.resFSBMuon->eta(),myEvent.myResFSBCandJets[1]->eta,myEvent.resFSBMuon->phi(),myEvent.myResFSBCandJets[1]->phi));
   std::cout << "dR_jet1_muon: " << dR_jet1_muon << " dR_jet2_muon: " << dR_jet2_muon << std::endl;
-  if (dR_jet1_muon < 0.4) return false;
-  if (dR_jet2_muon < 0.4) return false;
+//  if (dR_jet1_muon < 0.4) return false;
+//  if (dR_jet2_muon < 0.4) return false;
   myEvent.ResFSBCutProgress++;
 
   std::cout << "dR between FSB leptons" << std::endl;
@@ -5312,10 +5312,10 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   double dR_pair11 = sqrt(::wrTools::dR2(mu->eta(),jet1.eta(),mu->phi(),jet1.phi()));
   std::cout << "RES 11" << dR_pair11<< std::endl;
 
-//  if (dR_pair12 < 0.4) return false;
+  if (dR_pair12 < 0.4) return false;
   if (dR_pair21 < 0.4) return false;
   if (dR_pair22 < 0.4) return false;
-//  if (dR_pair11 < 0.4) return false;
+  if (dR_pair11 < 0.4) return false;
   std::cout << "RES FOUR OBJECT SEPARATION PASSED" << std::endl;
   myEvent.ResFSBCutProgress++;
     
