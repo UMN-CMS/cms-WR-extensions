@@ -6,6 +6,7 @@ eventBits::eventBits() {
   run = -1;
   lumi = -1;
   event = 0;
+  m_flavor = 0;
   weight = 1.0;
   FSBweight = 1.0;
   FSBweight_noISO = 1.0;

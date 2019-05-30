@@ -381,6 +381,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
   }else if (m_flavor == 5){
     float binBoundaries[12] = {200, 300, 400, 500, 600, 700, 800, 900, 1000, 1150, 1500, 6000};
 
+    std::cout << "Creating Flavor 5 plots" << std::endl;
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
     m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,1700, 0, 8500);//11, binBoundaries);
     m_leadAK8JetMuonMass_JECUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JECUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,1700, 0, 8500);//11, binBoundaries);
@@ -460,25 +461,26 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
    m_resolvedFSBRECOmass_MuResolUp  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuResolUp","2 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
     m_resolvedFSBRECOmass_MuResolDown  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuResolDown","4 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
   }
+
 }
 void eventHistos::fill(eventBits& event, int systematicRegion) {
  // m_outputTag->SetString("blahblah");
   std::cout << "systematicRegion: " << systematicRegion << std::endl;
-  std::cout << "m_flavor: " << m_flavor << std::endl;
-  if(m_flavor == 1) fillGen(event);
-  else if(m_flavor == 2) {
+  std::cout << "event.m_flavor: " << event.m_flavor << std::endl;
+  if(event.m_flavor == 1) fillGen(event);
+  else if(event.m_flavor == 2) {
     fillReco(event);
     fillCutProgress(event);
     fillWeight(event);
   }
-  else if(m_flavor == 3) {
+  else if(event.m_flavor == 3) {
     fillGen(event);
     fillReco(event);
     fillCutProgress(event);
     fillWeight(event);
-  } else if (m_flavor == 4) {
+  } else if (event.m_flavor == 4) {
     fillWeight(event);
-  } else if (m_flavor == 5){
+  } else if (event.m_flavor == 5){
     fillWeight(event);
     if (systematicRegion == 1){
       fillCombine_Nominal(event);
@@ -578,6 +580,7 @@ void eventHistos::fillCutProgress(eventBits& event) {
 void eventHistos::fillWeight(eventBits& event) {
   std::cout << "Filling Weights" << std::endl;
   std::cout << "event.count: " << event.count << std::endl;
+  std::cout << "m_eventsWeight->Integral(): " << m_eventsWeight->Integral() << std::endl;
   m_eventsWeight->Fill(0.5, event.count);
   std::cout << "Done Filling Weight" << std::endl;
 }

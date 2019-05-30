@@ -242,6 +242,7 @@ class cmsWRextension : public edm::EDAnalyzer {
 //
 //      eventHistos m_eventsPassingFlavorSidebandRECOres;
 
+      int flavor;
       HEEP myHEEP;
       egammaEffi myEgammaEffi;
       eventInfo myEventInfo;

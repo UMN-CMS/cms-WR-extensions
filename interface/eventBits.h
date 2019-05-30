@@ -25,6 +25,7 @@ public:
   int run;
   int lumi;
   int event;
+  int m_flavor;
   double weight;
   double FSBweight;
   double FSBweight_E;
