@@ -521,12 +521,12 @@ with open(localInputListFile, 'r') as f:
     #crabSubmit(config)
     # workaround for cmssw multiple-loading problem
     # submit in subprocess
-#    q = Queue()
-#    p = Process(target=crabSubmit, args=(config,))
-#    p.start()
-#    p.join()
-#    if q.get()==-1:
-#      exit(-1)
+    q = Queue()
+    p = Process(target=crabSubmit, args=(config,))
+    p.start()
+    p.join()
+    if q.get()==-1:
+      exit(-1)
     
 print 'Done!' 
 exit(0)
