@@ -107,6 +107,7 @@ class eventHistos {
 
   TH1D* m_cutProgress;
   TH1D* m_ResCutProgress;
+  TH1D* m_ResFSBCutProgress;
   TH1D* m_FSBcutProgress;
 
   TH1D* m_parton1Et;

@@ -293,6 +293,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       muonTrigPass = true;
     }else{
       muonTrigPass = passMuonTrig(iEvent, myRECOevent);
+      myRECOevent.muonTrigPassBit = muonTrigPass;
     }
   }
 
@@ -350,6 +351,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   //here we start tracking our progress through the main cuts 
   myRECOevent.cutProgress = 0;
   myRECOevent.ResCutProgress = 0;
+  myRECOevent.ResFSBCutProgress = 0;
 
   if (!m_doFast) {
     if(m_isMC && m_doGen) {
@@ -913,7 +915,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
       setEventWeight_ResolvedFSB(iEvent, myRECOevent);
 
-      if(passesResFSBRECOAllRegions[0]){
+      if(passesResFSBRECOAllRegions[0] && myRECOevent.resolvedFSBRECOmass > 800){
+        myRECOevent.ResFSBCutProgress++;
         std::cout << "PASSING FSB" << std::endl;
         m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 6);
@@ -944,6 +947,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
 
     if((passesResRECOAllRegions[0]||passesResRECOAllRegions[1]||passesResRECOAllRegions[2]||passesResRECOAllRegions[3]||passesResRECOAllRegions[4]) && muonTrigPass && !ZMASSres && !tooManyResLeptons){
+      myRECOevent.ResCutProgress++;
       std::vector<double> Muon_HighPtID_Weights;
       std::vector<double> Muon_LooseTkIso_Weights;
       std::vector<double> Muon_HighPtID2nd_Weights;
@@ -974,8 +978,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
       setEventWeight_Resolved(iEvent, myRECOevent);
 
-      if(passesResRECOAllRegions[0]){
+      if(passesResRECOAllRegions[0] && myRECOevent.resolvedRECOmass > 800){
         std::cout << "PASSING SR" << std::endl;
+        myRECOevent.ResCutProgress++;
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 6);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 7);
@@ -1036,7 +1041,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if(myRECOevent.myMuonJetPairs_JERDown.size() > 0){
         addMuons_JERDown = additionalMuons(iEvent, myRECOevent, false, false, 4, false);
         ZMASS_JERDown = subLeadingMuonZMass_JERDown(iEvent, myRECOevent, false);
-        addElectrons_JECDown = additionalElectrons(iEvent, myRECOevent, false, 3);
+        addElectrons_JECDown = additionalElectrons(iEvent, myRECOevent, false, 4);
       }
       if(m_isMC && (addMuons || addMuons_JECUp || addMuons_JECDown || addMuons_JERUp || addMuons_JERDown)) {
 	std::vector<double> Muon_LooseID_Weights;
@@ -1752,7 +1757,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
        double eventMass = ( jetVec + myRECOevent.myElectronCand->p4() ).mass();
        std::cout << "eventMass: " << eventMass << std::endl;
 
-       if( eventMass < 600 ) {myRECOevent.boostedFSBRECOmassAbove600 = false;}
+       if( eventMass < 800 ) {myRECOevent.boostedFSBRECOmassAbove600 = false;}
        else {myRECOevent.boostedFSBRECOmassAbove600 = true;}
 
        std::cout << "FOUND CAND DIOBJECT WITH ISO ELE" << std::endl;
@@ -1775,7 +1780,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
  
        double eventMass_noISO = ( jetVec + myRECOevent.myElectronCand_noISO->p4() ).mass();
 
-       if( eventMass_noISO < 600 ) continue;
+       if( eventMass_noISO < 800 ) continue;
 
        std::cout << "FOUND CAND DIOBJECT WITH NON ISO ELE" << std::endl;
 
@@ -4111,7 +4116,7 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
   int nTops            = 0;
   int nBs              = 0;
   int nPartons         = 0;
-  int flavor           = 0;
+//  int flavor           = 0;
 
   std::vector<const reco::GenParticle*> genLeptons;
   std::vector<const reco::GenParticle*> WRDaughters;
@@ -4195,7 +4200,7 @@ bool cmsWRextension::genCounter(const edm::Event& iEvent, eventBits& myEvent)
 //  //else if (mynMuons == 1 && mynElectrons >= 1) flavor = 4;
 //  else flavor = 9;
 //  
-  myEvent.myEventFlavor = flavor;
+//  myEvent.myEventFlavor = flavor;
 
   if (genLeptons.size() > 0)
     return true;
@@ -4636,7 +4641,7 @@ bool cmsWRextension::passBoostRECO(const edm::Event& iEvent, eventBits& myRECOev
   }
   std::cout <<"RECO OBJECT MASS: "<<myRECOevent.leadAK8JetMuonMassVal << std::endl;
 
-  if( myRECOevent.leadAK8JetMuonMassVal < 600 ) {myRECOevent.boostedRECOmassAbove600 = false; }
+  if( myRECOevent.leadAK8JetMuonMassVal < 800 ) {myRECOevent.boostedRECOmassAbove600 = false; }
   else { myRECOevent.boostedRECOmassAbove600 = true; }
 
 
@@ -4993,7 +4998,7 @@ bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   double resMass_Up = (mu1->p4()*myEvent.leadResMuonScale[1] + mu2->p4()*myEvent.secondResMuonScale[1] + jet1 + jet2).mass();
   double resMass_Down = (mu1->p4()*myEvent.leadResMuonScale[2] + mu2->p4()*myEvent.secondResMuonScale[2] + jet1 + jet2).mass();
 
-  if (resMass < 600){ myEvent.resolvedRECOmassAbove600 = false; }
+  if (resMass < 800){ myEvent.resolvedRECOmassAbove600 = false; }
   else { myEvent.resolvedRECOmassAbove600 = true; }
 
   myEvent.resolvedRECOmass = resMass; 
@@ -5026,6 +5031,21 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
   resolvedElectronSelection(iEvent, myEvent);
 
   if ( !resolvedMuonSelection(iEvent, myEvent) ) return FalseReturn;
+
+  std::cout << "subleading Muon pT" << std::endl;
+  if (myEvent.resolvedANAMuons[1]->pt()*myEvent.secondResMuonScale[0] < 53) return FalseReturn;
+  myEvent.ResCutProgress++;
+
+  std::cout << "subleading Muon ISO" << std::endl;
+  if (myEvent.resolvedANAMuons[1]->isolationR03().sumPt/myEvent.resolvedANAMuons[1]->pt() > 0.1) return FalseReturn;
+  myEvent.ResCutProgress++;
+
+  if(myEvent.NresolvedANAElectronCands > 0 ||myEvent.NresolvedANAMuonCands > 2) return FalseReturn;
+  myEvent.ResCutProgress++;
+
+  if(!myEvent.muonTrigPassBit) return FalseReturn;
+  myEvent.ResCutProgress++;
+  
   std::cout << "RES JET SELECTION CALL" << std::endl;
   if ( !resolvedJetSelection(iEvent, myEvent) )  return FalseReturn;
 
@@ -5045,14 +5065,6 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
   std::cout << "Muons dR_pair: " << dR_pair << std::endl;
   if (dR_pair < 0.4) return FalseReturn;
 
-  std::cout << "subleading Muon pT" << std::endl;
-  if (myEvent.resolvedANAMuons[1]->pt()*myEvent.secondResMuonScale[0] < 53) return FalseReturn;
-  myEvent.ResCutProgress++;
-
-  std::cout << "subleading Muon ISO" << std::endl;
-  if (myEvent.resolvedANAMuons[1]->isolationR03().sumPt/myEvent.resolvedANAMuons[1]->pt() > 0.1) return FalseReturn;
-  myEvent.ResCutProgress++;
-
   std::cout << "RES OBJECT SELECTIONS PASSED" << std::endl;
   const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
   const pat::Muon* mu2 =  myEvent.resolvedANAMuons[1];
@@ -5069,11 +5081,15 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets[0]->eta,mu2->phi(),myEvent.myResCandJets[0]->phi));
     double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets[1]->eta,mu2->phi(),myEvent.myResCandJets[1]->phi));
     double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),myEvent.myResCandJets[0]->eta,mu1->phi(),myEvent.myResCandJets[0]->phi));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(myEvent.myResCandJets[0]->eta,myEvent.myResCandJets[1]->eta,myEvent.myResCandJets[0]->phi,myEvent.myResCandJets[1]->phi));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
+
+    myEvent.ResCutProgress++;
 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
@@ -5115,11 +5131,13 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JECUp[0]->eta,mu2->phi(),myEvent.myResCandJets_JECUp[0]->phi));
     double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JECUp[1]->eta,mu2->phi(),myEvent.myResCandJets_JECUp[1]->phi));
     double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),myEvent.myResCandJets_JECUp[0]->eta,mu1->phi(),myEvent.myResCandJets_JECUp[0]->phi));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(myEvent.myResCandJets_JECUp[0]->eta,myEvent.myResCandJets_JECUp[1]->eta,myEvent.myResCandJets_JECUp[0]->phi,myEvent.myResCandJets_JECUp[1]->phi));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
@@ -5133,7 +5151,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 
     double resMass = (mu1->p4()*myEvent.leadResMuonScale[0] + mu2->p4()*myEvent.secondResMuonScale[0] + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedRECOmass_JECUp = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5147,11 +5165,13 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JECDown[0]->eta,mu2->phi(),myEvent.myResCandJets_JECDown[0]->phi));
     double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JECDown[1]->eta,mu2->phi(),myEvent.myResCandJets_JECDown[1]->phi));
     double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),myEvent.myResCandJets_JECDown[0]->eta,mu1->phi(),myEvent.myResCandJets_JECDown[0]->phi));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(myEvent.myResCandJets_JECDown[0]->eta,myEvent.myResCandJets_JECDown[1]->eta,myEvent.myResCandJets_JECDown[0]->phi,myEvent.myResCandJets_JECDown[1]->phi));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
@@ -5165,7 +5185,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 
     double resMass = (mu1->p4()*myEvent.leadResMuonScale[0] + mu2->p4()*myEvent.secondResMuonScale[0] + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedRECOmass_JECDown = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5180,11 +5200,13 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JERUp[0]->eta,mu2->phi(),myEvent.myResCandJets_JERUp[0]->phi));
     double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JERUp[1]->eta,mu2->phi(),myEvent.myResCandJets_JERUp[1]->phi));
     double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),myEvent.myResCandJets_JERUp[0]->eta,mu1->phi(),myEvent.myResCandJets_JERUp[0]->phi));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(myEvent.myResCandJets_JERUp[0]->eta,myEvent.myResCandJets_JERUp[1]->eta,myEvent.myResCandJets_JERUp[0]->phi,myEvent.myResCandJets_JERUp[1]->phi));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
@@ -5198,7 +5220,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 
     double resMass = (mu1->p4()*myEvent.leadResMuonScale[0] + mu2->p4()*myEvent.secondResMuonScale[0] + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedRECOmass_JERUp = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5212,11 +5234,13 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double dR_pair21 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JERDown[0]->eta,mu2->phi(),myEvent.myResCandJets_JERDown[0]->phi));
     double dR_pair22 = sqrt(::wrTools::dR2(mu2->eta(),myEvent.myResCandJets_JERDown[1]->eta,mu2->phi(),myEvent.myResCandJets_JERDown[1]->phi));
     double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),myEvent.myResCandJets_JERDown[0]->eta,mu1->phi(),myEvent.myResCandJets_JERDown[0]->phi));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(myEvent.myResCandJets_JERDown[0]->eta,myEvent.myResCandJets_JERDown[1]->eta,myEvent.myResCandJets_JERDown[0]->phi,myEvent.myResCandJets_JERDown[1]->phi));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     TLorentzVector* jet1Vec_temp = new TLorentzVector();
     TLorentzVector* jet2Vec_temp = new TLorentzVector();
@@ -5230,7 +5254,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 
     double resMass = (mu1->p4()*myEvent.leadResMuonScale[0] + mu2->p4()*myEvent.secondResMuonScale[0] + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedRECOmass_JERDown = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5323,7 +5347,7 @@ bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent
   double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
 
   std::cout << "RES FSB resMass: " << resMass << std::endl;
-  if (resMass < 600){ myEvent.resolvedFSBRECOmassAbove600 = false;}
+  if (resMass < 800){ myEvent.resolvedFSBRECOmassAbove600 = false;}
   else { myEvent.resolvedFSBRECOmassAbove600 = true;}
 
   myEvent.resolvedFSBRECOmass = resMass; 
@@ -5350,8 +5374,16 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
   FalseReturn.push_back(false);
 
   std::vector<bool> EachRegionReturn;
+  myEvent.ResFSBCutProgress++;
 
   if ( !resolvedFSBleptonSelection(iEvent, myEvent) ) return FalseReturn;
+
+  if(myEvent.NresolvedANAFSBLeptonCands != 2) return FalseReturn;
+  myEvent.ResFSBCutProgress++;
+
+  if(!myEvent.muonTrigPassBit) return FalseReturn;
+  myEvent.ResFSBCutProgress++;
+
   std::cout << "RES FSB JET SELECTION CALL" << std::endl;
   if ( !resolvedFSBJetSelection(iEvent, myEvent) )  return FalseReturn;
 
@@ -5373,8 +5405,8 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
   const pat::Muon*     mu   =  myEvent.resFSBMuon;
   const pat::Electron* el   =  myEvent.resFSBElec;
 
-  std::cout << "DOFAST RES FSB JET1 WITH PT,ETA,PHI: " << myEvent.myResFSBCandJets[0]->pT << "," << myEvent.myResFSBCandJets[0]->eta << "," << myEvent.myResFSBCandJets[0]->phi << std::endl;
-  std::cout << "DOFAST RES FSB JET1 WITH PT,ETA,PHI: " << myEvent.myResFSBCandJets[1]->pT << "," << myEvent.myResFSBCandJets[1]->eta << "," << myEvent.myResFSBCandJets[1]->phi << std::endl;
+//  std::cout << "DOFAST RES FSB JET1 WITH PT,ETA,PHI: " << myEvent.myResFSBCandJets[0]->pT << "," << myEvent.myResFSBCandJets[0]->eta << "," << myEvent.myResFSBCandJets[0]->phi << std::endl;
+//  std::cout << "DOFAST RES FSB JET1 WITH PT,ETA,PHI: " << myEvent.myResFSBCandJets[1]->pT << "," << myEvent.myResFSBCandJets[1]->eta << "," << myEvent.myResFSBCandJets[1]->phi << std::endl;
 
   std::cout << "DOFAST RES FSB MUON WITH PT,ETA,PHI: " << myEvent.resFSBMuon->pt() << "," << myEvent.resFSBMuon->eta() << "," << myEvent.resFSBMuon->phi() << std::endl;
   std::cout << "DOFAST RES FSB ELECTRON WITH PT,ETA,PHI: " << myEvent.resFSBElec->pt() << "," << myEvent.resFSBElec->eta() << "," << myEvent.resFSBElec->phi() << std::endl;
@@ -5382,6 +5414,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
 
   double mll = (mu->p4()*myEvent.leadFSBMuonScale[0]+el->p4()).mass();
   if (mll < 200) return FalseReturn;  // 2017
+  myEvent.ResFSBCutProgress++;
 
   if(myEvent.myResFSBCandJets.size() > 1){
     bool nominalPass = true;
@@ -5402,6 +5435,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     double dR_pair21 = sqrt(::wrTools::dR2(el->eta(),jet1.eta(),el->phi(),jet1.phi()));
     double dR_pair22 = sqrt(::wrTools::dR2(el->eta(),jet2.eta(),el->phi(),jet2.phi()));
     double dR_pair11 = sqrt(::wrTools::dR2(mu->eta(),jet1.eta(),mu->phi(),jet1.phi()));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(jet1.eta(),jet2.eta(),jet1.phi(),jet2.phi()));
 
     std::cout << "dR_pair12: " << dR_pair12 << std::endl;
     std::cout << "dR_pair21: " << dR_pair21 << std::endl;
@@ -5412,6 +5446,8 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
+    myEvent.ResFSBCutProgress++;
 
     double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
     std::cout << "DOFAST RES FSB resMass: " << resMass << std::endl;
@@ -5450,15 +5486,17 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     double dR_pair21 = sqrt(::wrTools::dR2(el->eta(),jet1.eta(),el->phi(),jet1.phi()));
     double dR_pair22 = sqrt(::wrTools::dR2(el->eta(),jet2.eta(),el->phi(),jet2.phi()));
     double dR_pair11 = sqrt(::wrTools::dR2(mu->eta(),jet1.eta(),mu->phi(),jet1.phi()));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(jet1.eta(),jet2.eta(),jet1.phi(),jet2.phi()));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedFSBRECOmass_JECUp = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5482,15 +5520,17 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     double dR_pair21 = sqrt(::wrTools::dR2(el->eta(),jet1.eta(),el->phi(),jet1.phi()));
     double dR_pair22 = sqrt(::wrTools::dR2(el->eta(),jet2.eta(),el->phi(),jet2.phi()));
     double dR_pair11 = sqrt(::wrTools::dR2(mu->eta(),jet1.eta(),mu->phi(),jet1.phi()));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(jet1.eta(),jet2.eta(),jet1.phi(),jet2.phi()));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedFSBRECOmass_JECDown = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5514,15 +5554,17 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     double dR_pair21 = sqrt(::wrTools::dR2(el->eta(),jet1.eta(),el->phi(),jet1.phi()));
     double dR_pair22 = sqrt(::wrTools::dR2(el->eta(),jet2.eta(),el->phi(),jet2.phi()));
     double dR_pair11 = sqrt(::wrTools::dR2(mu->eta(),jet1.eta(),mu->phi(),jet1.phi()));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(jet1.eta(),jet2.eta(),jet1.phi(),jet2.phi()));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedFSBRECOmass_JERUp = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5546,15 +5588,17 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     double dR_pair21 = sqrt(::wrTools::dR2(el->eta(),jet1.eta(),el->phi(),jet1.phi()));
     double dR_pair22 = sqrt(::wrTools::dR2(el->eta(),jet2.eta(),el->phi(),jet2.phi()));
     double dR_pair11 = sqrt(::wrTools::dR2(mu->eta(),jet1.eta(),mu->phi(),jet1.phi()));
+    double dR_Jetpair11 = sqrt(::wrTools::dR2(jet1.eta(),jet2.eta(),jet1.phi(),jet2.phi()));
 
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
 
     double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
 
-    if (resMass < 600) nominalPass = false;
+    if (resMass < 800) nominalPass = false;
 
     myEvent.resolvedFSBRECOmass_JERDown = resMass;
     EachRegionReturn.push_back(nominalPass);
@@ -5669,7 +5713,7 @@ bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
   if(myEvent.firstMuon->pt() < 60) return false;
   if(myEvent.secondMuon->pt() < 53) return false;
 
-  if ( myEvent.resolvedGENmass < 600) return false;
+  if ( myEvent.resolvedGENmass < 800) return false;
 
   if ( myEvent.resSubleadMuParton1dR < DRCUT) return false;
   if ( myEvent.resSubleadMuParton2dR < DRCUT) return false;
@@ -5758,6 +5802,7 @@ cmsWRextension::beginJob()
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 3, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
+    m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 3, m_outputTag, 0);
     m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_failBox")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_oppoBox")), 3, m_outputTag, 1);
@@ -5796,6 +5841,7 @@ cmsWRextension::beginJob()
     m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 2, m_outputTag, 2);
     m_eventsPassBoostFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_failBox")), 2, m_outputTag, 2);
     m_eventsPassBoostFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_oppoBox")), 2, m_outputTag, 2);
+    m_eventsPassJetSelection.book((fs->mkdir("eventsPassJetSelection")), 2, m_outputTag, 0);
   }
   if (m_doReco && m_doFast) {
     flavor = 5;

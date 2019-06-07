@@ -41,6 +41,8 @@ eventBits::eventBits() {
 
   myZ = NULL;
 
+  muonTrigPassBit = false;
+
   secondElectronCand = NULL;
 
   PVertex = NULL;
@@ -57,6 +59,7 @@ eventBits::eventBits() {
 
   cutProgress = -1;
   ResCutProgress = -1;
+  ResFSBCutProgress = -1;
   ResElecCutProgress = -1;
   FSBcutProgress = -1;
   ResFSBCutProgress = -1;

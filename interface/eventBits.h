@@ -164,6 +164,8 @@ public:
 
   math::XYZTLorentzVector     daughterClusterVector;
 
+  bool muonTrigPassBit;
+
   int secondInDecayMuon;
 
   //EVENT VALUES
