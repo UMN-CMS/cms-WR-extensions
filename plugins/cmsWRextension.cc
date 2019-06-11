@@ -1471,26 +1471,65 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
   }
 
 }
-void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent) {
-  if(m_isMC) {
-      edm::Handle<GenEventInfoProduct> eventInfo;
-      iEvent.getByToken(m_genEventInfoToken, eventInfo);
-      if(!m_amcatnlo) {
-        myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight;
-        myEvent.count = 1;
-	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
-      }
-      else {
-        myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
-        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
-      }
-  } else {
-      myEvent.FSBweight_noISO = 1;
-      myEvent.count = 1;
+double cmsWRextension::Zweight(const edm::Event& iEvent, eventBits& myEvent) {
+  if (m_isMC) {
+    double zm  = myEvent.genZmass;
+    double zpt = myEvent.genZpt;
+
+    std::string Zcorr = "";
+
+    if(m_era == "2016") {
+      std::string Zcorr="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/Zpt_weights_2016.root";
+    }
+    if(m_era == "2016") {
+      std::string Zcorr="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2017/Zpt_weights_2017.root";
+    }
+    if(m_era == "2016") {
+      std::string Zcorr="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2018/Zpt_weights_2018.root";
+    }
+    if (Zcorr == "") return 1.0;
+
+    TFile *lFile = TFile::Open(Zcorr.c_str());
+    TH2D* Zweights = (TH2D*) lFile->Get("zptmass_weights");
+
+    int xbin = Zweights->GetXaxis()->FindBin(zm);
+    int ybin = Zweights->GetYaxis()->FindBin(zpt);
+    if (xbin==0) xbin = 1;
+    else if (xbin > Zweights->GetXaxis()->GetNbins()) xbin -= 1;
+    if (ybin==0) ybin = 1;
+    else if (ybin > Zweights->GetYaxis()->GetNbins()) ybin -= 1;
+
+    double weight = Zweights->GetBinContent(xbin,ybin);
+
+    return weight;
+    
+  
+    lFile->Close();
   }
 
+  return 1.0;
+
 }
+//void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent) {
+//  if(m_isMC) {
+//      edm::Handle<GenEventInfoProduct> eventInfo;
+//      iEvent.getByToken(m_genEventInfoToken, eventInfo);
+//      if(!m_amcatnlo) {
+//        myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight;
+//        myEvent.count = 1;
+//	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
+//      }
+//      else {
+//        myEvent.FSBweight_noISO = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
+//        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+//	myEvent.FSBweight_noISO = myEvent.FSBweight_noISO*myEvent.HEEP_SF_noISO*myEvent.egamma_SF_noISO*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
+//      }
+//  } else {
+//      myEvent.FSBweight_noISO = 1;
+//      myEvent.count = 1;
+//  }
+//
+//}
 bool cmsWRextension::passElectronTrig(const edm::Event& iEvent, eventBits& myRECOevent) {
   bool passTriggers = false;
 
@@ -1940,15 +1979,15 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
       myRECOevent.egamma_SF = egamma_SF[0];
       setEventWeight_FSB(iEvent, myRECOevent);
     }
-    if (electronJetPairs_noISO.size() > 0) { 
-      std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.myElectronCand->et(), myRECOevent.selectedElectron_noISO_Eta, m_era);
-      std::vector<double> egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand_noISO->superCluster()->eta(), myRECOevent.selectedElectron_noISO_Pt, m_era);
-      if (fabs(myRECOevent.selectedElectron_noISO_Eta) > 1.6) myRECOevent.HEEP_SF_E_noISO = HEEP_SF[0];
-      if (fabs(myRECOevent.selectedElectron_noISO_Eta) < 1.4) myRECOevent.HEEP_SF_B_noISO = HEEP_SF[0];
-      myRECOevent.HEEP_SF_noISO = HEEP_SF[0];
-      myRECOevent.egamma_SF_noISO = egamma_SF[0];
-      setEventWeight_FSB_noISO(iEvent, myRECOevent);
-    }
+//    if (electronJetPairs_noISO.size() > 0) { 
+//      std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.myElectronCand->et(), myRECOevent.selectedElectron_noISO_Eta, m_era);
+//      std::vector<double> egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand_noISO->superCluster()->eta(), myRECOevent.selectedElectron_noISO_Pt, m_era);
+//      if (fabs(myRECOevent.selectedElectron_noISO_Eta) > 1.6) myRECOevent.HEEP_SF_E_noISO = HEEP_SF[0];
+//      if (fabs(myRECOevent.selectedElectron_noISO_Eta) < 1.4) myRECOevent.HEEP_SF_B_noISO = HEEP_SF[0];
+//      myRECOevent.HEEP_SF_noISO = HEEP_SF[0];
+//      myRECOevent.egamma_SF_noISO = egamma_SF[0];
+//      setEventWeight_FSB_noISO(iEvent, myRECOevent);
+//    }
   }
 
   std::cout << "EVENT PASSES FLAVOR SIDEBAND" << std::endl;
