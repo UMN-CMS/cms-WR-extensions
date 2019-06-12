@@ -349,9 +349,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   setEventWeight(iEvent, myRECOevent);
 
   //here we start tracking our progress through the main cuts 
-  myRECOevent.cutProgress = 0;
-  myRECOevent.ResCutProgress = 0;
-  myRECOevent.ResFSBCutProgress = 0;
+  myRECOevent.cutProgress = 1;
+  myRECOevent.ResCutProgress = 1;
+  myRECOevent.ResFSBCutProgress = 1;
 
   if (!m_doFast) {
     if(m_isMC && m_doGen) {
@@ -1315,6 +1315,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
+  setEventWeight_ResolvedFSB(iEvent, myRECOevent);
+  setEventWeight_Resolved(iEvent, myRECOevent);
   m_allEvents.fill(myRECOevent, 1);
   
 }
@@ -1440,7 +1442,8 @@ void cmsWRextension::setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventB
       if(!m_amcatnlo) {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
         myEvent.count = 1;
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight;      }
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight;
+      }
       else {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
@@ -1846,15 +1849,15 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     }
 
     additionalMuons(iEvent, myRECOevent, true, false,0, true);
-    if( myRECOevent.myMuonCands.size() < 1){
+    if( myRECOevent.muons10 < 1){
       std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
       return false;
     }
+    std::cout << "before subLeadingMuonZMass_FlavorSideband" << std::endl;
     if (subLeadingMuonZMass_FlavorSideband(iEvent, myRECOevent, false)){
         std::cout<< "EVENTS FAILS ELECTRON + MUON MASS" << std::endl;
         return false;
     }
-
   }
   if( electronJetPairs_noISO.size() > 0 ) {
     std::cout << "##NOT PROCESSING NONISO ELECTRON JET PAIRS### WE DON'T CARE ANY MORE" << std::endl;
@@ -1917,7 +1920,6 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
   //      return false;
   //  }
   }
-
 
   if(m_isMC && electronJetPairs.size() > 0) {
     std::vector<double> Muon_LooseID_Weights;
@@ -2622,6 +2624,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     std::sort(allMuons.begin(),allMuons.end(),::wrTools::compareEtCandidatePointer); 
   }
   if (myEvent.muons10 > 0) {
+    std::cout << "filling myMuonCands" << std::endl;
     myEvent.myMuonCands = allMuons; 
   }
   if(myEvent.muons10 < 1) return false;  //The leading muon should also pass these cuts, so an additional muon would mean 2 or more
@@ -5083,11 +5086,19 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),myEvent.myResCandJets[0]->eta,mu1->phi(),myEvent.myResCandJets[0]->phi));
     double dR_Jetpair11 = sqrt(::wrTools::dR2(myEvent.myResCandJets[0]->eta,myEvent.myResCandJets[1]->eta,myEvent.myResCandJets[0]->phi,myEvent.myResCandJets[1]->phi));
 
+/*    if (dR_pair12 < 0.4) return FalseReturn; 
+    if (dR_pair21 < 0.4) return FalseReturn; 
+    if (dR_pair22 < 0.4) return FalseReturn; 
+    if (dR_pair11 < 0.4) return FalseReturn;*/
     if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
+    myEvent.ResCutProgress++;
+
     if (dR_Jetpair11 < 0.4) nominalPass = false;
+/*    if (dR_Jetpair11 < 0.4) return FalseReturn;
+    if (dR_pair < 0.4) return FalseReturn;*/
 
     myEvent.ResCutProgress++;
 
@@ -5413,7 +5424,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
 
 
   double mll = (mu->p4()*myEvent.leadFSBMuonScale[0]+el->p4()).mass();
-  if (mll < 200) return FalseReturn;  // 2017
+  if (mll < 200) return FalseReturn; 
   myEvent.ResFSBCutProgress++;
 
   if(myEvent.myResFSBCandJets.size() > 1){
@@ -5426,8 +5437,6 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
 
     math::XYZTLorentzVector jet1;
     math::XYZTLorentzVector jet2;
-    std::cout << "jet1Vec_temp X,Y,Z,T: " << jet1Vec_temp->X() << "," << jet1Vec_temp->Y() << "," << jet1Vec_temp->Z() << "," << jet1Vec_temp->T() << std::endl;
-    std::cout << "jet1Vec_temp X,Y,Z,T: " << jet2Vec_temp->X() << "," << jet2Vec_temp->Y() << "," << jet2Vec_temp->Z() << "," << jet2Vec_temp->T() << std::endl;
     jet1.SetXYZT(jet1Vec_temp->X(),jet1Vec_temp->Y(),jet1Vec_temp->Z(),jet1Vec_temp->T());
     jet2.SetXYZT(jet2Vec_temp->X(),jet2Vec_temp->Y(),jet2Vec_temp->Z(),jet2Vec_temp->T());
 
@@ -5446,8 +5455,20 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
     if (dR_pair11 < 0.4) nominalPass = false;
-    if (dR_Jetpair11 < 0.4) nominalPass = false;
+/*    if (dR_pair12 < 0.4) return FalseReturn; 
+    if (dR_pair21 < 0.4) return FalseReturn; 
+    if (dR_pair22 < 0.4) return FalseReturn; 
+    if (dR_pair11 < 0.4) return FalseReturn; */
     myEvent.ResFSBCutProgress++;
+
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
+/*    if (dR_Jetpair11 < 0.4) return FalseReturn;
+    if (dR_pair < 0.4) return FalseReturn;*/
+    myEvent.ResFSBCutProgress++;
+
+/*    if (mll < 200) return FalseReturn;
+    myEvent.ResFSBCutProgress++;*/
+
 
     double resMass = (mu->p4()*myEvent.leadFSBMuonScale[0] + el->p4() + jet1 + jet2).mass();
     std::cout << "DOFAST RES FSB resMass: " << resMass << std::endl;
