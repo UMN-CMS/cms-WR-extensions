@@ -86,6 +86,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/eventInfo.h"
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 #include "ExoAnalysis/cmsWRextensions/interface/Muons.h"
+#include "ExoAnalysis/cmsWRextensions/interface/Zweight.h"
 
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 
@@ -176,6 +177,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent);
 
+      double getZweight(const edm::Event& iEvent, eventBits& myEvent);
       double PUPPIweight(double puppipt, double puppieta);
       void loadCMSSWPath();
       // ----------member data ---------------------------
@@ -247,6 +249,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       egammaEffi myEgammaEffi;
       eventInfo myEventInfo;
       Muons myMuons;
+      Zweight myZweights;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
@@ -283,6 +286,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       double m_MCL;    //MASS UPPER AND LOWER CUTS
       double m_MCU;
 
+      bool m_foundZ;
       
       double m_highPTleptonCut = 200;
       double m_subleadPTleptonCut = 10;
