@@ -1869,8 +1869,7 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
       myRECOevent.selectedJetTau21 = (electronJetPairs[0].first->tau2)/(electronJetPairs[0].first->tau1);
     }
 
-    additionalMuons(iEvent, myRECOevent, true, false,0, true);
-    if( myRECOevent.muons10 < 1){
+    if(!additionalMuons(iEvent, myRECOevent, true, false,0, true)){
       std::cout<< "EVENTS FAILS, NO MUONS OVER 10 GEV WITHIN ACCEPTANCE. " << myRECOevent.myMuonCands.size()<< " MUONS FOUND." << std::endl;
       return false;
     }
