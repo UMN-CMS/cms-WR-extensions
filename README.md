@@ -37,7 +37,7 @@ cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
 
-git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v1
+git clone git@github.com:Michael-Krohn/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X
 git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
@@ -80,7 +80,7 @@ cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git -b tweaksFor104X
 cd ..
 
-git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v1
+git clone git@github.com:Michael-Krohn/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X
 git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
