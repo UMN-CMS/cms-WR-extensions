@@ -106,10 +106,13 @@ eventInfo::eventInfo () {
 
   PVertex = NULL;
 
+  fPUWeightHist = (TH1F*) fPUDataHist2016->Clone();
+  fPUWeightHist_up = (TH1F*) fPUDataHist2016_up->Clone();
+  fPUWeightHist_down = (TH1F*) fPUDataHist2016_down->Clone();
+
 }
 
 eventInfo::~eventInfo() {
-
   delete fPUWeightHist; 
   delete fPUWeightHist_up;
   delete fPUWeightHist_down;

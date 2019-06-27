@@ -67,45 +67,49 @@ eventBits::eventBits() {
 
   nSecondElectronCands = -10000.0;
 
-  puWeight = -10000.0;
+  egamma_SF = 1.0;
+  egamma_SF_Up = -10000.0;
+  egamma_SF_Down = -10000.0;
+
+  puWeight = 1.0;
   puWeight_Up = -10000.0;
   puWeight_Down = -10000.0;
 
-  _prefiringweight = -10000.0;
+  _prefiringweight = 1.0;
   _prefiringweightup = -10000.0;
   _prefiringweightdown = -10000.0;
 
-  Muon_HighPtID_Weight = -10000.0;
+  Muon_HighPtID_Weight = 1.0;
   Muon_HighPtID_WeightUp = -10000.0;
   Muon_HighPtID_WeightDown = -10000.0;
 
-  Muon_HighPtID2nd_Weight = -10000.0;
+  Muon_HighPtID2nd_Weight = 1.0;
   Muon_HighPtID2nd_WeightUp = -10000.0;
   Muon_HighPtID2nd_WeightDown = -10000.0;
 
-  Muon_LooseID_Weight = -10000.0;
+  Muon_LooseID_Weight = 1.0;
   Muon_LooseID_WeightUp = -10000.0;
   Muon_LooseID_WeightDown = -10000.0;
 
-  Muon_LooseTkIso_Weight = -10000.0;
+  Muon_LooseTkIso_Weight = 1.0;
   Muon_LooseTkIso_WeightUp = -10000.0;
   Muon_LooseTkIso_WeightDown = -10000.0;
 
-  Muon_LooseTkIso2nd_Weight = -10000.0;
+  Muon_LooseTkIso2nd_Weight = 1.0;
   Muon_LooseTkIso2nd_WeightUp = -10000.0;
   Muon_LooseTkIso2nd_WeightDown = -10000.0;
 
-  Muon_Trig_Weight = -10000.0;
+  Muon_Trig_Weight = 1.0;
   Muon_Trig_WeightUp = -10000.0;
   Muon_Trig_WeightDown = -10000.0;
 
-  HEEP_SF  = -10000.0;
+  HEEP_SF  = 1.0;
   HEEP_SF_Up  = -10000.0;
   HEEP_SF_Down  = -10000.0;
   HEEP_SF_E  = -10000.0;
   HEEP_SF_B  = -10000.0;
 
-  HEEP_SF_noISO  = -10000.0;
+  HEEP_SF_noISO  = 1.0;
   HEEP_SF_E_noISO  = -10000.0;
   HEEP_SF_B_noISO  = -10000.0;
 
@@ -427,6 +431,7 @@ void eventBits::clear() {
   nVtx = -1;
   nPU = -1;
   nPUmean = -1;
+  FSBweight = 1.0;
 
   count = 0;
   
@@ -434,19 +439,23 @@ void eventBits::clear() {
   cutProgress = 0;
   FSBcutProgress = 0;
 
-  puWeight = 0.0;
+  egamma_SF = 1.0;
+  egamma_SF_Up = -10000.0;
+  egamma_SF_Down = -10000.0;
+
+  puWeight = 1.0;
   puWeight_Up = 0.0;
   puWeight_Down = 0.0;
 
-  Muon_HighPtID_Weight = 0.0;
+  Muon_HighPtID_Weight = 1.0;
   Muon_HighPtID_WeightUp = 0.0;
   Muon_HighPtID_WeightDown = 0.0;
 
-  Muon_LooseID_Weight = 0.0;
+  Muon_LooseID_Weight = 1.0;
   Muon_LooseID_WeightUp = 0.0;
   Muon_LooseID_WeightDown = 0.0;
 
-  HEEP_SF = 0.0;
+  HEEP_SF = 1.0;
   HEEP_SF_Up = 0.0;
   HEEP_SF_Down = 0.0;
   HEEP_SF_E  = 0.0;

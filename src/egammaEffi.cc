@@ -45,7 +45,7 @@ void egammaEffi::Initialize(std::string era) {
 
 std::vector<double> egammaEffi::ScaleFactor(double ElectronEta, double ElectronPt, std::string era) {
 
-  double scaleFactor = 0.;
+  double scaleFactor = 1.0;
   double scaleFactor_Up = 0;
   double scaleFactor_Down = 0.;
 

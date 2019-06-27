@@ -58,8 +58,11 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
     m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_ResCutProgress       = m_histoFolder.make<TH1D>("ResCutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
+    m_ResCutProgressNoWeight       = m_histoFolder.make<TH1D>("ResCutProgressNoWeight"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_FSBcutProgress    = m_histoFolder.make<TH1D>("FSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
-    m_ResFSBCutProgress    = m_histoFolder.make<TH1D>("ResFSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 9.5);
+    m_ResFSBCutProgress    = m_histoFolder.make<TH1D>("ResFSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
+    m_ResFSBCutProgressNoWeight    = m_histoFolder.make<TH1D>("ResFSBcutProgressNoWeight"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
+
     
     m_parton1Et =                       m_histoFolder.make<TH1D>("parton1Et", "Parton 1 Et;Et (GeV); ",                         80, 0.0, 4000);
     m_parton2Et =                       m_histoFolder.make<TH1D>("parton2Et", "Parton 2 Et;Et (GeV); ",                         80, 0.0, 4000);
@@ -385,7 +388,9 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     std::cout << "Creating Flavor 5 plots" << std::endl;
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
     m_ResCutProgress       = m_histoFolder.make<TH1D>("ResCutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
-    m_ResFSBCutProgress    = m_histoFolder.make<TH1D>("ResFSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 9.5);
+    m_ResCutProgressNoWeight       = m_histoFolder.make<TH1D>("ResCutProgressNoWeight"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
+    m_ResFSBCutProgress    = m_histoFolder.make<TH1D>("ResFSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
+    m_ResFSBCutProgressNoWeight    = m_histoFolder.make<TH1D>("ResFSBcutProgressNoWeight"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
     m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_FSBcutProgress    = m_histoFolder.make<TH1D>("FSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
     m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,1700, 0, 8500);//11, binBoundaries);
@@ -581,10 +586,12 @@ void eventHistos::fillCutProgress(eventBits& event) {
   }
   while (REStoFill > 0){
     m_ResCutProgress->Fill(REStoFill, weight);
+    m_ResCutProgressNoWeight->Fill(REStoFill);
     REStoFill--;
   }
   while (RESFSBtoFill > 0){
-    m_ResFSBCutProgress->Fill(RESFSBtoFill, weight);
+    m_ResFSBCutProgress->Fill(RESFSBtoFill, event.FSBweight);
+    m_ResFSBCutProgressNoWeight->Fill(RESFSBtoFill);
     RESFSBtoFill--;
   }
 }
