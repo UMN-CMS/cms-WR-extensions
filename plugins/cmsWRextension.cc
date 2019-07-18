@@ -566,6 +566,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if (::wrTools::InTheHEMfailBox(-1*myRECOevent.selectedJetEta, -1*myRECOevent.selectedJetPhi, 0.8) ) inTheOppoBox = true;
 
     }
+    bool resFailBox = false;
+    bool resOppoBox = false;
+    if (passesBoostFSBRECO) {
+      if (::wrTools::InTheHEMfailBox(myRECOevent.myResFSBCandJets[0]->eta, myRECOevent.myResFSBCandJets[0]->phi, 0.4) )       resFailBox = true;
+      if (::wrTools::InTheHEMfailBox(-1*myRECOevent.myResFSBCandJets[1]->eta, -1*myRECOevent.myResFSBCandJets[1]->phi, 0.4) ) resOppoBox = true;
+
+    }
 
     std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
     bool tooManyResLeptons = tooManyResElectrons || tooManyResMuons;
@@ -803,10 +810,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   //RES SIDEBANDS                              
     std::cout << "passesResFSBRECO: " << passesResFSBRECO << " myRECOevent.resolvedFSBRECOmassAbove600: " << myRECOevent.resolvedFSBRECOmassAbove600 << " tooManyBoostFSBLeptons: " << tooManyBoostFSBLeptons << std::endl;
-    if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600)                                          m_eventsPassResLowMassCRRECO.fill(myRECOevent, 1);
-    if ( passesResFSBRECO &&  myRECOevent.resolvedFSBRECOmassAbove600)                                       m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
-    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600)                                       m_eventsPassResFSBLowMassCRRECO.fill(  myRECOevent, 1);
-    if ( passesResRECO && !passesBoostRECO && passesZMASSres)                                                                       m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
+    if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600)                                       m_eventsPassResLowMassCRRECO.fill(myRECOevent, 1);
+    if ( passesResFSBRECO &&  myRECOevent.resolvedFSBRECOmassAbove600)                                                     m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
+    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600)                                                     m_eventsPassResFSBLowMassCRRECO.fill(  myRECOevent, 1);
+    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600 && resFailBox)                                       m_eventsPassResFSBLowMassCRRECO_failBox.fill(  myRECOevent, 1);
+    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600 && resOppoBox)                                       m_eventsPassResFSBLowMassCRRECO_oppoBox.fill(  myRECOevent, 1);
+    if ( passesResRECO && !passesBoostRECO && passesZMASSres)                                                              m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
     std::cout << "Done filling RECO stuff" << std::endl;
 
 /////////////////////////GEN STUFF////////////////////////////////////////////////////////////////////////////////////////////
@@ -5985,6 +5994,8 @@ cmsWRextension::beginJob()
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 3, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_failBox")), 3, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_oppoBox")), 3, m_outputTag, 1);
     m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 3, m_outputTag, 0);
     m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_failBox")), 3, m_outputTag, 1);
@@ -6017,6 +6028,8 @@ cmsWRextension::beginJob()
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 2, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 2, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 2, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_failBox")), 2, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_oppoBox")), 2, m_outputTag, 1);
 
     m_eventsPassBoostZMASSRECO.book((fs->mkdir("eventsFailResPassBoostRECO2016VETOZMASS")), 2, m_outputTag, 0);
     m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 2, m_outputTag, 0);    

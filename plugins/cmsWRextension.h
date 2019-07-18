@@ -205,6 +205,8 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResZMASSRECO;
       eventHistos m_eventsPassResFSBRECO;
       eventHistos m_eventsPassResFSBLowMassCRRECO;
+      eventHistos m_eventsPassResFSBLowMassCRRECO_failBox;
+      eventHistos m_eventsPassResFSBLowMassCRRECO_oppoBox;
       eventHistos m_eventsPassJetSelection;
 
       eventHistos m_eventsPassBoostFSBLowMassCRRECO;
