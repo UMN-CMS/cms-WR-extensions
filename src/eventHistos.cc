@@ -57,9 +57,12 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
 
 
     m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
+    m_cutProgressNoWeight       = m_histoFolder.make<TH1D>("cutProgressNoWeight"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
+
     m_ResCutProgress       = m_histoFolder.make<TH1D>("ResCutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_ResCutProgressNoWeight       = m_histoFolder.make<TH1D>("ResCutProgressNoWeight"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_FSBcutProgress    = m_histoFolder.make<TH1D>("FSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
+    m_FSBcutProgressNoWeight    = m_histoFolder.make<TH1D>("FSBcutProgressNoWeight"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
     m_ResFSBCutProgress    = m_histoFolder.make<TH1D>("ResFSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
     m_ResFSBCutProgressNoWeight    = m_histoFolder.make<TH1D>("ResFSBcutProgressNoWeight"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
 
@@ -392,7 +395,9 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_ResFSBCutProgress    = m_histoFolder.make<TH1D>("ResFSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
     m_ResFSBCutProgressNoWeight    = m_histoFolder.make<TH1D>("ResFSBcutProgressNoWeight"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   20, -.5, 19.5);
     m_cutProgress       = m_histoFolder.make<TH1D>("cutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
+    m_cutProgressNoWeight       = m_histoFolder.make<TH1D>("cutProgressNoWeight"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
     m_FSBcutProgress    = m_histoFolder.make<TH1D>("FSBcutProgress"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
+    m_FSBcutProgressNoWeight    = m_histoFolder.make<TH1D>("FSBcutProgressNoWeight"  , "; # Cut Progress in flavour sideband; Events passing cut level"     ,                                   10, -.5, 9.5);
     m_leadAK8JetMuonMass      =           m_histoFolder.make<TH1D>("leadAK8JetMuonMass","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,1700, 0, 8500);//11, binBoundaries);
     m_leadAK8JetMuonMass_JECUp=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JECUp","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,1700, 0, 8500);//11, binBoundaries);
     m_leadAK8JetMuonMass_JECDown=           m_histoFolder.make<TH1D>("leadAK8JetMuonMass_JECDown","2 Object Mass of the leading Jet and Muon;Mass (GeV);"                         ,1700, 0, 8500);//11, binBoundaries);
@@ -578,10 +583,12 @@ void eventHistos::fillCutProgress(eventBits& event) {
   int RESFSBtoFill = event.ResFSBCutProgress;
   while (toFill > 0) {
     m_cutProgress->Fill(toFill , weight);
+    m_cutProgressNoWeight->Fill(toFill);
     toFill--;
   }
   while (FSBtoFill > 0) {
     m_FSBcutProgress->Fill(FSBtoFill , weight);
+    m_FSBcutProgressNoWeight->Fill(FSBtoFill);
     FSBtoFill--;
   }
   while (REStoFill > 0){
@@ -594,6 +601,7 @@ void eventHistos::fillCutProgress(eventBits& event) {
     m_ResFSBCutProgressNoWeight->Fill(RESFSBtoFill);
     RESFSBtoFill--;
   }
+  std::cout << "Finishing filling cut progress" << std::endl;
 }
 void eventHistos::fillWeight(eventBits& event) {
   std::cout << "Filling Weights" << std::endl;

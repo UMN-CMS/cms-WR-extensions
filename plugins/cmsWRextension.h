@@ -140,7 +140,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passFlavorSideband(const edm::Event&, eventBits&);
       bool passFlavorSideband_Fast(const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
-      bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
+      bool jetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedJetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedFSBJetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
@@ -201,11 +201,19 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResFailBoostRECO;
       eventHistos m_eventsFailResPassBoostRECO;
 
+      eventHistos m_eventsPassResFailBoostRECO_mll300;
+      eventHistos m_eventsPassResFailBoostRECO_mll400;
+      eventHistos m_eventsPassResFailBoostRECO_mll500;
+
       eventHistos m_eventsPassResLowMassCRRECO;
       eventHistos m_eventsPassResZMASSRECO;
       eventHistos m_eventsPassResFSBRECO;
       eventHistos m_eventsPassResFSBLowMassCRRECO;
       eventHistos m_eventsPassJetSelection;
+
+      eventHistos m_eventsPassResFSBRECO_mll300;
+      eventHistos m_eventsPassResFSBRECO_mll400;
+      eventHistos m_eventsPassResFSBRECO_mll500;
 
       eventHistos m_eventsPassBoostFSBLowMassCRRECO;
       eventHistos m_eventsPassBoostFSBLowMassCRRECO_failBox;

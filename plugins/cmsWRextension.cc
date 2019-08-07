@@ -221,15 +221,15 @@ cmsWRextension::~cmsWRextension() {
 // ------------ method called for each event  ------------
 void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-/*  std::cout << "Beginning event analysis:" << std::endl;
+  std::cout << "Beginning event analysis:" << std::endl;
 
-  std::cout << "iEvent.luminosityBlock(): " << iEvent.luminosityBlock() << std::endl;
+/*  std::cout << "iEvent.luminosityBlock(): " << iEvent.luminosityBlock() << std::endl;
   std::cout << "iEvent.id().event(): " << iEvent.id().event() << std::endl;
 
-  if(iEvent.id().event()==9946613){
-    std::cout << "FOUND EVENT 9946613!!" << std::endl;
-    if(iEvent.luminosityBlock() == 52351){
-      std::cout << "FOUND LUMI 52351!!" << std::endl;
+  if(iEvent.id().event()==65119580){
+    std::cout << "FOUND EVENT 65119580!!" << std::endl;
+    if(iEvent.luminosityBlock() == 342735){
+      std::cout << "FOUND LUMI 342735!!" << std::endl;
     }
   }else{
     return;
@@ -307,6 +307,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   if (m_doTrig){
     if(m_isSignal){
       muonTrigPass = true;
+      myRECOevent.muonTrigPassBit = muonTrigPass;
     }else{
       muonTrigPass = passMuonTrig(iEvent, myRECOevent);
       myRECOevent.muonTrigPassBit = muonTrigPass;
@@ -876,7 +877,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
       setEventWeight_Resolved(iEvent, myRECOevent);
 
-      if(passesResRECOAllRegions[0]){
+      if(passesResRECOAllRegions[0] && myRECOevent.resolvedRECOmass > 800){
         m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 6);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 7);
@@ -934,7 +935,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
       setEventWeight_ResolvedFSB(iEvent, myRECOevent);
 
-      if(passesResFSBRECOAllRegions[0] && myRECOevent.resolvedFSBRECOmass > 800){
+      if(passesResFSBRECOAllRegions[0] && myRECOevent.subleadMuon_selElectronMass > 500){
         myRECOevent.ResFSBCutProgress++;
         std::cout << "PASSING FSB" << std::endl;
         m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
@@ -950,6 +951,18 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFSBRECO.fill(  myRECOevent, 17);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 18);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 19);
+	if(myRECOevent.subleadMuon_selElectronMass > 300){
+	  std::cout << "filling m_eventsPassResFSBRECO_mll300" << std::endl;
+          m_eventsPassResFSBRECO_mll300.fill(  myRECOevent, 1);
+	}
+        if(myRECOevent.subleadMuon_selElectronMass > 400){
+          std::cout << "filling m_eventsPassResFSBRECO_mll400" << std::endl;
+          m_eventsPassResFSBRECO_mll400.fill(  myRECOevent, 1);
+        }
+        if(myRECOevent.subleadMuon_selElectronMass > 500){
+          std::cout << "filling m_eventsPassResFSBRECO_mll500" << std::endl;
+          m_eventsPassResFSBRECO_mll500.fill(  myRECOevent, 1);
+        }
       }
       if(passesResFSBRECOAllRegions[1]){
         m_eventsPassResFSBRECO.fill(  myRECOevent, 24);
@@ -997,7 +1010,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
       setEventWeight_Resolved(iEvent, myRECOevent);
 
-      if(passesResRECOAllRegions[0] && myRECOevent.resolvedRECOmass > 800){
+      if(passesResRECOAllRegions[0] && myRECOevent.subleadMuon_selMuonMass > 500){
         std::cout << "PASSING SR" << std::endl;
         myRECOevent.ResCutProgress++;
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 1);
@@ -1011,6 +1024,15 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 17);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 18);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 19);
+	if(myRECOevent.subleadMuon_selMuonMass > 300){
+	  m_eventsPassResFailBoostRECO_mll300.fill(myRECOevent, 1);
+	}
+	if(myRECOevent.subleadMuon_selMuonMass > 400){
+          m_eventsPassResFailBoostRECO_mll400.fill(myRECOevent, 1);
+        }
+        if(myRECOevent.subleadMuon_selMuonMass > 500){
+          m_eventsPassResFailBoostRECO_mll500.fill(myRECOevent, 1);
+        }
       }
       if(passesResRECOAllRegions[1]){
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 24);
@@ -1103,13 +1125,14 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         myRECOevent.Muon_Trig_Weight = Muon_Trig_Weights[0];
         myRECOevent.Muon_Trig_WeightUp = Muon_Trig_Weights[1];
         myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
+	std::cout << "Setting event weight for boosted SR" << std::endl;
         setEventWeight(iEvent, myRECOevent);
       }
       //Fill histograms individually
       std::cout << "myRECOevent.myAddJetCandsHighPt.size(): " << myRECOevent.myAddJetCandsHighPt.size() << "myRECOevent.myMuonCandsHighPt.size(): " << myRECOevent.myMuonCandsHighPt.size() << "myRECOevent.myMuonJetPairs.size(): " << myRECOevent.myMuonJetPairs.size() << "muonTrigPass: " << muonTrigPass << "addMuons: " << addMuons << "ZMASS_Nom: " << ZMASS_Nom << "myRECOevent.nHighPtMuonsOutsideJet: " << myRECOevent.nHighPtMuonsOutsideJet << std::endl;
       if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150){
 	myRECOevent.cutProgress++;
-        if(myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 > 0){
+        if(myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0){
         myRECOevent.cutProgress++;
 	if(!addElectrons){
         myRECOevent.cutProgress++;
@@ -1134,16 +1157,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	}
 	}
       }
-      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JECUp == 1 && !addElectrons_JECUp && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JECUp == 1 && !addElectrons_JECUp && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 2.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECDown.size() > 0 && muonTrigPass && addMuons_JECDown && ZMASS_JECDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JECDown == 1 && !addElectrons_JECDown && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECDown.size() > 0 && muonTrigPass && addMuons_JECDown && ZMASS_JECDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JECDown == 1 && !addElectrons_JECDown && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 3.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERUp.size() > 0 && muonTrigPass && addMuons_JERUp && ZMASS_JERUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JERUp == 1 && !addElectrons_JERUp && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERUp.size() > 0 && muonTrigPass && addMuons_JERUp && ZMASS_JERUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JERUp == 1 && !addElectrons_JERUp && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 4.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERDown.size() > 0 && muonTrigPass && addMuons_JERDown && ZMASS_JERDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JERDown == 1 && !addElectrons_JERDown && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERDown.size() > 0 && muonTrigPass && addMuons_JERDown && ZMASS_JERDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JERDown == 1 && !addElectrons_JERDown && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 5.);
       }
       ZMASS_Nom = 0;
@@ -1220,7 +1243,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         myRECOevent.Muon_Trig_WeightDown = Muon_Trig_Weights[2];
         setEventWeight(iEvent, myRECOevent);
       }
-      if(myRECOevent.myAddJetCandsHighPt_noLSF.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF.size() > 0 && muonTrigPass && addMuons && ZMASS_Nom==1 && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_noLSF.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF.size() > 0 && muonTrigPass && addMuons && ZMASS_Nom==1 && myRECOevent.electronCands200 == 0 && myRECOevent.leadAK8JetMuonMassVal > 800){
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 1);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 6.);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 7.);
@@ -1233,16 +1256,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 18.);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 19.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==1 && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==1 && myRECOevent.electronCands200 == 0){
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 2.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_noLSF_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECDown.size() > 0 && muonTrigPass && addMuons_JECDown && ZMASS_JECDown==1 && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_noLSF_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECDown.size() > 0 && muonTrigPass && addMuons_JECDown && ZMASS_JECDown==1 && myRECOevent.electronCands200 == 0){
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 3.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_noLSF_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JERUp.size() > 0 && muonTrigPass && addMuons_JERUp && ZMASS_JERUp==1 && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_noLSF_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JERUp.size() > 0 && muonTrigPass && addMuons_JERUp && ZMASS_JERUp==1 && myRECOevent.electronCands200 == 0){
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 4.);
       }
-      if(myRECOevent.myAddJetCandsHighPt_noLSF_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JERDown.size() > 0 && muonTrigPass && addMuons_JERDown && ZMASS_JERDown==1 && myRECOevent.electronCands200 > 0){
+      if(myRECOevent.myAddJetCandsHighPt_noLSF_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JERDown.size() > 0 && muonTrigPass && addMuons_JERDown && ZMASS_JERDown==1 && myRECOevent.electronCands200 == 0){
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 5.);
       }
     }
@@ -1265,6 +1288,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       electronTrigPass = passElectronTrig(iEvent, myRECOevent);
       std::cout << "myRECOevent.myElectronJetPairs.size(): " << myRECOevent.myElectronJetPairs.size() << std::endl;
       if(myRECOevent.myElectronJetPairs.size() > 0){
+        myRECOevent.FSBcutProgress++;
 	if(additionalMuons(iEvent, myRECOevent, true, false, 0, true)){
 	  std::cout << "Passed additionalMuons" << std::endl;
 	  addMuons = true;
@@ -1322,7 +1346,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         myRECOevent.egamma_SF_Down = egamma_SF[2];
         setEventWeight_FSB(iEvent, myRECOevent);
       }
-      if(myRECOevent.myElectronJetPairs.size() > 0 && electronTrigPass && !ZMASS_FSB && addMuons && !addElectrons){
+      if(myRECOevent.myElectronJetPairs.size() > 0){
+	if(electronTrigPass){
+          myRECOevent.FSBcutProgress++;
+	  if(!ZMASS_FSB && addMuons && !addElectrons && myRECOevent.muonCands == 0){
+            myRECOevent.FSBcutProgress++;	  
+	    if(myRECOevent.leadAK8JetElectronMassVal > 800){
+              myRECOevent.FSBcutProgress++;
         std::cout << "doFast FILLING m_eventsPassBoostFSBRECO_all" << std::endl;
 	m_eventsPassBoostFSBRECO.fill(myRECOevent, 1);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 6);
@@ -1331,6 +1361,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 11);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 12);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 13);
+	    }
+	  }
+        }
       }
       if(myRECOevent.myElectronJetPairs_JECUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JECUp && addMuons_JECUp && !addElectrons_JECUp){
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 2);
@@ -1458,11 +1491,15 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
         myEvent.weight = eventInfo->weight()*myEvent.puWeight;
         std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
         myEvent.count = 1;
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;      }
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;
+        std::cout << "myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << " myEvent.Muon_LooseID_Weight: " << myEvent.Muon_LooseID_Weight << " myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << " myEvent.Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << " myEvent._prefiringweight: " << myEvent._prefiringweight << " myEvent.weight: " << myEvent.weight << " myEvent.puWeight: " << myEvent.puWeight << " eventInfo->weight(): " << eventInfo->weight() << std::endl;
+      }
       else {
         myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;      }
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight;
+	std::cout << "myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << "myEvent.Muon_LooseID_Weight: " << myEvent.Muon_LooseID_Weight << "myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << "myEvent.Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << "myEvent._prefiringweight: " << myEvent._prefiringweight << "myEvent.weight: " << myEvent.weight << std::endl;
+      }
       if(m_foundZ) myEvent.weight = myEvent.weight * getZweight(iEvent, myEvent);
   } else {
       myEvent.weight = 1;
@@ -1629,16 +1666,37 @@ bool cmsWRextension::passMuonTrig(const edm::Event& iEvent, eventBits& myRECOeve
 }
 bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits& myRECOevent) {
 
+  /*if (myRECOevent.myResCandJets.size() == 1 && myRECOevent.resolvedANAMuons.size() > 0){
+    double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[0]->eta(),myRECOevent.myResCandJets[0]->eta,myRECOevent.resolvedANAMuons[0]->phi(),myRECOevent.myResCandJets[0]->phi));
+    std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
+    if (dR_jet1_muon2 > 0.4) return false;
+  }else*/ if(myRECOevent.myResFSBCandJets.size() > 1 && myRECOevent.nResFSBMuons > 0){
+    double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resFSBMuon->eta(),myRECOevent.myResFSBCandJets[0]->eta,myRECOevent.resFSBMuon->phi(),myRECOevent.myResFSBCandJets[0]->phi));
+    double dR_jet2_muon2 = sqrt(::wrTools::dR2(myRECOevent.resFSBMuon->eta(),myRECOevent.myResFSBCandJets[1]->eta,myRECOevent.resFSBMuon->phi(),myRECOevent.myResFSBCandJets[1]->phi));
+    std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
+    std::cout << "dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
+    if (dR_jet1_muon2 > 0.4 && dR_jet2_muon2 > 0.4) return false;
+  }
+  myRECOevent.FSBcutProgress++;
+  jetSelection(iEvent, myRECOevent);
+  electronSelection(iEvent, myRECOevent);
+  std::cout << "done with electronSelection" <<std::endl;
+
+
   if( (myRECOevent.myAddJetCandsHighPt.size() < 1) && myRECOevent.myAddJetCandsHighPt_JECUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_JECDown.size() < 1 && myRECOevent.myAddJetCandsHighPt_JERUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_JERDown.size() < 1) {
 //  if( (myRECOevent.myAddJetCandsHighPt_noLSF.size() < 1) && myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_noLSF_JECDown.size() < 1 && myRECOevent.myAddJetCandsHighPt_noLSF_JERUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_noLSF_JERDown.size() < 1) {
     return false;
   }
-  myRECOevent.FSBcutProgress++;
 
-  if(myRECOevent.muonCands > 0){
+//Removed for cutFlow study
+/*  if(myRECOevent.muonCands > 0){
     std::cout << "TOO MANY BOOSTED MUONS IN FSB EVENT" << std::endl;
     return false;
-  }
+  }*/
+
+  if(myRECOevent.myElectronCandsHighPt200.size() == 0) return false;
+
+  if(myRECOevent.myElectronCand->pt() < 60) return false;
 
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_JECUp;
@@ -1646,15 +1704,18 @@ bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_JERUp;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> electronJetPairs_JERDown;
   if( myRECOevent.myElectronCandsHighPt200.size() > 0 ){
-    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
-       if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
+    if(myRECOevent.myAddJetCandsHighPt.size() > 0){
+//    for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt.begin(); iJet != myRECOevent.myAddJetCandsHighPt.end(); iJet++) {
+       const baconhep::TAddJet* iJet = myRECOevent.myAddJetCandsHighPt.front();    
+       if(fabs(reco::deltaPhi((iJet)->phi, myRECOevent.myElectronCand->phi())) > 2.0 ){// continue;
 
        TLorentzVector* jetVec_temp = new TLorentzVector();
-       jetVec_temp->SetPtEtaPhiE( (*iJet)->pT, (*iJet)->eta, (*iJet)->phi, (*iJet)->E );
+       jetVec_temp->SetPtEtaPhiE( (iJet)->pT, (iJet)->eta, (iJet)->phi, (iJet)->E );
 
        math::XYZTLorentzVector jetVec;
        jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
-       electronJetPairs.push_back(std::make_pair( (*iJet) , myRECOevent.myElectronCand ));
+       electronJetPairs.push_back(std::make_pair( (iJet) , myRECOevent.myElectronCand ));
+       }
     }
     for(std::vector<const baconhep::TAddJet*>::const_iterator iJet = myRECOevent.myAddJetCandsHighPt_JECUp.begin(); iJet != myRECOevent.myAddJetCandsHighPt_JECUp.end(); iJet++) {
        if(fabs(reco::deltaPhi((*iJet)->phi, myRECOevent.myElectronCand->phi())) < 2.0 ) continue;
@@ -1720,10 +1781,10 @@ bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits
     jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
 
     auto corrP4  = electronJetPairs[0].second->p4();
-    if(m_isMC && m_era == "2016"){
+/*    if(m_isMC && m_era == "2016"){
       auto corrP4  = electronJetPairs[0].second->p4()*electronJetPairs[0].second->userFloat("ecalTrkEnergyPostCorr") / electronJetPairs[0].second->energy();
       myRECOevent.leadAK8JetElectronMassVal = ( jetVec + corrP4 ).mass();
-    }
+    }*/
 
     myRECOevent.leadAK8JetElectronMassVal = ( jetVec + corrP4 ).mass();
     myRECOevent.selectedElectronPt  = electronJetPairs[0].second->pt();
@@ -1739,10 +1800,10 @@ bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits
     jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
 
     auto corrP4  = electronJetPairs_JECUp[0].second->p4();
-    if(m_isMC && m_era == "2016"){
+/*    if(m_isMC && m_era == "2016"){
       auto corrP4  = electronJetPairs_JECUp[0].second->p4()*electronJetPairs_JECUp[0].second->userFloat("ecalTrkEnergyPostCorr") / electronJetPairs_JECUp[0].second->energy();
       myRECOevent.leadAK8JetElectronMassVal_JECUp = ( jetVec + corrP4 ).mass();
-    }
+    }*/
 
     myRECOevent.leadAK8JetElectronMassVal_JECUp = ( jetVec + corrP4 ).mass();
     myRECOevent.selectedElectronPt  = electronJetPairs_JECUp[0].second->pt();
@@ -1757,10 +1818,10 @@ bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits
     jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
 
     auto corrP4  = electronJetPairs_JECDown[0].second->p4();
-    if(m_isMC && m_era == "2016"){
+/*    if(m_isMC && m_era == "2016"){
       auto corrP4  = electronJetPairs_JECDown[0].second->p4()*electronJetPairs_JECDown[0].second->userFloat("ecalTrkEnergyPostCorr") / electronJetPairs_JECDown[0].second->energy();
       myRECOevent.leadAK8JetElectronMassVal_JECDown = ( jetVec + corrP4 ).mass();
-    }
+    }*/
 
     myRECOevent.leadAK8JetElectronMassVal_JECDown = ( jetVec + corrP4 ).mass();
     myRECOevent.selectedElectronPt  = electronJetPairs_JECDown[0].second->pt();
@@ -1775,10 +1836,10 @@ bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits
     jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
 
     auto corrP4  = electronJetPairs_JERUp[0].second->p4();
-    if(m_isMC && m_era == "2016"){
+/*    if(m_isMC && m_era == "2016"){
       auto corrP4  = electronJetPairs_JERUp[0].second->p4()*electronJetPairs_JERUp[0].second->userFloat("ecalTrkEnergyPostCorr") / electronJetPairs_JERUp[0].second->energy();
       myRECOevent.leadAK8JetElectronMassVal_JERUp = ( jetVec + corrP4 ).mass();
-    }
+    }*/
 
     myRECOevent.leadAK8JetElectronMassVal_JERUp = ( jetVec + corrP4 ).mass();
    myRECOevent.selectedElectronPt  = electronJetPairs_JERUp[0].second->pt();
@@ -1793,10 +1854,10 @@ bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits
     jetVec.SetXYZT(jetVec_temp->X(),jetVec_temp->Y(),jetVec_temp->Z(),jetVec_temp->T());
 
     auto corrP4  = electronJetPairs_JERDown[0].second->p4();
-    if(m_isMC && m_era == "2016"){
+/*    if(m_isMC && m_era == "2016"){
       auto corrP4  = electronJetPairs_JERDown[0].second->p4()*electronJetPairs_JERDown[0].second->userFloat("ecalTrkEnergyPostCorr") / electronJetPairs_JERDown[0].second->energy();
       myRECOevent.leadAK8JetElectronMassVal_JERDown = ( jetVec + corrP4 ).mass();
-    }
+    }*/
 
     myRECOevent.leadAK8JetElectronMassVal_JERDown = ( jetVec + corrP4 ).mass();
     myRECOevent.selectedElectronPt  = electronJetPairs_JERDown[0].second->pt();
@@ -1888,10 +1949,10 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     jetVec.SetXYZT(jetVec_temp.X(),jetVec_temp.Y(),jetVec_temp.Z(),jetVec_temp.T());
 
     auto corrP4  = electronJetPairs[0].second->p4();
-    if(m_isMC && m_era == "2016"){
+/*    if(m_isMC && m_era == "2016"){
       auto corrP4  = electronJetPairs[0].second->p4()*electronJetPairs[0].second->userFloat("ecalTrkEnergyPostCorr") / electronJetPairs[0].second->energy();
       myRECOevent.leadAK8JetElectronMassVal = ( jetVec + corrP4 ).mass();
-    }
+    }*/
 
     myRECOevent.leadAK8JetElectronMassVal = ( jetVec + corrP4 ).mass();
 
@@ -2064,7 +2125,7 @@ bool cmsWRextension::preSelectBoostReco(const edm::Event& iEvent, const edm::Eve
   std::cout << "beginning preselection" << std::endl;
   muonSelection(iEvent, myRECOevent);
   electronSelection(iEvent, myRECOevent);
-  jetSelection(iEvent, iSetup, myRECOevent);
+  jetSelection(iEvent, myRECOevent);
 //  additionalElectrons(iEvent, myRECOevent, true, 0);
 
   if (myRECOevent.myMuonCand == NULL) { return false; }
@@ -2078,6 +2139,7 @@ bool cmsWRextension::preSelectBoostReco(const edm::Event& iEvent, const edm::Eve
     std::cout<< "EVENT FAILS, NO MUONS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myMuonCandsHighPt.size()<<" MUONS FOUND." << std::endl;
     return false;
   }
+  if(myRECOevent.myMuonCandsHighPt[0]->tunePMuonBestTrack()->pt() < 60) return false;
   myRECOevent.cutProgress++;
   //BUILD PAIRS OF AK8 JETS WITH THE LEAD MUON
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>> muonJetPairs;
@@ -2128,22 +2190,35 @@ bool cmsWRextension::preSelectBoostReco(const edm::Event& iEvent, const edm::Eve
 }
 bool cmsWRextension::preSelectReco_Fast(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myRECOevent) {
   std::cout << "starting preSelectReco_Fast" << std::endl;
-  if (myRECOevent.myResCandJets.size() == 1 && myRECOevent.resolvedANAMuons.size() > 1){
+  if(myRECOevent.myResCandJets.size() > 0){
+    std::cout << "WE HAVE ENOUGH RES CAND JETS" << std::endl;
+  }
+  if(myRECOevent.resolvedANAMuons.size() > 1){
+    std::cout << "WE JAVE ENOUGH resolved Muons" << std::endl;
+  }
+  /*if (myRECOevent.myResCandJets.size() == 1 && myRECOevent.resolvedANAMuons.size() > 1){
     double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[0]->eta,myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[0]->phi));
+    std::cout << "RES MUON1 with pT, eta, phi: " << myRECOevent.resolvedANAMuons[0]->pt() << "," << myRECOevent.resolvedANAMuons[0]->eta() << "," << myRECOevent.resolvedANAMuons[0]->phi() << std::endl;
+    std::cout << "RES MUON2 with pT, eta, phi: " << myRECOevent.resolvedANAMuons[1]->pt() << "," << myRECOevent.resolvedANAMuons[1]->eta() << "," << myRECOevent.resolvedANAMuons[1]->phi() << std::endl;
+    std::cout << "RES JET1 with pT, eta, phi: " << myRECOevent.myResCandJets[0]->pT << "," << myRECOevent.myResCandJets[0]->eta << "," << myRECOevent.myResCandJets[0]->phi << std::endl;    
     std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
     if (dR_jet1_muon2 > 0.4) return false;
-  }else if(myRECOevent.myResCandJets.size() > 1 && myRECOevent.resolvedANAMuons.size() > 1){
+  }else*/ if(myRECOevent.myResCandJets.size() > 1 && myRECOevent.resolvedANAMuons.size() > 1){
     double dR_jet1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[0]->eta,myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[0]->phi));
     double dR_jet2_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.myResCandJets[1]->eta,myRECOevent.resolvedANAMuons[1]->phi(),myRECOevent.myResCandJets[1]->phi));
+    double dR_jet1_muon1 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[0]->eta(),myRECOevent.myResCandJets[0]->eta,myRECOevent.resolvedANAMuons[0]->phi(),myRECOevent.myResCandJets[0]->phi));
+    double dR_jet2_muon1 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[0]->eta(),myRECOevent.myResCandJets[1]->eta,myRECOevent.resolvedANAMuons[0]->phi(),myRECOevent.myResCandJets[1]->phi));
+    double dR_jet1_jet2 = sqrt(::wrTools::dR2(myRECOevent.myResCandJets[0]->eta,myRECOevent.myResCandJets[1]->eta,myRECOevent.myResCandJets[0]->phi,myRECOevent.myResCandJets[1]->phi));
+    double dR_muon1_muon2 = sqrt(::wrTools::dR2(myRECOevent.resolvedANAMuons[0]->eta(),myRECOevent.resolvedANAMuons[1]->eta(),myRECOevent.resolvedANAMuons[0]->phi(),myRECOevent.resolvedANAMuons[1]->phi()));
     std::cout << "dR_jet1_muon2: " << dR_jet1_muon2 << std::endl;
     std::cout << "dR_jet2_muon2: " << dR_jet2_muon2 << std::endl;
-    if (dR_jet1_muon2 > 0.4 && dR_jet2_muon2 > 0.4) return false;
+    if (dR_jet1_muon2 > 0.4 && dR_jet2_muon2 > 0.4 && dR_jet1_muon1 > 0.4 && dR_jet2_muon1 > 0.4 && dR_jet1_jet2 > 0.4 && dR_muon1_muon2 > 0.4) return false;
   }
   myRECOevent.cutProgress++;
 
   muonSelection(iEvent, myRECOevent);
   electronSelection(iEvent, myRECOevent);
-  jetSelection(iEvent, iSetup, myRECOevent);
+  jetSelection(iEvent, myRECOevent);
 
 
   if( (myRECOevent.myAddJetCandsHighPt.size() < 1) && myRECOevent.myAddJetCandsHighPt_JECUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_JECDown.size() < 1 && myRECOevent.myAddJetCandsHighPt_JERUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_JERDown.size() < 1 && (myRECOevent.myAddJetCandsHighPt_noLSF.size() < 1) && myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_noLSF_JECDown.size() < 1 && myRECOevent.myAddJetCandsHighPt_noLSF_JERUp.size() < 1 && myRECOevent.myAddJetCandsHighPt_noLSF_JERDown.size() < 1) {
@@ -2155,6 +2230,7 @@ bool cmsWRextension::preSelectReco_Fast(const edm::Event& iEvent, const edm::Eve
     std::cout<< "EVENT FAILS, NO MUONS OVER 200 GEV WITHIN ACCEPTANCE. "<<myRECOevent.myMuonCandsHighPt.size()<<" MUONS FOUND." << std::endl;
     return false;
   }
+  if(myRECOevent.myMuonCandsHighPt[0]->tunePMuonBestTrack()->pt() < 60) return false;
 //  myRECOevent.cutProgress++;
   //BUILD PAIRS OF AK8 JETS WITH THE LEAD MUON
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Muon*>> muonJetPairs;
@@ -2501,14 +2577,14 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband(const edm::Event& iEvent
   if ( selEl       == NULL ) return false;
 
   auto corrP4  = selEl->p4();
-  if(m_isMC && m_era == "2016"){
+/*  if(m_isMC && m_era == "2016"){
     auto corrP4  = selEl->p4()*selEl->userFloat("ecalTrkEnergyPostCorr") / selEl->energy();  
-    double subleadMuon_selElectronMass = (subleadMuon->p4()*leadMuScale + corrP4).mass();
-  }
+    myEvent.subleadMuon_selElectronMass = (subleadMuon->p4()*leadMuScale + corrP4).mass();
+  }*/
 
-  double subleadMuon_selElectronMass = (subleadMuon->p4()*leadMuScale + corrP4).mass();
+  myEvent.subleadMuon_selElectronMass = (subleadMuon->p4()*leadMuScale + corrP4).mass();
 
-  if(subleadMuon_selElectronMass < 200)  return true;
+  if(myEvent.subleadMuon_selElectronMass < 200)  return true;
 
 
   return false;
@@ -2521,10 +2597,10 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_Nominal(const edm::Event
   selEl   = myEvent.myElectronCand;
 
   auto corrP4  = selEl->p4();
-  if(m_isMC && m_era == "2016"){
+/*  if(m_isMC && m_era == "2016"){
     auto corrP4  = selEl->p4()*selEl->userFloat("ecalTrkEnergyPostCorr") / selEl->energy();
     double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
-  }
+  }*/
 
 
   double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
@@ -2543,10 +2619,10 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECUp(const edm::Event& 
   selEl   = myEvent.myElectronCand;
 
   auto corrP4  = selEl->p4();
-  if(m_isMC && m_era == "2016"){
+/*  if(m_isMC && m_era == "2016"){
     auto corrP4  = selEl->p4()*selEl->userFloat("ecalTrkEnergyPostCorr") / selEl->energy();
     double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
-  }
+  }*/
 
   double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
 
@@ -2564,10 +2640,10 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JECDown(const edm::Event
   selEl   = myEvent.myElectronCand;
 
   auto corrP4  = selEl->p4();
-  if(m_isMC && m_era == "2016"){
+/*  if(m_isMC && m_era == "2016"){
     auto corrP4  = selEl->p4()*selEl->userFloat("ecalTrkEnergyPostCorr") / selEl->energy();
     double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
-  }
+  }*/
 
   double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
 
@@ -2585,10 +2661,10 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERUp(const edm::Event& 
   selEl   = myEvent.myElectronCand;
 
   auto corrP4  = selEl->p4();
-  if(m_isMC && m_era == "2016"){
+/*  if(m_isMC && m_era == "2016"){
     auto corrP4  = selEl->p4()*selEl->userFloat("ecalTrkEnergyPostCorr") / selEl->energy();
     double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
-  }
+  }*/
 
   double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
 
@@ -2606,10 +2682,10 @@ bool cmsWRextension::subLeadingMuonZMass_FlavorSideband_JERDown(const edm::Event
   selEl   = myEvent.myElectronCand;
 
   auto corrP4  = selEl->p4();
-  if(m_isMC && m_era == "2016"){
+/*  if(m_isMC && m_era == "2016"){
     auto corrP4  = selEl->p4()*selEl->userFloat("ecalTrkEnergyPostCorr") / selEl->energy();
     double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
-  }
+  }*/
 
   double subleadMuon_selElectronMass = (subleadMuon->p4()*myEvent.secondBoostMuonScale[0] + corrP4).mass();
 
@@ -2670,7 +2746,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
   std::vector<const pat::Muon*> allMuons;
 
   for(std::vector<pat::Muon>::const_iterator iMuon = regMuons->begin(); iMuon != regMuons->end(); iMuon++) {
-    if ( iMuon->pt() < 50 || fabs(iMuon->eta()) > 2.4) continue;  //10 GeV is designed to capture slow muons from Z->MUMU
+    if ( iMuon->pt() < 53 || fabs(iMuon->eta()) > 2.4) continue;  //10 GeV is designed to capture slow muons from Z->MUMU
     if ( ! iMuon->isLooseMuon() ) continue;  //Loose MuonID
     std::cout << "Additional Muon passes Loose ID" << std::endl;
     std::cout << "additional Muon pT: " << iMuon->pt() << std::endl;
@@ -2758,7 +2834,12 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
         //double dPhi = fabs(::wrTools::dPhi(jetPhi, muPhi));
         double dR = sqrt(::wrTools::dR2(jetEta, muEta, jetPhi, muPhi));
 
-        if(abs(dR) > 0.8) continue;
+        if(abs(dR) > 0.8){
+	  const pat::Muon* selMuon     = myEvent.myMuonCand;
+          double subleadMuon_selMuonMass = (iMuon->p4() + selMuon->p4()).mass();
+          if(subleadMuon_selMuonMass < 150 && subleadMuon_selMuonMass > 60)return false;
+	  continue;
+	}
 
       }
     }
@@ -2784,6 +2865,7 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
     }
   }else{
   //IF WE HAVE ADDITION MUONS, WE SHOULD SEE WHICH IS THE LEADING MUON WHICH ISN'T THE MAIN CANDIDATE
+   if(ZPeak==false){
     for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
       if(sqrt(::wrTools::dR2((*iMuon)->eta(),(myEvent.myMuonCand)->eta(),(*iMuon)->phi(),(myEvent.myMuonCand)->phi())) > 0.02) {
         myEvent.mySubleadMuon = *iMuon;
@@ -2820,6 +2902,46 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
         break;
       }
     }
+   }else{
+    for(std::vector<const pat::Muon*>::iterator iMuon = myEvent.myMuonCands.begin(); iMuon != myEvent.myMuonCands.end(); iMuon++) {
+      if(sqrt(::wrTools::dR2((*iMuon)->eta(),(myEvent.myMuonCand)->eta(),(*iMuon)->phi(),(myEvent.myMuonCand)->phi())) > 0.02) {
+        const pat::Muon* selMuon     = myEvent.myMuonCand;
+        double subleadMuon_selMuonMass = ((*iMuon)->p4() + selMuon->p4()).mass();
+	if(subleadMuon_selMuonMass > 150 || subleadMuon_selMuonMass < 60)continue;
+        myEvent.mySubleadMuon = *iMuon;
+        if(ZPeak==false){
+          double muPhi  = myEvent.mySubleadMuon->phi();
+          double muEta  = myEvent.mySubleadMuon->eta();
+          double jetPhi = 0;
+          double jetEta = 0;
+          if(JetCorrectionRegion == 0){
+            jetPhi = myEvent.myMuonJetPairs[0].first->phi;
+            jetEta = myEvent.myMuonJetPairs[0].first->eta;
+          }else if(JetCorrectionRegion == 1){
+            jetPhi = myEvent.myMuonJetPairs_JECUp[0].first->phi;
+            jetEta = myEvent.myMuonJetPairs_JECUp[0].first->eta;
+          }else if(JetCorrectionRegion == 2){
+            jetPhi = myEvent.myMuonJetPairs_JECDown[0].first->phi;
+            jetEta = myEvent.myMuonJetPairs_JECDown[0].first->eta;
+          }else if(JetCorrectionRegion == 3){
+            jetPhi = myEvent.myMuonJetPairs_JERUp[0].first->phi;
+            jetEta = myEvent.myMuonJetPairs_JERUp[0].first->eta;
+          }else if(JetCorrectionRegion == 4){
+            jetPhi = myEvent.myMuonJetPairs_JERDown[0].first->phi;
+            jetEta = myEvent.myMuonJetPairs_JERDown[0].first->eta;
+          }
+          double dR = sqrt( ::wrTools::dR2( jetEta, muEta, jetPhi, muPhi));
+
+          myEvent.secondRECOMuonRECOjetDR = dR;
+        }
+        if (m_doGen) {
+          if(myEvent.genSecondMuon != NULL)
+            myEvent.dRmuon2 = sqrt(deltaR2(*(myEvent.mySubleadMuon),*(myEvent.genSecondMuon)));
+        }
+        break;
+      }
+    }
+   }
   }
 
 //Study of 3-object invariant mass
@@ -3007,6 +3129,7 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
 
   myEvent.NresolvedANAFSBLeptonCands = resElecs.size() + resMus.size();
 
+  myEvent.nResFSBMuons = resMus.size();
   //CHECK THAT AT LEAST ONE IS ABOVE 60 GEV
   
   if( (leadElec->pt() < 60) && (leadMuon->tunePMuonBestTrack()->pt()*myEvent.leadFSBMuonScale[0] < 60) ) return false;
@@ -3034,7 +3157,7 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
 
    if( fabs(iMuon->eta()) > 2.4) continue;
-   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53)){ // && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
+   if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > 53) && (iMuon->isolationR03().sumPt/iMuon->pt() < 0.1)) {      //2017
       std::cout<<"RES LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
       std::cout<<"RES LEPTON CAND WITH Iso: " << iMuon->isolationR03().sumPt/iMuon->pt() << std::endl;
      
@@ -3175,7 +3298,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
         myEvent.nAdditionalHEEP++;
       }
 
-      if (iElec->pt() >= 60){
+      if (iElec->pt() >= 53){
 	std::cout << "iElec->pt(): " << iElec->pt() << std::endl;
         highPTelectrons200.push_back(&(*iElec));
       }
@@ -3186,6 +3309,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
   //COLLECT MUONS INTO HIGHPT AND ALLPT WITHIN ACCEPTANCE
   //USE THIS FOR LEPTON VETOES
   myEvent.electronCands200 = highPTelectrons200.size();
+  std::cout << "check #1" << std::endl;
   //UP HERE /\ //
   if (myEvent.electronCands200 > 0) {
     std::sort(highPTelectrons200.begin(),highPTelectrons200.end(),::wrTools::compareEtCandidatePointer); 
@@ -3216,12 +3340,12 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   
   for(std::vector<pat::Muon>::const_iterator iMuon = highMuons->begin(); iMuon != highMuons->end(); iMuon++) {
     std::cout << "Looping through muons" << std::endl;
-    if( iMuon->pt() < 40 || fabs(iMuon->eta()) > 2.4 ) continue; //preliminary pt cut to speed the loop, and the eta cut
+    if( iMuon->tunePMuonBestTrack()->pt() < 53 || fabs(iMuon->eta()) > 2.4 ) continue; //preliminary pt cut to speed the loop, and the eta cut
 //    if(m_doTrig) {
 //      std::cout << "Checking Filter" << std::endl;
 //      if (! ::wrTools::checkFilters(iMuon->eta(),iMuon->phi(),*trigObjsHandle,m_muonFiltersToPass) ) continue;      
 //    }
-    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > m_highPTleptonCut) && (iMuon->isolationR03().sumPt/iMuon->pt() <= .05)) {
+    if(( iMuon->isHighPtMuon(*myEvent.PVertex) && iMuon->tunePMuonBestTrack()->pt() > m_highPTleptonCut) && (iMuon->isolationR03().sumPt/iMuon->pt() < .1)) {
       std::cout<<"LEPTON CAND WITH PT,ETA,PHI: "<<iMuon->pt()<<","<<iMuon->eta()<<","<<iMuon->phi()<<std::endl;
      
       highPTMuons.push_back(&(*iMuon));
@@ -3316,10 +3440,10 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 	}
   }
 
-  if (myEvent.resolvedANAMuons.size() < 2) {
+/*  if (myEvent.resolvedANAMuons.size() < 2) {
     std::cout << "NOT ENOUGH MUONS, EXITING RESOLVED JET SELECTION" << std::endl;
     return false;
-  }
+  }*/
   double NHF  =                0.;
   double NEMF =                0.;
   double CHF  =                0.;
@@ -3403,7 +3527,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     jetEJERDown = iJet->energy()*jetEnergySmearFactorDown;
 
 
-    if(jetCorrPtSmear > 40){
+    if(jetCorrPtSmear > 100){
       baconhep::TAddJet* pAddJet = new baconhep::TAddJet();
 
       pAddJet->pT   = jetCorrPtSmear;
@@ -3415,7 +3539,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
       std::cout<<"RES JET CAND WITH PT,ETA,PHI: "<<iJet->pt()<<","<<iJet->eta()<<","<<iJet->phi()<<std::endl;
 
     }
-    if(jetPtJESUp > 40){
+    if(jetPtJESUp > 100){
       baconhep::TAddJet* pAddJet_JECUp = new baconhep::TAddJet();
 
       pAddJet_JECUp->pT = jetPtJESUp;
@@ -3425,7 +3549,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 
       resCandJets_JECUp.push_back(pAddJet_JECUp);
     }
-    if(jetPtJESDown > 40){
+    if(jetPtJESDown > 100){
       baconhep::TAddJet* pAddJet_JECDown = new baconhep::TAddJet();
 
       pAddJet_JECDown->pT = jetPtJESDown;
@@ -3435,7 +3559,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 
       resCandJets_JECDown.push_back(pAddJet_JECDown);
     }
-    if(jetPtJERUp > 40){
+    if(jetPtJERUp > 100){
       baconhep::TAddJet* pAddJet_JERUp = new baconhep::TAddJet();
 
       pAddJet_JERUp->pT = jetPtJERUp;
@@ -3445,7 +3569,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 
       resCandJets_JERUp.push_back(pAddJet_JERUp);
     }
-    if(jetPtJERDown > 40){
+    if(jetPtJERDown > 100){
       baconhep::TAddJet* pAddJet_JERDown = new baconhep::TAddJet();
 
       pAddJet_JERDown->pT = jetPtJERDown;
@@ -3586,7 +3710,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
     double jetEJERDown = iJet->energy()*jetEnergySmearFactorDown;
 
 
-    if(jetCorrPtSmear > 40){
+    if(jetCorrPtSmear > 100){
       baconhep::TAddJet* pAddJet = new baconhep::TAddJet();
 
       pAddJet->pT   = jetCorrPtSmear;
@@ -3600,7 +3724,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
       std::cout <<"sf: " << sf << " sigma_MC: " << sigma_MC << " x1: " << x1 << std::endl;
 
     }
-    if(jetPtJESUp > 40){
+    if(jetPtJESUp > 100){
       baconhep::TAddJet* pAddJet_JECUp = new baconhep::TAddJet();
 
       pAddJet_JECUp->pT = jetPtJESUp;
@@ -3610,7 +3734,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
 
       resCandJets_JECUp.push_back(pAddJet_JECUp);
     }
-    if(jetPtJESDown > 40){
+    if(jetPtJESDown > 100){
       baconhep::TAddJet* pAddJet_JECDown = new baconhep::TAddJet();
 
       pAddJet_JECDown->pT = jetPtJESDown;
@@ -3620,7 +3744,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
 
       resCandJets_JECDown.push_back(pAddJet_JECDown);
     }
-    if(jetPtJERUp > 40){
+    if(jetPtJERUp > 100){
       baconhep::TAddJet* pAddJet_JERUp = new baconhep::TAddJet();
 
       pAddJet_JERUp->pT = jetPtJERUp;
@@ -3630,7 +3754,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
 
       resCandJets_JERUp.push_back(pAddJet_JERUp);
     }
-    if(jetPtJERDown > 40){
+    if(jetPtJERDown > 100){
       baconhep::TAddJet* pAddJet_JERDown = new baconhep::TAddJet();
 
       pAddJet_JERDown->pT = jetPtJERDown;
@@ -3652,7 +3776,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
   return true;
 
 }
-bool cmsWRextension::jetSelection(const edm::Event& iEvent, const edm::EventSetup &iSetup, eventBits& myEvent) {
+bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent) {
    
 //  if (myEvent.genSecondMuon == NULL) { return false; }
 
@@ -5076,10 +5200,10 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 bool cmsWRextension::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES SELECTION CALL" << std::endl;
   std::cout << "RES LEPTON SELECTION CALL" << std::endl;
-  if ( !resolvedMuonSelection(iEvent, myEvent) ) return false;
+  if ( !resolvedMuonSelection(iEvent, myEvent) || !resolvedJetSelection(iEvent, myEvent) ) return false;
   resolvedElectronSelection(iEvent, myEvent);
   std::cout << "RES JET SELECTION CALL" << std::endl;
-  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
+//  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
 
   if (myEvent.myResCandJets.size() < 2) {
     return false;
@@ -5184,7 +5308,10 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 
   resolvedElectronSelection(iEvent, myEvent);
 
-  if ( !resolvedMuonSelection(iEvent, myEvent) ) return FalseReturn;
+  std::cout << "RES JET SELECTION CALL" << std::endl;
+  if ( !resolvedJetSelection(iEvent, myEvent) || !resolvedMuonSelection(iEvent, myEvent) )  return FalseReturn;
+
+//  if ( !resolvedMuonSelection(iEvent, myEvent) ) return FalseReturn;
 
   std::cout << "subleading Muon pT" << std::endl;
   if (myEvent.resolvedANAMuons[1]->tunePMuonBestTrack()->pt()*myEvent.secondResMuonScale[0] < 53) return FalseReturn;
@@ -5194,15 +5321,15 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
   if (myEvent.resolvedANAMuons[1]->isolationR03().sumPt/myEvent.resolvedANAMuons[1]->pt() > 0.1) return FalseReturn;
   myEvent.ResCutProgress++;
 
+  std::cout << "checking additional leptons" << std::endl;
   if(myEvent.NresolvedANAElectronCands > 0 ||myEvent.NresolvedANAMuonCands > 2) return FalseReturn;
   myEvent.ResCutProgress++;
 
+  std::cout << "checking triggers" << std::endl;
   if(!myEvent.muonTrigPassBit) return FalseReturn;
   myEvent.ResCutProgress++;
   
-  std::cout << "RES JET SELECTION CALL" << std::endl;
-  if ( !resolvedJetSelection(iEvent, myEvent) )  return FalseReturn;
-
+  std::cout << "checking number of jets" << std::endl;
   if (myEvent.myResCandJets.size() < 2 && myEvent.myResCandJets_JECUp.size() < 2 && myEvent.myResCandJets_JECDown.size() < 2 && myEvent.myResCandJets_JERUp.size() < 2 && myEvent.myResCandJets_JERDown.size() < 2) {
     return FalseReturn;
   } else {
@@ -5216,7 +5343,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
   std::cout << "dR between muons" << std::endl;
   double dR_pair = sqrt(::wrTools::dR2(myEvent.resolvedANAMuons[0]->eta(),myEvent.resolvedANAMuons[1]->eta(),myEvent.resolvedANAMuons[0]->phi(),myEvent.resolvedANAMuons[1]->phi()));
   std::cout << "Muons dR_pair: " << dR_pair << std::endl;
-//  if (dR_pair < 0.4) return FalseReturn;
+  if (dR_pair < 0.4) return FalseReturn;
 
   std::cout << "RES OBJECT SELECTIONS PASSED" << std::endl;
   const pat::Muon* mu1 =  myEvent.resolvedANAMuons[0];
@@ -5224,7 +5351,7 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 
   double mll = (mu1->p4()*myEvent.leadResMuonScale[0]+mu2->p4()*myEvent.secondResMuonScale[0]).mass();
   myEvent.resMLL = mll;
-//  if (mll < 200) return FalseReturn;  // 2017
+//  if (mll < 200) return FalseReturn;  // Applied later on - only here for cutflow studies
 
 
   if(myEvent.myResCandJets.size() > 1){
@@ -5237,19 +5364,19 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
     double dR_pair11 = sqrt(::wrTools::dR2(mu1->eta(),myEvent.myResCandJets[0]->eta,mu1->phi(),myEvent.myResCandJets[0]->phi));
     double dR_Jetpair11 = sqrt(::wrTools::dR2(myEvent.myResCandJets[0]->eta,myEvent.myResCandJets[1]->eta,myEvent.myResCandJets[0]->phi,myEvent.myResCandJets[1]->phi));
 
-    if (dR_pair12 < 0.4) return FalseReturn; 
+/*    if (dR_pair12 < 0.4) return FalseReturn; 
     if (dR_pair21 < 0.4) return FalseReturn; 
     if (dR_pair22 < 0.4) return FalseReturn; 
-    if (dR_pair11 < 0.4) return FalseReturn;
-/*    if (dR_pair12 < 0.4) nominalPass = false;
+    if (dR_pair11 < 0.4) return FalseReturn;*/
+    if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
-    if (dR_pair11 < 0.4) nominalPass = false;*/
+    if (dR_pair11 < 0.4) nominalPass = false;
     myEvent.ResCutProgress++;
 
-//    if (dR_Jetpair11 < 0.4) nominalPass = false;
-    if (dR_Jetpair11 < 0.4) return FalseReturn;
-    if (dR_pair < 0.4) return FalseReturn;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
+//    if (dR_Jetpair11 < 0.4) return FalseReturn;
+//    if (dR_pair < 0.4) return FalseReturn;
 
     myEvent.ResCutProgress++;
 
@@ -5431,9 +5558,9 @@ std::vector<bool> cmsWRextension::passResRECO_Fast(const edm::Event& iEvent, eve
 bool cmsWRextension::passFSBResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES FSB SELECTION CALL" << std::endl;
   std::cout << "RES FSB LEPTON SELECTION CALL" << std::endl;
-  if ( !resolvedFSBleptonSelection(iEvent, myEvent) ) return false;
+  if ( !resolvedFSBleptonSelection(iEvent, myEvent) || !resolvedFSBJetSelection(iEvent, myEvent)) return false;
   std::cout << "RES FSB JET SELECTION CALL" << std::endl;
-  if ( !resolvedFSBJetSelection(iEvent, myEvent) )  return false;
+//  if ( !resolvedFSBJetSelection(iEvent, myEvent) )  return false;
 
   if (myEvent.myResFSBCandJets.size() < 2) {
     return false;
@@ -5544,7 +5671,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
   std::vector<bool> EachRegionReturn;
   myEvent.ResFSBCutProgress++;
 
-  if ( !resolvedFSBleptonSelection(iEvent, myEvent) ) return FalseReturn;
+  if ( !resolvedFSBleptonSelection(iEvent, myEvent) || !resolvedFSBJetSelection(iEvent, myEvent)) return FalseReturn;
 
   if(myEvent.NresolvedANAFSBLeptonCands != 2) return FalseReturn;
   myEvent.ResFSBCutProgress++;
@@ -5553,7 +5680,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
   myEvent.ResFSBCutProgress++;
 
   std::cout << "RES FSB JET SELECTION CALL" << std::endl;
-  if ( !resolvedFSBJetSelection(iEvent, myEvent) )  return FalseReturn;
+//  if ( !resolvedFSBJetSelection(iEvent, myEvent) )  return FalseReturn;
 
   if (myEvent.myResFSBCandJets.size() < 2 && myEvent.myResFSBCandJets_JECUp.size() < 2 && myEvent.myResFSBCandJets_JECDown.size() < 2 && myEvent.myResFSBCandJets_JERUp.size() < 2 && myEvent.myResFSBCandJets_JERDown.size() < 2) {
     return FalseReturn;
@@ -5566,7 +5693,7 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
   }
 
   double dR_pair = sqrt(::wrTools::dR2(myEvent.resFSBMuon->eta(),myEvent.resFSBElec->eta(),myEvent.resFSBMuon->phi(),myEvent.resFSBElec->phi()));
-//  if (dR_pair < 0.4) return FalseReturn;
+  if (dR_pair < 0.4) return FalseReturn;
 
 
   const pat::Muon*     mu   =  myEvent.resFSBMuon;
@@ -5579,13 +5706,13 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
   std::cout << "DOFAST RES FSB ELECTRON WITH PT,ETA,PHI: " << myEvent.resFSBElec->pt() << "," << myEvent.resFSBElec->eta() << "," << myEvent.resFSBElec->phi() << std::endl;
 
   auto corrP4  = myEvent.resFSBElec->p4();
-  if(m_isMC && m_era == "2016"){
+/*  if(m_isMC && m_era == "2016"){
     auto corrP4  = myEvent.resFSBElec->p4()*myEvent.resFSBElec->userFloat("ecalTrkEnergyPostCorr") / myEvent.resFSBElec->energy();
     double mll = (mu->p4()*myEvent.leadFSBMuonScale[0]+corrP4).mass();
-  }
+  }*/
   //MLL
   double mll = (mu->p4()*myEvent.leadFSBMuonScale[0]+corrP4).mass();
-//  if (mll < 200) return FalseReturn; 
+  if (mll < 200) return FalseReturn; 
 //  myEvent.ResFSBCutProgress++;
 
   if(myEvent.myResFSBCandJets.size() > 1){
@@ -5613,22 +5740,22 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     std::cout << "dR_pair22: " << dR_pair22 << std::endl;
     std::cout << "dR_pair11: " << dR_pair11 << std::endl;
 
-/*    if (dR_pair12 < 0.4) nominalPass = false;
+    if (dR_pair12 < 0.4) nominalPass = false;
     if (dR_pair21 < 0.4) nominalPass = false;
     if (dR_pair22 < 0.4) nominalPass = false;
-    if (dR_pair11 < 0.4) nominalPass = false;*/
-    if (dR_pair12 < 0.4) return FalseReturn; 
+    if (dR_pair11 < 0.4) nominalPass = false;
+/*    if (dR_pair12 < 0.4) return FalseReturn; 
     if (dR_pair21 < 0.4) return FalseReturn; 
     if (dR_pair22 < 0.4) return FalseReturn; 
-    if (dR_pair11 < 0.4) return FalseReturn; 
+    if (dR_pair11 < 0.4) return FalseReturn; */
     myEvent.ResFSBCutProgress++;
 
-//    if (dR_Jetpair11 < 0.4) nominalPass = false;
-    if (dR_Jetpair11 < 0.4) return FalseReturn;
-    if (dR_pair < 0.4) return FalseReturn;
+    if (dR_Jetpair11 < 0.4) nominalPass = false;
+//    if (dR_Jetpair11 < 0.4) return FalseReturn;
+//    if (dR_pair < 0.4) return FalseReturn;
     myEvent.ResFSBCutProgress++;
 
-    if (mll < 200) return FalseReturn;
+//    if (mll < 200) return FalseReturn;
     myEvent.ResFSBCutProgress++;
 
 
@@ -5636,7 +5763,6 @@ std::vector<bool> cmsWRextension::passFSBResRECO_Fast(const edm::Event& iEvent, 
     std::cout << "DOFAST RES FSB resMass: " << resMass << std::endl;
     double resMass_Up = (mu->p4()*myEvent.leadFSBMuonScale[1] + el->p4() + jet1 + jet2).mass();
     double resMass_Down = (mu->p4()*myEvent.leadFSBMuonScale[2] + el->p4() + jet1 + jet2).mass();
-
 
     myEvent.resolvedFSBRECOmass = resMass;
     myEvent.resolvedFSBRECOmass_MuResolUp = resMass_Up;
@@ -6037,6 +6163,12 @@ cmsWRextension::beginJob()
     m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")),            5, m_outputTag, false);
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")),                    5, m_outputTag, false);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")),                        5, m_outputTag, true);
+    m_eventsPassResFailBoostRECO_mll300.book((fs->mkdir("eventsPassResFailBoostRECO_mll300")),            5, m_outputTag, false);
+    m_eventsPassResFailBoostRECO_mll400.book((fs->mkdir("eventsPassResFailBoostRECO_mll400")),            5, m_outputTag, false);
+    m_eventsPassResFailBoostRECO_mll500.book((fs->mkdir("eventsPassResFailBoostRECO_mll500")),            5, m_outputTag, false);
+    m_eventsPassResFSBRECO_mll300.book((fs->mkdir("eventsPassResFSBRECO_mll300")),                        5, m_outputTag, true);
+    m_eventsPassResFSBRECO_mll400.book((fs->mkdir("eventsPassResFSBRECO_mll400")),                        5, m_outputTag, true);
+    m_eventsPassResFSBRECO_mll500.book((fs->mkdir("eventsPassResFSBRECO_mll500")),                        5, m_outputTag, true);
 
 
 

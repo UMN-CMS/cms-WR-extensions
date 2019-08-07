@@ -158,6 +158,7 @@ eventBits::eventBits() {
   resFSBMuon_phi = -10000.0;
   resFSBMuon_eta = -10000.0;
 
+  nResFSBMuons = -10000.0;
 
   resMLL             = -10000.0;
   resolvedSubleadMuPt= -10000.0;
