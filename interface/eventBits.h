@@ -214,6 +214,8 @@ public:
 
   int    nSecondElectronCands;
 
+  int	 nResFSBMuons;
+
   int    myEventFlavor  ;
 
   int	 nVtx		;
