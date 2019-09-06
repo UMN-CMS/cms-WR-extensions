@@ -4615,61 +4615,30 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
 //////////////////  ::wrTools::characterizeEvent(myGenParticles);
 
   //CHECK THAT THE EVENT MAKES SENSE
-  if (myGenPartons.size() != 2 || (myGenMuons.size() != 2)) {
-//  if (myGenPartons.size() != 2 || (myGenMuons.size() != 2 && myGenElectrons.size() != 2)) {
-    std::cout << "EVENT NOT UNDERSTOOD! # of partons: "<<myGenPartons.size()<<" # of muons: "<<myGenMuons.size()<< " # of electrons: " << myGenElectrons.size() <<std::endl;
-    return false;
+  if (myGenPartons.size() == 2 && (myGenMuons.size() == 2)) {
+    std::cout << "KINEMATIC CLOSURE CHECK" << std::endl;
+    std::cout << "NR MASS:" << myEvent.NR->mass() << std::endl;
+    //SORT GEN MUONS AND PARTONS BY ET
+    std::sort(myGenPartons.begin(),myGenPartons.end(),::wrTools::compareEtGenParticlePointer);
+    std::sort(myGenMuons.begin(),myGenMuons.end(),::wrTools::compareEtGenParticlePointer);
+
+    myEvent.parton1EtVal = myGenPartons[0]->et();
+    myEvent.parton1EtaVal = myGenPartons[0]->eta();
+    myEvent.parton1PhiVal = myGenPartons[0]->phi();
+    myEvent.parton2EtVal = myGenPartons[1]->et();
+    myEvent.parton2EtaVal = myGenPartons[1]->eta();
+    myEvent.parton2PhiVal = myGenPartons[1]->phi();
+
+    if(myGenMuons.size() == 2){
+      myEvent.muon1EtVal  = myEvent.firstMuon->et();
+      myEvent.muon1EtaVal = myEvent.firstMuon->eta();
+      myEvent.muon1PhiVal = myEvent.firstMuon->phi();
+      myEvent.muon2EtVal  = myEvent.secondMuon->et();
+      myEvent.muon2EtaVal = myEvent.secondMuon->eta();
+      myEvent.muon2PhiVal = myEvent.secondMuon->phi();
+    }
+
   }
-  std::cout << "KINEMATIC CLOSURE CHECK" << std::endl;
-  std::cout << "NR MASS:" << myEvent.NR->mass() << std::endl;
-/*  std::cout << "MU2 PARTON PARTON MASS: " << (myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl;
-  std::cout << "WR MASS:" << myEvent.WR->mass() << std::endl;
-  std::cout << "MU1 MU2 PARTON PARTON MASS: " << (myEvent.firstMuon->p4() + myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl;
-  std::cout << "4DIFF: " << myEvent.WR->mass() - (myEvent.firstMuon->p4() + myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl; 
-  std::cout << "3DIFF: " << myEvent.NR->mass() - (myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl;*/
-
-  //SORT GEN MUONS AND PARTONS BY ET
-  std::sort(myGenPartons.begin(),myGenPartons.end(),::wrTools::compareEtGenParticlePointer);
-  std::sort(myGenMuons.begin(),myGenMuons.end(),::wrTools::compareEtGenParticlePointer);
-
-  myEvent.parton1EtVal = myGenPartons[0]->et();
-  myEvent.parton1EtaVal = myGenPartons[0]->eta();
-  myEvent.parton1PhiVal = myGenPartons[0]->phi();
-  myEvent.parton2EtVal = myGenPartons[1]->et();
-  myEvent.parton2EtaVal = myGenPartons[1]->eta();
-  myEvent.parton2PhiVal = myGenPartons[1]->phi();
-
-  //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
-//  int index = 0;
-//  for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-//    if(::wrTools::particleIsFromABS((*iMuon),9900014)){
-//      if (myEvent.secondInDecayMuon>=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
-//      myEvent.secondInDecayMuon = index;
-//    }
-//    index++;
-//  }
-//
-//  if (myEvent.secondInDecayMuon!=1){
-//    std::cout<<"Highest ET muon, is not first in decay"<<std::endl;
-//    if (myEvent.secondInDecayMuon==0) std::swap(myGenMuons[0],myGenMuons[1]);
-//    else std::cout<<"myEvent.secondInDecayMuon is "<<myEvent.secondInDecayMuon<<". I don't know what to do"<<std::endl;
-//  }
-
-  if(myGenMuons.size() == 2){
-    myEvent.muon1EtVal  = myEvent.firstMuon->et();
-    myEvent.muon1EtaVal = myEvent.firstMuon->eta();
-    myEvent.muon1PhiVal = myEvent.firstMuon->phi();
-    myEvent.muon2EtVal  = myEvent.secondMuon->et();
-    myEvent.muon2EtaVal = myEvent.secondMuon->eta();
-    myEvent.muon2PhiVal = myEvent.secondMuon->phi();
-  }
-
-//  myEvent.dRparton1parton2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenPartons[1])));
-//  myEvent.dRmuon1muon2Val     = sqrt(deltaR2(*(myGenMuons[0]),*(myGenMuons[1])));
-//  myEvent.dRparton1muon1Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.firstMuon)));
-//  myEvent.dRparton1muon2Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.secondMuon)));
-//  myEvent.dRparton2muon1Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.firstMuon)));
-//  myEvent.dRparton2muon2Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.secondMuon))); 
 
   myEvent.myGenPartons = myGenPartons;
   myEvent.myGenMuons = myGenMuons;
