@@ -168,6 +168,9 @@ scaleB = 1./integralB
 
 histoA.Scale(scaleA)
 histoB.Scale(scaleB)
+
+histoA.SetAxisRange(0.0, 1000.0)
+histoB.SetAxisRange(0.0, 1000.0)
 #histoArebin = copy.deepcopy(histoA)
 #histoBrebin = copy.deepcopy(histoB)
 #histoCrebin = copy.deepcopy(histoC)

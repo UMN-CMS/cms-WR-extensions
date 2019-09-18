@@ -574,6 +574,13 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if (::wrTools::InTheHEMfailBox(-1*myRECOevent.selectedJetEta, -1*myRECOevent.selectedJetPhi, 0.8) ) inTheOppoBox = true;
 
     }
+    bool resFailBox = false;
+    bool resOppoBox = false;
+    if (passesBoostFSBRECO) {
+      if (::wrTools::InTheHEMfailBox(myRECOevent.myResFSBCandJets[0]->eta, myRECOevent.myResFSBCandJets[0]->phi, 0.4) )       resFailBox = true;
+      if (::wrTools::InTheHEMfailBox(-1*myRECOevent.myResFSBCandJets[1]->eta, -1*myRECOevent.myResFSBCandJets[1]->phi, 0.4) ) resOppoBox = true;
+
+    }
 
     std::cout << "passesResFSBRECO: " << passesResFSBRECO << " muonTrigPass: " << muonTrigPass << " ZMASSFSBres: " << ZMASSFSBres << std::endl;
     bool tooManyResLeptons = tooManyResElectrons || tooManyResMuons;
@@ -811,10 +818,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   //RES SIDEBANDS                              
     std::cout << "passesResFSBRECO: " << passesResFSBRECO << " myRECOevent.resolvedFSBRECOmassAbove600: " << myRECOevent.resolvedFSBRECOmassAbove600 << " tooManyBoostFSBLeptons: " << tooManyBoostFSBLeptons << std::endl;
-    if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600)                                          m_eventsPassResLowMassCRRECO.fill(myRECOevent, 1);
-    if ( passesResFSBRECO &&  myRECOevent.resolvedFSBRECOmassAbove600)                                       m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
-    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600)                                       m_eventsPassResFSBLowMassCRRECO.fill(  myRECOevent, 1);
-    if ( passesResRECO && !passesBoostRECO && passesZMASSres)                                                                       m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
+    if ( passesResRECO && !passesBoostRECO && !myRECOevent.resolvedRECOmassAbove600)                                       m_eventsPassResLowMassCRRECO.fill(myRECOevent, 1);
+    if ( passesResFSBRECO &&  myRECOevent.resolvedFSBRECOmassAbove600)                                                     m_eventsPassResFSBRECO.fill(  myRECOevent, 1);
+    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600)                                                     m_eventsPassResFSBLowMassCRRECO.fill(  myRECOevent, 1);
+    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600 && resFailBox)                                       m_eventsPassResFSBLowMassCRRECO_failBox.fill(  myRECOevent, 1);
+    if ( passesResFSBRECO && !myRECOevent.resolvedFSBRECOmassAbove600 && resOppoBox)                                       m_eventsPassResFSBLowMassCRRECO_oppoBox.fill(  myRECOevent, 1);
+    if ( passesResRECO && !passesBoostRECO && passesZMASSres)                                                              m_eventsPassResZMASSRECO.fill(myRECOevent, 1);
     std::cout << "Done filling RECO stuff" << std::endl;
 
 /////////////////////////GEN STUFF////////////////////////////////////////////////////////////////////////////////////////////
@@ -4640,61 +4649,30 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
 //////////////////  ::wrTools::characterizeEvent(myGenParticles);
 
   //CHECK THAT THE EVENT MAKES SENSE
-  if (myGenPartons.size() != 2 || (myGenMuons.size() != 2)) {
-//  if (myGenPartons.size() != 2 || (myGenMuons.size() != 2 && myGenElectrons.size() != 2)) {
-    std::cout << "EVENT NOT UNDERSTOOD! # of partons: "<<myGenPartons.size()<<" # of muons: "<<myGenMuons.size()<< " # of electrons: " << myGenElectrons.size() <<std::endl;
-//    return false;
+  if (myGenPartons.size() == 2 && (myGenMuons.size() == 2)) {
+    std::cout << "KINEMATIC CLOSURE CHECK" << std::endl;
+    std::cout << "NR MASS:" << myEvent.NR->mass() << std::endl;
+    //SORT GEN MUONS AND PARTONS BY ET
+    std::sort(myGenPartons.begin(),myGenPartons.end(),::wrTools::compareEtGenParticlePointer);
+    std::sort(myGenMuons.begin(),myGenMuons.end(),::wrTools::compareEtGenParticlePointer);
+
+    myEvent.parton1EtVal = myGenPartons[0]->et();
+    myEvent.parton1EtaVal = myGenPartons[0]->eta();
+    myEvent.parton1PhiVal = myGenPartons[0]->phi();
+    myEvent.parton2EtVal = myGenPartons[1]->et();
+    myEvent.parton2EtaVal = myGenPartons[1]->eta();
+    myEvent.parton2PhiVal = myGenPartons[1]->phi();
+
+    if(myGenMuons.size() == 2){
+      myEvent.muon1EtVal  = myEvent.firstMuon->et();
+      myEvent.muon1EtaVal = myEvent.firstMuon->eta();
+      myEvent.muon1PhiVal = myEvent.firstMuon->phi();
+      myEvent.muon2EtVal  = myEvent.secondMuon->et();
+      myEvent.muon2EtaVal = myEvent.secondMuon->eta();
+      myEvent.muon2PhiVal = myEvent.secondMuon->phi();
+    }
+
   }
-  std::cout << "KINEMATIC CLOSURE CHECK" << std::endl;
-//  std::cout << "NR MASS:" << myEvent.NR->mass() << std::endl;
-/*  std::cout << "MU2 PARTON PARTON MASS: " << (myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl;
-  std::cout << "WR MASS:" << myEvent.WR->mass() << std::endl;
-  std::cout << "MU1 MU2 PARTON PARTON MASS: " << (myEvent.firstMuon->p4() + myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl;
-  std::cout << "4DIFF: " << myEvent.WR->mass() - (myEvent.firstMuon->p4() + myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl; 
-  std::cout << "3DIFF: " << myEvent.NR->mass() - (myEvent.secondMuon->p4() + myGenPartons[0]->p4() + myGenPartons[1]->p4()).mass() << std::endl;*/
-
-  //SORT GEN MUONS AND PARTONS BY ET
-  std::sort(myGenPartons.begin(),myGenPartons.end(),::wrTools::compareEtGenParticlePointer);
-  std::sort(myGenMuons.begin(),myGenMuons.end(),::wrTools::compareEtGenParticlePointer);
-
-  myEvent.parton1EtVal = myGenPartons[0]->et();
-  myEvent.parton1EtaVal = myGenPartons[0]->eta();
-  myEvent.parton1PhiVal = myGenPartons[0]->phi();
-  myEvent.parton2EtVal = myGenPartons[1]->et();
-  myEvent.parton2EtaVal = myGenPartons[1]->eta();
-  myEvent.parton2PhiVal = myGenPartons[1]->phi();
-
-  //LOOK THROUGH GEN MUONS AND FIND THE ONES WITH THE WR AND NR MOTHERS
-//  int index = 0;
-//  for (std::vector<const reco::GenParticle*>::iterator iMuon = myGenMuons.begin(); iMuon != myGenMuons.end(); iMuon++) {
-//    if(::wrTools::particleIsFromABS((*iMuon),9900014)){
-//      if (myEvent.secondInDecayMuon>=0) std::cout<<"ERROR: Two muons selected are seen as second in decay chain."<<std::endl;
-//      myEvent.secondInDecayMuon = index;
-//    }
-//    index++;
-//  }
-//
-//  if (myEvent.secondInDecayMuon!=1){
-//    std::cout<<"Highest ET muon, is not first in decay"<<std::endl;
-//    if (myEvent.secondInDecayMuon==0) std::swap(myGenMuons[0],myGenMuons[1]);
-//    else std::cout<<"myEvent.secondInDecayMuon is "<<myEvent.secondInDecayMuon<<". I don't know what to do"<<std::endl;
-//  }
-
-  if(myGenMuons.size() == 2){
-    myEvent.muon1EtVal  = myEvent.firstMuon->et();
-    myEvent.muon1EtaVal = myEvent.firstMuon->eta();
-    myEvent.muon1PhiVal = myEvent.firstMuon->phi();
-    myEvent.muon2EtVal  = myEvent.secondMuon->et();
-    myEvent.muon2EtaVal = myEvent.secondMuon->eta();
-    myEvent.muon2PhiVal = myEvent.secondMuon->phi();
-  }
-
-//  myEvent.dRparton1parton2Val = sqrt(deltaR2(*(myGenPartons[0]),*(myGenPartons[1])));
-//  myEvent.dRmuon1muon2Val     = sqrt(deltaR2(*(myGenMuons[0]),*(myGenMuons[1])));
-//  myEvent.dRparton1muon1Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.firstMuon)));
-//  myEvent.dRparton1muon2Val   = sqrt(deltaR2(*(myGenPartons[0]),*(myEvent.secondMuon)));
-//  myEvent.dRparton2muon1Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.firstMuon)));
-//  myEvent.dRparton2muon2Val   = sqrt(deltaR2(*(myGenPartons[1]),*(myEvent.secondMuon))); 
 
   myEvent.myGenPartons = myGenPartons;
   myEvent.myGenMuons = myGenMuons;
@@ -6145,6 +6123,8 @@ cmsWRextension::beginJob()
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBRECO.book((fs->mkdir("eventsPassBoostFSBRECO_D")), 3, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 3, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_failBox")), 3, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_oppoBox")), 3, m_outputTag, 1);
     m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 3, m_outputTag, 0);
     m_eventsPassBoostFSBLowMassCRRECO.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO")), 3, m_outputTag, 1);
     m_eventsPassBoostFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassBoostFSBLowMassCRRECO_failBox")), 3, m_outputTag, 1);
@@ -6177,6 +6157,8 @@ cmsWRextension::beginJob()
     m_eventsPassResZMASSRECO.book((fs->mkdir("eventsPassResZMASSRECO")), 2, m_outputTag, 0);
     m_eventsPassResFSBRECO.book((fs->mkdir("eventsPassResFSBRECO")), 2, m_outputTag, 1);
     m_eventsPassResFSBLowMassCRRECO.book((fs->mkdir("eventsPassResFSBLowMassCRRECO")), 2, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_failBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_failBox")), 2, m_outputTag, 1);
+    m_eventsPassResFSBLowMassCRRECO_oppoBox.book((fs->mkdir("eventsPassResFSBLowMassCRRECO_oppoBox")), 2, m_outputTag, 1);
 
     m_eventsPassBoostZMASSRECO.book((fs->mkdir("eventsFailResPassBoostRECO2016VETOZMASS")), 2, m_outputTag, 0);
     m_eventsPassBoostLowMassCRRECO.book((fs->mkdir("eventsPassBoostLowMassCRRECO")), 2, m_outputTag, 0);    
