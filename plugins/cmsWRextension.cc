@@ -1363,12 +1363,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         myRECOevent.Muon_LooseID_WeightDown = Muon_LooseID_Weights[2];
         std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.myElectronCand->et(), myRECOevent.selectedElectronEta, m_era);
         std::vector<double> egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt, m_era);
+        std::vector<double> egamma_SF_HLT = myEgammaEffi.HLT_ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt, m_era);
         myRECOevent.HEEP_SF = HEEP_SF[0];
 	myRECOevent.HEEP_SF_Up = HEEP_SF[1];
         myRECOevent.HEEP_SF_Down = HEEP_SF[2];
         myRECOevent.egamma_SF = egamma_SF[0];
         myRECOevent.egamma_SF_Up = egamma_SF[1];
         myRECOevent.egamma_SF_Down = egamma_SF[2];
+        myRECOevent.egamma_SF_HLT = egamma_SF_HLT[0];
+        myRECOevent.egamma_SF_HLT_Up = egamma_SF_HLT[1];
+        myRECOevent.egamma_SF_HLT_Down = egamma_SF_HLT[2];
         setEventWeight_FSB(iEvent, myRECOevent);
       }
       std::cout << "electronTrigPass: " << electronTrigPass << " ZMASS_FSB: " << ZMASS_FSB << " addElectrons: " << addElectrons << " myRECOevent.leadAK8JetElectronMassVal: " << myRECOevent.leadAK8JetElectronMassVal << std::endl;
@@ -1381,6 +1385,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 11);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 12);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 13);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 32);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 33);
       }
       if(myRECOevent.myElectronJetPairs_JECUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JECUp && addMuons_JECUp && !addElectrons_JECUp){
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 2);
@@ -1570,12 +1576,12 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
         }else{
           myEvent.count = 1;
         }
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.egamma_SF_HLT*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
       }
       else {
         myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
         myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
+	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.egamma_SF_HLT*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
       }
       if(m_foundZ) myEvent.FSBweight = myEvent.FSBweight * getZweight(iEvent, myEvent);
   } else {
@@ -2116,10 +2122,12 @@ bool cmsWRextension::passFlavorSideband(const edm::Event& iEvent, eventBits& myR
     if (electronJetPairs.size() > 0) { 
       std::vector<double> HEEP_SF = myHEEP.ScaleFactor(myRECOevent.myElectronCand->et(), myRECOevent.selectedElectronEta, m_era);
       std::vector<double> egamma_SF = myEgammaEffi.ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt, m_era);
+      std::vector<double> egamma_SF_HLT = myEgammaEffi.HLT_ScaleFactor(myRECOevent.myElectronCand->superCluster()->eta(), myRECOevent.selectedElectronPt, m_era);
       if (fabs(myRECOevent.selectedElectronEta) > 1.6) myRECOevent.HEEP_SF_E = HEEP_SF[0];
       if (fabs(myRECOevent.selectedElectronEta) < 1.4) myRECOevent.HEEP_SF_B = HEEP_SF[0];
       myRECOevent.HEEP_SF = HEEP_SF[0];
       myRECOevent.egamma_SF = egamma_SF[0];
+      myRECOevent.egamma_SF_HLT = egamma_SF_HLT[0];
       setEventWeight_FSB(iEvent, myRECOevent);
     }
 //    if (electronJetPairs_noISO.size() > 0) { 

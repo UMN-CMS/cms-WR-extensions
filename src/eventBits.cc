@@ -77,6 +77,10 @@ eventBits::eventBits() {
   egamma_SF_Up = -10000.0;
   egamma_SF_Down = -10000.0;
 
+  egamma_SF_HLT = 1.0;
+  egamma_SF_HLT_Up = -10000.0;
+  egamma_SF_HLT_Down = -10000.0;
+
   puWeight = 1.0;
   puWeight_Up = -10000.0;
   puWeight_Down = -10000.0;
@@ -449,6 +453,10 @@ void eventBits::clear() {
   egamma_SF = 1.0;
   egamma_SF_Up = -10000.0;
   egamma_SF_Down = -10000.0;
+
+  egamma_SF_HLT = 1.0;
+  egamma_SF_HLT_Up = -10000.0;
+  egamma_SF_HLT_Down = -10000.0;
 
   puWeight = 1.0;
   puWeight_Up = 0.0;

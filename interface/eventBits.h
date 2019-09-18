@@ -37,6 +37,7 @@ public:
   int RECOcategory;
 
   bool isMC;
+  bool hasPVertex;
 
   std::string outputTag;  //LABELLING THE DATA
 
@@ -71,6 +72,7 @@ public:
   int JetContainingBothDaughters;
   double secondGENMuonRECOjetDR;
   double secondRECOMuonRECOjetDR;
+  int nMuonOutSideJetFSB;
 
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_JECUp;
@@ -212,6 +214,9 @@ public:
 
   double NRenergy;
 
+  double eventNumber;
+  double lumiSection;
+
   int    nSecondElectronCands;
 
   int	 nResFSBMuons;
@@ -262,6 +267,9 @@ public:
   double egamma_SF      ;
   double egamma_SF_Up   ;
   double egamma_SF_Down ;
+  double egamma_SF_HLT      ;
+  double egamma_SF_HLT_Up   ;
+  double egamma_SF_HLT_Down ;
 
   double HEEP_SF_noISO        ;
   double HEEP_SF_E_noISO      ;

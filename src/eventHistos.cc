@@ -444,6 +444,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_leadAK8JetElectronMass_MuLDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_MuLDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
     m_leadAK8JetElectronMass_HEEPUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_HEEPUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
     m_leadAK8JetElectronMass_HEEPDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_HEEPDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
+    m_leadAK8JetElectronMass_ElHLTUp  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_ElHLTUp","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
+    m_leadAK8JetElectronMass_ElHLTDown  =           m_histoFolder.make<TH1D>("leadAK8JetElectronMass_ElHLTDown","2 Object Mass of the leading Jet and Electron;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
     m_resolvedRECOmass  =           m_histoFolder.make<TH1D>("resolvedRECOmass","2 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
     m_resolvedRECOmass_MuResIsoUp  =           m_histoFolder.make<TH1D>("resolvedRECOmass_MuResIsoUp","2 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
     m_resolvedRECOmass_MuResIsoDown  =           m_histoFolder.make<TH1D>("resolvedRECOmass_MuResIsoDown","4 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
@@ -574,6 +576,10 @@ void eventHistos::fill(eventBits& event, int systematicRegion) {
       fillCombine_FSBResMuIsoUp(event);
     }else if(systematicRegion == 31){
       fillCombine_FSBResMuIsoDown(event);
+    }else if(systematicRegion == 32){
+      fillCombine_ElHLTUp(event);
+    }else if(systematicRegion == 33){
+      fillCombine_ElHLTDown(event);
     }
 
   }
@@ -1169,7 +1175,7 @@ void eventHistos::fillCombine_HEEPUp(eventBits& event) {
   if(event.isMC){
     if(m_FSB == true){
       if(event.HEEP_SF == 0 || event.egamma_SF == 0){
-        weight = event.FSBweight*event.HEEP_SF_Up;
+        weight = event.FSBweight*event.HEEP_SF_Up*event.egamma_SF_Up;
       }else{
         weight = event.FSBweight*event.HEEP_SF_Up*event.egamma_SF_Up/(event.HEEP_SF*event.egamma_SF);
       }
@@ -1183,12 +1189,46 @@ void eventHistos::fillCombine_HEEPUp(eventBits& event) {
   m_resolvedFSBRECOmass_HEEPUp->Fill(event.resolvedFSBRECOmass, weight);
 
 }
+void eventHistos::fillCombine_ElHLTUp(eventBits& event) {
+  double weight = 0.0;
+  if(event.isMC){
+    if(m_FSB == true){
+      if(event.egamma_SF_HLT == 0){
+        weight = event.FSBweight*event.egamma_SF_HLT_Up;
+      }else{
+        weight = event.FSBweight*event.egamma_SF_HLT_Up/(event.egamma_SF_HLT);
+      }
+    }else{
+      weight = event.weight*event.egamma_SF_HLT_Up/(event.egamma_SF_HLT);
+    }
+  }else{
+    weight = 1.;
+  }
+  m_leadAK8JetElectronMass_ElHLTUp->Fill(event.leadAK8JetElectronMassVal, weight);
+}
+void eventHistos::fillCombine_ElHLTDown(eventBits& event) {
+  double weight = 0.0;
+  if(event.isMC){
+    if(m_FSB == true){
+      if(event.egamma_SF_HLT == 0){
+        weight = event.FSBweight*event.egamma_SF_HLT_Down;
+      }else{
+        weight = event.FSBweight*event.egamma_SF_HLT_Down/(event.egamma_SF_HLT);
+      }
+    }else{
+      weight = event.weight*event.egamma_SF_HLT_Down/(event.egamma_SF_HLT);
+    }
+  }else{
+    weight = 1.;
+  }
+  m_leadAK8JetElectronMass_ElHLTDown->Fill(event.leadAK8JetElectronMassVal, weight);
+}
 void eventHistos::fillCombine_HEEPDown(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
       if(event.HEEP_SF == 0 || event.egamma_SF == 0){
-        weight = event.FSBweight*event.HEEP_SF_Down;
+        weight = event.FSBweight*event.HEEP_SF_Down*event.egamma_SF_Down;
       }else{
         weight = event.FSBweight*event.HEEP_SF_Down*event.egamma_SF_Down/(event.HEEP_SF*event.egamma_SF);
       }

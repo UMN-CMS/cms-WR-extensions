@@ -14,6 +14,7 @@
 //ROOT CLASSES
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TTree.h"
 #include "TObjString.h"
 //C++ CLASSES
 #include <iostream>
@@ -66,6 +67,8 @@ class eventHistos {
   void fillCombine_FSBResMuIDDown(eventBits& event);
   void fillCombine_FSBResMuIsoUp(eventBits& event);
   void fillCombine_FSBResMuIsoDown(eventBits& event);
+  void fillCombine_ElHLTUp(eventBits& event);
+  void fillCombine_ElHLTDown(eventBits& event);
 
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
@@ -203,6 +206,9 @@ class eventHistos {
 
   TH1D* m_leadAK8JetElectronMass_HEEPUp;
   TH1D* m_leadAK8JetElectronMass_HEEPDown;
+
+  TH1D* m_leadAK8JetElectronMass_ElHLTUp;
+  TH1D* m_leadAK8JetElectronMass_ElHLTDown;
 
   TH1D* m_leadAK8JetMuonMass_JECUp;
   TH1D* m_leadAK8JetMuonMass_JECDown;
@@ -383,6 +389,10 @@ class eventHistos {
   TH1D* m_resMLL;
   TH1D* m_resolvedSubleadMuPt;
 
+  TTree* tree_evtNumVSlumiSec;
+  TVectorT<double>* m_evtNum;
+  TH1D* m_lumiSec;
+
   TH1D* m_resFSBJetDR;
   TH1D* m_resolvedFSBRECOmass; 
   TH1D* m_resFSBElecJet1dR;
@@ -489,6 +499,8 @@ class eventHistos {
   TH1D* m_selElectron_noISO_endcap_trackPnt        ; 
   TH1D* m_selElectron_noISO_endcap_innerLostHits   ; 
   TH1D* m_selElectron_noISO_endcap_dxy             ; 
+
+  Double_t evtNum, lumiSec;
 
 };
 
