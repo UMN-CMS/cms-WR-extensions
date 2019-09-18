@@ -388,6 +388,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
   }else if (m_flavor == 5){
     float binBoundaries[12] = {200, 300, 400, 500, 600, 700, 800, 900, 1000, 1150, 1500, 6000};
 
+
     std::cout << "Creating Flavor 5 plots" << std::endl;
     m_eventsWeight = m_histoFolder.make<TH1D>("eventsWeight","number of events weighted", 1, 0.0, 1);
     m_ResCutProgress       = m_histoFolder.make<TH1D>("ResCutProgress"     , "; # Cut Progress; Events passing cut level"     ,                                                       20, -.5, 19.5);
@@ -475,6 +476,19 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_resolvedFSBRECOmass_MuTrigDown  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuTrigDown","4 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
    m_resolvedFSBRECOmass_MuResolUp  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuResolUp","2 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
     m_resolvedFSBRECOmass_MuResolDown  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuResolDown","4 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
+//    m_evtNum                               =  m_histoFolder.make<TH1D>("evtNum", "Event number; ",  200000000, 0.5, 200000000.5);
+//    m_lumiSec				   = m_histoFolder.make<TH1D>("lumiSec", "Lumi Seciton;",   2000000, 0.5, 2000000.5);
+//    m_evtNum				= m_histoFolder.make<TVectorT<double>(200);
+    
+/*    tree_evtNumVSlumiSec = m_histoFolder.make<TTree>("evtNumVSlumiSec","title_evtNumVSlumiSec");
+
+    std::cout << "Creating evtNum branch" << std::endl;
+    tree_evtNumVSlumiSec->Branch("evtNum", &evtNum, "evtNum/D");
+    std::cout << "Creating lumiSec branch" << std::endl;
+    tree_evtNumVSlumiSec->Branch("lumiSec", &lumiSec, "lumiSec/D");
+    std::cout << "Done with booking" << std::endl;*/
+
+    
   }
 
 }
@@ -974,6 +988,11 @@ void eventHistos::fillCombine_Nominal(eventBits& event) {
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
   m_resolvedRECOmass->Fill(event.resolvedRECOmass, weight);
   m_resolvedFSBRECOmass->Fill(event.resolvedFSBRECOmass, weight);
+//  m_evtNum->Fill(event.eventNumber);
+//  m_lumiSec->Fill(event.lumiSection);
+  evtNum = event.eventNumber;
+  lumiSec = event.lumiSection;
+//  tree_evtNumVSlumiSec->Fill();
 }
 void eventHistos::fillCombine_JECUp(eventBits& event) {
   double weight = 0.0;

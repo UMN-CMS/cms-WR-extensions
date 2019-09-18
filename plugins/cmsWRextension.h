@@ -201,9 +201,11 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResFailBoostRECO;
       eventHistos m_eventsFailResPassBoostRECO;
 
-      eventHistos m_eventsPassResFailBoostRECO_mll300;
+      eventHistos m_eventsPassResFailBoostRECO_mll450;
       eventHistos m_eventsPassResFailBoostRECO_mll400;
       eventHistos m_eventsPassResFailBoostRECO_mll500;
+      eventHistos m_eventsPassResFailBoostRECO_mll550;
+      eventHistos m_eventsPassResFailBoostRECO_mll600;
 
       eventHistos m_eventsPassResLowMassCRRECO;
       eventHistos m_eventsPassResZMASSRECO;
@@ -211,9 +213,11 @@ class cmsWRextension : public edm::EDAnalyzer {
       eventHistos m_eventsPassResFSBLowMassCRRECO;
       eventHistos m_eventsPassJetSelection;
 
-      eventHistos m_eventsPassResFSBRECO_mll300;
+      eventHistos m_eventsPassResFSBRECO_mll450;
       eventHistos m_eventsPassResFSBRECO_mll400;
       eventHistos m_eventsPassResFSBRECO_mll500;
+      eventHistos m_eventsPassResFSBRECO_mll550;
+      eventHistos m_eventsPassResFSBRECO_mll600;
 
       eventHistos m_eventsPassBoostFSBLowMassCRRECO;
       eventHistos m_eventsPassBoostFSBLowMassCRRECO_failBox;
@@ -296,7 +300,7 @@ class cmsWRextension : public edm::EDAnalyzer {
 
       bool m_foundZ;
       
-      double m_highPTleptonCut = 200;
+      double m_highPTleptonCut = 60;
       double m_subleadPTleptonCut = 10;
       double m_leptonEtaCut = 2.4;
       double m_muonIsoCut = .05;

@@ -20,6 +20,11 @@ eventBits::eventBits() {
   passResGen       = false;
   passGenCounter   = false;
 
+  hasPVertex = false;
+
+  eventNumber = -999;
+  lumiSection = -999;
+
   mySubleadMuon = NULL;
   myElectronCand = NULL;
   myMuonCand = NULL;
@@ -66,6 +71,7 @@ eventBits::eventBits() {
 
 
   nSecondElectronCands = -10000.0;
+  nMuonOutSideJetFSB = -10000.0;
 
   egamma_SF = 1.0;
   egamma_SF_Up = -10000.0;
