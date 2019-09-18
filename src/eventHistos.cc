@@ -540,10 +540,6 @@ void eventHistos::fill(eventBits& event, int systematicRegion) {
       fillCombine_HEEPUp(event);
     }else if(systematicRegion == 13){
       fillCombine_HEEPDown(event);
-    }else if(systematicRegion == 14){
-      fillCombine_MuIsoUp(event);
-    }else if(systematicRegion == 15){
-      fillCombine_MuIsoDown(event);
     }else if(systematicRegion == 16){
       fillCombine_MuTrigUp(event);
     }else if(systematicRegion == 17){
@@ -556,10 +552,6 @@ void eventHistos::fill(eventBits& event, int systematicRegion) {
       fillCombine_MuResIDUp(event);
     }else if(systematicRegion == 21){
       fillCombine_MuResIDDown(event);
-    }else if(systematicRegion == 22){
-      fillCombine_MuResIsoUp(event);
-    }else if(systematicRegion == 23){
-      fillCombine_MuResIsoDown(event);
     }else if(systematicRegion == 24){
       fillCombine_AK4JECUp(event);
     }else if(systematicRegion == 25){
@@ -572,10 +564,6 @@ void eventHistos::fill(eventBits& event, int systematicRegion) {
       fillCombine_FSBResMuIDUp(event);
     }else if(systematicRegion == 29){
       fillCombine_FSBResMuIDDown(event);
-    }else if(systematicRegion == 30){
-      fillCombine_FSBResMuIsoUp(event);
-    }else if(systematicRegion == 31){
-      fillCombine_FSBResMuIsoDown(event);
     }else if(systematicRegion == 32){
       fillCombine_ElHLTUp(event);
     }else if(systematicRegion == 33){
@@ -1109,9 +1097,9 @@ void eventHistos::fillCombine_MuBoostIDUp(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_HighPtID_WeightUp*event.Muon_LooseID_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
+      weight = event.FSBweight*event.Muon_HighPtID_WeightUp*event.Muon_LooseID_WeightUp*event.Muon_LooseTkIso_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
     }else{
-      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_LooseID_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
+      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_LooseID_WeightUp*event.Muon_LooseTkIso_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
     }
   }else{
     weight = 1.;
@@ -1125,9 +1113,9 @@ void eventHistos::fillCombine_MuBoostIDDown(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_HighPtID_WeightDown*event.Muon_LooseID_WeightDown/(event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
+      weight = event.FSBweight*event.Muon_HighPtID_WeightDown*event.Muon_LooseID_WeightDown*event.Muon_LooseTkIso_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
     }else{
-      weight = event.weight*event.Muon_HighPtID_WeightDown*event.Muon_LooseID_WeightDown/(event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
+      weight = event.weight*event.Muon_HighPtID_WeightDown*event.Muon_LooseID_WeightDown*event.Muon_LooseTkIso_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight*event.Muon_LooseID_Weight);
     }
   }else{
     weight = 1.;
@@ -1241,36 +1229,6 @@ void eventHistos::fillCombine_HEEPDown(eventBits& event) {
   m_leadAK8JetElectronMass_HEEPDown->Fill(event.leadAK8JetElectronMassVal, weight);
   m_resolvedFSBRECOmass_HEEPDown->Fill(event.resolvedFSBRECOmass, weight);
 }
-void eventHistos::fillCombine_MuIsoUp(eventBits& event) {
-  double weight = 0.0;
-  if(event.isMC){
-    if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_LooseTkIso_WeightUp/event.Muon_LooseTkIso_Weight;
-    }else{
-      weight = event.weight*event.Muon_LooseTkIso_WeightUp/event.Muon_LooseTkIso_Weight;
-    }
-  }else{
-    weight = 1.;
-  }
-
-  m_leadAK8JetMuonMass_MuIsoUp->Fill(event.leadAK8JetMuonMassVal, weight);
-  m_leadAK8JetMuonMass_noLSF_MuIsoUp->Fill(event.leadAK8JetMuonMassVal_noLSF, weight);
-}
-void eventHistos::fillCombine_MuIsoDown(eventBits& event) {
-  double weight = 0.0;
-  if(event.isMC){
-    if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_LooseTkIso_WeightDown/event.Muon_LooseTkIso_Weight;
-    }else{
-      weight = event.weight*event.Muon_LooseTkIso_WeightDown/event.Muon_LooseTkIso_Weight;
-    }
-  }else{
-    weight = 1.;
-  }
-
-  m_leadAK8JetMuonMass_MuIsoDown->Fill(event.leadAK8JetMuonMassVal, weight);
-  m_leadAK8JetMuonMass_noLSF_MuIsoDown->Fill(event.leadAK8JetMuonMassVal_noLSF, weight);
-}
 void eventHistos::fillCombine_MuTrigUp(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
@@ -1344,9 +1302,9 @@ void eventHistos::fillCombine_MuResIDUp(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
+      weight = event.FSBweight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp*event.Muon_LooseTkIso_WeightUp*event.Muon_LooseTkIso2nd_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight*event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
     }else{
-      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
+      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp*event.Muon_LooseTkIso_WeightUp*event.Muon_LooseTkIso2nd_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight*event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
     }
   }else{
     weight = 1.;
@@ -1359,45 +1317,15 @@ void eventHistos::fillCombine_MuResIDDown(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_HighPtID_WeightDown*event.Muon_HighPtID2nd_WeightDown/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
+      weight = event.FSBweight*event.Muon_HighPtID_WeightDown*event.Muon_HighPtID2nd_WeightDown*event.Muon_LooseTkIso_WeightDown*event.Muon_LooseTkIso2nd_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight*event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
     }else{
-      weight = event.weight*event.Muon_HighPtID_WeightDown*event.Muon_HighPtID2nd_WeightDown/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
+      weight = event.weight*event.Muon_HighPtID_WeightDown*event.Muon_HighPtID2nd_WeightDown*event.Muon_LooseTkIso_WeightDown*event.Muon_LooseTkIso2nd_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight*event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
     }
   }else{
     weight = 1.;
   }
 
   m_resolvedRECOmass_MuResIDDown->Fill(event.resolvedRECOmass, weight);
-
-}
-void eventHistos::fillCombine_MuResIsoUp(eventBits& event) {
-  double weight = 0.0;
-  if(event.isMC){
-    if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_LooseTkIso_WeightUp*event.Muon_LooseTkIso2nd_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight);
-    }else{
-      weight = event.weight*event.Muon_LooseTkIso_WeightUp*event.Muon_LooseTkIso2nd_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight);
-    }
-  }else{
-    weight = 1.;
-  }
-
-  m_resolvedRECOmass_MuResIsoUp->Fill(event.resolvedRECOmass, weight);
-
-}
-void eventHistos::fillCombine_MuResIsoDown(eventBits& event) {
-  double weight = 0.0;
-  if(event.isMC){
-    if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_LooseTkIso_WeightDown*event.Muon_LooseTkIso2nd_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight);
-    }else{
-      weight = event.weight*event.Muon_LooseTkIso_WeightDown*event.Muon_LooseTkIso2nd_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_LooseTkIso2nd_Weight);
-    }
-  }else{
-    weight = 1.;
-  }
-
-  m_resolvedRECOmass_MuResIsoDown->Fill(event.resolvedRECOmass, weight);
 
 }
 void eventHistos::fillCombine_AK4JECUp(eventBits& event) {
@@ -1466,9 +1394,9 @@ void eventHistos::fillCombine_FSBResMuIDUp(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_HighPtID_WeightUp/(event.Muon_HighPtID_Weight);
+      weight = event.FSBweight*event.Muon_HighPtID_WeightUp*event.Muon_LooseTkIso_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight);
     }else{
-      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
+      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_LooseTkIso_WeightUp/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight);
     }
   }else{
     weight = 1.;
@@ -1480,41 +1408,13 @@ void eventHistos::fillCombine_FSBResMuIDDown(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_HighPtID_WeightDown/(event.Muon_HighPtID_Weight);
+      weight = event.FSBweight*event.Muon_HighPtID_WeightDown*event.Muon_LooseTkIso_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight);
     }else{
-      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
+      weight = event.weight*event.Muon_HighPtID_WeightDown*event.Muon_LooseTkIso_WeightDown/(event.Muon_LooseTkIso_Weight*event.Muon_HighPtID_Weight);
     }
   }else{
     weight = 1.;
   }
 
   m_resolvedFSBRECOmass_MuIDDown->Fill(event.resolvedFSBRECOmass, weight);
-}
-void eventHistos::fillCombine_FSBResMuIsoUp(eventBits& event) {
-  double weight = 0.0;
-  if(event.isMC){
-    if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_LooseTkIso_WeightUp/(event.Muon_LooseTkIso_Weight);
-    }else{
-      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
-    }
-  }else{
-    weight = 1.;
-  }
-
-  m_resolvedFSBRECOmass_MuIsoUp->Fill(event.resolvedFSBRECOmass, weight);
-}
-void eventHistos::fillCombine_FSBResMuIsoDown(eventBits& event) {
-  double weight = 0.0;
-  if(event.isMC){
-    if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_LooseTkIso_WeightDown/(event.Muon_LooseTkIso_Weight);
-    }else{
-      weight = event.weight*event.Muon_HighPtID_WeightUp*event.Muon_HighPtID2nd_WeightUp/(event.Muon_HighPtID_Weight*event.Muon_HighPtID2nd_Weight);
-    }
-  }else{
-    weight = 1.;
-  }
-
-  m_resolvedFSBRECOmass_MuIsoDown->Fill(event.resolvedFSBRECOmass, weight);
 }

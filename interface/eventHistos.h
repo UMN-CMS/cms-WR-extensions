@@ -49,24 +49,18 @@ class eventHistos {
   void fillCombine_MuLDown(eventBits& event);
   void fillCombine_HEEPUp(eventBits& event);
   void fillCombine_HEEPDown(eventBits& event);
-  void fillCombine_MuIsoUp(eventBits& event);
-  void fillCombine_MuIsoDown(eventBits& event); 
   void fillCombine_MuTrigUp(eventBits& event);
   void fillCombine_MuTrigDown(eventBits& event);
   void fillCombine_MuResolUp(eventBits& event);
   void fillCombine_MuResolDown(eventBits& event);
   void fillCombine_MuResIDUp(eventBits& event);
   void fillCombine_MuResIDDown(eventBits& event);
-  void fillCombine_MuResIsoUp(eventBits& event);
-  void fillCombine_MuResIsoDown(eventBits& event);
   void fillCombine_AK4JECUp(eventBits& event);
   void fillCombine_AK4JECDown(eventBits& event);
   void fillCombine_AK4JERUp(eventBits& event);
   void fillCombine_AK4JERDown(eventBits& event);
   void fillCombine_FSBResMuIDUp(eventBits& event);
   void fillCombine_FSBResMuIDDown(eventBits& event);
-  void fillCombine_FSBResMuIsoUp(eventBits& event);
-  void fillCombine_FSBResMuIsoDown(eventBits& event);
   void fillCombine_ElHLTUp(eventBits& event);
   void fillCombine_ElHLTDown(eventBits& event);
 

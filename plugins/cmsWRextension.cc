@@ -901,8 +901,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResZMASSRECO.fill(myRECOevent, 7);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 20);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 21);
-        m_eventsPassResZMASSRECO.fill(myRECOevent, 22);
-        m_eventsPassResZMASSRECO.fill(myRECOevent, 23);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 16);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 17);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 18);
@@ -961,8 +959,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFSBRECO.fill(  myRECOevent, 7);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 28);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 29);
-        m_eventsPassResFSBRECO.fill(  myRECOevent, 30);
-        m_eventsPassResFSBRECO.fill(  myRECOevent, 31);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 12);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 13);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 16);
@@ -1042,8 +1038,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 7);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 20);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 21);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 22);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 23);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 16);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 17);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 18);
@@ -1172,8 +1166,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 7.);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 8.);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 9.);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 14.);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 15.);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 16.);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 17.);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 18.);
@@ -1273,8 +1265,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 7.);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 8.);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 9.);
-        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 14.);
-        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 15.);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 16.);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 17.);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 18.);
