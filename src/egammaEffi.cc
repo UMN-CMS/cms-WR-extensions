@@ -31,19 +31,19 @@ egammaEffi::egammaEffi () {
   std::string iegammaEffi_HLT_SF2016="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/egammaEffi.txt_EGM2D_HLT2016.root";
   TFile *lFile_HLT2016 = TFile::Open(iegammaEffi_HLT_SF2016.c_str());
   m_egamma__HLT_sf2016_barrel = (TH2D*) lFile_HLT2016->Get("SF_TH2F_Barrel");
-  m_egamma__HLT_sf2016_endcap = (TH2D*) lFile_HLT2016->Get("SF_TH2F_Endcap");
+  m_egamma__HLT_sf2016_endcap = (TH2D*) lFile_HLT2016->Get("SF_TH2F_EndCap");
   lFile_HLT2016->Close();
 
   std::string iegammaEffi_HLT_SF2017="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2017/egammaEffi.txt_EGM2D_HLT2017.root";
   TFile *lFile_HLT2017 = TFile::Open(iegammaEffi_HLT_SF2017.c_str());
   m_egamma__HLT_sf2017_barrel = (TH2D*) lFile_HLT2017->Get("SF_TH2F_Barrel");
-  m_egamma__HLT_sf2017_endcap = (TH2D*) lFile_HLT2017->Get("SF_TH2F_Endcap");
+  m_egamma__HLT_sf2017_endcap = (TH2D*) lFile_HLT2017->Get("SF_TH2F_EndCap");
   lFile_HLT2017->Close();
 
   std::string iegammaEffi_HLT_SF2018="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2018/egammaEffi.txt_EGM2D_HLT2018.root";
   TFile *lFile_HLT2018 = TFile::Open(iegammaEffi_HLT_SF2018.c_str());
   m_egamma__HLT_sf2018_barrel = (TH2D*) lFile_HLT2018->Get("SF_TH2F_Barrel");
-  m_egamma__HLT_sf2018_endcap = (TH2D*) lFile_HLT2018->Get("SF_TH2F_Endcap");
+  m_egamma__HLT_sf2018_endcap = (TH2D*) lFile_HLT2018->Get("SF_TH2F_EndCap");
   lFile_HLT2018->Close();
 
 

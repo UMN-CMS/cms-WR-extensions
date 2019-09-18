@@ -271,6 +271,11 @@ public:
   double egamma_SF_HLT_Up   ;
   double egamma_SF_HLT_Down ;
 
+  std::vector<double>   PDFWeights_Scale;
+  std::vector<double> PDFWeights_Error;
+  std::vector<double> PDFWeights_AlphaS;
+
+
   double HEEP_SF_noISO        ;
   double HEEP_SF_E_noISO      ;
   double HEEP_SF_B_noISO      ;

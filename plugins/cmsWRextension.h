@@ -92,6 +92,9 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h" // -- LHE info like PDF
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h" // -- ??
+
 #include "TRandom3.h"
 //
 // class declaration
@@ -179,6 +182,7 @@ class cmsWRextension : public edm::EDAnalyzer {
 
       double getZweight(const edm::Event& iEvent, eventBits& myEvent);
       double PUPPIweight(double puppipt, double puppieta);
+      void LHEinfo(const edm::Event& iEvent, eventBits& myEvent);
       void loadCMSSWPath();
       // ----------member data ---------------------------
       eventHistos m_allEvents;
@@ -285,6 +289,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_trigObjsToken;
       edm::EDGetToken m_PUInfoToken;
       edm::EDGetToken m_rhoLabel;
+      edm::EDGetToken LHEEventProductToken;
       edm::EDGetTokenT< double > prefweight_token;
       edm::EDGetTokenT< double > prefweightup_token;
       edm::EDGetTokenT< double > prefweightdown_token;
@@ -328,6 +333,10 @@ class cmsWRextension : public edm::EDAnalyzer {
       JME::JetResolutionScaleFactor resolution_sf;
       JME::JetResolution resolution_AK4;
       JME::JetResolutionScaleFactor resolution_sf_AK4;
+
+      std::vector< int > ScaleIDRange_, PDFErrorIDRange_, PDFAlphaSIDRange_;
+      std::string PDFErrorType_;
+      std::vector< double > PDFAlphaSScaleValue_;
 
       TRandom3* r;
 

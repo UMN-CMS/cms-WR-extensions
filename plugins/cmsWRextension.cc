@@ -121,6 +121,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),
   m_PUInfoToken (consumes< std::vector<PileupSummaryInfo>> (iConfig.getParameter<edm::InputTag>("edmPileupInfo"))),
   m_rhoLabel    (consumes<double> (iConfig.getParameter<edm::InputTag>("rhoLabel"))),
+  LHEEventProductToken    ( consumes< LHEEventProduct > (iConfig.getUntrackedParameter<edm::InputTag>("LHEEventProduct"))),
   m_wantHardProcessMuons (iConfig.getUntrackedParameter<bool>("wantHardProcessMuons",true)),
   m_doGen (iConfig.getUntrackedParameter<bool>("doGen",false)),
   m_doReco (iConfig.getUntrackedParameter<bool>("doReco",true)),
@@ -163,7 +164,9 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
     m_AK8genJetsToken   =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"));
   }
 
+  std::cout << "Inside myEgammaEffi.Initialize" << std::endl;
   myEgammaEffi.Initialize(m_era);
+  std::cout << "Outside myEgammaEffi.Initialize" << std::endl;
 
   myZweights.setup(m_era);
   m_foundZ           = false;
@@ -198,6 +201,10 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   resolution_AK4 = JME::JetResolution(Form(resPath_AK4.c_str()));
   resolution_sf_AK4 = JME::JetResolutionScaleFactor(Form(resPathSF_AK4.c_str()));
 
+  ScaleIDRange_ = iConfig.getUntrackedParameter< std::vector<int> >("ScaleIDRange");
+  PDFErrorIDRange_ = iConfig.getUntrackedParameter< std::vector<int> >("PDFErrorIDRange");
+  PDFAlphaSIDRange_ = iConfig.getUntrackedParameter< std::vector<int> >("PDFAlphaSIDRange");
+  PDFAlphaSScaleValue_ = iConfig.getUntrackedParameter< std::vector<double> >("PDFAlphaSScaleValue");
 
   r = new TRandom3(1988);
 
@@ -313,6 +320,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       muonTrigPass = passMuonTrig(iEvent, myRECOevent);
       myRECOevent.muonTrigPassBit = muonTrigPass;
     }
+  }
+
+  if (m_isSignal){
+    LHEinfo(iEvent, myRECOevent);
   }
 
   myRECOevent.eventNumber = iEvent.id().event();
@@ -3288,7 +3299,69 @@ bool cmsWRextension::resolvedElectronSelection(const edm::Event& iEvent, eventBi
    
   return true;
 }
+void cmsWRextension::LHEinfo(const edm::Event& iEvent, eventBits& myEvent){
+  std::cout << "Inside LHEinfo" << std::endl;
+  edm::Handle<LHEEventProduct> LHEInfo;
+  iEvent.getByToken(LHEEventProductToken, LHEInfo);
+  if(!LHEInfo.isValid()) return;
 
+  std::cout << "Found LHEEventProduct" << std::endl;
+
+  int nWeight = (int)LHEInfo->weights().size();
+
+  map<int,double> map_id_to_weight;
+  for(int i=0; i<nWeight; i++){
+    int this_id = stoi(LHEInfo->weights()[i].id.c_str());
+    map_id_to_weight[this_id] = LHEInfo->weights()[i].wgt;
+    std::cout << "[SKFlatMaker::fillLHEInfo] map_id_to_weight["<<this_id<<"] = " << map_id_to_weight[this_id] << std::endl;
+  }
+
+  int central = ScaleIDRange_.at(0);
+  std::cout << "[SKFlatMaker::fillLHEInfo] central = " << central << std::endl;
+  std::cout << "[SKFlatMaker::fillLHEInfo] map_id_to_weight[central] = " << map_id_to_weight[central] << std::endl;
+
+  //=============================
+  //==== 1) QCD Scale variation
+  //=============================
+
+  for(int i=ScaleIDRange_.at(0);i<=ScaleIDRange_.at(1);i++){
+    std::cout << "[SKFlatMaker::fillLHEInfo] Scale Varation; adding id = " << i << std::endl;
+    myEvent.PDFWeights_Scale.push_back( map_id_to_weight[i]/map_id_to_weight[ScaleIDRange_.at(0)] );
+  }
+
+  //==============================
+  //==== 2) PDF Error and AlphaS
+  //==============================
+  int N_ErrorSet = PDFErrorIDRange_.at(1)-PDFErrorIDRange_.at(0)+1;
+
+  for(int i=PDFErrorIDRange_.at(0);i<=PDFErrorIDRange_.at(1);i++){
+    double this_reweight = map_id_to_weight[i] / map_id_to_weight[central];
+    myEvent.PDFWeights_Error.push_back( this_reweight );
+    std::cout << "[SKFlatMaker::fillLHEInfo] Error set; adding id = " << i << ", reweight = " << this_reweight << std::endl;
+  }
+
+  //==== AlphaS
+
+  double this_as_dn = (map_id_to_weight[PDFAlphaSIDRange_.at(0)] - map_id_to_weight[central]) / map_id_to_weight[central] * PDFAlphaSScaleValue_.at(0);
+  double this_as_up = (map_id_to_weight[PDFAlphaSIDRange_.at(1)] - map_id_to_weight[central]) / map_id_to_weight[central] * PDFAlphaSScaleValue_.at(1);
+
+  std::cout << "[SKFlatMaker::fillLHEInfo] AlphaS; dn id = " << PDFAlphaSIDRange_.at(0) << std::endl;
+  std::cout << "[SKFlatMaker::fillLHEInfo] AlphaS; up id = " << PDFAlphaSIDRange_.at(1) << std::endl;
+
+  myEvent.PDFWeights_AlphaS.push_back(1.+this_as_dn);
+  myEvent.PDFWeights_AlphaS.push_back(1.+this_as_up);
+
+  std::cout << "[SKFlatMaker::fillLHEInfo] LHEInfo->originalXWGTUP() = " << LHEInfo->originalXWGTUP() << std::endl;
+  std::cout << "[SKFlatMaker::fillLHEInfo] [myEvent.PDFWeights_Scale]" << std::endl;
+  for(unsigned int i=0;i<myEvent.PDFWeights_Scale.size();i++) std::cout << "[SKFlatMaker::fillLHEInfo] " << myEvent.PDFWeights_Scale.at(i) << std::endl;
+  std::cout << "[SKFlatMaker::fillLHEInfo] [myEvent.PDFWeights_Error]" << std::endl;
+  for(unsigned int i=0;i<myEvent.PDFWeights_Error.size();i++) std::cout << "[SKFlatMaker::fillLHEInfo] " << myEvent.PDFWeights_Error.at(i) << std::endl;
+  std::cout << "[SKFlatMaker::fillLHEInfo] [myEvent.PDFWeights_AlphaS]" << std::endl;
+  for(unsigned int i=0;i<myEvent.PDFWeights_AlphaS.size();i++) std::cout << "[SKFlatMaker::fillLHEInfo] " << myEvent.PDFWeights_AlphaS.at(i) << std::endl;
+
+
+
+}
 bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEvent) {  //Flavor sideband
   std::cout<<"STARTING ELECTRON SELECTION"<<std::endl;
   std::vector<const pat::Electron*> highPTelectrons200;
