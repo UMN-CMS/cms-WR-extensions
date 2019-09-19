@@ -72,13 +72,26 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(300))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
+#import FWCore.Utilities.FileUtils as FileUtils
+#mylist = FileUtils.loadListFromFile ('ttbarFiles1FileFSB.txt')
+#readFiles = cms.untracked.vstring( *mylist)
 
 process.source = cms.Source ("PoolSource",
+#          fileNames = readFiles,
 	  fileNames = cms.untracked.vstring (options.inputFiles),
-# 	  skipEvents = cms.untracked.uint32(9000)
+#	  lumisToProcess = cms.untracked.VLuminosityBlockRange("1:342735-1:342740" )
+#	  e = cms.EventID(1,9946613, 52351) 
+# 	  skipEvents = cms.untracked.uint32(800)
 )
+
+#import FWCore.ParameterSet.Config as cms
+#import PhysicsTools.PythonAnalysis.LumiList as LumiList
+#myLumis = LumiList.LumiList(filename = 'DYevents.json').getCMSSWString().split(',')
+#print "myLumis: ", myLumis
+#process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()
+#process.source.lumisToProcess.extend(myLumis)
 
 process.options = cms.untracked.PSet(
     SkipEvent = cms.untracked.vstring('ProductNotFound')
@@ -195,6 +208,11 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               trigResults = cms.InputTag("TriggerResults","","HLT"),
                               trigObjs = cms.InputTag("selectedPatTrigger"),
                               muonPathsToPass = muonPaths,
+			      LHEEventProduct = cms.untracked.InputTag("source"),
+			      ScaleIDRange = cms.untracked.vint32(1001,1045),
+			      PDFErrorIDRange = cms.untracked.vint32(1046,1146),
+			      PDFAlphaSIDRange = cms.untracked.vint32(1147,1148),
+			      PDFAlphaSScaleValue = cms.untracked.vdouble(0.116,0.120),
                               muonFiltersToPass = cms.vstring(""),
 			      electronPathsToPass = electronPaths,
 			      electronFiltersToPass = cms.vstring(""),
@@ -231,19 +249,19 @@ from PhysicsTools.PatUtils.l1ECALPrefiringWeightProducer_cfi import l1ECALPrefir
 if options.era == '2016':
   process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
       DataEra = cms.string("2016BtoH"),
-      UseJetEMPt = cms.bool(False),
+      UseJetEMPt = cms.bool(True),
       PrefiringRateSystematicUncty = cms.double(0.2),
       SkipWarnings = False)
 elif options.era == '2017':
   process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
       DataEra = cms.string("2017BtoF"), #Use 2016BtoH for 2016
-      UseJetEMPt = cms.bool(False),
+      UseJetEMPt = cms.bool(True),
       PrefiringRateSystematicUncty = cms.double(0.2),
       SkipWarnings = False)
 elif options.era == '2018':
   process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
       DataEra = cms.string("2018AtoD"), #Use 2016BtoH for 2016
-      UseJetEMPt = cms.bool(False),
+      UseJetEMPt = cms.bool(True),
       PrefiringRateSystematicUncty = cms.double(0.2),
       SkipWarnings = False)
 
