@@ -849,7 +849,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
   //THIS PART OF THE CODE RUNS THE ANALYSIS IN FAST MODE.  THE GOAL HERE IS TO PRODUCE ALL THE NECESSARY INFORMATION FOR HIGGS COMBINE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  if (m_doFast){
+  if (m_doFast && myRECOevent.hasPVertex){
     std::cout << "Inside doFast running" << std::endl;
     if (m_isMC && m_doGen) {
 
