@@ -809,6 +809,7 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     tree_evtNumVSlumiSec->Branch("evtNum", &evtNum, "evtNum/D");
     std::cout << "Creating lumiSec branch" << std::endl;
     tree_evtNumVSlumiSec->Branch("lumiSec", &lumiSec, "lumiSec/D");
+    tree_evtNumVSlumiSec->Branch("BoostSRmass", &BoostSRmass, "BoostSRInvariantMass/D");
     std::cout << "Done with booking" << std::endl;*/
 
     
@@ -1643,6 +1644,7 @@ void eventHistos::fillCombine_Nominal(eventBits& event, bool isSignal) {
 //  m_lumiSec->Fill(event.lumiSection);
   evtNum = event.eventNumber;
   lumiSec = event.lumiSection;
+  BoostSRmass = event.leadAK8JetMuonMassVal;
 //  tree_evtNumVSlumiSec->Fill();
 }
 void eventHistos::fillCombine_JECUp(eventBits& event) {

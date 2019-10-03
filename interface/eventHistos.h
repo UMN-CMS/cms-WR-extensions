@@ -821,7 +821,7 @@ class eventHistos {
   TH1D* m_resolvedRECOmass_alphasUp		;
   TH1D* m_resolvedRECOmass_alphasDown		;
 
-  Double_t evtNum, lumiSec;
+  Double_t evtNum, lumiSec, BoostSRmass;
 
 };
 

@@ -1,6 +1,7 @@
 #include "ExoAnalysis/cmsWRextensions/interface/Muons.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "ExoAnalysis/cmsWRextensions/interface/GeneralizedEndpoint.h"
 
 //C++ CLASSES
 #include <iostream>
@@ -108,7 +109,7 @@ Muons::Muons () {
 //Trigger SF files - 2016
   std::string iMuon_Trig_BCDEF = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/EfficienciesAndSF_RunBtoF.root";
   TFile *lFile_Trig_BCDEF = TFile::Open(iMuon_Trig_BCDEF.c_str());
-  Muon_Trig_BCDEF = (TH1F*) lFile_Trig_BCDEF->Get("Mu50_OR_TkMu50_PtBins/pt_ratio");
+  Muon_Trig_BCDEF = (TH2D*) lFile_Trig_BCDEF->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio");
   Muon_Trig_DataEff_BCDEF = (TH1F*) lFile_Trig_BCDEF->Get("Mu50_OR_TkMu50_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_BCDEF->SetDirectory(0);
   Muon_Trig_DataEff_BCDEF->SetDirectory(0);
@@ -116,15 +117,23 @@ Muons::Muons () {
 
   std::string iMuon_Trig_GH = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/EfficienciesAndSF_RunGtoH.root";
   TFile *lFile_Trig_GH = TFile::Open(iMuon_Trig_GH.c_str());
-  Muon_Trig_GH = (TH1F*) lFile_Trig_GH->Get("Mu50_OR_TkMu50_PtBins/pt_ratio");
+  Muon_Trig_GH = (TH2D*) lFile_Trig_GH->Get("Mu50_OR_TkMu50_PtEtaBins/abseta_pt_ratio");
   Muon_Trig_DataEff_GH = (TH1F*) lFile_Trig_GH->Get("Mu50_OR_TkMu50_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_GH->SetDirectory(0);
   Muon_Trig_DataEff_GH->SetDirectory(0);
   lFile_Trig_GH->Close();
 
-  Muon_Trig_SF2016 = (TH1F*) Muon_Trig_GH->Clone("pt_SF_trig_ave");
+  Muon_Trig_SF2016 = (TH2D*) Muon_Trig_GH->Clone("pt_SF_trig_ave");
   Muon_Trig_SF2016->Scale(lumi_GH / lumi_total);
   Muon_Trig_SF2016->Add(Muon_Trig_BCDEF, lumi_BCDEF/lumi_total);
+
+  for(int i=1;i<Muon_Trig_SF2016->GetNbinsX()+1; i++){
+     for(int j=1;j<Muon_Trig_SF2016->GetNbinsY()+1; j++){
+	std::cout << "Muon_Trig_SF2016.GetXaxis().GetBinCenter(i): " << Muon_Trig_SF2016->GetXaxis()->GetBinCenter(i) << std::endl;
+	std::cout << "Muon_Trig_SF2016.GetYaxis().GetBinCenter(j): " << Muon_Trig_SF2016->GetYaxis()->GetBinCenter(j) << std::endl;
+	std::cout << "Muon_Trig_SF2016.GetBinContent(i,j): " << Muon_Trig_SF2016->GetBinContent(i,j) << std::endl;
+     }
+  }
 
   Muon_Trig_DataEff2016 = (TH1F*) Muon_Trig_DataEff_GH->Clone("pt_dataEff_trig_ave");
   Muon_Trig_DataEff2016->Scale(lumi_GH / lumi_total);
@@ -133,7 +142,7 @@ Muons::Muons () {
 //Trigger SF files - 2017
   std::string iMuon_Trig_BtoF = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2017/EfficienciesAndSF_RunBtoF_Nov17Nov2017.root";
   TFile *lFile_Trig_BtoF = TFile::Open(iMuon_Trig_BtoF.c_str());
-  Muon_Trig_SF2017 = (TH1F*) lFile_Trig_BtoF->Get("Mu50_PtBins/pt_ratio");
+  Muon_Trig_SF2017 = (TH2D*) lFile_Trig_BtoF->Get("Mu50_PtEtaBins/abseta_pt_ratio");
   Muon_Trig_DataEff2017 = (TH1F*) lFile_Trig_BtoF->Get("Mu50_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_SF2017->SetDirectory(0);
   Muon_Trig_DataEff2017->SetDirectory(0);
@@ -142,7 +151,7 @@ Muons::Muons () {
 //Trigger SF files - 2018
   std::string iMuon_Trig_2018 = "${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2018/EfficienciesAndSF_2018Data_AfterMuonHLTUpdate.root";
   TFile *lFile_Trig_2018 = TFile::Open(iMuon_Trig_2018.c_str());
-  Muon_Trig_SF2018 = (TH1F*) lFile_Trig_2018->Get("Mu50_OR_OldMu100_OR_TkMu100_PtBins/pt_ratio");
+  Muon_Trig_SF2018 = (TH2D*) lFile_Trig_2018->Get("Mu50_OR_OldMu100_OR_TkMu100_PtEtaBins/abseta_pt_ratio");
   Muon_Trig_DataEff2018 = (TH1F*) lFile_Trig_2018->Get("Mu50_OR_OldMu100_OR_TkMu100_PtBins/efficienciesDATA/histo_pt_DATA");
   Muon_Trig_SF2018->SetDirectory(0);
   Muon_Trig_DataEff2018->SetDirectory(0);
@@ -155,6 +164,9 @@ Muons::Muons () {
   rc2016.init(edm::FileInPath("ExoAnalysis/cmsWRextensions/data/2016/RoccoR2016.txt").fullPath());
   rc2017.init(edm::FileInPath("ExoAnalysis/cmsWRextensions/data/2017/RoccoR2017.txt").fullPath());
   rc2018.init(edm::FileInPath("ExoAnalysis/cmsWRextensions/data/2018/RoccoR2018.txt").fullPath());
+
+//Generalized Endpoint Method
+
 
 }
 
@@ -293,9 +305,10 @@ std::vector<double> Muons::MuonLooseTkIso(double MuonPt, double MuonEta, std::st
 
 }
 
-std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era, bool isSignal){
+std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, std::string era, bool isSignal){
 
   double muPtForId = 0.;
+  double muEtaForId = 0.;
 
   if(MuonPt > 800){
     muPtForId = 799;
@@ -303,15 +316,22 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era, boo
     muPtForId = MuonPt;
   }
 
+  if(std::abs(MuonEta) > 2.4){
+    muEtaForId = 2.39;
+  }else{
+    muEtaForId = std::abs(MuonEta);
+  }
+
+
   if(era == "2016"){
     if(isSignal){
       muTrigWeight = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId));
       muTrigWeightUp = muTrigWeight + Muon_Trig_DataEff2016->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId));
       muTrigWeightDown = muTrigWeight - Muon_Trig_DataEff2016->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId));
     }else{
-      muTrigWeight = Muon_Trig_SF2016->GetBinContent(Muon_Trig_SF2016->FindBin(muPtForId));
-      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
-      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muPtForId));
+      muTrigWeight = Muon_Trig_SF2016->GetBinContent(Muon_Trig_SF2016->FindBin(muEtaForId,muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muEtaForId,muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2016->GetBinError(Muon_Trig_SF2016->FindBin(muEtaForId,muPtForId));
     }
   }else if(era == "2017"){
     if(isSignal){
@@ -319,9 +339,9 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era, boo
       muTrigWeightUp = muTrigWeight + Muon_Trig_DataEff2017->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId));
       muTrigWeightDown = muTrigWeight - Muon_Trig_DataEff2017->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId));
     }else{
-      muTrigWeight = Muon_Trig_SF2017->GetBinContent(Muon_Trig_SF2017->FindBin(muPtForId));
-      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
-      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muPtForId));
+      muTrigWeight = Muon_Trig_SF2017->GetBinContent(Muon_Trig_SF2017->FindBin(muEtaForId,muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muEtaForId,muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2017->GetBinError(Muon_Trig_SF2017->FindBin(muEtaForId,muPtForId));
     }
   }else if(era == "2018"){
     if(isSignal){
@@ -329,14 +349,15 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, std::string era, boo
       muTrigWeightUp = muTrigWeight + Muon_Trig_DataEff2018->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId));
       muTrigWeightDown = muTrigWeight - Muon_Trig_DataEff2018->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId));
     }else{
-      muTrigWeight = Muon_Trig_SF2018->GetBinContent(Muon_Trig_SF2018->FindBin(muPtForId));
-      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
-      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muPtForId));
+      muTrigWeight = Muon_Trig_SF2018->GetBinContent(Muon_Trig_SF2018->FindBin(muEtaForId,muPtForId));
+      muTrigWeightUp = muTrigWeight + Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muEtaForId,muPtForId));
+      muTrigWeightDown = muTrigWeight - Muon_Trig_SF2018->GetBinError(Muon_Trig_SF2018->FindBin(muEtaForId,muPtForId));
     }
   }
 
   std::cout << "muTrigWeight: " << muTrigWeight << std::endl;
   std::cout << "muPtForId: " << muPtForId << std::endl;
+  std::cout << "muEtaForId: " << muEtaForId << std::endl;
 
   std::vector<double> muTrigWeights;
   muTrigWeights.push_back(muTrigWeight);
@@ -416,6 +437,40 @@ std::vector<double> Muons::RochesterMethod_MCSmear(const pat::Muon* Mu, std::str
 
   return Weights;
 
+
+}
+
+std::vector<double> Muons::GeneralizedEndpointMethod(const pat::Muon* Mu){
+
+  double CorrectpT = myGeneralizedEndpoint.GeneralizedEndpointPt(Mu->pt(), Mu->charge(), Mu->eta(), Mu->phi(), 0, 1);
+  double CorrectpT_Up = myGeneralizedEndpoint.GeneralizedEndpointPt(Mu->pt(), Mu->charge(), Mu->eta(), Mu->phi(), 1, 1);
+  double CorrectpT_Down = myGeneralizedEndpoint.GeneralizedEndpointPt(Mu->pt(), Mu->charge(), Mu->eta(), Mu->phi(), 2, 1);
+
+  std::cout << "CorrectpT/Mu->pt(): " << CorrectpT/Mu->pt() << std::endl;
+
+  std::vector<double> Weights;
+  Weights.push_back(CorrectpT/Mu->pt());
+  Weights.push_back(CorrectpT_Up/Mu->pt());
+  Weights.push_back(CorrectpT_Down/Mu->pt());
+
+  return Weights;    
+
+}
+
+std::vector<double> Muons::GeneralizedEndpointMethod_Data(const pat::Muon* Mu){
+
+  double CorrectpT = myGeneralizedEndpoint.GeneralizedEndpointPt(Mu->pt(), Mu->charge(), Mu->eta(), Mu->phi(), -1, 1);
+  double CorrectpT_Up = myGeneralizedEndpoint.GeneralizedEndpointPt(Mu->pt(), Mu->charge(), Mu->eta(), Mu->phi(), -2, 1);
+  double CorrectpT_Down = myGeneralizedEndpoint.GeneralizedEndpointPt(Mu->pt(), Mu->charge(), Mu->eta(), Mu->phi(), -3, 1);
+
+  std::cout << "CorrectpT/Mu->pt(): " << CorrectpT/Mu->pt() << std::endl;
+
+  std::vector<double> Weights;
+  Weights.push_back(CorrectpT/Mu->pt());
+  Weights.push_back(CorrectpT_Up/Mu->pt());
+  Weights.push_back(CorrectpT_Down/Mu->pt());
+
+  return Weights;
 
 }
 
