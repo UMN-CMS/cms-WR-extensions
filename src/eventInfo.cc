@@ -14,6 +14,7 @@
 
 eventInfo::eventInfo () {
 
+
   std::string PU_Data2016="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2016/pileUp_Cert_271036-284044_13TeV_Collisions16_JSON.root";
   TFile *lFile2016 = TFile::Open(PU_Data2016.c_str());
   fPUDataHist2016  = (TH1F*) lFile2016->Get("pileup");
@@ -38,10 +39,37 @@ eventInfo::eventInfo () {
   }
 
   fPUMCHist2016->Scale(1./fPUMCHist2016->Integral());
+
+  fPUDataHist2016_Signal = (TH1F*) fPUDataHist2016->Clone("fPUDataHist2016_forSignal");
+  fPUDataHist2016_Signal_up = (TH1F*) fPUDataHist2016_up->Clone("fPUDataHist2016_forSignal_up");
+  fPUDataHist2016_Signal_down = (TH1F*) fPUDataHist2016_down->Clone("fPUDataHist2016_forSignal_down");
   
   fPUDataHist2016->Divide(fPUMCHist2016);
   fPUDataHist2016_up->Divide(fPUMCHist2016);
   fPUDataHist2016_down->Divide(fPUMCHist2016);
+
+  std::cout << "Original Reweighting" << std::endl;
+  for(int i=1; i<fPUDataHist2016->GetNbinsX()+1; i++){
+     std::cout << "bin: " << i << " amount: " << fPUDataHist2016->GetBinContent(i) << std::endl;
+  }
+
+  float fPUMCValues2016_Signal[100] = {0.000829312873542,0.00124276120498,0.00339329181587,0.00408224735376,0.00383036590008,0.00659159288946,0.00816022734493,	0.00943640833116,0.0137777376066,0.017059392038,0.0213193035468,0.0247343174676,0.0280848773878,0.0323308476564,0.0370394341409,0.0456917721191,0.0558762890594,0.0576956187107,0.0625325287017,0.0591603758776,0.0656650815128,0.0678329011676,0.0625142146389,0.0548068448797,0.0503893295063,0.040209818868,	0.0374446988111,0.0299661572042,0.0272024759921,0.0219328403791,0.0179586571619,0.0142926728247,0.00839941654725,0.00522366397213,0.00224457976761,0.000779274977993,0.000197066585944,	7.16031761328e-05,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
+
+  fPUMCHist2016_Signal = (TH1F*) fPUDataHist2016->Clone();
+  for(int i=1; i<101; i++){
+     fPUMCHist2016_Signal->SetBinContent(i,fPUMCValues2016_Signal[i-1]);
+  }
+
+  fPUMCHist2016_Signal->Scale(1./fPUMCHist2016_Signal->Integral());
+
+  fPUDataHist2016_Signal->Divide(fPUMCHist2016_Signal);
+  fPUDataHist2016_Signal_up->Divide(fPUMCHist2016_Signal);
+  fPUDataHist2016_Signal_down->Divide(fPUMCHist2016_Signal);
+  std::cout << "Original Signal Reweighting" << std::endl;
+  for(int i=1; i<fPUDataHist2016_Signal->GetNbinsX()+1; i++){
+     std::cout << "bin: " << i << " amount: " << fPUDataHist2016_Signal->GetBinContent(i) << std::endl;
+  }
+
 
   std::string PU_Data2017="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2017/pileUp_Cert_294927-306462_13TeV_Collisions17_JSON.root";
   TFile *lFile2017 = TFile::Open(PU_Data2017.c_str());
@@ -153,7 +181,7 @@ bool eventInfo::PVselection(edm::Handle<std::vector<reco::Vertex>> vertices) {
   return isPV;
 }
 
-std::vector<float> eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct, std::string era){
+std::vector<float> eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInfo> > hPileupInfoProduct, std::string era, bool isSignal){
 
   const std::vector<PileupSummaryInfo> *inPUInfos = hPileupInfoProduct.product();
   for (std::vector<PileupSummaryInfo>::const_iterator itPUInfo = inPUInfos->begin(); itPUInfo!=inPUInfos->end(); ++itPUInfo) {
@@ -170,9 +198,15 @@ std::vector<float> eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInf
   }
 
   if(era == "2016"){
-    fPUWeightHist = (TH1F*) fPUDataHist2016->Clone();
-    fPUWeightHist_up = (TH1F*) fPUDataHist2016_up->Clone();
-    fPUWeightHist_down = (TH1F*) fPUDataHist2016_down->Clone();
+    if(isSignal){
+      fPUWeightHist = (TH1F*) fPUDataHist2016_Signal->Clone();
+      fPUWeightHist_up = (TH1F*) fPUDataHist2016_Signal_up->Clone();
+      fPUWeightHist_down = (TH1F*) fPUDataHist2016_Signal_down->Clone();
+    }else{
+      fPUWeightHist = (TH1F*) fPUDataHist2016->Clone();
+      fPUWeightHist_up = (TH1F*) fPUDataHist2016_up->Clone();
+      fPUWeightHist_down = (TH1F*) fPUDataHist2016_down->Clone();
+    }
   }else if (era == "2017"){
     fPUWeightHist = (TH1F*) fPUDataHist2017->Clone();
     fPUWeightHist_up = (TH1F*) fPUDataHist2017_up->Clone();
@@ -201,9 +235,15 @@ std::vector<float> eventInfo::PUweight(edm::Handle< std::vector<PileupSummaryInf
   std::cout << "puweight_down: " << puweight_down << std::endl;
 
   std::vector<float> puWeights;
-  puWeights.push_back(lNPVW);
-  puWeights.push_back(puweight_up);
-  puWeights.push_back(puweight_down);
+  if(isSignal and era == "2016"){
+    puWeights.push_back(lNPVW/0.983);
+    puWeights.push_back(puweight_up/0.983);
+    puWeights.push_back(puweight_down/0.983);
+  }else{
+    puWeights.push_back(lNPVW);
+    puWeights.push_back(puweight_up);
+    puWeights.push_back(puweight_down);
+  }
 
   return puWeights;
 

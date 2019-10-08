@@ -255,6 +255,14 @@ public:
   double Muon_LooseTkIso2nd_WeightUp;
   double Muon_LooseTkIso2nd_WeightDown;
 
+  double Muon_RECO_Weight;
+  double Muon_RECO_WeightUp;
+  double Muon_RECO_WeightDown;
+
+  double Muon_RECO2nd_Weight;
+  double Muon_RECO2nd_WeightUp;
+  double Muon_RECO2nd_WeightDown;
+
   double Muon_Trig_Weight;
   double Muon_Trig_WeightUp;
   double Muon_Trig_WeightDown;
@@ -331,6 +339,7 @@ public:
   double resFSBElec_eta;
 
   double resFSBMuon_pt ;
+  double resFSBMuon_p ;
   double resFSBMuon_phi;
   double resFSBMuon_eta;
 

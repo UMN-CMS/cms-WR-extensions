@@ -109,6 +109,14 @@ eventBits::eventBits() {
   Muon_LooseTkIso2nd_WeightUp = -10000.0;
   Muon_LooseTkIso2nd_WeightDown = -10000.0;
 
+  Muon_RECO_Weight = 1.0;
+  Muon_RECO_WeightUp = -10000.0;
+  Muon_RECO_WeightDown = -10000.0;
+
+  Muon_RECO2nd_Weight = 1.0;
+  Muon_RECO2nd_WeightUp = -10000.0;
+  Muon_RECO2nd_WeightDown = -10000.0;
+
   Muon_Trig_Weight = 1.0;
   Muon_Trig_WeightUp = -10000.0;
   Muon_Trig_WeightDown = -10000.0;

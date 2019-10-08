@@ -49,6 +49,13 @@ options.register( 'isSignal',
                   "True when running over signal MC samples"
                )
 
+options.register( 'checkZ',
+		  True,
+		  VarParsing.multiplicity.singleton,
+		  VarParsing.varType.bool,
+		  "True when running over Drell-Yan MC samples"
+	       )
+
 options.parseArguments()
 
 #LOCAL VARIABLE DEFINITIONS
@@ -72,18 +79,23 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
-#import FWCore.Utilities.FileUtils as FileUtils
-#mylist = FileUtils.loadListFromFile ('ttbarFiles1FileFSB.txt')
+import FWCore.Utilities.FileUtils as FileUtils
+#mylist = FileUtils.loadListFromFile ('DY600Files.txt')
 #readFiles = cms.untracked.vstring( *mylist)
+
+#mylistEvents = FileUtils.loadListFromFile ('events_TTbarLeptonic.txt')
+#mylistEvents = FileUtils.loadListFromFile ('events_WR4000_N100.txt')
+#eventsToProcess = cms.untracked.vstring( *mylistEvents)
 
 process.source = cms.Source ("PoolSource",
 #          fileNames = readFiles,
 	  fileNames = cms.untracked.vstring (options.inputFiles),
+#          eventsToProcess = cms.untracked.VEventRange(eventsToProcess),
 #	  lumisToProcess = cms.untracked.VLuminosityBlockRange("1:342735-1:342740" )
 #	  e = cms.EventID(1,9946613, 52351) 
-# 	  skipEvents = cms.untracked.uint32(800)
+# 	  skipEvents = cms.untracked.uint32(118000)
 )
 
 #import FWCore.ParameterSet.Config as cms
@@ -143,9 +155,9 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
 from ExoAnalysis.cmsWRextensions.tools import addHEEPV70ElesMiniAOD
 addHEEPV70ElesMiniAOD(process,useStdName=False)
 
-from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
+#from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
 #jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])
-jetToolbox( process, 'ak8', 'jetSequence', 'noOutput', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addSoftDropSubjets=True, addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])  
+#jetToolbox( process, 'ak8', 'jetSequence', 'noOutput', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addSoftDropSubjets=True, addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])  
 
 process.options.allowUnscheduled = cms.untracked.bool(True)
 ##this is our example analysis module reading the results, you will have your own module
@@ -195,8 +207,10 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               recoJets = cms.InputTag("slimmedJets"),
                               AK4recoCHSJets = cms.InputTag("slimmedJets"),
                               AK8recoCHSJets = cms.InputTag("slimmedJetsAK8"),
-                              AK8recoPUPPIJets = cms.InputTag("selectedPatJetsAK8PFPuppi"),
-                              subJetName         = cms.InputTag('selectedPatJetsAK8PFPuppiSoftDropPacked'),
+                              AK8recoPUPPIJets = cms.InputTag("slimmedJetsAK8"),
+#                              AK8recoPUPPIJets = cms.InputTag("selectedPatJetsAK8PFPuppi"),
+                              subJetName         = cms.InputTag('slimmedJetsAK8PFPuppiSoftDropPacked:SubJets'),
+#                              subJetName         = cms.InputTag('selectedPatJetsAK8PFPuppiSoftDropPacked'),
                               #AK8recoPUPPIJets = cms.InputTag("AK8PFJetsPuppi"),
           		              jettinessPUPPI  = cms.untracked.string("NjettinessAK8Puppi"),
 			                  jecUncName  = (cms.untracked.string('AK8Puppi')),
@@ -221,7 +235,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               doGen = cms.untracked.bool(True),
                               isSignal = cms.untracked.bool(options.isSignal),
                               doFast = cms.untracked.bool(options.doFast),
-                              checkZ = cms.untracked.bool(True),
+                              checkZ = cms.untracked.bool(options.checkZ),
                               isMC = cms.untracked.bool(options.isMC),
 			                  amcatnlo = cms.untracked.bool(options.ISmcatnlo),
                               #MCL = cms.untracked.double(100),

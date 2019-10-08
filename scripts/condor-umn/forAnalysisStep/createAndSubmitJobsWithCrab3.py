@@ -318,6 +318,10 @@ with open(localInputListFile, 'r') as f:
       config.Data.ignoreLocality = True
       config.Site.whitelist = ['T2*']
     else: privateSamples = False
+
+    if 'DYJets' in primaryDatasetName: checkZ = True
+    else: checkZ = False
+
     if isData:
 #      config.JobType.priority = 500
       config.JobType.pyCfgParams = ['isMC=False']
@@ -418,43 +422,51 @@ with open(localInputListFile, 'r') as f:
                 print "isData"
                 if '94X_dataRun2_v10' in tag:
                         print "in 2016"
-                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=False']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=False','checkZ=False']
                 elif '94X_dataRun2_v11' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=False']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=False','checkZ=False']
                 elif '102X' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=False']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=False','checkZ=False']
           elif isAMCATNLO:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2016','ISmcatnlo=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2017','ISmcatnlo=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2018','ISmcatnlo=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
           else:
 	     if privateSamples:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isSignal=True','isMC=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isSignal=True','isMC=True','checkZ=False']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isSignal=True','isMC=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isSignal=True','isMC=True','checkZ=False']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isSignal=True','isMC=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isSignal=True','isMC=True','checkZ=False']
+	     elif checkZ:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True','checkZ=True']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True','checkZ=True']
+                elif '102X_upgrade2018_realistic_v12' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True','checkZ=True']
 	     else:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True','checkZ=False']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True','checkZ=False']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True']
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True','checkZ=False']
+
 	else:
 	  if isData:
 		print "isData"
 		if '94X_dataRun2_v10' in tag:
 			print "in 2016"
-			config.JobType.pyCfgParams = ['era=2016','isMC=False']
+			config.JobType.pyCfgParams = ['era=2016','isMC=False','checkZ=False']
         	elif '94X_dataRun2_v11' in tag:
-			config.JobType.pyCfgParams = ['era=2017','isMC=False']
+			config.JobType.pyCfgParams = ['era=2017','isMC=False','checkZ=False']
 		elif '102X' in tag:
-			config.JobType.pyCfgParams = ['era=2018','isMC=False']
+			config.JobType.pyCfgParams = ['era=2018','isMC=False','checkZ=False']
 	  elif isAMCATNLO:
 		if '94X_mcRun2_asymptotic_v3' in tag:
                         config.JobType.pyCfgParams = ['era=2016','ISmcatnlo=True']
