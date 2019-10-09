@@ -324,6 +324,10 @@ std::vector<double> Muons::MuonLooseTkIso(double MuonPt, double MuonEta, std::st
 
 std::vector<double> Muons::MuonRECOweight(double MuonP, double MuonEta, std::string era){
 
+  muRecoWeight = 1.0;
+  muRecoWeightUp = 1.0;
+  muRecoWeightDown = 1.0;
+
   if(era == "2016"){
     if(std::abs(MuonEta) < 1.6){
       if(MuonP > 50 && MuonP < 100){
@@ -354,7 +358,7 @@ std::vector<double> Muons::MuonRECOweight(double MuonP, double MuonEta, std::str
         muRecoWeight = 0.989;
         muRecoWeightUp = 0.989+0.004;
         muRecoWeightDown = 0.989-0.004;
-      }else if(MuonP > 1500 && MuonP < 3500){
+      }else if(MuonP > 1500){
         muRecoWeight = 0.8;
         muRecoWeightUp = 0.8+0.3;
         muRecoWeightDown = 0.8-0.3;
@@ -388,7 +392,7 @@ std::vector<double> Muons::MuonRECOweight(double MuonP, double MuonEta, std::str
         muRecoWeight = 0.978;
         muRecoWeightUp = 0.978+0.005;
         muRecoWeightDown = 0.978-0.005;
-      }else if(MuonP > 1500 && MuonP < 3500){
+      }else if(MuonP > 1500){
         muRecoWeight = 0.9;
         muRecoWeightUp = 0.9+0.2;
         muRecoWeightDown = 0.9-0.2;
@@ -424,7 +428,7 @@ std::vector<double> Muons::MuonRECOweight(double MuonP, double MuonEta, std::str
         muRecoWeight = 0.987;
         muRecoWeightUp = 0.987+0.003;
         muRecoWeightDown = 0.987-0.003;
-      }else if(MuonP > 1500 && MuonP < 3500){
+      }else if(MuonP > 1500){
         muRecoWeight = 0.9;
         muRecoWeightUp = 0.9+0.1;
         muRecoWeightDown = 0.9-0.1;
@@ -458,7 +462,7 @@ std::vector<double> Muons::MuonRECOweight(double MuonP, double MuonEta, std::str
         muRecoWeight = 0.986;
         muRecoWeightUp = 0.986+0.006;
         muRecoWeightDown = 0.986-0.006;
-      }else if(MuonP > 1500 && MuonP < 3500){
+      }else if(MuonP > 1500){
         muRecoWeight = 1.01;
         muRecoWeightUp = 1.01+0.01;
         muRecoWeightDown = 1.01-0.01;
@@ -494,7 +498,7 @@ std::vector<double> Muons::MuonRECOweight(double MuonP, double MuonEta, std::str
         muRecoWeight = 0.991;
         muRecoWeightUp = 0.991+0.004;
         muRecoWeightDown = 0.991-0.004;
-      }else if(MuonP > 1500 && MuonP < 3500){
+      }else if(MuonP > 1500){
         muRecoWeight = 1.0;
         muRecoWeightUp = 1.0+0.1;
         muRecoWeightDown = 1.0-0.1;
@@ -528,7 +532,7 @@ std::vector<double> Muons::MuonRECOweight(double MuonP, double MuonEta, std::str
         muRecoWeight = 0.978;
         muRecoWeightUp = 0.978+0.006;
         muRecoWeightDown = 0.978-0.006;
-      }else if(MuonP > 1500 && MuonP < 3500){
+      }else if(MuonP > 1500){
         muRecoWeight = 0.98;
         muRecoWeightUp = 0.98+0.01;
         muRecoWeightDown = 0.98-0.01;
