@@ -3381,7 +3381,7 @@ void cmsWRextension::LHEinfo(const edm::Event& iEvent, eventBits& myEvent){
 
   for(int i=ScaleIDRange_.at(0);i<=ScaleIDRange_.at(1);i++){
 //    std::cout << "[SKFlatMaker::fillLHEInfo] Scale Varation; adding id = " << i << std::endl;
-    myEvent.PDFWeights_Scale.push_back( map_id_to_weight[i]/fabs(map_id_to_weight[ScaleIDRange_.at(0)]) );
+    myEvent.PDFWeights_Scale.push_back( map_id_to_weight[i]/map_id_to_weight[ScaleIDRange_.at(0)] );
   }
 
   //==============================
