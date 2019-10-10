@@ -4088,32 +4088,60 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
 //    fJetUnc->setJetPt(iJet->pt());
 //    fJetUnc->setJetEta(iJet->eta());
 //    double jetUNC =              fJetUnc->getUncertainty(true);
-    JME::JetParameters parameters = {{JME::Binning::JetPt, iJet->pt()}, {JME::Binning::JetEta, iJet->eta()}, {JME::Binning::Rho, TMath::Min(rho,44.30)}};
-    float sigma_MC = resolution.getResolution(parameters);
+    JME::JetParameters parameters = {{JME::Binning::JetPt, iJet->pt()}, {JME::Binning::JetEta, iJet->eta()}, {JME::Binning::Rho, rho}};
+    float jet_resolution = resolution.getResolution(parameters);
     float sf = resolution_sf.getScaleFactor(parameters);
     float sfUp = resolution_sf.getScaleFactor(parameters, Variation::UP);
     float sfDown = resolution_sf.getScaleFactor(parameters, Variation::DOWN);
-    double x1 = r->Gaus(0., sigma_MC);
-    double x2 = r->Gaus(0., sigma_MC);
-    double x3 = r->Gaus(0., sigma_MC);
+//    double x1 = r->Gaus(0., sigma_MC);
+//    double x2 = r->Gaus(0., sigma_MC);
+//    double x3 = r->Gaus(0., sigma_MC);
+    double x1;
+    double x2;
+    double x3;
     double jetEnergySmearFactor = 1.0;
     double jetEnergySmearFactorUp = 1.0;
     double jetEnergySmearFactorDown = 1.0;
+    double sigma = 1.0;
+    double sigmaUp = 1.0;
+    double sigmaDown = 1.0;
     if(m_isMC){
-      jetEnergySmearFactor = 1.0 + sqrt(sf*sf - 1.0)*x1;
-      jetEnergySmearFactorUp = 1.0 + sqrt(sfUp*sfUp - 1.0)*x2;
-      jetEnergySmearFactorDown = 1.0 + sqrt(sfDown*sfDown - 1.0)*x3;
-//      std::cout << "jetEnergySmearFactor: " << jetEnergySmearFactor << " sf: " << sf << " sigma_MC: " << sigma_MC << " x1: " << x1 << std::endl;
+      std::cout << "sf: " << sf << " sfUp: " << sfUp << " sfDown: " << sfDown << std::endl;
+      sigma = jet_resolution * sqrt(TMath::Max(sf*sf - 1.0,0.));
+      sigmaUp = jet_resolution * sqrt(TMath::Max(sfUp*sfUp - 1.0,0.));
+      sigmaDown = jet_resolution * sqrt(TMath::Max(sfDown*sfDown - 1.0,0.));
+      x1 = r->Gaus(0., sigma);
+      x2 = r->Gaus(0., sigmaUp);
+      x3 = r->Gaus(0., sigmaDown);
+      jetEnergySmearFactor = 1.0+x1;
+      jetEnergySmearFactorUp = 1.0+x2;
+      jetEnergySmearFactorDown = 1.0+x3;
+//      jetEnergySmearFactor = 1.0 + sqrt(TMath::Max(sf*sf - 1.0,0.))*x1;
+//      jetEnergySmearFactorUp = 1.0 + sqrt(TMath::Max(sfUp*sfUp - 1.0,0.))*x2;
+//      jetEnergySmearFactorDown = 1.0 + sqrt(TMath::Max(sfDown*sfDown - 1.0,0.))*x3;
+      std::cout << "jetEnergySmearFactor: " << jetEnergySmearFactor << " jetEnergySmearFactorUp: " << jetEnergySmearFactorUp << " jetEnergySmearFactorDown: " << jetEnergySmearFactorDown << std::endl;
+//      std::cout << "jetEnergySmearFactorDown: " << jetEnergySmearFactorDown << " sfDown: " << sfDown << " x3: " << x3 << std::endl;
     }
+//    fJetUnc->setJetPt(iJet->pt());
     fJetUnc->setJetPt(iJet->pt()*jetEnergySmearFactor);
     fJetUnc->setJetEta(iJet->eta());
     double jetUNC =              fJetUnc->getUncertainty(true);
+/*    double jetCorrPtSmear = iJet->pt();
+    double jetPtJESUp =            iJet->pt()*(1+jetUNC);
+    double jetPtJESDown =          iJet->pt()*(1-jetUNC);
+    double jetPtJERUp = iJet->pt()*jetEnergySmearFactorUp;
+    double jetPtJERDown = iJet->pt()*jetEnergySmearFactorDown;*/
     double jetCorrPtSmear = iJet->pt()*jetEnergySmearFactor;
     double jetPtJESUp =            iJet->pt()*jetEnergySmearFactor*(1+jetUNC);
     double jetPtJESDown =          iJet->pt()*jetEnergySmearFactor*(1-jetUNC);
     double jetPtJERUp = iJet->pt()*jetEnergySmearFactorUp;
     double jetPtJERDown = iJet->pt()*jetEnergySmearFactorDown;
 
+/*    double jetCorrESmear = iJet->energy();
+    double jetEJESUp = iJet->energy()*(1+jetUNC);
+    double jetEJESDown = iJet->energy()*(1-jetUNC);
+    double jetEJERUp = iJet->energy()*jetEnergySmearFactorUp;
+    double jetEJERDown = iJet->energy()*jetEnergySmearFactorDown;*/
     double jetCorrESmear = iJet->energy()*jetEnergySmearFactor;
     double jetEJESUp = iJet->energy()*jetEnergySmearFactor*(1+jetUNC);
     double jetEJESDown = iJet->energy()*jetEnergySmearFactor*(1-jetUNC);
@@ -4167,10 +4195,11 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
     std::cout << iJet->userFloat("ak8PFJetsPuppiSoftDropMass") << std::endl;
     std::cout<<"POSSIBLE AK8JET CAND WITH PT,ETA,PHI,MASS: "<<jetCorrPtSmear<<","<<iJet->eta()<<","<<iJet->phi()<<","<< iJet->userFloat("ak8PFJetsPuppiSoftDropMass") << std::endl;
 
+    std::cout << "jetCorrPtSmear: " << jetCorrPtSmear << " jetPtJESUp: " << jetPtJESUp << " jetPtJESDown: " << jetPtJESDown << " jetPtJERUp: " << jetPtJERUp << " jetPtJERDown: " << jetPtJERDown << std::endl;
 
     //JETS PASSING WITH VERY HIGH PT
     if( jetCorrPtSmear > 200 ){
-      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta()) > 40){
+      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta(),m_isMC) > 40){
       	baconhep::TAddJet* pAddJet = new baconhep::TAddJet();
 
       	pAddJet->tau1 = iJet->userFloat(m_jettiness + std::string(":tau1"));
@@ -4181,7 +4210,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
       	pAddJet->eta  = iJet->eta();
       	pAddJet->phi  = iJet->phi();
       	pAddJet->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        pAddJet->SDmassCorr = PUPPIweight(pAddJet->pT, pAddJet->eta);
+        pAddJet->SDmassCorr = PUPPIweight(pAddJet->pT, pAddJet->eta, m_isMC);
 	std::cout << "pAddJet->SDmassCorr: " << pAddJet->SDmassCorr << std::endl;
 
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
@@ -4224,7 +4253,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
       }
     }
     if( jetPtJESUp > 200 ){
-      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta()) > 40){
+      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta(),m_isMC) > 40){
         baconhep::TAddJet* pAddJet_JECUp = new baconhep::TAddJet();
 
         pAddJet_JECUp->tau1 = iJet->userFloat(m_jettiness + std::string(":tau1"));
@@ -4234,7 +4263,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         pAddJet_JECUp->eta = iJet->eta();
         pAddJet_JECUp->phi = iJet->phi();
         pAddJet_JECUp->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        pAddJet_JECUp->SDmassCorr = PUPPIweight(pAddJet_JECUp->pT, pAddJet_JECUp->eta);
+        pAddJet_JECUp->SDmassCorr = PUPPIweight(pAddJet_JECUp->pT, pAddJet_JECUp->eta,m_isMC);
 
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JECUp->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JECUp->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
@@ -4255,7 +4284,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
     }
 
     if( jetPtJESDown > 200 ){
-      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta()) > 40){
+      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta(), m_isMC) > 40){
         baconhep::TAddJet* pAddJet_JECDown = new baconhep::TAddJet();
 
         pAddJet_JECDown->tau1 = iJet->userFloat(m_jettiness + std::string(":tau1"));
@@ -4265,7 +4294,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         pAddJet_JECDown->eta = iJet->eta();
         pAddJet_JECDown->phi = iJet->phi();
         pAddJet_JECDown->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        pAddJet_JECDown->SDmassCorr = PUPPIweight(pAddJet_JECDown->pT, pAddJet_JECDown->eta);
+        pAddJet_JECDown->SDmassCorr = PUPPIweight(pAddJet_JECDown->pT, pAddJet_JECDown->eta, m_isMC);
 
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JECDown->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JECDown->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
@@ -4285,7 +4314,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
       }
     }
     if( jetPtJERUp > 200 ){
-      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta()) > 40){
+      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta(),m_isMC) > 40){
         baconhep::TAddJet* pAddJet_JERUp = new baconhep::TAddJet();
 
         pAddJet_JERUp->tau1 = iJet->userFloat(m_jettiness + std::string(":tau1"));
@@ -4295,7 +4324,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         pAddJet_JERUp->eta = iJet->eta();
         pAddJet_JERUp->phi = iJet->phi();
         pAddJet_JERUp->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        pAddJet_JERUp->SDmassCorr = PUPPIweight(pAddJet_JERUp->pT, pAddJet_JERUp->eta);
+        pAddJet_JERUp->SDmassCorr = PUPPIweight(pAddJet_JERUp->pT, pAddJet_JERUp->eta,m_isMC);
 
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JERUp->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JERUp->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
@@ -4315,7 +4344,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
       }
     }
     if( jetPtJERDown > 200 ){
-      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta()) > 40){
+      if(iJet->userFloat("ak8PFJetsPuppiSoftDropMass")*PUPPIweight(jetCorrPtSmear,iJet->eta(),m_isMC) > 40){
         baconhep::TAddJet* pAddJet_JERDown = new baconhep::TAddJet();
 
         pAddJet_JERDown->tau1 = iJet->userFloat(m_jettiness + std::string(":tau1"));
@@ -4325,7 +4354,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         pAddJet_JERDown->eta = iJet->eta();
         pAddJet_JERDown->phi = iJet->phi();
         pAddJet_JERDown->SDmass = iJet->userFloat("ak8PFJetsPuppiSoftDropMass");
-        pAddJet_JERDown->SDmassCorr = PUPPIweight(pAddJet_JERDown->pT, pAddJet_JERDown->eta);
+        pAddJet_JERDown->SDmassCorr = PUPPIweight(pAddJet_JERDown->pT, pAddJet_JERDown->eta,m_isMC);
 
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JERDown->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JERDown->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
@@ -4446,41 +4475,46 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
   delete fJetUnc;
   return true;
 }
-double cmsWRextension::PUPPIweight(double puppipt, double puppieta){
+double cmsWRextension::PUPPIweight(double puppipt, double puppieta, bool isMC){
 
-  double genCorr=1;
-  double recoCorr=1;
   double totalWeight=1;
 
-  TF1 corrGEN = TF1("corrGEN", "[0]+[1]*pow(x*[2],-[3])", 200, 3500);
-  corrGEN.SetParameter(0, 1.00626);
-  corrGEN.SetParameter(1, -1.06161);
-  corrGEN.SetParameter(2, 0.0799900);
-  corrGEN.SetParameter(3, 1.20454);
+  if(isMC){
+    double genCorr=1;
+    double recoCorr=1;
 
-  TF1 corrRECO_cen = TF1("corrRECO_cen", "[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)", 200, 3500);
-  corrRECO_cen.SetParameter(0, 1.09302);
-  corrRECO_cen.SetParameter(1, -0.000150068);
-  corrRECO_cen.SetParameter(2, 3.44866e-07);
-  corrRECO_cen.SetParameter(3, -2.68100e-10);
-  corrRECO_cen.SetParameter(4, 8.67440e-14);
-  corrRECO_cen.SetParameter(5, -1.00114e-17);
+    TF1 corrGEN = TF1("corrGEN", "[0]+[1]*pow(x*[2],-[3])", 200, 3500);
+    corrGEN.SetParameter(0, 1.00626);
+    corrGEN.SetParameter(1, -1.06161);
+    corrGEN.SetParameter(2, 0.0799900);
+    corrGEN.SetParameter(3, 1.20454);
 
-  TF1 corrRECO_for = TF1("corrRECO_for", "[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)", 200, 3500);
-  corrRECO_for.SetParameter(0, 1.27212);
-  corrRECO_for.SetParameter(1, -0.000571640);
-  corrRECO_for.SetParameter(2, 8.37289e-07);
-  corrRECO_for.SetParameter(3, -5.20433e-10);
-  corrRECO_for.SetParameter(4, 1.45375e-13);
-  corrRECO_for.SetParameter(5, -1.50389e-17);
+    TF1 corrRECO_cen = TF1("corrRECO_cen", "[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)", 200, 3500);
+    corrRECO_cen.SetParameter(0, 1.09302);
+    corrRECO_cen.SetParameter(1, -0.000150068);
+    corrRECO_cen.SetParameter(2, 3.44866e-07);
+    corrRECO_cen.SetParameter(3, -2.68100e-10);
+    corrRECO_cen.SetParameter(4, 8.67440e-14);
+    corrRECO_cen.SetParameter(5, -1.00114e-17);
 
-  genCorr = corrGEN.Eval(puppipt);
-  if (abs(puppieta) < 1.3){
-    recoCorr = corrRECO_cen.Eval(puppipt);
+    TF1 corrRECO_for = TF1("corrRECO_for", "[0]+[1]*x+[2]*pow(x,2)+[3]*pow(x,3)+[4]*pow(x,4)+[5]*pow(x,5)", 200, 3500);
+    corrRECO_for.SetParameter(0, 1.27212);
+    corrRECO_for.SetParameter(1, -0.000571640);
+    corrRECO_for.SetParameter(2, 8.37289e-07);
+    corrRECO_for.SetParameter(3, -5.20433e-10);
+    corrRECO_for.SetParameter(4, 1.45375e-13);
+    corrRECO_for.SetParameter(5, -1.50389e-17);
+
+    genCorr = corrGEN.Eval(puppipt);
+    if (abs(puppieta) < 1.3){
+      recoCorr = corrRECO_cen.Eval(puppipt);
+    }else{
+      recoCorr = corrRECO_for.Eval(puppipt);
+    }
+    totalWeight = genCorr * recoCorr;
   }else{
-    recoCorr = corrRECO_for.Eval(puppipt);
+    totalWeight = 1.0;
   }
-  totalWeight = genCorr * recoCorr;
 
   return totalWeight;
 

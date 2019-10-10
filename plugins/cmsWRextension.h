@@ -181,7 +181,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       void setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent);
 
       double getZweight(const edm::Event& iEvent, eventBits& myEvent);
-      double PUPPIweight(double puppipt, double puppieta);
+      double PUPPIweight(double puppipt, double puppieta, bool isMC);
       void LHEinfo(const edm::Event& iEvent, eventBits& myEvent);
       void loadCMSSWPath();
       // ----------member data ---------------------------
