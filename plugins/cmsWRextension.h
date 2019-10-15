@@ -179,6 +179,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent);
+      bool WRresonanceStudy(const edm::Event& iEvent, eventBits& myEvent);
 
       double getZweight(const edm::Event& iEvent, eventBits& myEvent);
       double PUPPIweight(double puppipt, double puppieta, bool isMC);
@@ -186,6 +187,11 @@ class cmsWRextension : public edm::EDAnalyzer {
       void loadCMSSWPath();
       // ----------member data ---------------------------
       eventHistos m_allEvents;
+
+      eventHistos m_allOnShellEvents;
+      eventHistos m_allOffShellEvents;
+      eventHistos m_eventsFailResPassBoostRECO_onShell;
+      eventHistos m_eventsFailResPassBoostRECO_offShell;
 //      eventHistos m_eventsPassingWR2016;
 //      eventHistos m_eventsPassingExtensionGEN;
 //      eventHistos m_eventsPassingExtensionRECO;

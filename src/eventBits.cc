@@ -205,6 +205,8 @@ eventBits::eventBits() {
   
   minPartonMuon2dR           = -10000.0;
 
+  wrShellMass = -10000.0;
+
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
   muon1EtVal = -10000.0;

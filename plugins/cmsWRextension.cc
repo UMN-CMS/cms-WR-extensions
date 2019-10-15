@@ -269,6 +269,10 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool tooManyBoostElectronsInJet = false;
   bool tooManyBoostFSBLeptons = false;
 
+
+ //////
+  bool passesFastBoostRECO = false;
+
 //////
   bool passesBoostRECO = false;
   bool passesBoostGEN = false; //this tracks with our current analysis effort
@@ -1211,7 +1215,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
       //Fill histograms individually
       std::cout << "myRECOevent.myAddJetCandsHighPt.size(): " << myRECOevent.myAddJetCandsHighPt.size() << "myRECOevent.myMuonCandsHighPt.size(): " << myRECOevent.myMuonCandsHighPt.size() << "myRECOevent.myMuonJetPairs.size(): " << myRECOevent.myMuonJetPairs.size() << "muonTrigPass: " << muonTrigPass << "addMuons: " << addMuons << "ZMASS_Nom: " << ZMASS_Nom << "myRECOevent.nHighPtMuonsOutsideJet: " << myRECOevent.nHighPtMuonsOutsideJet << std::endl;
-      if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150 && myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0 && !addElectrons && addMuons && ZMASS_Nom==2 && myRECOevent.leadAK8JetMuonMassVal > 800){
+      if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150 && myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0 && !addElectrons && addMuons && ZMASS_Nom==2){
+        passesFastBoostRECO = true;
 	myRECOevent.cutProgress++;
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 1., m_isSignal);
@@ -1451,6 +1456,16 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
     }
   }
+  bool onShell = false;
+  onShell = WRresonanceStudy(iEvent, myRECOevent);
+  
+  if( passesFastBoostRECO ) {
+    if ( onShell) m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 1 ,m_isSignal); 
+    if (!onShell) m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 1 ,m_isSignal); 
+  }
+  if (onShell) m_allOnShellEvents.fill(myRECOevent, 1, m_isSignal);
+  if(!onShell) m_allOffShellEvents.fill(myRECOevent, 1, m_isSignal);
+
   std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
   setEventWeight_ResolvedFSB(iEvent, myRECOevent);
   setEventWeight_Resolved(iEvent, myRECOevent);
@@ -6238,6 +6253,51 @@ bool cmsWRextension::passResGEN(const edm::Event& iEvent, eventBits& myEvent) {
   return true;
 
 }
+bool cmsWRextension::WRresonanceStudy(const edm::Event& iEvent, eventBits& myEvent) {
+  std::cout << "Starting WRresonanceStudy" << std::endl;
+  edm::Handle<std::vector<reco::GenParticle>> genParticles;
+  iEvent.getByToken(m_genParticleToken, genParticles);
+
+  //LOOP OVER GEN PARTICLES
+  //9900024 WR 9900014 NRu 9900012 NRe 9900016 NRt
+  bool foundIt = false;
+  for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
+    if( ! iParticle->isHardProcess() ) continue;  //ONLY HARD PROCESS AND NOT INCOMING
+    if( iParticle->status() == 21 )    continue;
+
+    if ( abs(iParticle->pdgId()) == 34 ) {
+    //  std::cout << "WR with mass: "<< iParticle->mass() << std::endl;
+      myEvent.wrShellMass = iParticle->mass();
+      foundIt = true;
+    }
+    
+    
+  }
+  if (!foundIt) {
+    const reco::GenParticle* lostLepton   = 0;
+    const reco::GenParticle* lostNeutrino = 0;
+
+ //   std::cout << "DISASTER!" << std::endl;
+    for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
+      if( ! iParticle->isHardProcess() ) continue;  //ONLY HARD PROCESS AND NOT INCOMING
+//      std::cout << "STATUS: " << iParticle->status() << " PDGID: " << iParticle->pdgId() << " MOTHER: " << iParticle->mother()->pdgId() << std::endl;
+
+      if( abs( iParticle->mother()->pdgId() ) <= 6 ) {//CAME FROM A QUARK
+        if( abs( iParticle->pdgId() ) == 13 || abs( iParticle->pdgId() ) == 11 ) //HERE'S A LEPTON
+          lostLepton = &(*iParticle);
+        if( abs( iParticle->pdgId() ) == 9900014 || abs( iParticle->pdgId() ) == 9900012) //HERE'S A RIGHT-HANDED NEUTRINO
+          lostNeutrino = &(*iParticle);
+      }
+    }
+    if(lostLepton == 0 || lostNeutrino == 0) {
+      std::cout <<"STILL A MESS!!!"<<std::endl;
+    }
+    myEvent.wrShellMass = (lostLepton->p4() + lostNeutrino->p4()).mass();
+  }
+ 
+  return foundIt;
+
+}
 //TIGHTER VERSIONS
 //bool cmsWRextension::passBoostTightGEN(const edm::Event& iEvent, eventBits& myEvent) {
 //
@@ -6364,6 +6424,11 @@ cmsWRextension::beginJob()
     flavor = 5;
     std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
     m_allEvents.book((fs->mkdir("allEvents")), 5, m_outputTag, false, m_isSignal);
+
+    m_allOnShellEvents.book((fs->mkdir("allOnShellEvents")), 5, m_outputTag, false, m_isSignal);
+    m_allOffShellEvents.book((fs->mkdir("allOffShellEvents")), 5, m_outputTag, false, m_isSignal);
+    m_eventsFailResPassBoostRECO_onShell.book((fs->mkdir( "eventsFailResPassBoostRECO_onShell" )),            5, m_outputTag, false, m_isSignal);
+    m_eventsFailResPassBoostRECO_offShell.book((fs->mkdir("eventsFailResPassBoostRECO_offShell")),            5, m_outputTag, false, m_isSignal);
 
     m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")),            5, m_outputTag, false, m_isSignal);
     m_eventsPassBoostZMASSRECO.book((fs->mkdir("eventsPassBoostZMASSRECO")),                5, m_outputTag, false, m_isSignal);

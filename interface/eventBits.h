@@ -291,6 +291,8 @@ public:
 
   double myGenLSF;
 
+  double wrShellMass;
+
   //GEN Z
   double genZmass;
   double genZpt;
