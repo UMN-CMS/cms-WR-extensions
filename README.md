@@ -53,9 +53,8 @@ python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/
 ```
 Example incantations to run the analysis by hand:
 ```
-cmsRun python/ConfFile_cfg.py inputFiles_load=samples/backgrounds/WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt outputFile=out.root >& out.txt &
+cmsRun python/ConfFile_cfg_regression_IDs.py inputFiles=root://cmsxrootd.fnal.gov//store/user/suoh/WRtoNLtoLLJJ_WR7000_N2800/CMSSW_9_4_6_patch1__MINIAOD/190418_080016/0000/MINIAOD_28.root doFast=True isSignal=True isMC=True checkZ=False >& out.txt &
 
-cmsRun python/ConfFile_cfg.py inputFiles=root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AC65E566-52D0-E611-ACAA-1866DAEA812C.root outputFile=out.root >& out.txt &
 ```
 
 ## Legacy Run II (**IN PROGRESS** as of 1-22-2019)
