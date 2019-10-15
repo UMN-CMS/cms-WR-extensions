@@ -102,6 +102,8 @@ class eventHistos {
 
   TH1D* m_eventFlavor       ;
 
+  TH1D* m_wrShellMass;
+
   TH1D* m_cutProgress;
   TH1D* m_cutProgressNoWeight;
   TH1D* m_ResCutProgress;
