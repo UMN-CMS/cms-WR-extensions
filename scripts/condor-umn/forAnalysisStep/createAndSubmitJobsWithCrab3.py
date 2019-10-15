@@ -49,11 +49,14 @@ globalTagsByDataset['Run2017F-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017G-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017H-31Mar2018*'] = '94X_dataRun2_v11'
 
-globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v12'
-globalTagsByDataset['Run2018A-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018B-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018C-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v11'
+globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v19'
+globalTagsByDataset['Run2018A-17Sep2018*'] = '102X_dataRun2_v11'
+globalTagsByDataset['Run2018B-17Sep2018*'] = '102X_dataRun2_v11'
+globalTagsByDataset['Run2018C-17Sep2018*'] = '102X_dataRun2_v11'
+#globalTagsByDataset['Run2018A-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+#globalTagsByDataset['Run2018B-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+#globalTagsByDataset['Run2018C-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v14'
 
 def crabSubmit(config):
     try:
@@ -326,7 +329,7 @@ with open(localInputListFile, 'r') as f:
 #      config.JobType.priority = 500
       config.JobType.pyCfgParams = ['isMC=False']
       if '2016' in datasetName:
-      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt'
       elif '2017' in datasetName:
      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
       elif '2018' in datasetName:

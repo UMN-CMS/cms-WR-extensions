@@ -466,6 +466,8 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
    m_resolvedFSBRECOmass_MuTrigDown  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuTrigDown","4 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
    m_resolvedFSBRECOmass_MuResolUp  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuResolUp","2 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
    m_resolvedFSBRECOmass_MuResolDown  =           m_histoFolder.make<TH1D>("resolvedFSBRECOmass_MuResolDown","4 Object Mass;Mass (GeV);"                 ,1700, 0, 8500);//11, binBoundaries);
+    m_selectedJetLSF3   =                 m_histoFolder.make<TH1D>("selectedJetLSF3"   ,"Selected Jet LSF_{3}; Jet LSF_{3};"   ,40,0.0,1.0 );
+
    if(isSignal){
     m_Scale_muR1_muF1 = m_histoFolder.make<TH1D>("m_Scale_muR1_muF1","number of events weighted", 1, 0.0, 1);
     m_Scale_muR2_muF1 = m_histoFolder.make<TH1D>("m_Scale_muR2_muF1","number of events weighted", 1, 0.0, 1);
@@ -1412,11 +1414,15 @@ void eventHistos::fillCombine_Nominal(eventBits& event, bool isSignal) {
   std::cout << "doFast event.weight : " << event.weight << std::endl;
   std::cout << "doFast event.leadAK8JetMuonMassVal: " << event.leadAK8JetMuonMassVal << std::endl;
   std::cout << "doFast event.resolvedRECOmass: " << event.resolvedRECOmass << std::endl;
+  std::cout << "event.selectedJetLSF3: " << event.selectedJetLSF3 << std::endl;
+  std::cout << "event.leadAK8JetElectronMassVal: " << event.leadAK8JetElectronMassVal << std::endl;
   m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
   m_leadAK8JetMuonMass_noLSF->Fill(event.leadAK8JetMuonMassVal_noLSF, weight);
   m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
   m_resolvedRECOmass->Fill(event.resolvedRECOmass, weight);
   m_resolvedFSBRECOmass->Fill(event.resolvedFSBRECOmass, weight);
+  m_selectedJetLSF3->Fill(event.selectedJetLSF3, weight);
+
   if(isSignal){
     m_leadAK8JetMuonMass_Scale_muR2_muF1->Fill(event.leadAK8JetMuonMassVal, weight*event.PDFWeights_Scale.at(5));
     m_leadAK8JetMuonMass_Scale_muRp5_muF1->Fill(event.leadAK8JetMuonMassVal, weight*event.PDFWeights_Scale.at(10));

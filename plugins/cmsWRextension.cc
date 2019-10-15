@@ -190,10 +190,10 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
     resPath_AK4 = jecPathname + "2017/Fall17_V3_MC_PtResolution_AK4PFchs.txt";
     resPathSF_AK4 = jecPathname + "2017/Fall17_V3_MC_SF_AK4PFchs.txt";
   } else if (m_era == "2018") {
-    resPath = jecPathname + "2018/Autumn18_V1_MC_PtResolution_AK8PFPuppi.txt";
-    resPathSF = jecPathname + "2018/Autumn18_V1_MC_SF_AK4PFchs.txt";
-    resPath_AK4 = jecPathname + "2018/Autumn18_V1_MC_PtResolution_AK4PFchs.txt";
-    resPathSF_AK4 = jecPathname + "2018/Autumn18_V1_MC_SF_AK8PFPuppi.txt";
+    resPath = jecPathname + "2018/Autumn18_V7_MC_PtResolution_AK8PFPuppi.txt";
+    resPathSF = jecPathname + "2018/Autumn18_V7_MC_SF_AK4PFchs.txt";
+    resPath_AK4 = jecPathname + "2018/Autumn18_V7_MC_PtResolution_AK4PFchs.txt";
+    resPathSF_AK4 = jecPathname + "2018/Autumn18_V7_MC_SF_AK8PFPuppi.txt";
   }
 
   resolution = JME::JetResolution(Form(resPath.c_str()));
@@ -1211,7 +1211,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
       //Fill histograms individually
       std::cout << "myRECOevent.myAddJetCandsHighPt.size(): " << myRECOevent.myAddJetCandsHighPt.size() << "myRECOevent.myMuonCandsHighPt.size(): " << myRECOevent.myMuonCandsHighPt.size() << "myRECOevent.myMuonJetPairs.size(): " << myRECOevent.myMuonJetPairs.size() << "muonTrigPass: " << muonTrigPass << "addMuons: " << addMuons << "ZMASS_Nom: " << ZMASS_Nom << "myRECOevent.nHighPtMuonsOutsideJet: " << myRECOevent.nHighPtMuonsOutsideJet << std::endl;
-      if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150 && myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0 && !addElectrons && addMuons && ZMASS_Nom==2){
+      if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150 && myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0 && !addElectrons && addMuons && ZMASS_Nom==2 && myRECOevent.leadAK8JetMuonMassVal > 800){
 	myRECOevent.cutProgress++;
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 1., m_isSignal);
@@ -3583,7 +3583,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 	}else if(m_era == "2017"){
           fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
 	}else if(m_era == "2018"){
-          fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V8_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+          fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V19_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
 	}
   }else{
 	if (m_era == "2016") {
@@ -3606,13 +3606,13 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
 	  }
 	}else if(m_era == "2018"){
           if (iEvent.id().run() < 316996) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunA_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunA_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 317079 && iEvent.id().run() < 319311) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunB_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunB_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 319336 && iEvent.id().run() < 320066) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunC_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunC_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 320672 && iEvent.id().run() < 325176) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunD_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunD_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           }
 	}
   }
@@ -3798,7 +3798,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
         }else if(m_era == "2017"){
           fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017_V32_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
         }else if(m_era == "2018"){
-          fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V8_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+          fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V19_MC_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
         }
   }else{
         if (m_era == "2016") {
@@ -3821,13 +3821,13 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
           }
         }else if(m_era == "2018"){
           if (iEvent.id().run() < 316996) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunA_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunA_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 317079 && iEvent.id().run() < 319311) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunB_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunB_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 319336 && iEvent.id().run() < 320066) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunC_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunC_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 320672 && iEvent.id().run() < 325176) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunD_V8_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunD_V19_DATA_Uncertainty_AK4PFchs.txt",jecPathname.c_str()));
           }
         }
   }
@@ -3977,7 +3977,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
     } else if (m_era == "2017") {
       fJetUnc = new JetCorrectionUncertainty(Form("%s/2017/Fall17_17Nov2017_V32_MC_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
     } else if (m_era == "2018") {
-      fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V8_MC_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+      fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_V19_MC_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
     }
   }else{
 	if (m_era == "2016") {
@@ -4000,13 +4000,13 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
       }
 	} else if (m_era == "2018") {
           if (iEvent.id().run() < 316996) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunA_V8_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunA_V19_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 317079 && iEvent.id().run() < 319311) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunB_V8_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunB_V19_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 319336 && iEvent.id().run() < 320066) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunC_V8_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunC_V19_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
           } else if (iEvent.id().run() > 320672 && iEvent.id().run() < 325176) {
-            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunD_V8_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
+            fJetUnc = new JetCorrectionUncertainty(Form("%s/2018/Autumn18_RunD_V19_DATA_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
           }
 	}
   }
@@ -5190,6 +5190,7 @@ void cmsWRextension::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
   	myRECOevent.selectedJetPt   = myRECOevent.myMuonJetPairs[0].first->pT;
   	myRECOevent.selectedJetPhi  = myRECOevent.myMuonJetPairs[0].first->phi;
   	myRECOevent.selectedJetEta  = myRECOevent.myMuonJetPairs[0].first->eta;
+	myRECOevent.selectedJetLSF3 = myRECOevent.myMuonJetPairs[0].first->lsfC_3;
   	myRECOevent.selectedJetMass = myRECOevent.myMuonJetPairs[0].first->SDmass*myRECOevent.myMuonJetPairs[0].first->SDmassCorr;
 
   	if(myRECOevent.myMuonJetPairs[0].first->tau1==0){
