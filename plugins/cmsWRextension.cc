@@ -271,7 +271,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
 
  //////
-  bool passesFastBoostRECO = false;
+//  bool passesFastBoostRECO = false;
 
 //////
   bool passesBoostRECO = false;
@@ -1214,9 +1214,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         setEventWeight(iEvent, myRECOevent);
       }
       //Fill histograms individually
+      bool onShell = false;
+      onShell = WRresonanceStudy(iEvent, myRECOevent);
+      
       std::cout << "myRECOevent.myAddJetCandsHighPt.size(): " << myRECOevent.myAddJetCandsHighPt.size() << "myRECOevent.myMuonCandsHighPt.size(): " << myRECOevent.myMuonCandsHighPt.size() << "myRECOevent.myMuonJetPairs.size(): " << myRECOevent.myMuonJetPairs.size() << "muonTrigPass: " << muonTrigPass << "addMuons: " << addMuons << "ZMASS_Nom: " << ZMASS_Nom << "myRECOevent.nHighPtMuonsOutsideJet: " << myRECOevent.nHighPtMuonsOutsideJet << std::endl;
       if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150 && myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0 && !addElectrons && addMuons && ZMASS_Nom==2){
-        passesFastBoostRECO = true;
+//        passesFastBoostRECO = true;
 	myRECOevent.cutProgress++;
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 1., m_isSignal);
@@ -1228,18 +1231,62 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 17., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 18., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 19., m_isSignal);
+
+        if ( onShell){
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 1 ,m_isSignal);
+	  m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 6 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 7 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 8 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 9 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 16 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 17 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 18 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 19 ,m_isSignal);
+	}else if(!onShell){ 
+	  m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 1 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 6 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 7 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 8 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 9 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 16 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 17 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 18 ,m_isSignal);
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 19 ,m_isSignal);
+        }
+
       }
       if(myRECOevent.myAddJetCandsHighPt_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JECUp == 1 && !addElectrons_JECUp && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 2., m_isSignal);
+        if ( onShell){
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 2 ,m_isSignal);
+        }else if(!onShell){
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 2 ,m_isSignal);
+        }
       }
       if(myRECOevent.myAddJetCandsHighPt_JECDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JECDown.size() > 0 && muonTrigPass && addMuons_JECDown && ZMASS_JECDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JECDown == 1 && !addElectrons_JECDown && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 3., m_isSignal);
+        if ( onShell){
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 3 ,m_isSignal);
+        }else if(!onShell){
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 3 ,m_isSignal);
+        }
+
       }
       if(myRECOevent.myAddJetCandsHighPt_JERUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERUp.size() > 0 && muonTrigPass && addMuons_JERUp && ZMASS_JERUp==2 && myRECOevent.nHighPtMuonsOutsideJet_JERUp == 1 && !addElectrons_JERUp && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 4., m_isSignal);
+        if ( onShell){
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 4 ,m_isSignal);
+        }else if(!onShell){
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 4 ,m_isSignal);
+        }
       }
       if(myRECOevent.myAddJetCandsHighPt_JERDown.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_JERDown.size() > 0 && muonTrigPass && addMuons_JERDown && ZMASS_JERDown==2 && myRECOevent.nHighPtMuonsOutsideJet_JERDown == 1 && !addElectrons_JERDown && myRECOevent.electronCands200 == 0){
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 5., m_isSignal);
+        if ( onShell){
+          m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 5 ,m_isSignal);
+        }else if(!onShell){
+          m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 5 ,m_isSignal);
+        }
       }
       ZMASS_Nom = 0;
       ZMASS_JECUp = 0;
@@ -1459,10 +1506,6 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   bool onShell = false;
   onShell = WRresonanceStudy(iEvent, myRECOevent);
   
-  if( passesFastBoostRECO ) {
-    if ( onShell) m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 1 ,m_isSignal); 
-    if (!onShell) m_eventsFailResPassBoostRECO_offShell.fill(myRECOevent, 1 ,m_isSignal); 
-  }
   if (onShell) m_allOnShellEvents.fill(myRECOevent, 1, m_isSignal);
   if(!onShell) m_allOffShellEvents.fill(myRECOevent, 1, m_isSignal);
 
