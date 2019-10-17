@@ -1215,10 +1215,12 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       }
       //Fill histograms individually
       bool onShell = false;
-      onShell = WRresonanceStudy(iEvent, myRECOevent);
+      if(m_isSignal){
+        onShell = WRresonanceStudy(iEvent, myRECOevent);
+      }
       
       std::cout << "myRECOevent.myAddJetCandsHighPt.size(): " << myRECOevent.myAddJetCandsHighPt.size() << "myRECOevent.myMuonCandsHighPt.size(): " << myRECOevent.myMuonCandsHighPt.size() << "myRECOevent.myMuonJetPairs.size(): " << myRECOevent.myMuonJetPairs.size() << "muonTrigPass: " << muonTrigPass << "addMuons: " << addMuons << "ZMASS_Nom: " << ZMASS_Nom << "myRECOevent.nHighPtMuonsOutsideJet: " << myRECOevent.nHighPtMuonsOutsideJet << std::endl;
-      if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150 && myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0 && !addElectrons && addMuons && ZMASS_Nom==2){
+      if(myRECOevent.myAddJetCandsHighPt.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs.size() > 0 && muonTrigPass && myRECOevent.subleadMuon_selMuonMass > 150 && myRECOevent.nHighPtMuonsOutsideJet == 1 && myRECOevent.electronCands200 == 0 && !addElectrons && addMuons && ZMASS_Nom==2){// && myRECOevent.leadAK8JetMuonMassVal > 1800){
 //        passesFastBoostRECO = true;
 	myRECOevent.cutProgress++;
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
@@ -1504,7 +1506,9 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     }
   }
   bool onShell = false;
-  onShell = WRresonanceStudy(iEvent, myRECOevent);
+  if(m_isSignal){
+    onShell = WRresonanceStudy(iEvent, myRECOevent);
+  }
   
   if (onShell) m_allOnShellEvents.fill(myRECOevent, 1, m_isSignal);
   if(!onShell) m_allOffShellEvents.fill(myRECOevent, 1, m_isSignal);
