@@ -169,9 +169,9 @@ Muons::Muons () {
   Muon_Trig_MCEff2017Up = (TH2D*) lFile_Trig->Get("Eff_2017_DY_errorUpper");
   Muon_Trig_MCEff2017Down = (TH2D*) lFile_Trig->Get("Eff_2017_DY_errorLower");
 
-  Muon_Trig_DataEff2018 = (TH2D*) lFile_Trig->Get("Eff_2016_Data_var");
-  Muon_Trig_DataEff2018Up = (TH2D*) lFile_Trig->Get("Eff_2016_Data_errorUpper");
-  Muon_Trig_DataEff2018Down = (TH2D*) lFile_Trig->Get("Eff_2016_Data_errorLower");
+  Muon_Trig_DataEff2018 = (TH2D*) lFile_Trig->Get("Eff_2018_Data_var");
+  Muon_Trig_DataEff2018Up = (TH2D*) lFile_Trig->Get("Eff_2018_Data_errorUpper");
+  Muon_Trig_DataEff2018Down = (TH2D*) lFile_Trig->Get("Eff_2018_Data_errorLower");
   Muon_Trig_MCEff2018 = (TH2D*) lFile_Trig->Get("Eff_2018_DY_var");
   Muon_Trig_MCEff2018Up = (TH2D*) lFile_Trig->Get("Eff_2018_DY_errorUpper");
   Muon_Trig_MCEff2018Down = (TH2D*) lFile_Trig->Get("Eff_2018_DY_errorLower");
@@ -570,8 +570,8 @@ std::vector<double> Muons::MuonTriggerWeight_ResFSB(double MuonPt, double MuonEt
   if(era == "2016"){
     if(isSignal){
       muTrigDATAEff_1 = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2016Up->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2016Down->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2016Up->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2016Down->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
 
       muTrigWeight = (1-(1-muTrigDATAEff_1));
       muTrigWeightUp = (1-(1-muTrigDATAEffUp_1));
@@ -579,12 +579,12 @@ std::vector<double> Muons::MuonTriggerWeight_ResFSB(double MuonPt, double MuonEt
 
     }else{
       muTrigMCEff_1 = Muon_Trig_MCEff2016->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffUp_1 = Muon_Trig_MCEff2016Up->GetBinError(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffDown_1 = Muon_Trig_MCEff2016Down->GetBinError(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffUp_1 = muTrigMCEff_1 + Muon_Trig_MCEff2016Up->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffDown_1 = muTrigMCEff_1 - Muon_Trig_MCEff2016Down->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
 
       muTrigDATAEff_1 = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2016Up->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2016Down->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2016Up->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2016Down->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
 
       muTrigWeight = (1-(1-muTrigDATAEff_1))/(1-(1-muTrigMCEff_1));
       muTrigWeightUp = (1-(1-muTrigDATAEffUp_1))/(1-(1-muTrigMCEffUp_1));
@@ -594,20 +594,20 @@ std::vector<double> Muons::MuonTriggerWeight_ResFSB(double MuonPt, double MuonEt
   }else if(era == "2017"){
     if(isSignal){
       muTrigDATAEff_1 = Muon_Trig_DataEff2017->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2017Up->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2017Down->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2017Up->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2017Down->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
 
       muTrigWeight = (1-(1-muTrigDATAEff_1));
       muTrigWeightUp = (1-(1-muTrigDATAEffUp_1));
       muTrigWeightDown = (1-(1-muTrigDATAEffDown_1));
     }else{
       muTrigMCEff_1 = Muon_Trig_MCEff2017->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffUp_1 = Muon_Trig_MCEff2017Up->GetBinError(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffDown_1 = Muon_Trig_MCEff2017Down->GetBinError(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffUp_1 = muTrigMCEff_1 + Muon_Trig_MCEff2017Up->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffDown_1 = muTrigMCEff_1 - Muon_Trig_MCEff2017Down->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
 
       muTrigDATAEff_1 = Muon_Trig_DataEff2017->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2017Up->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2017Down->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2017Up->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2017Down->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
 
       muTrigWeight = (1-(1-muTrigDATAEff_1))/(1-(1-muTrigMCEff_1));
       muTrigWeightUp = (1-(1-muTrigDATAEffUp_1))/(1-(1-muTrigMCEffUp_1));
@@ -616,20 +616,20 @@ std::vector<double> Muons::MuonTriggerWeight_ResFSB(double MuonPt, double MuonEt
   }else if(era == "2018"){
     if(isSignal){
       muTrigDATAEff_1 = Muon_Trig_DataEff2018->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2018Up->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2018Down->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2018Up->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2018Down->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
 
       muTrigWeight = (1-(1-muTrigDATAEff_1));
       muTrigWeightUp = (1-(1-muTrigDATAEffUp_1));
       muTrigWeightDown = (1-(1-muTrigDATAEffDown_1));
     }else{
       muTrigMCEff_1 = Muon_Trig_MCEff2018->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffUp_1 = Muon_Trig_MCEff2018Up->GetBinError(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffDown_1 = Muon_Trig_MCEff2018Down->GetBinError(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffUp_1 = muTrigMCEff_1 + Muon_Trig_MCEff2018Up->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffDown_1 = muTrigMCEff_1 - Muon_Trig_MCEff2018Down->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
 
       muTrigDATAEff_1 = Muon_Trig_DataEff2018->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2018Up->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2018Down->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2018Up->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2018Down->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
 
       muTrigWeight = (1-(1-muTrigDATAEff_1))/(1-(1-muTrigMCEff_1));
       muTrigWeightUp = (1-(1-muTrigDATAEffUp_1))/(1-(1-muTrigMCEffUp_1));
@@ -688,11 +688,11 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, doub
       std::cout << "Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId): " << Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId) << std::endl;
       std::cout << "Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId)): " << Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId)) << std::endl;
       muTrigDATAEff_1 = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2016Up->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2016Down->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2016Up->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2016Down->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
       muTrigDATAEff_2 = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffUp_2 = Muon_Trig_DataEff2016Up->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffDown_2 = Muon_Trig_DataEff2016Down->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffUp_2 = muTrigDATAEff_2 + Muon_Trig_DataEff2016Up->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffDown_2 = muTrigDATAEff_2 - Muon_Trig_DataEff2016Down->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
 
       std::cout << "muTrigDATAEff_1: " << muTrigDATAEff_1 << " muTrigDATAEff_2: " << muTrigDATAEff_2 << std::endl;
 
@@ -709,18 +709,18 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, doub
 
     }else{
       muTrigMCEff_1 = Muon_Trig_MCEff2016->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffUp_1 = Muon_Trig_MCEff2016Up->GetBinError(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffDown_1 = Muon_Trig_MCEff2016Down->GetBinError(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffUp_1 = muTrigMCEff_1 + Muon_Trig_MCEff2016Up->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffDown_1 = muTrigMCEff_1 - Muon_Trig_MCEff2016Down->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId,muEtaForId));
       muTrigMCEff_2 = Muon_Trig_MCEff2016->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigMCEffUp_2 = Muon_Trig_MCEff2016Up->GetBinError(Muon_Trig_MCEff2016->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigMCEffDown_2 = Muon_Trig_MCEff2016Down->GetBinError(Muon_Trig_MCEff2016->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigMCEffUp_2 = muTrigMCEff_2 + Muon_Trig_MCEff2016Up->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigMCEffDown_2 = muTrigMCEff_2 - Muon_Trig_MCEff2016Down->GetBinContent(Muon_Trig_MCEff2016->FindBin(muPtForId_2,muEtaForId_2));
 
       muTrigDATAEff_1 = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2016Up->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2016Down->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2016Up->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2016Down->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId,muEtaForId));
       muTrigDATAEff_2 = Muon_Trig_DataEff2016->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffUp_2 = Muon_Trig_DataEff2016Up->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffDown_2 = Muon_Trig_DataEff2016Down->GetBinError(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffUp_2 = muTrigDATAEff_2 + Muon_Trig_DataEff2016Up->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffDown_2 = muTrigDATAEff_2 - Muon_Trig_DataEff2016Down->GetBinContent(Muon_Trig_DataEff2016->FindBin(muPtForId_2,muEtaForId_2));
 
       if(analysis == "Resolved"){
         muTrigWeight = (1-(1-muTrigDATAEff_1)*(1-muTrigDATAEff_2))/(1-(1-muTrigMCEff_1)*(1-muTrigMCEff_2));
@@ -735,11 +735,11 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, doub
   }else if(era == "2017"){
     if(isSignal){
       muTrigDATAEff_1 = Muon_Trig_DataEff2017->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2017Up->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2017Down->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2017Up->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2017Down->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
       muTrigDATAEff_2 = Muon_Trig_DataEff2017->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffUp_2 = Muon_Trig_DataEff2017Up->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffDown_2 = Muon_Trig_DataEff2017Down->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffUp_2 = muTrigDATAEff_2 + Muon_Trig_DataEff2017Up->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffDown_2 = muTrigDATAEff_2 - Muon_Trig_DataEff2017Down->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
 
       if(analysis == "Resolved"){
         muTrigWeight = (1.-(1.-muTrigDATAEff_1)*(1.-muTrigDATAEff_2));
@@ -752,18 +752,18 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, doub
       }
     }else{
       muTrigMCEff_1 = Muon_Trig_MCEff2017->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffUp_1 = Muon_Trig_MCEff2017Up->GetBinError(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffDown_1 = Muon_Trig_MCEff2017Down->GetBinError(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffUp_1 = muTrigMCEffUp_1 + Muon_Trig_MCEff2017Up->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffDown_1 = muTrigMCEffUp_1 - Muon_Trig_MCEff2017Down->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId,muEtaForId));
       muTrigMCEff_2 = Muon_Trig_MCEff2017->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigMCEffUp_2 = Muon_Trig_MCEff2017Up->GetBinError(Muon_Trig_MCEff2017->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigMCEffDown_2 = Muon_Trig_MCEff2017Down->GetBinError(Muon_Trig_MCEff2017->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigMCEffUp_2 = muTrigMCEff_2 + Muon_Trig_MCEff2017Up->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigMCEffDown_2 = muTrigMCEff_2 - Muon_Trig_MCEff2017Down->GetBinContent(Muon_Trig_MCEff2017->FindBin(muPtForId_2,muEtaForId_2));
 
       muTrigDATAEff_1 = Muon_Trig_DataEff2017->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2017Up->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2017Down->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2017Up->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2017Down->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId,muEtaForId));
       muTrigDATAEff_2 = Muon_Trig_DataEff2017->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffUp_2 = Muon_Trig_DataEff2017Up->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffDown_2 = Muon_Trig_DataEff2017Down->GetBinError(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffUp_2 = muTrigDATAEff_2 + Muon_Trig_DataEff2017Up->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffDown_2 = muTrigDATAEff_2 - Muon_Trig_DataEff2017Down->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
 
       if(analysis == "Resolved"){
         muTrigWeight = (1-(1-muTrigDATAEff_1)*(1-muTrigDATAEff_2))/(1-(1-muTrigMCEff_1)*(1-muTrigMCEff_2));
@@ -778,11 +778,11 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, doub
   }else if(era == "2018"){
     if(isSignal){
       muTrigDATAEff_1 = Muon_Trig_DataEff2018->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2018Up->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2018Down->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2018Up->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2018Down->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
       muTrigDATAEff_2 = Muon_Trig_DataEff2018->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffUp_2 = Muon_Trig_DataEff2018Up->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffDown_2 = Muon_Trig_DataEff2018Down->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffUp_2 = muTrigDATAEff_2 + Muon_Trig_DataEff2018Up->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffDown_2 = muTrigDATAEff_2 - Muon_Trig_DataEff2018Down->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
 
       if(analysis == "Resolved"){
         muTrigWeight = (1.-(1.-muTrigDATAEff_1)*(1.-muTrigDATAEff_2));
@@ -796,18 +796,18 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, doub
 
     }else{
       muTrigMCEff_1 = Muon_Trig_MCEff2018->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffUp_1 = Muon_Trig_MCEff2018Up->GetBinError(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigMCEffDown_1 = Muon_Trig_MCEff2018Down->GetBinError(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffUp_1 = muTrigMCEff_1 + Muon_Trig_MCEff2018Up->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigMCEffDown_1 = muTrigMCEff_1 - Muon_Trig_MCEff2018Down->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId,muEtaForId));
       muTrigMCEff_2 = Muon_Trig_MCEff2018->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigMCEffUp_2 = Muon_Trig_MCEff2018Up->GetBinError(Muon_Trig_MCEff2018->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigMCEffDown_2 = Muon_Trig_MCEff2018Down->GetBinError(Muon_Trig_MCEff2018->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigMCEffUp_2 = muTrigMCEff_2 + Muon_Trig_MCEff2018Up->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigMCEffDown_2 = muTrigMCEff_2 - Muon_Trig_MCEff2018Down->GetBinContent(Muon_Trig_MCEff2018->FindBin(muPtForId_2,muEtaForId_2));
 
       muTrigDATAEff_1 = Muon_Trig_DataEff2018->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffUp_1 = Muon_Trig_DataEff2018Up->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
-      muTrigDATAEffDown_1 = Muon_Trig_DataEff2018Down->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffUp_1 = muTrigDATAEff_1 + Muon_Trig_DataEff2018Up->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
+      muTrigDATAEffDown_1 = muTrigDATAEff_1 - Muon_Trig_DataEff2018Down->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId,muEtaForId));
       muTrigDATAEff_2 = Muon_Trig_DataEff2018->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffUp_2 = Muon_Trig_DataEff2018Up->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
-      muTrigDATAEffDown_2 = Muon_Trig_DataEff2018Down->GetBinError(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffUp_2 = muTrigDATAEff_2 + Muon_Trig_DataEff2018Up->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
+      muTrigDATAEffDown_2 = muTrigDATAEff_2 - Muon_Trig_DataEff2018Down->GetBinContent(Muon_Trig_DataEff2018->FindBin(muPtForId_2,muEtaForId_2));
 
       if(analysis == "Resolved"){
         muTrigWeight = (1-(1-muTrigDATAEff_1)*(1-muTrigDATAEff_2))/(1-(1-muTrigMCEff_1)*(1-muTrigMCEff_2));
