@@ -40,6 +40,7 @@ globalTagsByDataset['Run2016G-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016H-17Jul2018*'] = '94X_dataRun2_v10'
 
 globalTagsByDataset['RunIIFall17MiniAODv2*'] = '94X_mc2017_realistic_v17'
+globalTagsByDataset['2017Run_WR_Dilep'] = '94X_mc2017_realistic_v17'
 globalTagsByDataset['Run2017A-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017B-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017C-31Mar2018*'] = '94X_dataRun2_v11'
@@ -275,6 +276,7 @@ with open(localInputListFile, 'r') as f:
 	InputFileList = "../../../samples/signals/" + dataset + ".txt"
 
 	config.Data.userInputFiles = open(InputFileList).readlines()
+	print "config.Data.userInputFiles: ", config.Data.userInputFiles
     	nUnits = 20
     	nUnitsPerJob = 1
     	datasetName = InputFileList.split('/')[5][:-4]
@@ -286,6 +288,32 @@ with open(localInputListFile, 'r') as f:
 	secondaryDatasetName = split[0].split("/")[2]
 	print "secondaryDatasetName: ", secondaryDatasetName
 	outputFile = dataset
+    elif("WRtoNLtoLLJJ_2017" in options.inputList):
+        print "Running on 2017 signals"
+	print "split[0]: ", split[0]
+	dataset= split[0]
+	print "options.inputList[:43]: ", options.inputList[:43]
+
+	InputFileList = options.inputList[:43] + dataset + ".txt"
+
+	signalFiles = []
+	with open(InputFileList, 'r') as fSignalFile:
+	    for lineSignalFile in fSignalFile:
+		signalFiles.append(lineSignalFile.split()[1])
+
+	config.Data.userInputFiles = signalFiles
+	print "len(signalFiles): ", len(signalFiles)
+	nUnits = len(signalFiles)
+        nUnitsPerJob = 1
+	datasetName = dataset
+	thisWorkDir = workDir+'/'+datasetName
+        isData = 'Run201' in datasetName
+        config.Data.outputPrimaryDataset = datasetName
+        outputFile = dataset
+	TypeOfFile = "USER"
+	primaryDatasetName = dataset
+	secondaryDatasetName = "2017Run_WR_Dilep"
+
     else:
         print "RUNNING ON NORMAL STUFF"
     	dataset = split[0]
@@ -315,11 +343,16 @@ with open(localInputListFile, 'r') as f:
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if "USER" in TypeOfFile:
       print "Running on Korean private samples"
+      if "WRtoNLtoLLJJ_2017" in options.inputList:
+	config.Data.ignoreLocality = True
+	config.Site.whitelist = ['T2*']
+	privateSamples = True
+      else:
 #       privateSamples = False
-      privateSamples = True
-      config.Data.inputDBS = 'phys03'
-      config.Data.ignoreLocality = True
-      config.Site.whitelist = ['T2*']
+      	privateSamples = True
+     	config.Data.inputDBS = 'phys03'
+      	config.Data.ignoreLocality = True
+      	config.Site.whitelist = ['T2*']
     else: privateSamples = False
 
     if 'DYJets' in primaryDatasetName: checkZ = True
@@ -358,14 +391,18 @@ with open(localInputListFile, 'r') as f:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
     if("WR_datasets" not in options.inputList):
-	print "inputDataset: ", dataset
-    	config.Data.inputDataset = dataset
-    #print 'make dir:',thisWorkDir
-    	makeDirAndCheck(thisWorkDir)
-    	outputFileNames = []
+      makeDirAndCheck(thisWorkDir)
+      outputFileNames = []
+      if("WRtoNLtoLLJJ_2017" in options.inputList):
+	outputFileNames.append(dataset)
+	print "WRtoNLtoLLJJ_2017"
+      else:
+        print "inputDataset: ", dataset
+        config.Data.inputDataset = dataset
     	outputFileNames.append(dataset[1:dataset.find('_Tune')])
     	outputFileNames.append(dataset[1:dataset.find('_13TeV')])
     	outputFileNames.append(dataset.split('/')[1])
+	print "outputFileNames: ", outputFileNames
     # get the one with the shortest filename
     	outputFile = sorted(outputFileNames, key=len)[0]
     	if isData:

@@ -36,8 +36,11 @@ for line in lines:
     if lineNum < 2 : 
         lineNum+=1
         continue
-    dataset_fullpath = line.split()[0].strip()  #first entry in row is dataset's full path
-    datasetPrefix = dataset_fullpath.split("/")[1]
+    if "WRtoNLtoLLJJ_2017" in datasetsList:
+	datasetPrefix = line.split()[0]
+    else:
+        dataset_fullpath = line.split()[0].strip()  #first entry in row is dataset's full path
+        datasetPrefix = dataset_fullpath.split("/")[1]
     if ("SingleElectron" in datasetPrefix or "SingleMuon" in datasetPrefix or "EGamma" in datasetPrefix):
         datasetFlavor = datasetPrefix + "--" + dataset_fullpath.split("/")[2]
         datasets.append(datasetFlavor)
