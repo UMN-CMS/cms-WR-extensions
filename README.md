@@ -108,17 +108,16 @@ Steps for running Combine:
 
 1.Set doFast to true. This can be done by setting -f True for the createAndSubmitJobsWithCrab3.py script.
 
-2.Make the workspaces:
+2.Make the workspaces(ttbar SF is hard-coded within these scripts):
 ```
-python makeWorkspaces.py ../../../samples/allSamples_temp.txt ../../../Output/doFast/ ../../../Output/doFast/Workspace/
+python makeWorkspaces_Resolved.py ../../../samples/allSamples2016.txt ../../../Output/Full2016_3rd/ ../../../Output/Full2016_3rd/Workspace/
+
+python makeWorkspaces_Boosted.py ../../../samples/allSamples2016.txt ../../../Output/Full2016_3rd/ ../../../Output/Full2016_3rd/Workspace/
 ```
 
 3.Make the datacards:
 ```
-python makeCardsMuMuJJ.py ../../../Output/doFast/Workspace/
-```
+python makeCardsMuMuJJ_Resolved.py ../../../Output/Full2016_3rd/Workspace/
 
-4.Combine cards and run limits:
-```
-./runLimits.sh
+python makeCardsMuMuJJ_Boosted.py ../../../Output/Full2016_3rd/Workspace/
 ```
