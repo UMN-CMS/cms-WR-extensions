@@ -344,12 +344,20 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		SquaredBinError.append(0.0)
 	    for i in range(1047, 1146+1):
 		for j in range(1,histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetNbinsX()+1):
-		    print "bin j: ", j
-		    print "Error: ", i
+#		    print "bin j: ", j
+#		    print "Error: ", i
 		    SquaredBinError[j] += (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
+		    if j == 5:
+	                print "bin j: ", j
+			print "Error: ", i
+		        print "SquaredBinError: ", (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
+			print "SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)]: ", SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)]
+			print "SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)]: ", SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)]
 	    for j in range(1,histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetNbinsX()+1):
 		print "Setting PDF error bin: ", j
 		print "histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j): ", histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)
+		print "math.sqrt(SquaredBinError[j]): ", math.sqrt(SquaredBinError[j])
+		print "histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j): ", histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)
 		if histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j) == 0:
 		    histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j,0)
 		    histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j,0)
