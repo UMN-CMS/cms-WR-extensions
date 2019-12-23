@@ -219,7 +219,8 @@ config.JobType.inputFiles = []
 config.JobType.psetName    = '' # overridden per dataset
 # need to execute the user_script
 #config.JobType.scriptExe = 'user_script.sh'
-config.JobType.maxMemoryMB = 7000
+config.JobType.maxMemoryMB = 5000
+#config.JobType.maxMemoryMB = 7000
 #config.JobType.priority = 400
 config.Data.inputDataset = '' # overridden per dataset
 config.Data.inputDBS = 'global'
