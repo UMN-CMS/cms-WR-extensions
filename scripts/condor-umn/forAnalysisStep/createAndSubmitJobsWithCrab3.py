@@ -298,8 +298,11 @@ with open(localInputListFile, 'r') as f:
 	InputFileList = options.inputList[:43] + dataset + ".txt"
 
 	signalFiles = []
+#	print "InputFileList: ", InputFileList
 	with open(InputFileList, 'r') as fSignalFile:
 	    for lineSignalFile in fSignalFile:
+#		print "lineSignalFile: ", lineSignalFile
+		if len(lineSignalFile) == 1: continue
 		signalFiles.append(lineSignalFile.split()[1])
 
 	config.Data.userInputFiles = signalFiles
@@ -473,7 +476,7 @@ with open(localInputListFile, 'r') as f:
                         config.JobType.pyCfgParams = ['doFast=True','era=2016','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
                 elif '94X_mc2017_realistic_v17' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2017','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
-                elif '102X_upgrade2018_realistic_v12' in tag:
+                elif '102X_upgrade2018_realistic_v19' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2018','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
           else:
 	     if privateSamples:
@@ -481,21 +484,21 @@ with open(localInputListFile, 'r') as f:
                         config.JobType.pyCfgParams = ['doFast=True','era=2016','isSignal=True','isMC=True','checkZ=False']
                 elif '94X_mc2017_realistic_v17' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2017','isSignal=True','isMC=True','checkZ=False']
-                elif '102X_upgrade2018_realistic_v12' in tag:
+                elif '102X_upgrade2018_realistic_v19' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2018','isSignal=True','isMC=True','checkZ=False']
 	     elif checkZ:
                 if '94X_mcRun2_asymptotic_v3' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True','checkZ=True']
                 elif '94X_mc2017_realistic_v17' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True','checkZ=True']
-                elif '102X_upgrade2018_realistic_v12' in tag:
+                elif '102X_upgrade2018_realistic_v19' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True','checkZ=True']
 	     else:
                 if '94X_mcRun2_asymptotic_v3' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True','checkZ=False']
                 elif '94X_mc2017_realistic_v17' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True','checkZ=False']
-                elif '102X_upgrade2018_realistic_v12' in tag:
+                elif '102X_upgrade2018_realistic_v19' in tag:
                         config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True','checkZ=False']
 
 	else:
