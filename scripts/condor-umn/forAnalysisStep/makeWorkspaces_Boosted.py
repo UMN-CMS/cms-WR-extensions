@@ -15,7 +15,7 @@ binBoundaries = []
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 8000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000,4000,8000]
-steps = 100
+steps = 400
 for ibin in range(800, 8001,steps):
     binBoundaries.append(ibin)
 print binBoundaries
@@ -354,10 +354,12 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		SquaredBinError.append(0.0)
 	    for i in range(1047, 1146+1):
 		for j in range(1,histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetNbinsX()+1):
+		    if histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() == 0: continue
+                    if abs(histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral() - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral()) / histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() < 0.6:
 #		    print "bin j: ", j
 #		    print "Error: ", i
-		    SquaredBinError[j] += (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
-		    if j == 5:
+		      SquaredBinError[j] += (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
+		      if j == 5:
 	                print "bin j: ", j
 			print "Error: ", i
 		        print "SquaredBinError: ", (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
@@ -371,9 +373,13 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		if histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j) == 0:
 		    histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j,0)
 		    histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j,0)
+#		elif math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j) < 1:
 		else:
                     histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j, histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 +  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)))
                     histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j, histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 -  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)))
+#		else:
+#		    histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j, histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 +  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)))
+#                    histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j,0)
 
 
 	    histoDict['WR_%s_NR_%s_AlphaSUp'%(wrMass,nuMass)] = histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].Clone('WR_%s_NR_%s_AlphaSUp'%(wrMass,nuMass))
@@ -1136,6 +1142,7 @@ sampleList = sys.argv[1]
 samplesLocation = sys.argv[2]
 workspaceOutputDirectory = sys.argv[3]
 integratedLuminosity = 35900.0
+#integratedLuminosity = 137400.0
 LSFSF = 0.87
 #integratedLuminosity = 80000.0
 
