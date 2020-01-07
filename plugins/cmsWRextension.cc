@@ -3430,19 +3430,19 @@ void cmsWRextension::LHEinfo(const edm::Event& iEvent, eventBits& myEvent){
   for(int i=0; i<nWeight; i++){
     int this_id = stoi(LHEInfo->weights()[i].id.c_str());
     map_id_to_weight[this_id] = LHEInfo->weights()[i].wgt;
-//    std::cout << "[SKFlatMaker::fillLHEInfo] map_id_to_weight["<<this_id<<"] = " << map_id_to_weight[this_id] << std::endl;
+    std::cout << "[SKFlatMaker::fillLHEInfo] map_id_to_weight["<<this_id<<"] = " << map_id_to_weight[this_id] << std::endl;
   }
 
   int central = ScaleIDRange_.at(0);
-//  std::cout << "[SKFlatMaker::fillLHEInfo] central = " << central << std::endl;
-//  std::cout << "[SKFlatMaker::fillLHEInfo] map_id_to_weight[central] = " << map_id_to_weight[central] << std::endl;
+  std::cout << "[SKFlatMaker::fillLHEInfo] central = " << central << std::endl;
+  std::cout << "[SKFlatMaker::fillLHEInfo] map_id_to_weight[central] = " << map_id_to_weight[central] << std::endl;
 
   //=============================
   //==== 1) QCD Scale variation
   //=============================
 
   for(int i=ScaleIDRange_.at(0);i<=ScaleIDRange_.at(1);i++){
-//    std::cout << "[SKFlatMaker::fillLHEInfo] Scale Varation; adding id = " << i << std::endl;
+    std::cout << "[SKFlatMaker::fillLHEInfo] Scale Varation; adding id = " << i << " map_id_to_weight[i]: " << map_id_to_weight[i] << " map_id_to_weight[ScaleIDRange_.at(0)]: " << map_id_to_weight[ScaleIDRange_.at(0)] << std::endl;
     myEvent.PDFWeights_Scale.push_back( map_id_to_weight[i]/map_id_to_weight[ScaleIDRange_.at(0)] );
   }
 
@@ -3454,7 +3454,7 @@ void cmsWRextension::LHEinfo(const edm::Event& iEvent, eventBits& myEvent){
   for(int i=PDFErrorIDRange_.at(0);i<=PDFErrorIDRange_.at(1);i++){
     double this_reweight = map_id_to_weight[i] / map_id_to_weight[central];
     myEvent.PDFWeights_Error.push_back( this_reweight );
-//    std::cout << "[SKFlatMaker::fillLHEInfo] Error set; adding id = " << i << ", reweight = " << this_reweight << std::endl;
+    std::cout << "[SKFlatMaker::fillLHEInfo] Error set; adding id = " << i << ", reweight = " << this_reweight << "map_id_to_weight[central]: " << map_id_to_weight[central] << std::endl;
   }
 
   //==== AlphaS
@@ -4282,7 +4282,8 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
 
 	std::cout << "pAddJet->lsfC_3: " << pAddJet->lsfC_3 << std::endl;
 
-        if(pAddJet->lsfC_3 > 0.7){
+//        if(pAddJet->lsfC_3 > 0.5){
+        if(pAddJet->lsfC_3 > 0.75){
 
           if(vSubC_3.size() > 0) {
             pAddJet->lsfC_3_sj1_pt = vSubC_3[0].pt();
@@ -4330,7 +4331,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JECUp->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JECUp->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
 
-        if(pAddJet_JECUp->lsfC_3 > 0.7){
+        if(pAddJet_JECUp->lsfC_3 > 0.75){
 
           if(vSubC_3.size() > 0) {
             pAddJet_JECUp->lsfC_3_sj1_pt = vSubC_3[0].pt();
@@ -4361,7 +4362,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JECDown->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JECDown->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
 
-        if(pAddJet_JECDown->lsfC_3 > 0.7){
+        if(pAddJet_JECDown->lsfC_3 > 0.75){
 
           if(vSubC_3.size() > 0) {
             pAddJet_JECDown->lsfC_3_sj1_pt = vSubC_3[0].pt();
@@ -4391,7 +4392,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JERUp->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JERUp->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
 
-        if(pAddJet_JERUp->lsfC_3 > 0.7){
+        if(pAddJet_JERUp->lsfC_3 > 0.75){
 
           if(vSubC_3.size() > 0) {
             pAddJet_JERUp->lsfC_3_sj1_pt = vSubC_3[0].pt();
@@ -4421,7 +4422,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
         std::vector<fastjet::PseudoJet> vSubCInc; pAddJet_JERDown->lsfCInc = JetTools::lsf(lClusterParticles, vSubCInc, lepCPt, lepCEta, lepCPhi, lepCId, 0.2, 2);
         std::vector<fastjet::PseudoJet> vSubC_3;  pAddJet_JERDown->lsfC_3 = JetTools::lsf(lClusterParticles, vSubC_3, lepCPt, lepCEta, lepCPhi, lepCId, 2.0, 3);
 
-        if(pAddJet_JERDown->lsfC_3 > 0.7){
+        if(pAddJet_JERDown->lsfC_3 > 0.75){
 
           if(vSubC_3.size() > 0) {
             pAddJet_JERDown->lsfC_3_sj1_pt = vSubC_3[0].pt();
