@@ -18,7 +18,7 @@ binBoundaries = []
 steps = 400
 for ibin in range(800, 8001,steps):
     binBoundaries.append(ibin)
-print binBoundaries
+#print binBoundaries
 #    binBoundaries = [800, 1000, 1200, 1600, 2000, 8000]
 #    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 6000]
 binBoundariesArray = array.array('d', binBoundaries)
@@ -38,24 +38,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 	systs = ['JEC','JER','PU','MuResID','MuResol','MuTrig']
         systs_pdf = ['Scale_muR2_muF1','Scale_muRp5_muF1','Scale_muR1_muF2','Scale_muR2_muF2','Scale_muR1_muFp5','Scale_muRp5_muFp5','Error_1047','Error_1048','Error_1049','Error_1050','Error_1051','Error_1052','Error_1053','Error_1054','Error_1055','Error_1056','Error_1057','Error_1058','Error_1059','Error_1060','Error_1061','Error_1062','Error_1063','Error_1064','Error_1065','Error_1066','Error_1067','Error_1068','Error_1069','Error_1070','Error_1071','Error_1072','Error_1073','Error_1074','Error_1075','Error_1076','Error_1077','Error_1078','Error_1079','Error_1080','Error_1081','Error_1082','Error_1083','Error_1084','Error_1085','Error_1086','Error_1087','Error_1088','Error_1089','Error_1090','Error_1091','Error_1092','Error_1093','Error_1094','Error_1095','Error_1096','Error_1097','Error_1098','Error_1099','Error_1100','Error_1101','Error_1102','Error_1103','Error_1104','Error_1105','Error_1106','Error_1107','Error_1108','Error_1109','Error_1110','Error_1111','Error_1112','Error_1113','Error_1114','Error_1115','Error_1116','Error_1117','Error_1118','Error_1119','Error_1120','Error_1121','Error_1122','Error_1123','Error_1124','Error_1125','Error_1126','Error_1127','Error_1128','Error_1129','Error_1130','Error_1131','Error_1132','Error_1133','Error_1134','Error_1135','Error_1136','Error_1137','Error_1138','Error_1139','Error_1140','Error_1141','Error_1142','Error_1143','Error_1144','Error_1145','Error_1146','Error_alphasUp','Error_alphasDown']
 
-	if sample == 'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8':
-	    
-            temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass')
-	    histoDict['TT'] = temp.Rebin(Nbins, 'TT', binBoundariesArray)
-            histoDict['TT'].SetDirectory(0)
-	    histoDict['TT'].Scale(weights[sample])
-
-	    for syst in systs:
-		temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-		histoDict['TT_%sUp'%(syst)] = temp.Rebin(Nbins, 'TT_%sUp'%(syst), binBoundariesArray)
-                histoDict['TT_%sUp'%(syst)].SetDirectory(0)
-		histoDict['TT_%sUp'%(syst)].Scale(weights[sample])
-        	temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-                histoDict['TT_%sDown'%(syst)] = temp.Rebin(Nbins, 'TT_%sDown'%(syst), binBoundariesArray)
-		histoDict['TT_%sDown'%(syst)].SetDirectory(0)
-		histoDict['TT_%sDown'%(syst)].Scale(weights[sample])
-
-	elif sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
+	if sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
 
 	    if sample == 'WW_TuneCUETP8M1_13TeV-pythia8':
 		temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass')
@@ -276,7 +259,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
             for i in range(1047, 1146+1):
                 for j in range(1,histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetNbinsX()+1):
 		    if histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() == 0: continue
-		    if abs(histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral() - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral()) / histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() < 0.6:
+		    if abs(histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral() - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral()) / histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() < 0.2:
 			print "syst: ", i
 			print "histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral(): ", histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral()
                         SquaredBinError[j] += (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
