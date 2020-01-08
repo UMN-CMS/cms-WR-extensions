@@ -16,8 +16,8 @@
 /DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM                      -1 2 5.678+0.02079-0.02079 DYJetsToLL ROOT.kGreen+3 
 /DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM                      -1 2 1.367+0.005233-0.005233 DYJetsToLL ROOT.kGreen+3 
 /DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v2/MINIAODSIM                     -1 2 0.6304+0.002427-0.002427 DYJetsToLL ROOT.kGreen+3 
-/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM                                           -1 1 88.29+1.363-1.363 TTJets_inc ROOT.kGray
 /TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM                                          -1 1 365.34+5.428-5.428 TTJets_inc ROOT.kGray
+/TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15-v1/MINIAODSIM                                           -1 1 88.29+1.363-1.363 TTJets_inc ROOT.kGray
 /WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM                                          -1 1 0.2086+5.428-5.428 VVV ROOT.kGray
 /WWZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM        -1 1 0.1651+5.428-5.428 VVV ROOT.kGray
 /WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIIAutumn18MiniAOD-102X_upgrade2018_realistic_v15_ext1-v2/MINIAODSIM        -1 1 0.05565+5.428-5.428 VVV ROOT.kGray
