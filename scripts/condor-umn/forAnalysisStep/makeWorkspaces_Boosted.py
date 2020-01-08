@@ -43,9 +43,9 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
         systs = ['JEC','JER','PU','MuID','MuResol','MuTrig']
 	systs_pdf = ['Scale_muR2_muF1','Scale_muRp5_muF1','Scale_muR1_muF2','Scale_muR2_muF2','Scale_muR1_muFp5','Scale_muRp5_muFp5','Error_1047','Error_1048','Error_1049','Error_1050','Error_1051','Error_1052','Error_1053','Error_1054','Error_1055','Error_1056','Error_1057','Error_1058','Error_1059','Error_1060','Error_1061','Error_1062','Error_1063','Error_1064','Error_1065','Error_1066','Error_1067','Error_1068','Error_1069','Error_1070','Error_1071','Error_1072','Error_1073','Error_1074','Error_1075','Error_1076','Error_1077','Error_1078','Error_1079','Error_1080','Error_1081','Error_1082','Error_1083','Error_1084','Error_1085','Error_1086','Error_1087','Error_1088','Error_1089','Error_1090','Error_1091','Error_1092','Error_1093','Error_1094','Error_1095','Error_1096','Error_1097','Error_1098','Error_1099','Error_1100','Error_1101','Error_1102','Error_1103','Error_1104','Error_1105','Error_1106','Error_1107','Error_1108','Error_1109','Error_1110','Error_1111','Error_1112','Error_1113','Error_1114','Error_1115','Error_1116','Error_1117','Error_1118','Error_1119','Error_1120','Error_1121','Error_1122','Error_1123','Error_1124','Error_1125','Error_1126','Error_1127','Error_1128','Error_1129','Error_1130','Error_1131','Error_1132','Error_1133','Error_1134','Error_1135','Error_1136','Error_1137','Error_1138','Error_1139','Error_1140','Error_1141','Error_1142','Error_1143','Error_1144','Error_1145','Error_1146','Error_alphasUp','Error_alphasDown']
 
-	if sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
+	if 'WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample:
 
-	    if sample == 'WW_TuneCUETP8M1_13TeV-pythia8':
+	    if 'WW_Tune' in sample:
 		temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 		histoDict['DiBoson'] = temp.Rebin(Nbins, 'DiBoson', binBoundariesArray)
 		histoDict['DiBoson'].SetDirectory(0)
@@ -81,8 +81,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'DiBoson_temp', binBoundariesArray)
                     histoDict['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif sample == 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8':
-	    if sample == 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8':
+	elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample:
+	    if 'WWW_4F_Tune' in sample:
 		temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
                 histoDict['TriBoson'] = temp.Rebin(Nbins, 'TriBoson', binBoundariesArray)
                 histoDict['TriBoson'].SetDirectory(0)
@@ -115,8 +115,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'TriBoson_temp', binBoundariesArray)
                     histoDict['TriBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif sample == 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' or sample == 'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' or sample == 'ttZJets_13TeV_madgraphMLM-pythia8':
-            if sample == 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8':
+	elif 'TTWJetsToLNu' in sample or 'ttWJets' in sample or 'TTWJetsToQQ' in sample or 'ttZJets' in sample:
+            if 'TTWJetsToLNu' in sample or 'ttWJets' in sample:
                 temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
                 histoDict['ttV'] = temp.Rebin(Nbins, 'ttV', binBoundariesArray)
                 histoDict['ttV'].SetDirectory(0)
@@ -148,8 +148,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'ttV_temp', binBoundariesArray)
                     histoDict['ttV_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif sample == 'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia' or sample == 'ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1' or sample == 'ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1' or sample == 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4' or sample == 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4':
-	    if sample == 'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia':
+	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel_top' in sample:
 		temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 		histoDict['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDict['ST'].SetDirectory(0)
@@ -205,7 +205,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 histoDict['WJets_LSFDown'].Scale(LSFSFDown/LSFSF)
 
         elif 'DY' in sample:
-            if sample == 'DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
+            if 'DYJetsToLL_M-50_HT-100to200' in sample:
 		temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 		histoDict['DY'] = temp.Rebin(Nbins, 'DY', binBoundariesArray)
                 histoDict['DY'].SetDirectory(0)
@@ -236,30 +236,6 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     histoDict['DY_%sUp'%(syst)].Add(temp,weights[sample]*ZPeakSF)
 		    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'DY_temp', binBoundariesArray)
                     histoDict['DY_%sDown'%(syst)].Add(temp,weights[sample]*ZPeakSF)
-
-        elif 'QCD' in sample:
-            if sample == 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
-		temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
-		histoDict['QCD'] = temp.Rebin(Nbins, 'QCD', binBoundariesArray)
-                histoDict['QCD'].SetDirectory(0)
-                histoDict['QCD'].Scale(weights[sample])
-                for syst in systs:
-                    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sUp'%(syst))
-		    histoDict['QCD_%sUp'%(syst)] = temp.Rebin(Nbins, 'QCD_%sUp'%(syst), binBoundariesArray)
-                    histoDict['QCD_%sUp'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sUp'%(syst)].Scale(weights[sample])
-                    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst))
-		    histoDict['QCD_%sDown'%(syst)] = temp.Rebin(Nbins, 'QCD_%sDown'%(syst), binBoundariesArray)
-                    histoDict['QCD_%sDown'%(syst)].SetDirectory(0)
-                    histoDict['QCD_%sDown'%(syst)].Scale(weights[sample])
-            else:
-		temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass').Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                histoDict['QCD'].Add(temp,weights[sample])
-                for syst in systs:
-		    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sUp'%(syst)).Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                    histoDict['QCD_%sUp'%(syst)].Add(temp,weights[sample])
-		    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                    histoDict['QCD_%sDown'%(syst)].Add(temp,weights[sample])
 
 	elif 'WR' in sample:
 	    wrMass = sample.split('_')[1][2:]
@@ -376,7 +352,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 	
 
         elif 'SingleMuon' in sample:
-            if sample == 'SingleMuon--Run2016B-17Jul2018_ver2-v1':
+            if 'SingleMuon--Run2016B' in sample or 'SingleMuon--Run2017B' in sample or 'SingleMuon--Run2018A' in sample:
 		temp2 = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 		histoDict['SRdata'] = temp2.Rebin(Nbins, 'data_obs', binBoundariesArray)
 		histoDict['SRdata'].SetDirectory(0)
@@ -384,8 +360,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		temp2 = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass').Rebin(Nbins, 'data_obs_temp', binBoundariesArray)
 		histoDict['SRdata'].Add(temp2)
 
-	elif 'SingleElectron' in sample:
-	    if sample == 'SingleElectron--Run2016B-17Jul2018_ver2-v1':
+	elif 'SingleElectron' in sample or 'EGamma' in sample:
+	    if 'SingleElectron--Run2016B' in sample or 'SingleElectron--Run2017B' in sample or 'EGamma--Run2018A' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDict['data_obs'] = temp.Rebin(Nbins, 'EMu', binBoundariesArray)
                 histoDict['data_obs'].SetDirectory(0)
@@ -522,11 +498,11 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
     for sample in sampleNames:
         if "WRto" in sample: continue
         tfile = r.TFile.Open(samplesLocation+sample+'.root')
-        bkgs = ['TT','ST','WJets','DY','DiBoson','QCD']
+        bkgs = ['TT','ST','WJets','DY','DiBoson']
         systs = ['JEC','JER','PU','MuID','MuResol','MuTrig']
 
 	if 'TTTo' in sample:
-          if sample == 'TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8':
+          if 'TTToSemilepton' in sample:
 
             temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
 	    histoDictZPeak['TT'] = temp.Rebin(Nbins, 'TT', binBoundariesArray)
@@ -547,9 +523,9 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
             histoDictZPeak['TT'].Add(temp,weights[sample])
 
 
-        elif sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
+	elif 'WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample:
 
-            if sample == 'WW_TuneCUETP8M1_13TeV-pythia8':
+	    if 'WW_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
 		histoDictZPeak['DiBoson'] = temp.Rebin(Nbins, 'DiBoson', binBoundariesArray)
                 histoDictZPeak['DiBoson'].SetDirectory(0)
@@ -573,8 +549,8 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(Nbins, 'DiBoson_temp', binBoundariesArray)
                     histoDictZPeak['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif sample == 'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia' or sample == 'ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1' or sample == 'ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1' or sample == 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4' or sample == 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4':
-            if sample == 'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia':
+	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel_top' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
                 histoDictZPeak['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDictZPeak['ST'].SetDirectory(0)
@@ -615,7 +591,7 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
         elif 'DY' in sample:
 	    print "sample: ", sample
 	    print "DY scale: ", weights[sample]
-            if sample == 'DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
+            if 'DYJetsToLL_M-50_HT-100to200' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
                 histoDictZPeak['DY'] = temp.Rebin(Nbins, 'DY', binBoundariesArray)
                 histoDictZPeak['DY'].SetDirectory(0)
@@ -638,31 +614,8 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(Nbins, 'DY_temp', binBoundariesArray)
                     histoDictZPeak['DY_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'QCD' in sample:
-            if sample == 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
-                temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
-                histoDictZPeak['QCD'] = temp.Rebin(Nbins, 'QCD', binBoundariesArray)
-                histoDictZPeak['QCD'].SetDirectory(0)
-                histoDictZPeak['QCD'].Scale(weights[sample])
-                for syst in systs:
-		    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
-                    histoDictZPeak['QCD_%sUp'%(syst)] = temp.Rebin(Nbins, 'QCD_%sUp'%(syst), binBoundariesArray)
-                    histoDictZPeak['QCD_%sUp'%(syst)].SetDirectory(0)
-                    histoDictZPeak['QCD_%sUp'%(syst)].Scale(weights[sample])
-                    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
-                    histoDictZPeak['QCD_%sDown'%(syst)] = temp.Rebin(Nbins, 'QCD_%sDown'%(syst), binBoundariesArray)
-                    histoDictZPeak['QCD_%sDown'%(syst)].SetDirectory(0)
-                    histoDictZPeak['QCD_%sDown'%(syst)].Scale(weights[sample])
-            else:
-		temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF').Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                histoDictZPeak['QCD'].Add(temp,weights[sample])
-                for syst in systs:
-		    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sUp'%(syst)).Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                    histoDictZPeak['QCD_%sUp'%(syst)].Add(temp,weights[sample])
-		    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                    histoDictZPeak['QCD_%sDown'%(syst)].Add(temp,weights[sample])
-        elif sample == 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8':
-            if sample == 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8':
+	elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample:
+	    if 'WWW_4F_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
                 histoDictZPeak['TriBoson'] = temp.Rebin(Nbins, 'TriBoson', binBoundariesArray)
                 histoDictZPeak['TriBoson'].SetDirectory(0)
@@ -685,10 +638,9 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
                     temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(Nbins, 'TriBoson_temp', binBoundariesArray)
                     histoDictZPeak['TriBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif sample == 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' or sample == 'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' or sample == 'ttZJets_13TeV_madgraphMLM-pythia8':
-	    print "sample: ", sample
-            if sample == 'ttZJets_13TeV_madgraphMLM-pythia8':
-		print "sample: ", sample
+	elif 'TTWJetsToLNu' in sample or 'ttWJets' in sample or 'TTWJetsToQQ' in sample or 'ttZJets' in sample:
+            if 'TTWJetsToLNu' in sample or 'ttWJets' in sample:
+	        print "sample: ", sample
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
                 histoDictZPeak['ttV'] = temp.Rebin(Nbins, 'ttV', binBoundariesArray)
                 histoDictZPeak['ttV'].SetDirectory(0)
@@ -830,29 +782,12 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
         if "WRto" in sample: continue
         print "sample: ", sample
         tfile = r.TFile.Open(samplesLocation+sample+'.root')
-        bkgs = ['TT','ST','WJets','DY','DiBoson','QCD']
+        bkgs = ['TT','ST','WJets','DY','DiBoson']
         systs = ['JEC','JER','PU','MuL','HEEP','ElHLT']
 
-        if sample == 'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8':
+	if 'WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample:
 
-            temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
-            histoDictFSB['TT'] = temp.Rebin(Nbins, 'TT', binBoundariesArray)
-            histoDictFSB['TT'].SetDirectory(0)
-            histoDictFSB['TT'].Scale(weights[sample])
-
-            for syst in systs:
-                temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sUp'%(syst))
-                histoDictFSB['TT_%sUp'%(syst)] = temp.Rebin(Nbins, 'TT_%sUp'%(syst), binBoundariesArray)
-                histoDictFSB['TT_%sUp'%(syst)].SetDirectory(0)
-                histoDictFSB['TT_%sUp'%(syst)].Scale(weights[sample])
-                temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst))
-                histoDictFSB['TT_%sDown'%(syst)] = temp.Rebin(Nbins, 'TT_%sDown'%(syst), binBoundariesArray)
-                histoDictFSB['TT_%sDown'%(syst)].SetDirectory(0)
-                histoDictFSB['TT_%sDown'%(syst)].Scale(weights[sample])
-
-        elif sample == 'WW_TuneCUETP8M1_13TeV-pythia8' or sample == 'WZ_TuneCUETP8M1_13TeV-pythia8' or sample == 'ZZ_TuneCUETP8M1_13TeV-pythia8':
-
-            if sample == 'WW_TuneCUETP8M1_13TeV-pythia8':
+	    if 'WW_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['DiBoson'] = temp.Rebin(Nbins, 'DiBoson', binBoundariesArray)
                 histoDictFSB['DiBoson'].SetDirectory(0)
@@ -876,8 +811,8 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
 		    temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(Nbins, 'DiBoson_temp', binBoundariesArray)
                     histoDictFSB['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif sample == 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8' or sample == 'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8':
-            if sample == 'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8':
+	elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample:
+	    if 'WWW_4F_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['TriBoson'] = temp.Rebin(Nbins, 'TriBoson', binBoundariesArray)
                 histoDictFSB['TriBoson'].SetDirectory(0)
@@ -901,8 +836,8 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
                     temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(Nbins, 'TriBoson_temp', binBoundariesArray)
                     histoDictFSB['TriBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif sample == 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' or sample == 'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' or sample == 'ttZJets_13TeV_madgraphMLM-pythia8':
-            if sample == 'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8':
+	elif 'TTWJetsToLNu' in sample or 'ttWJets' in sample or 'TTWJetsToQQ' in sample or 'ttZJets' in sample:
+            if 'TTWJetsToLNu' in sample or 'ttWJets' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['ttV'] = temp.Rebin(Nbins, 'ttV', binBoundariesArray)
                 histoDictFSB['ttV'].SetDirectory(0)
@@ -925,8 +860,8 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
                     temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(Nbins, 'ttV_temp', binBoundariesArray)
                     histoDictFSB['ttV_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif sample == 'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia' or sample == 'ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1' or sample == 'ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1' or sample == 'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4' or sample == 'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4':
-            if sample == 'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia':
+	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel_top' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDictFSB['ST'].SetDirectory(0)
@@ -965,7 +900,7 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
                     histoDictFSB['WJets_%sDown'%(syst)].Scale(weights[sample])
 
         elif 'DY' in sample:
-            if sample == 'DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
+            if 'DYJetsToLL_M-50_HT-100to200' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['DY'] = temp.Rebin(Nbins, 'DY', binBoundariesArray)
                 histoDictFSB['DY'].SetDirectory(0)
@@ -988,29 +923,6 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
 		    temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(Nbins, 'DY_temp', binBoundariesArray)
                     histoDictFSB['DY_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'QCD' in sample:
-            if sample == 'QCD_HT200to300_TuneCUETP8M1_13TeV-madgraphMLM-pythia8':
-                temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
-                histoDictFSB['QCD'] = temp.Rebin(Nbins, 'QCD', binBoundariesArray)
-                histoDictFSB['QCD'].SetDirectory(0)
-                histoDictFSB['QCD'].Scale(weights[sample])
-                for syst in systs:
-                    temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sUp'%(syst))
-                    histoDictFSB['QCD_%sUp'%(syst)] = temp.Rebin(Nbins, 'QCD_%sUp'%(syst), binBoundariesArray)
-                    histoDictFSB['QCD_%sUp'%(syst)].SetDirectory(0)
-                    histoDictFSB['QCD_%sUp'%(syst)].Scale(weights[sample])
-                    temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst))
-                    histoDictFSB['QCD_%sDown'%(syst)] = temp.Rebin(Nbins, 'QCD_%sDown'%(syst), binBoundariesArray)
-                    histoDictFSB['QCD_%sDown'%(syst)].SetDirectory(0)
-                    histoDictFSB['QCD_%sDown'%(syst)].Scale(weights[sample])
-            else:
-		temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass').Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                histoDictFSB['QCD'].Add(temp,weights[sample])
-                for syst in systs:
-		    temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sUp'%(syst)).Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                    histoDictFSB['QCD_%sUp'%(syst)].Add(temp,weights[sample])	
-		    temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(Nbins, 'QCD_temp', binBoundariesArray)
-                    histoDictFSB['QCD_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WR' in sample:
             wrMass = sample.split('_')[1][3:]
@@ -1030,8 +942,8 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
                 histoDictFSB['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
                 histoDictFSB['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
-        elif 'SingleElectron' in sample:
-            if sample == 'SingleElectron--Run2016B-17Jul2018_ver2-v1':
+        elif 'SingleElectron' in sample or 'EGamma'in sample:
+            if 'SingleElectron--Run2016B' in sample or 'SingleElectron--Run2017B' in sample or 'EGamma--Run2018A' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['data_obs'] = temp.Rebin(Nbins, 'data_obs', binBoundariesArray)
                 histoDictFSB['data_obs'].SetDirectory(0)
@@ -1134,7 +1046,7 @@ for line in lines:
         lineNum+=1
         continue
     print "line.split()[0]: ", line.split()[0]
-    if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0]):
+    if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0] or "EGamma" in line.split()[0]):
         sampleNames.append(line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/")[2])
     elif ("WR" in line.split()[0]):
 	print "WR: ", line.split()[0].strip().split("/")[1]
