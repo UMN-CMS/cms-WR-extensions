@@ -136,7 +136,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'ST_temp', binBoundariesArray)
                     histoDict['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets':
+        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets' in sample:
 		temp =  tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass')
 		histoDict['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDict['WJets'].SetDirectory(0)
@@ -457,7 +457,7 @@ def ZPeakWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'ST_temp', binBoundariesArray)
                     histoDictZPeak['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets':
+        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets' in sample:
                 temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass')
                 histoDictZPeak['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDictZPeak['WJets'].SetDirectory(0)
@@ -566,7 +566,7 @@ def ZPeakWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights
                 histoDictZPeak['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
 	elif 'SingleMuon' in sample:
-            if sample == 'SingleMuon--Run2016B-17Jul2018_ver2-v1':
+            if 'SingleMuon--Run2016B' in sample or 'SingleMuon--Run2017B' in sample or 'SingleMuon--Run2018A' in sample:
                 temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass')
                 histoDictZPeak['data_obs'] = temp.Rebin(Nbins, 'data_obs', binBoundariesArray)
                 histoDictZPeak['data_obs'].SetDirectory(0)
@@ -736,7 +736,7 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
 		    temp = tfile.Get('analysis/eventsPassResFSBRECO/resolvedFSBRECOmass_%sDown'%(syst)).Rebin(Nbins, 'ST_temp', binBoundariesArray)
                     histoDictFSB['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets':
+        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets' in sample:
 		temp = tfile.Get('analysis/eventsPassResFSBRECO/resolvedFSBRECOmass')
                 histoDictFSB['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDictFSB['WJets'].SetDirectory(0)
@@ -899,13 +899,16 @@ for line in lines:
     if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0] or "EGamma" in line.split()[0]):
         sampleNames.append(line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/")[2])
     elif ("WR" in line.split()[0]):
-	print "WR: ", line.split()[0].strip().split("/")[1]
-	sampleNames.append(line.split()[0].strip().split("/")[1])
+        if "/" in line.split()[0]:
+            name = line.split()[0].strip().split("/")[1]
+        else:
+            name = line.split()[0].strip() 
+	print "WR: ", name
+	sampleNames.append(name)
 #        xsecLine = line.split()[3].strip().split("+")[0]
 #        xsec = float(xsecLine)
 #        print "xsec: ", xsec
 	xsec = float(1.0)
-        name = line.split()[0].strip().split("/")[1]
         xsecs[name] = xsec
     else:
 	sampleNames.append(line.split()[0].strip().split("/")[1])
