@@ -184,7 +184,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'ST_temp', binBoundariesArray)
                     histoDict['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WJets' in sample and not 'TTWJets' in sample:
+        elif 'WJets' in sample and not 'TTWJets' in sample  and not 'ttWJets':
 		temp =  tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 		histoDict['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDict['WJets'].SetDirectory(0)
@@ -376,7 +376,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 
     ttbarEst = histoDict['data_obs'].Clone('EMu')
     print "FSB data Integral: ", ttbarEst.Integral()
-#    ttbarEst.Scale(80000./35900.)
+#    ttbarEst.Scale(137400./35900.)
 
     print "data FSB: ", ttbarEst.GetBinContent(5)
     print "DiBoson FSB: ", histoDictFSB['DiBoson'].GetBinContent(5)
@@ -575,7 +575,7 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(Nbins, 'ST_temp', binBoundariesArray)
                     histoDictZPeak['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WJets' in sample and not 'TTWJets' in sample:
+        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets':
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
                 histoDictZPeak['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDictZPeak['WJets'].SetDirectory(0)
@@ -886,7 +886,7 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
 		    temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(Nbins, 'ST_temp', binBoundariesArray)
                     histoDictFSB['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WJets' in sample and not 'TTWJets' in sample:
+        elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets':
 		temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDictFSB['WJets'].SetDirectory(0)
@@ -1032,8 +1032,8 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
 sampleList = sys.argv[1]
 samplesLocation = sys.argv[2]
 workspaceOutputDirectory = sys.argv[3]
-#integratedLuminosity = 35900.0
-integratedLuminosity = 137400.0
+integratedLuminosity = 35900.0
+#integratedLuminosity = 137400.0
 LSFSF = 0.87
 #integratedLuminosity = 80000.0
 
