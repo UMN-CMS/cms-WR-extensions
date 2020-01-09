@@ -684,7 +684,7 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
                 histoDictZPeak['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
 	elif 'SingleMuon' in sample:
-            if sample == 'SingleMuon--Run2016B-17Jul2018_ver2-v1':
+            if 'SingleMuon--Run2016B' in sample or 'SingleMuon--Run2017B' in sample or 'SingleMuon--Run2018A' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
                 histoDictZPeak['data_obs'] = temp.Rebin(Nbins, 'data_obs', binBoundariesArray)
                 histoDictZPeak['data_obs'].SetDirectory(0)
@@ -1032,7 +1032,10 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
 sampleList = sys.argv[1]
 samplesLocation = sys.argv[2]
 workspaceOutputDirectory = sys.argv[3]
-integratedLuminosity = 35900.0
+lumi2016 = 35920.0
+lumi2017 = 41530.0
+lumi2018 = 59740.0
+integratedLuminosity = lumi2017
 #integratedLuminosity = 137400.0
 LSFSF = 0.87
 #integratedLuminosity = 80000.0
