@@ -1636,7 +1636,6 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       myEvent.weight = myEvent.count;
 	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight*myEvent.puWeight;
 	std::cout << "myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << "myEvent.Muon_LooseID_Weight: " << myEvent.Muon_LooseID_Weight << "myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << "myEvent.Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << "myEvent._prefiringweight: " << myEvent._prefiringweight << "myEvent.weight: " << myEvent.weight << " myEvent.Muon_RECO_Weight: " << myEvent.Muon_RECO_Weight << std::endl;
-      }
       if(m_foundZ){
         std::vector<double> Zweight = getZweight(iEvent, myEvent);
         myEvent.Zweight = Zweight[0];
@@ -1680,7 +1679,6 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
       myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
       myEvent.FSBweight = myEvent.count;
       myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.egamma_SF_HLT*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight*myEvent.puWeight;
-      }
       if(m_foundZ){
         std::vector<double> Zweight = getZweight(iEvent, myEvent);
         myEvent.Zweight = Zweight[0];
