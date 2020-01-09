@@ -76,6 +76,7 @@ systematics = [
 
 if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "WRONG"
+    print "One input need. True if running resolved or False if running boosted"
     exit(0)
 
 isResolved = sys.argv[1]
