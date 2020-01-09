@@ -34,7 +34,12 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 
 
 #    ttbarSF = 1.51
-    ttbarSF = 1.304
+    if '2016' in sampleList:
+	ttbarSF = 1.307
+    elif '2017' in sampleList:
+        ttbarSF = 1.310
+    elif '2018' in sampleList:
+        ttbarSF = 1.267
 
     for sample in sampleNames:
 	print "sample: ", sample
@@ -378,13 +383,13 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     print "FSB data Integral: ", ttbarEst.Integral()
 #    ttbarEst.Scale(137400./35900.)
 
-    print "data FSB: ", ttbarEst.GetBinContent(5)
-    print "DiBoson FSB: ", histoDictFSB['DiBoson'].GetBinContent(5)
-    print "ST FSB: ", histoDictFSB['ST'].GetBinContent(5)
-    print "WJets FSB: ", histoDictFSB['WJets'].GetBinContent(5)
-    print "DY FSB: ", histoDictFSB['DY'].GetBinContent(5)
-    print "TriBoson FSB: ", histoDictFSB['TriBoson'].GetBinContent(5)
-    print "ttV FSB: ", histoDictFSB['ttV'].GetBinContent(5)
+    print "data FSB: ", ttbarEst.Integral()
+    print "DiBoson FSB: ", histoDictFSB['DiBoson'].Integral()
+    print "ST FSB: ", histoDictFSB['ST'].Integral()
+    print "WJets FSB: ", histoDictFSB['WJets'].Integral()
+    print "DY FSB: ", histoDictFSB['DY'].Integral()
+    print "TriBoson FSB: ", histoDictFSB['TriBoson'].Integral()
+    print "ttV FSB: ", histoDictFSB['ttV'].Integral()
 
 
     ttbarEst.Add(histoDictFSB['DiBoson'],-1)
@@ -403,7 +408,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     ttbarEst_SystUp.Scale(1.2)
     ttbarEst_SystDown.Scale(0.8)
 
-    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_BoostedSignalRegion.root'    
+    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_BoostedSignalRegion_400GeVBin.root'    
     outputWorkspace = r.TFile(outputFile, "RECREATE")
 
     MuMuJJ = outputWorkspace.mkdir("MuMuJJ")
@@ -1029,13 +1034,23 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "Directory for the output workspace"
     print "True/False for whether blind or not"
 
+global sampleList 
 sampleList = sys.argv[1]
 samplesLocation = sys.argv[2]
 workspaceOutputDirectory = sys.argv[3]
 lumi2016 = 35920.0
 lumi2017 = 41530.0
 lumi2018 = 59740.0
-integratedLuminosity = lumi2017
+if '2016' in sampleList:
+    integratedLuminosity = lumi2016
+elif '2017' in sampleList:
+    integratedLuminosity = lumi2017
+elif '2018' in sampleList:
+    integratedLuminosity = lumi2018
+else:
+    print "GIVE ME A SAMPLE LIST WITH YEAR IN NAME!!!"
+    exit(0)
+
 #integratedLuminosity = 137400.0
 LSFSF = 0.87
 #integratedLuminosity = 80000.0

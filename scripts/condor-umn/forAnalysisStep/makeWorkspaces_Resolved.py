@@ -30,7 +30,12 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     histoDict = {}
 
 
-    ttbarSF = 0.746
+    if '2016' in sampleList:
+        ttbarSF = 0.742
+    elif '2017' in sampleList:
+        ttbarSF = 0.701
+    elif '2018' in sampleList:
+        ttbarSF = 0.650
 
     for sample in sampleNames:
 	tfile = r.TFile.Open(samplesLocation+sample+'.root')
@@ -307,7 +312,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     ttbarEst_SystUp.Scale(1.2)
     ttbarEst_SystDown.Scale(0.8)
 
-    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion.root'    
+    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion_400GeVBin.root'    
     outputWorkspace = r.TFile(outputFile, "RECREATE")
 
     MuMuJJ = outputWorkspace.mkdir("MuMuJJ")
@@ -878,12 +883,22 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "Directory for the output workspace"
     print "True/False for whether blind or not"
 
+global sampleList 
 sampleList = sys.argv[1]
 samplesLocation = sys.argv[2]
 workspaceOutputDirectory = sys.argv[3]
-#integratedLuminosity = 137400.0
-integratedLuminosity = 35900.0
-#integratedLuminosity = 80000.0
+lumi2016 = 35920.0
+lumi2017 = 41530.0
+lumi2018 = 59740.0
+if '2016' in sampleList:
+    integratedLuminosity = lumi2016
+elif '2017' in sampleList:
+    integratedLuminosity = lumi2017
+elif '2018' in sampleList:
+    integratedLuminosity = lumi2018
+else:
+    print "GIVE ME A SAMPLE LIST WITH YEAR IN NAME!!!"
+    exit(0)
 
 with open(sampleList) as f:
     lines = f.read().splitlines()
