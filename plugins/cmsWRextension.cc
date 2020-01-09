@@ -941,6 +941,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResZMASSRECO.fill(myRECOevent, 17, m_isSignal);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 18, m_isSignal);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 19, m_isSignal);
+        m_eventsPassResZMASSRECO.fill(myRECOevent, 34, m_isSignal);
+        m_eventsPassResZMASSRECO.fill(myRECOevent, 35, m_isSignal);
       }
       if(passesResRECOAllRegions[1]){
         m_eventsPassResZMASSRECO.fill(myRECOevent, 24, m_isSignal);
@@ -1006,6 +1008,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFSBRECO.fill(  myRECOevent, 17, m_isSignal);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 18, m_isSignal);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 19, m_isSignal);
+        m_eventsPassResFSBRECO.fill(  myRECOevent, 34, m_isSignal);
+        m_eventsPassResFSBRECO.fill(  myRECOevent, 35, m_isSignal);
 /*	if(myRECOevent.subleadMuon_selElectronMass > 450){
 	  std::cout << "filling m_eventsPassResFSBRECO_mll450" << std::endl;
           m_eventsPassResFSBRECO_mll450.fill(  myRECOevent, 1);
@@ -1094,6 +1098,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 17, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 18, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 19, m_isSignal);
+        m_eventsPassResFailBoostRECO.fill(myRECOevent, 34, m_isSignal);
+        m_eventsPassResFailBoostRECO.fill(myRECOevent, 35, m_isSignal);
 /*	if(myRECOevent.subleadMuon_selMuonMass > 450){
 	  m_eventsPassResFailBoostRECO_mll450.fill(myRECOevent, 1);
 	}
@@ -1233,7 +1239,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 17., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 18., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 19., m_isSignal);
-
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 34., m_isSignal);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 35., m_isSignal);
         if ( onShell){
           m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 1 ,m_isSignal);
 	  m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 6 ,m_isSignal);
@@ -1382,6 +1389,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 17., m_isSignal);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 18., m_isSignal);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 19., m_isSignal);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 34., m_isSignal);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 35., m_isSignal);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==1 && myRECOevent.electronCands200 == 0){
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 2., m_isSignal);
@@ -1490,6 +1499,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 13, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 32, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 33, m_isSignal);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 34, m_isSignal);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 35, m_isSignal);
       }
       if(myRECOevent.myElectronJetPairs_JECUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JECUp && addMuons_JECUp && !addElectrons_JECUp){
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 2, m_isSignal);
@@ -1599,24 +1610,17 @@ void cmsWRextension::setEventWeight_Resolved(const edm::Event& iEvent, eventBits
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
-      if(!m_amcatnlo) {
-        myEvent.weight = eventInfo->weight()*myEvent.puWeight;
-        std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
-	if(m_isSignal){
-	  myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	}else{
-          myEvent.count = 1;
-	}
-        std::cout << "myEvent.puWeight: " << myEvent.puWeight << " myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << " myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << " myEvent.Muon_HighPtID2nd_Weight: " << myEvent.Muon_HighPtID2nd_Weight << " myEvent.Muon_LooseTkIso2nd_Weight: " << myEvent.Muon_LooseTkIso2nd_Weight << " myEvent.Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << " myEvent._prefiringweight: " << myEvent._prefiringweight << " myEvent.Muon_RECO_Weight: " << myEvent.Muon_RECO_Weight << " myEvent.Muon_RECO2nd_Weight: " << myEvent.Muon_RECO2nd_Weight << std::endl;
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight*myEvent.Muon_RECO2nd_Weight;
+
+      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.weight = myEvent.count;
+      myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight*myEvent.Muon_RECO2nd_Weight*myEvent.puWeight;
+      if(m_foundZ){
+	std::vector<double> Zweight = getZweight(iEvent, myEvent);
+	myEvent.Zweight = Zweight[0];
+	myEvent.Zweight_Up = Zweight[1];
+        myEvent.Zweight_Down = Zweight[2];
+	myEvent.weight = myEvent.weight * Zweight[0];
       }
-      else {
-        myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
-        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-        myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight*myEvent.Muon_RECO2nd_Weight;
-      }
-      if(m_foundZ) myEvent.weight = myEvent.weight * getZweight(iEvent, myEvent);
-      std::cout << "m_foundZ: " << m_foundZ << " getZweight(iEvent, myEvent): " << getZweight(iEvent, myEvent) << " myEvent.weight: " << myEvent.weight << std::endl;
   } else {
       myEvent.weight = 1;
       myEvent.count = 1;
@@ -1627,25 +1631,19 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
-      if(!m_amcatnlo) {
-        myEvent.weight = eventInfo->weight()*myEvent.puWeight;
-        std::cout << "EVENTINFO WEIGHT: "<< eventInfo->weight() << std::endl;
-        if(m_isSignal){
-          myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-        }else{
-          myEvent.count = 1;
-        }
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight;
-        std::cout << "myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << " myEvent.Muon_LooseID_Weight: " << myEvent.Muon_LooseID_Weight << " myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << " myEvent.Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << " myEvent._prefiringweight: " << myEvent._prefiringweight << " myEvent.weight: " << myEvent.weight << " myEvent.puWeight: " << myEvent.puWeight << " eventInfo->weight(): " << eventInfo->weight() << " myEvent.Muon_RECO_Weight: " << myEvent.Muon_RECO_Weight << std::endl;
-      }
-      else {
-        myEvent.weight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
-        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight;
+      
+      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.weight = myEvent.count;
+	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight*myEvent.puWeight;
 	std::cout << "myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << "myEvent.Muon_LooseID_Weight: " << myEvent.Muon_LooseID_Weight << "myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << "myEvent.Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << "myEvent._prefiringweight: " << myEvent._prefiringweight << "myEvent.weight: " << myEvent.weight << " myEvent.Muon_RECO_Weight: " << myEvent.Muon_RECO_Weight << std::endl;
       }
-      if(m_foundZ) myEvent.weight = myEvent.weight * getZweight(iEvent, myEvent);
-      std::cout << "m_foundZ: " << m_foundZ << " getZweight(iEvent, myEvent): " << getZweight(iEvent, myEvent) << " myEvent.weight: " << myEvent.weight << std::endl;
+      if(m_foundZ){
+        std::vector<double> Zweight = getZweight(iEvent, myEvent);
+        myEvent.Zweight = Zweight[0];
+        myEvent.Zweight_Up = Zweight[1];
+        myEvent.Zweight_Down = Zweight[2];
+        myEvent.weight = myEvent.weight * Zweight[0];
+      }
   } else {
       myEvent.weight = 1;
       myEvent.count = 1;
@@ -1657,22 +1655,17 @@ void cmsWRextension::setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventB
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
-      if(!m_amcatnlo) {
-	std::cout << "eventInfo->weight(): " << eventInfo->weight() << " myEvent.puWeight: " << myEvent.puWeight << " myEvent.HEEP_SF: " << myEvent.HEEP_SF << " myEvent.egamma_SF: " << myEvent.egamma_SF << " myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << " myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << " myEvent._prefiringweight: " << myEvent._prefiringweight << " Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << std::endl;
-        myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
-        if(m_isSignal){
-          myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-        }else{
-          myEvent.count = 1;
-        }
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight*myEvent.Muon_Trig_Weight*myEvent.Muon_RECO_Weight;
-        std::cout << "myEvent.FSBweight: " << myEvent.FSBweight << std::endl;
+
+      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.FSBweight = myEvent.count;
+      myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight*myEvent.Muon_Trig_Weight*myEvent.Muon_RECO_Weight*myEvent.puWeight;      
+      if(m_foundZ){
+        std::vector<double> Zweight = getZweight(iEvent, myEvent);
+        myEvent.Zweight = Zweight[0];
+        myEvent.Zweight_Up = Zweight[1];
+        myEvent.Zweight_Down = Zweight[2];
+        myEvent.FSBweight = myEvent.FSBweight * Zweight[0];
       }
-      else {
-        myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
-        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight*myEvent.Muon_Trig_Weight*myEvent.Muon_RECO_Weight;      }
-      if(m_foundZ) myEvent.FSBweight = myEvent.FSBweight * getZweight(iEvent, myEvent);
   } else {
       myEvent.FSBweight = 1;
       myEvent.count = 1;
@@ -1683,29 +1676,27 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
   if(m_isMC) {
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
-      if(!m_amcatnlo) {
-        myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight;
-        if(m_isSignal){
-          myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-        }else{
-          myEvent.count = 1;
-        }
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.egamma_SF_HLT*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
+
+      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.FSBweight = myEvent.count;
+      myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.egamma_SF_HLT*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight*myEvent.puWeight;
       }
-      else {
-        myEvent.FSBweight = eventInfo->weight()*myEvent.puWeight/fabs(eventInfo->weight());
-        myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
-	myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.egamma_SF_HLT*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight;
+      if(m_foundZ){
+        std::vector<double> Zweight = getZweight(iEvent, myEvent);
+        myEvent.Zweight = Zweight[0];
+        myEvent.Zweight_Up = Zweight[1];
+        myEvent.Zweight_Down = Zweight[2];
+        myEvent.FSBweight = myEvent.FSBweight * Zweight[0];
       }
-      if(m_foundZ) myEvent.FSBweight = myEvent.FSBweight * getZweight(iEvent, myEvent);
   } else {
       myEvent.FSBweight = 1;
       myEvent.count = 1;
   }
 
 }
-double cmsWRextension::getZweight(const edm::Event& iEvent, eventBits& myEvent) {
+std::vector<double> cmsWRextension::getZweight(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "Running getZweight" << std::endl;
+  std::vector<double> Zweights;
   double zpt = -1;
   double zm  = -1;
   zpt = myEvent.genZpt;
@@ -1716,7 +1707,10 @@ double cmsWRextension::getZweight(const edm::Event& iEvent, eventBits& myEvent) 
   if(zpt > 0 && zm > 0) {
     return myZweights.getZweight(zm, zpt);
   }
-  return 1.0;
+  Zweights.push_back(1.0);
+  Zweights.push_back(1.0);
+  Zweights.push_back(1.0);
+  return Zweights;
 }
 //void cmsWRextension::setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent) {
 //  if(m_isMC) {
