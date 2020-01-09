@@ -1032,8 +1032,8 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
 sampleList = sys.argv[1]
 samplesLocation = sys.argv[2]
 workspaceOutputDirectory = sys.argv[3]
-integratedLuminosity = 35900.0
-#integratedLuminosity = 137400.0
+#integratedLuminosity = 35900.0
+integratedLuminosity = 137400.0
 LSFSF = 0.87
 #integratedLuminosity = 80000.0
 
