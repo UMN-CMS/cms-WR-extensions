@@ -150,8 +150,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'ttV_temp', binBoundariesArray)
                     histoDict['ttV_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
-	    if 'ST_s-channel_top' in sample:
+	elif 'ST_s-channel' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel' in sample:
 		temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 		histoDict['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDict['ST'].SetDirectory(0)
@@ -551,8 +551,8 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(Nbins, 'DiBoson_temp', binBoundariesArray)
                     histoDictZPeak['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
-	    if 'ST_s-channel_top' in sample:
+	elif 'ST_s-channel' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
                 histoDictZPeak['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDictZPeak['ST'].SetDirectory(0)
@@ -862,8 +862,8 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
                     temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst)).Rebin(Nbins, 'ttV_temp', binBoundariesArray)
                     histoDictFSB['ttV_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
-	    if 'ST_s-channel_top' in sample:
+	elif 'ST_s-channel' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel' in sample:
                 temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
                 histoDictFSB['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDictFSB['ST'].SetDirectory(0)
@@ -1051,13 +1051,16 @@ for line in lines:
     if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0] or "EGamma" in line.split()[0]):
         sampleNames.append(line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/")[2])
     elif ("WR" in line.split()[0]):
-	print "WR: ", line.split()[0].strip().split("/")[1]
-	sampleNames.append(line.split()[0].strip().split("/")[1])
+        if "/" in line.split()[0]:
+            name = line.split()[0].strip().split("/")[1]
+        else:
+            name = line.split()[0].strip() 
+	print "WR: ", name
+	sampleNames.append(name)
 #        xsecLine = line.split()[3].strip().split("+")[0]
 #        xsec = float(xsecLine)
 #        print "xsec: ", xsec
 	xsec = float(1.0)
-        name = line.split()[0].strip().split("/")[1]
         xsecs[name] = xsec
     else:
 	sampleNames.append(line.split()[0].strip().split("/")[1])

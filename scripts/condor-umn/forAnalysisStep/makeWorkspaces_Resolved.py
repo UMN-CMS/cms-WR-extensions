@@ -112,8 +112,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'ttV_temp', binBoundariesArray)
                     histoDict['ttV_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
-	    if 'ST_s-channel_top' in sample:
+	elif 'ST_s-channel' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel' in sample:
 		temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass')
 		histoDict['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDict['ST'].SetDirectory(0)
@@ -433,8 +433,8 @@ def ZPeakWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'DiBoson_temp', binBoundariesArray)
                     histoDictZPeak['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
-	    if 'ST_s-channel_top' in sample:
+	elif 'ST_s-channel' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel' in sample:
                 temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass')
                 histoDictZPeak['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDictZPeak['ST'].SetDirectory(0)
@@ -712,8 +712,8 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
                     temp = tfile.Get('analysis/eventsPassResFSBRECO/resolvedFSBRECOmass_%sDown'%(syst)).Rebin(Nbins, 'ttV_temp', binBoundariesArray)
                     histoDictFSB['ttV_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'ST_s-channel_top' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
-	    if 'ST_s-channel_top' in sample:
+	elif 'ST_s-channel' in sample or 'ST_t-channel_antitop' in sample or 'ST_t-channel_top' in sample or 'ST_tW_antitop' in sample or 'ST_tW_top' in sample:
+	    if 'ST_s-channel' in sample:
                 temp = tfile.Get('analysis/eventsPassResFSBRECO/resolvedFSBRECOmass')
                 histoDictFSB['ST'] = temp.Rebin(Nbins, 'ST', binBoundariesArray)
                 histoDictFSB['ST'].SetDirectory(0)
