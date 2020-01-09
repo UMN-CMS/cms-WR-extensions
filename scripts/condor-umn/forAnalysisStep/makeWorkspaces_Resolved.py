@@ -38,7 +38,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 	systs = ['JEC','JER','PU','MuResID','MuResol','MuTrig']
         systs_pdf = ['Scale_muR2_muF1','Scale_muRp5_muF1','Scale_muR1_muF2','Scale_muR2_muF2','Scale_muR1_muFp5','Scale_muRp5_muFp5','Error_1047','Error_1048','Error_1049','Error_1050','Error_1051','Error_1052','Error_1053','Error_1054','Error_1055','Error_1056','Error_1057','Error_1058','Error_1059','Error_1060','Error_1061','Error_1062','Error_1063','Error_1064','Error_1065','Error_1066','Error_1067','Error_1068','Error_1069','Error_1070','Error_1071','Error_1072','Error_1073','Error_1074','Error_1075','Error_1076','Error_1077','Error_1078','Error_1079','Error_1080','Error_1081','Error_1082','Error_1083','Error_1084','Error_1085','Error_1086','Error_1087','Error_1088','Error_1089','Error_1090','Error_1091','Error_1092','Error_1093','Error_1094','Error_1095','Error_1096','Error_1097','Error_1098','Error_1099','Error_1100','Error_1101','Error_1102','Error_1103','Error_1104','Error_1105','Error_1106','Error_1107','Error_1108','Error_1109','Error_1110','Error_1111','Error_1112','Error_1113','Error_1114','Error_1115','Error_1116','Error_1117','Error_1118','Error_1119','Error_1120','Error_1121','Error_1122','Error_1123','Error_1124','Error_1125','Error_1126','Error_1127','Error_1128','Error_1129','Error_1130','Error_1131','Error_1132','Error_1133','Error_1134','Error_1135','Error_1136','Error_1137','Error_1138','Error_1139','Error_1140','Error_1141','Error_1142','Error_1143','Error_1144','Error_1145','Error_1146','Error_alphasUp','Error_alphasDown']
 
-	if 'WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample:
+        if ('WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample) and not 'WWZ_Tune' in sample and not 'ZZZ_Tune' in sample and not 'WZZ_Tune' in sample:
 
 	    if 'WW_Tune' in sample:
 		temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass')
@@ -64,7 +64,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'DiBoson_temp', binBoundariesArray)
                     histoDict['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample:
+        elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample or 'WWZ_4F_Tune' in sample:
 	    if 'WWW_4F_Tune' in sample:
 		temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass')
                 histoDict['TriBoson'] = temp.Rebin(Nbins, 'TriBoson', binBoundariesArray)
@@ -407,7 +407,7 @@ def ZPeakWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights
             temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass').Rebin(Nbins, 'TT', binBoundariesArray)
             histoDictZPeak['TT'].Add(temp,weights[sample])
 
-	elif 'WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample:
+        elif ('WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample) and not 'WWZ_Tune' in sample and not 'ZZZ_Tune' in sample and not 'WZZ_Tune' in sample:
 
 	    if 'WW_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass')
@@ -457,7 +457,7 @@ def ZPeakWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'ST_temp', binBoundariesArray)
                     histoDictZPeak['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WJets' in sample:
+        elif 'WJets' in sample and not 'TTWJets' in sample:
                 temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass')
                 histoDictZPeak['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDictZPeak['WJets'].SetDirectory(0)
@@ -496,7 +496,7 @@ def ZPeakWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights
 		    temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'DY_temp', binBoundariesArray)
                     histoDictZPeak['DY_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample:
+        elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample or 'WWZ_4F_Tune' in sample:
 	    if 'WWW_4F_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassResZMASSRECO/resolvedRECOmass')
                 histoDictZPeak['TriBoson'] = temp.Rebin(Nbins, 'TriBoson', binBoundariesArray)
@@ -637,7 +637,7 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
         bkgs = ['TT','ST','WJets','DY','DiBoson']
         systs = ['JEC','JER','PU','MuID','MuResol','MuTrig','HEEP']
 
-	if 'WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample:
+        if ('WW_Tune' in sample or 'WZ_Tune' in sample or 'ZZ_Tune' in sample) and not 'WWZ_Tune' in sample and not 'ZZZ_Tune' in sample and not 'WZZ_Tune' in sample:
 
 	    if 'WW_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassResFSBRECO/resolvedFSBRECOmass')
@@ -663,7 +663,7 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
 		    temp = tfile.Get('analysis/eventsPassResFSBRECO/resolvedFSBRECOmass_%sDown'%(syst)).Rebin(Nbins, 'DiBoson_temp', binBoundariesArray)
                     histoDictFSB['DiBoson_%sDown'%(syst)].Add(temp,weights[sample])
 
-	elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample:
+        elif 'WWW_4F_Tune' in sample or 'WWZ_Tune' in sample or 'WZZ_Tune' in sample or 'ZZZ_Tune' in sample or 'WWZ_4F_Tune' in sample:
 	    if 'WWW_4F_Tune' in sample:
                 temp = tfile.Get('analysis/eventsPassResFSBRECO/resolvedFSBRECOmass')
                 histoDictFSB['TriBoson'] = temp.Rebin(Nbins, 'TriBoson', binBoundariesArray)
