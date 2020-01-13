@@ -5,6 +5,7 @@ import subprocess
 from shutil import copyfile
 import copy
 import collections
+import array
 """
 Style options mostly from CMS's tdrStyle.C
 """
@@ -196,6 +197,13 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'WW_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
           'WZ_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
           'ZZ_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
+	  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8': ROOT.kRed+2,
+	  'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8': ROOT.kRed+2,
+	  'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8': ROOT.kRed+2,
+	  'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8':ROOT.kRed+2,
+	  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8': ROOT.kGreen-1,
+	  'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' : ROOT.kGreen-1,
+	  'ttZJets_13TeV_madgraphMLM-pythia8': ROOT.kGreen-1,
           'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8': ROOT.kRed,
           'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
           'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
@@ -239,6 +247,7 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'DYJetsToLL_M-50_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+	  'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlack,
           'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Wpt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
@@ -259,9 +268,12 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+	  'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
           'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8': ROOT.kGray,
           'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGray,
           'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8': ROOT.kGray,
+	  'TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8': ROOT.kGray,
+	  'TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8': ROOT.kGray,
           'SingleElectron--Run2016B-17Jul2018_ver2-v1'          : 794,
           'SingleElectron--Run2016C-17Jul2018-v1'               : 794,
           'SingleElectron--Run2016D-17Jul2018-v1'               : 794,
@@ -351,9 +363,9 @@ for background,xsec in xsecs.items():
             continue
         print "Found # events:"+str(eventsWeight)
         weight /= eventsWeight
-	if "tW" in background and (year == "2017" or year == "2018"):
-	    print "Reducing ST weight"
-	    weight /= 35.1316
+#	if "tW" in background and (year == "2017" or year == "2018"):
+#	    print "Reducing ST weight"
+#	    weight /= 35.1316
         print "DONE CALCULATING"
     print "Scale: "+str(weight)
  #   saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOToutputDir)
@@ -362,6 +374,9 @@ for background,xsec in xsecs.items():
 #Loop over stacks and make save stackhists
 
 #c = ROOT.TCanvas("c","c",1000,1000)
+binBoundaries = [800, 1000, 1200, 1500, 1800, 8000]
+binBoundariesArray = array.array('d', binBoundaries)
+
 for plot,stack in stackList.items():
     pos = 1
     dummy = 0
@@ -383,6 +398,14 @@ for plot,stack in stackList.items():
         if "TH2" in histType and pos == 1:
             pos+=1
             continue
+	if "leadAK8JetMuonMass" in plot.split("/")[-1][:-5]:
+	    print "hist.GetNbinsX(): ", hist.GetNbinsX()
+	    print "REBINNING"
+	    temp = hist.Rebin(5,hist.GetName(),binBoundariesArray)
+            print "temp.GetNbinsX(): ", temp.GetNbinsX()
+	else:
+	    temp = hist
+
         print histType 
         #myHist = copy.deepcopy(hist)
     #    print "Adding"
@@ -390,8 +413,8 @@ for plot,stack in stackList.items():
         print hist.GetName()
 	print "Integral: ", hist.Integral()
         #hist.SetFillColor(pos)
-        hist.Draw("HIST")
-        dummy.Add(hist)
+        temp.Draw("HIST")
+        dummy.Add(temp)
         if pos == 9:
             pos+=2
         else:
