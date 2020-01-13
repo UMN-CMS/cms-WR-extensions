@@ -111,7 +111,7 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 2016 1.0"
+    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList2018_no_ext.txt /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/Output/Full2018/ ~/nobackup/backgroundStacks/2018/ 2018 1.0"
     print ""
     exit(0)
 if len(sys.argv) != 6:
@@ -259,9 +259,20 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8' : ROOT.kBlue+2,
           'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8': ROOT.kGray,
+          'TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8': ROOT.kGray,
+          'TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8': ROOT.kGray,
+          'TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8' : ROOT.kGray,
           'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGray,
           'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8': ROOT.kGray,
+          'WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8' : ROOT.kOrange,
+          'WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8' :  ROOT.kOrange,
+          'WWZ_TuneCP5_13TeV-amcatnlo-pythia8'    : ROOT.kOrange,
+          'WZZ_TuneCP5_13TeV-amcatnlo-pythia8'    :  ROOT.kOrange,
+          'ZZZ_TuneCP5_13TeV-amcatnlo-pythia8'    :  ROOT.kOrange,
+          'ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8' : ROOT.kRed,
+          'ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8' : ROOT.kRed,
           'SingleElectron--Run2016B-17Jul2018_ver2-v1'          : 794,
           'SingleElectron--Run2016C-17Jul2018-v1'               : 794,
           'SingleElectron--Run2016D-17Jul2018-v1'               : 794,
@@ -351,9 +362,9 @@ for background,xsec in xsecs.items():
             continue
         print "Found # events:"+str(eventsWeight)
         weight /= eventsWeight
-	if "tW" in background and (year == "2017" or year == "2018"):
-	    print "Reducing ST weight"
-	    weight /= 35.1316
+#	if "tW" in background and (year == "2017" or year == "2018"):
+#	    print "Reducing ST weight"
+#	    weight /= 35.1316
         print "DONE CALCULATING"
     print "Scale: "+str(weight)
  #   saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOToutputDir)
