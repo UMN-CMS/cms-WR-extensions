@@ -24,7 +24,7 @@ print binBoundaries
 binBoundariesArray = array.array('d', binBoundaries)
 Nbins = len(binBoundaries) - 1
 
-def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF):
+def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF,doSignal):
     print "ZPeakSF: ", ZPeakSF
     histoDict = {}
 
@@ -478,37 +478,38 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 #    signalMasses = [(1000,100),(1500,100),(2000,100),(2500,100),(3000,100),(3500,100),(4000,100),(4500,100),(5000,100),(5500,100),(1000,300),(1500,300),(2000,300),(2500,300),(3000,300),(3500,300),(4000,300),(4500,300),(5000,300),(5500,300),(2000,500),(2500,500),(3000,500),(3500,500),(4000,500),(4500,500),(5000,500),(5500,500),(2000,700),(2500,700),(3000,700),(3500,700),(4000,700),(4500,700),(5000,700),(5500,700),(3000,900),(3500,900),(4000,900),(4500,900),(5000,900),(5500,900),(3500,1100),(4000,1100),(4500,1100),(5000,1100),(5500,1100),(4500,1300),(5000,1300),(5500,1300),(4500,1500),(5000,1500),(5500,1500),(5500,1700),(5500,1900),(5000,1000),(4500,450),(4000,800),(4000,400),(3500,350),(3000,600),(2500,250),(2000,400),(2000,200),(1500,150),(1000,200)] 
 
 #    signalMasses = [(2000,1000),(3000,1500),(4000,2000)]
+    if(doSignal):
+        signalMasses = []
 
-    signalMasses = []
+        signalMassFile = 'signalMassPoints.txt'
 
-    signalMassFile = 'signalMassPoints.txt'
+        with open(signalMassFile) as f:
+            lines = f.read().splitlines()
 
-    with open(signalMassFile) as f:
- 	lines = f.read().splitlines()
+        for line in lines:
+            line = line.split(',')
+            signalMasses.append(line)
 
-    for line in lines:
-	line = line.split(',')
-	signalMasses.append(line)
+        for WRmass,NRmass in signalMasses:
+            histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Write()
+            histoDict['WR_%s_NR_%s_Numerator'%(WRmass,NRmass)].Write()
+            for syst in systs:
+                histoDict['WR_%s_NR_%s_%sUp'%(WRmass,NRmass,syst)].Write()
+                histoDict['WR_%s_NR_%s_%sDown'%(WRmass,NRmass,syst)].Write()
+            for syst in systs_pdf:
+                if 'Error' in syst: continue 
+#           	if float(WRmass) != 5000.: continue
+#               print "Saving: ", syst
+                histoDict['WR_%s_NR_%s_%s'%(WRmass,NRmass,syst)].Write()
 
-    for WRmass,NRmass in signalMasses:
-    	histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Write()
-	histoDict['WR_%s_NR_%s_Numerator'%(WRmass,NRmass)].Write()
-	for syst in systs:
-            histoDict['WR_%s_NR_%s_%sUp'%(WRmass,NRmass,syst)].Write()
-            histoDict['WR_%s_NR_%s_%sDown'%(WRmass,NRmass,syst)].Write()
-	for syst in systs_pdf:
-	    if 'Error' in syst: continue 
-#		if float(WRmass) != 5000.: continue
-#	    print "Saving: ", syst
-	    histoDict['WR_%s_NR_%s_%s'%(WRmass,NRmass,syst)].Write()
+            histoDict['WR_%s_NR_%s_PDFUp'%(WRmass,NRmass)].Write()
+            histoDict['WR_%s_NR_%s_PDFDown'%(WRmass,NRmass)].Write()
+            histoDict['WR_%s_NR_%s_AlphaSUp'%(WRmass,NRmass)].Write()
+            histoDict['WR_%s_NR_%s_AlphaSDown'%(WRmass,NRmass)].Write()
+            histoDict['WR_%s_NR_%s_LSFUp'%(WRmass,NRmass)].Write()
+            histoDict['WR_%s_NR_%s_LSFDown'%(WRmass,NRmass)].Write()
 
-	histoDict['WR_%s_NR_%s_PDFUp'%(WRmass,NRmass)].Write()
-	histoDict['WR_%s_NR_%s_PDFDown'%(WRmass,NRmass)].Write()
-	histoDict['WR_%s_NR_%s_AlphaSUp'%(WRmass,NRmass)].Write()
-	histoDict['WR_%s_NR_%s_AlphaSDown'%(WRmass,NRmass)].Write()
-        histoDict['WR_%s_NR_%s_LSFUp'%(WRmass,NRmass)].Write()
-        histoDict['WR_%s_NR_%s_LSFDown'%(WRmass,NRmass)].Write()
-
+    
     outputWorkspace.Write()
     outputWorkspace.Close()
 
@@ -1066,6 +1067,15 @@ else:
     print "GIVE ME A SAMPLE LIST WITH YEAR IN NAME!!!"
     exit(0)
 
+if(len(sys.argv) == 5):
+    doSignalStr = sys.argv[4]
+    if(doSignalStr == "True"):
+        doSignal = True
+    else:
+        doSignal = False
+else:
+    doSignal = True
+
 #integratedLuminosity = 137400.0
 LSFSF = 0.87
 #integratedLuminosity = 80000.0
@@ -1150,7 +1160,7 @@ ZPeakSF = ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, w
 print "ZPeakSF: ", ZPeakSF
 
 print "MAKING SIGNAL REGION WORKSPACE"
-SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF)
+SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF, doSignal)
 
 #print "MAKING ZPEAK REGION WORKSPACE"
 #ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights)
