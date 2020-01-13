@@ -64,16 +64,6 @@ fittedbgs = [
 "EMu"
 ]
 
-systematics = [
-"JEC",
-"JER",
-"PU",
-"MuID",
-"MuResolUp",
-"MuTrig",
-"LSF"
-]
-
 if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "WRONG"
     print "One input need. True if running resolved or False if running boosted"
@@ -399,6 +389,8 @@ if isResolved == "True":
     DYhist_MuResolDown = fileA.Get(folder+"DY_MuResolDown")
     DYhist_MuTrigUp = fileA.Get(folder+"DY_MuTrigUp")
     DYhist_MuTrigDown = fileA.Get(folder+"DY_MuTrigDown")
+    DYhist_MuZweightUp = fileA.Get(folder+"DY_ZweightUp")
+    DYhist_MuZweightDown = fileA.Get(folder+"DY_ZweightDown")
 
 else:
     DYhist_JECUp = fileA.Get(folder+"DY_JECUp")
@@ -415,6 +407,9 @@ else:
     DYhist_MuTrigDown = fileA.Get(folder+"DY_MuTrigDown")
     DYhist_LSFUp = fileA.Get(folder+"DY_LSFUp")
     DYhist_LSFDown = fileA.Get(folder+"DY_LSFDown")
+    DYhist_MuZweightUp = fileA.Get(folder+"DY_ZweightUp")
+    DYhist_MuZweightDown = fileA.Get(folder+"DY_ZweightDown")
+
 
 #bigBinEmu = EmuHist.Rebin(7, "bigBinEmu")
 EmuHist = removeNegBins(EmuHist)
@@ -741,8 +736,6 @@ newBGstack.Add(otherBGhist)
 
 #COMBINED HIST
 newBGhist = histFromStack(newBGstack)
-addUncertainty(DYtemplate,bigBinDY)
-addUncertainty(EMUtemplate,bigBinEMU)
 oldBGhist = histoB
 
 ####CREATING DY SYSTEMATIC HISTOGRAMS#############################
@@ -760,6 +753,8 @@ if isResolved == "True":
     DYhist_MuResolDown_temp = DYhist_MuResolDown.Rebin(6, "", binningDY)
     DYhist_MuTrigUp_temp = DYhist_MuTrigUp.Rebin(6, "", binningDY)
     DYhist_MuTrigDown_temp = DYhist_MuTrigDown.Rebin(6, "", binningDY)
+    DYhist_MuZweightUp_temp = DYhist_MuZweightUp.Rebin(6, "", binningDY)
+    DYhist_MuZweightDown_temp = DYhist_MuZweightDown.Rebin(6, "", binningDY)
 
 else:
     bigBinDY_temp = DYhist.Rebin(6, "", binningDY)
@@ -775,6 +770,8 @@ else:
     DYhist_MuResolDown_temp = DYhist_MuResolDown.Rebin(6, "", binningDY)
     DYhist_MuTrigUp_temp = DYhist_MuTrigUp.Rebin(6, "", binningDY)
     DYhist_MuTrigDown_temp = DYhist_MuTrigDown.Rebin(6, "", binningDY)
+    DYhist_MuZweightUp_temp = DYhist_MuZweightUp.Rebin(6, "", binningDY)
+    DYhist_MuZweightDown_temp = DYhist_MuZweightDown.Rebin(6, "", binningDY)
     DYhist_LSFUp_temp = DYhist_LSFUp.Rebin(6, "", binningDY)
     DYhist_LSFDown_temp = DYhist_LSFDown.Rebin(6, "", binningDY)
 
@@ -788,6 +785,9 @@ DY_MuResolUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhis
 DY_MuResolDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhist_MuResolDown_temp)
 DY_MuTrigUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhist_MuTrigUp_temp)
 DY_MuTrigDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhist_MuTrigDown_temp)
+DYhist_MuZweightUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhist_MuZweightUp_temp)
+DYhist_MuZweightDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhist_MuZweightDown_temp)
+
 if isResolved == "True":
     DY_MuIDUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhist_MuIDUp_temp)
     DY_MuIDDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY_temp, DYhist_MuIDDown_temp)
@@ -808,6 +808,9 @@ DY_MuResolUpTemplate.SetName("DY_MuResolUp")
 DY_MuResolDownTemplate.SetName("DY_MuResolDown")
 DY_MuTrigUpTemplate.SetName("DY_MuTrigUp")
 DY_MuTrigDownTemplate.SetName("DY_MuTrigDown")
+DYhist_MuZweightUpTemplate.SetName("DY_ZweightUp")
+DYhist_MuZweightDownTemplate.SetName("DY_ZweightDown")
+
 if isResolved == "True":
     DY_MuIDUpTemplate.SetName("DY_MuResIDUp")
     DY_MuIDDownTemplate.SetName("DY_MuResIDDown")
@@ -829,6 +832,8 @@ DY_MuResolUpTemplate.Write()
 DY_MuResolDownTemplate.Write()
 DY_MuTrigUpTemplate.Write()
 DY_MuTrigDownTemplate.Write()
+DYhist_MuZweightUpTemplate.Write()
+DYhist_MuZweightDownTemplate.Write()
 if not (isResolved == "True"):
     DY_LSFUpTemplate.Write()
     DY_LSFDownTemplate.Write()

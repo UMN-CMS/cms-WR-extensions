@@ -171,6 +171,15 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		    histoDict['DY_%sDown'%(syst)] = temp.Rebin(Nbins, 'DY_%sDown'%(syst), binBoundariesArray)
                     histoDict['DY_%sDown'%(syst)].SetDirectory(0)
                     histoDict['DY_%sDown'%(syst)].Scale(weights[sample]*ZPeakSF)
+                temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_ZweightUp')
+                histoDict['DY_ZweightUp'] = temp.Rebin(Nbins, 'DY_ZweightUp', binBoundariesArray)
+                histoDict['DY_ZweightUp'].SetDirectory(0)
+                histoDict['DY_ZweightUp'].Scale(weights[sample]*ZPeakSF)
+                temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_ZweightDown')
+                histoDict['DY_ZweightDown'] = temp.Rebin(Nbins, 'DY_ZweightDown', binBoundariesArray)
+                histoDict['DY_ZweightDown'].SetDirectory(0)
+                histoDict['DY_ZweightDown'].Scale(weights[sample]*ZPeakSF)
+
             else:
 		temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass').Rebin(Nbins, 'DY_temp', binBoundariesArray)
                 histoDict['DY'].Add(temp,weights[sample]*ZPeakSF)
@@ -179,6 +188,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     histoDict['DY_%sUp'%(syst)].Add(temp,weights[sample]*ZPeakSF)
 		    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'DY_temp', binBoundariesArray)
                     histoDict['DY_%sDown'%(syst)].Add(temp,weights[sample]*ZPeakSF)
+                temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_ZweightUp').Rebin(Nbins, 'DY_temp', binBoundariesArray)
+                histoDict['DY_ZweightUp'].Add(temp,weights[sample]*ZPeakSF)
+                temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_ZweightDown').Rebin(Nbins, 'DY_temp', binBoundariesArray)
+                histoDict['DY_ZweightDown'].Add(temp,weights[sample]*ZPeakSF)
+
 
 	elif 'WR' in sample:
 	    print "sample: ", sample
@@ -240,10 +254,10 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
             for i in range(1047, 1146+1):
                 for j in range(1,histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetNbinsX()+1):
 		    if histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() == 0: continue
-		    if abs(histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral() - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral()) / histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() < 0.2:
-			print "syst: ", i
-			print "histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral(): ", histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral()
-                        SquaredBinError[j] += (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
+#		    if abs(histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral() - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral()) / histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].Integral() < 0.2:
+#		    print "syst: ", i
+#		    print "histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral(): ", histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].Integral()
+                    SquaredBinError[j] += (histoDict['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s_Error_%s'%(wrMass,nuMass,i)] - histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)/SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)])**2
             for j in range(1,histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetNbinsX()+1):
                 print "Setting PDF error bin: ", j
                 print "histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j): ", histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)
@@ -312,7 +326,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     ttbarEst_SystUp.Scale(1.2)
     ttbarEst_SystDown.Scale(0.8)
 
-    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion_400GeVBin.root'    
+    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion_400GeVBins.root'    
     outputWorkspace = r.TFile(outputFile, "RECREATE")
 
     MuMuJJ = outputWorkspace.mkdir("MuMuJJ")
@@ -348,6 +362,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
         histoDict['DY_%sDown'%(syst)].Write()
 #        histoDict['QCD_%sUp'%(syst)].Write()
 #        histoDict['QCD_%sDown'%(syst)].Write()
+    histoDict['DY_ZweightUp'].Write()
+    histoDict['DY_ZweightDown'].Write()
 
 #    signalMasses = [(1000,100),(1500,100),(2000,100),(2500,100),(3000,100),(3500,100),(4000,100),(4500,100),(5000,100),(5500,100),(1000,300),(1500,300),(2000,300),(2500,300),(3000,300),(3500,300),(4000,300),(4500,300),(5000,300),(5500,300),(2000,500),(2500,500),(3000,500),(3500,500),(4000,500),(4500,500),(5000,500),(5500,500),(2000,700),(2500,700),(3000,700),(3500,700),(4000,700),(4500,700),(5000,700),(5500,700),(3000,900),(3500,900),(4000,900),(4500,900),(5000,900),(5500,900),(3500,1100),(4000,1100),(4500,1100),(5000,1100),(5500,1100),(4500,1300),(5000,1300),(5500,1300),(4500,1500),(5000,1500),(5500,1500),(5500,1700),(5500,1900),(5000,1000),(4500,450),(4000,800),(4000,400),(3500,350),(3000,600),(2500,250),(2000,400),(2000,200),(1500,150),(1000,200)] 
 
