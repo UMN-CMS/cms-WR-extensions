@@ -145,15 +145,15 @@ def SignalRegionCard(workspaceDirectory):
     	processNumberString = 'process'
     	rateString = 'rate'
     	lumiString = 'lumi\tlnN'
-    	jecString = 'JEC\tshape'
-    	jerString = 'JER\tshape'
-    	puString = 'PU\tshape'
-	muResIDString = 'MuResID\tshape'
-	muResolString = 'MuResol\tshape'
-	muTrigString = 'MuTrig\tshape'
+    	jecString = 'JEC\tshapeN2'
+    	jerString = 'JER\tshapeN2'
+    	puString = 'PU\tshapeN2'
+	muResIDString = 'MuResID\tshapeN2'
+	muResolString = 'MuResol\tshapeN2'
+	muTrigString = 'MuTrig\tshapeN2'
         ScaleUncString = 'Scale\tlnN'
-        PDFUncString = 'PDF\tshape'
-        AlphaSUncString = 'AlphaS\tshape'
+        PDFUncString = 'PDF\tshapeN2'
+        AlphaSUncString = 'AlphaS\tshapeN2'
 
 	print "WR_%s_NR_%s%(WRmass,NRmass): ", 'WR_%s_NR_%s'%(WRmass,NRmass)
 	print "histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral(): ", histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral()

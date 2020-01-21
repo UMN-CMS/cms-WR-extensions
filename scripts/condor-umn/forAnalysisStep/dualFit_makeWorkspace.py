@@ -155,11 +155,17 @@ def findNearBinCenter(val, hist):
             break
     return closest
 def addUncertainty(mainHist, uncHist):
+    print "mainHist.GetName(): ", mainHist.GetName()
     for ibin in range(1, mainHist.GetNbinsX()+1):
         binE = mainHist.GetBinError(ibin)
         binCenter = mainHist.GetBinCenter(ibin)
         nearBin = findNearBinCenter(binCenter, uncHist)
         addE = uncHist.GetBinError(nearBin)
+#	if mainHist.GetName() == "DY" and ibin > 5:
+#	    addE = addE + addE*15
+#        elif mainHist.GetName() == "EMu" and ibin > 3:
+#            addE = addE + addE*15
+	print "addE: ", addE
 
         newE = math.sqrt(binE * binE + addE * addE)
             
@@ -428,7 +434,9 @@ newBGstack = ROOT.THStack() #DY, EMU, OTHER
 
 #TEMPLATES FOR LATER
 DYtemplate  = copy.deepcopy(otherBGhist)
+DYtemplate.SetName("DY")
 EMUtemplate = copy.deepcopy(otherBGhist)
+EMUtemplate.SetName("EMu")
 DYtemplate.Scale( 0.0)
 EMUtemplate.Scale(0.0)
 
@@ -594,6 +602,7 @@ DYhist.SetLineWidth(3)
 if not (isResolved == "True"):
     bigBinDY = DYhist.Rebin(nBinsDY, "", binningDY)
     bigBinDY = histBinSplit(bigBinDY, 13)
+    bigBinDY.SetName("DY")
 
 
 fitFunctionDY = ROOT.TF1('funcDY', fitFormDY, 800.0, 8000.0)
@@ -669,6 +678,7 @@ else:
     bigBinEMU = histBinSplit(bigBinEMU, 15)
 
 bigBinEMU.SetLineColor(ROOT.kRed)
+bigBinEMU.SetName("EMu")
 
 fitFunctionEMU = ROOT.TF1('funcEMU', expMod, 800, 8000)
 
@@ -723,7 +733,9 @@ ratioHisto.Draw("e")
 #ADDING UNCERTAINTIES
 if isResolved == "True":
     bigBinDY = DYhist   #FOR RESOLVED
+print "Adding DY unc"
 addUncertainty(DYtemplate, bigBinDY)
+print "Adding ttbar unc"
 addUncertainty(EMUtemplate, bigBinEMU)
 
 #HISTS MADE TIME TO STACK
@@ -846,6 +858,8 @@ DiBosonHist.SetName("DiBoson")
 TriBosonHist.SetName("TriBoson")
 ttVhist.SetName("ttV")
 WJetsHist.SetName("WJets")
+#bigBinDY.Write()
+#bigBinEMU.Write()
 DYtemplate.Write()
 EMUtemplate.Write()
 #SThist.Write()
@@ -870,12 +884,12 @@ oldBGhist.SetLineColor(ROOT.kRed)
 EMUtemplate.SetTitle("")
 EMUtemplate.Draw("e")
 DYtemplate.Draw("esame")
-otherBGhist.Draw("esame")
+#otherBGhist.Draw("esame")
 
 newLeg = ROOT.TLegend(0.7,0.7,1.0,1.0)
 newLeg.AddEntry(EMUtemplate, "EMU FIT")
 newLeg.AddEntry(DYtemplate, "DY FIT")
-newLeg.AddEntry(otherBGhist, "Other BGs")
+#newLeg.AddEntry(otherBGhist, "Other BGs")
 newLeg.Draw()
 c.cd(8)
 ROOT.gPad.SetLogy()
