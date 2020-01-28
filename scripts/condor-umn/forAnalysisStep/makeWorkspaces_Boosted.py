@@ -381,6 +381,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		histoDict['WR_%s_NR_%s_AlphaSUp'%(wrMass,nuMass)].SetBinContent(j, (AlphaBinError[0]*histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j) + histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)))
                 histoDict['WR_%s_NR_%s_AlphaSDown'%(wrMass,nuMass)].SetBinContent(j, (histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j) - histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*AlphaBinError[0]))
 
+	    if(normToOne):
+		histoDict['WR_%s_NR_%s_AlphaSUp'%(wrMass,nuMass)].Scale(norm)
+		histoDict['WR_%s_NR_%s_AlphaSDown'%(wrMass,nuMass)].Scale(norm)
+		histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].Scale(norm)
+		histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].Scale(norm)
 	
 
         elif 'SingleMuon' in sample:
