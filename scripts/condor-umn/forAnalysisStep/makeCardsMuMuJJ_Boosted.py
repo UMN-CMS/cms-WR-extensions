@@ -59,6 +59,7 @@ def SignalRegionCard(workspaceDirectory):
     muResolErrs = {}
     muTrigErrs = {}
     ScaleErrs = {}
+    ZweightsErrs = {}
     LSFErrs = {}
 
     for bkg in bkgs:
@@ -89,6 +90,7 @@ def SignalRegionCard(workspaceDirectory):
         muResolErrs['%s'%(bkg)] = 1.0
         muTrigErrs['%s'%(bkg)] = 1.0
 	LSFErrs['%s'%(bkg)] = 1.0
+        ZweightsErrs['%s'%(bkg)] = 1.0
 
     for WRmass,NRmass in signalMasses:
         rate = histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral()
@@ -165,6 +167,7 @@ def SignalRegionCard(workspaceDirectory):
 	ScaleUncString = 'Scale\tlnN'
 	PDFUncString = 'PDF\tshapeN2'
 	AlphaSUncString = 'AlphaS\tshapeN2'
+        ZweightString = 'Zweight\tshapeN2'
 
 	print "WR_%s_NR_%s%(WRmass,NRmass): ", 'WR_%s_NR_%s'%(WRmass,NRmass)
 	print "histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral(): ", histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral()
@@ -181,6 +184,7 @@ def SignalRegionCard(workspaceDirectory):
 #            muResIsoString += '\t%.3f'%muResIsoErrs['WR_%s_NR_%s'%(WRmass,NRmass)]
 	    muResIDString += '\t%.3f'%muResIDErrs['WR_%s_NR_%s'%(WRmass,NRmass)]
 	    muResolString += '\t%.3f'%muResolErrs['WR_%s_NR_%s'%(WRmass,NRmass)]
+            ZweightString += '\t-'
 	    muTrigString += '\t%.3f'%muTrigErrs['WR_%s_NR_%s'%(WRmass,NRmass)]
 	    LSFString += '\t%.3f'%LSFErrs['WR_%s_NR_%s'%(WRmass,NRmass)]
 	    ScaleUncString += '\t%.3f'%(ScaleErrs['WR_%s_NR_%s'%(WRmass,NRmass)])
@@ -207,6 +211,7 @@ def SignalRegionCard(workspaceDirectory):
 	    ScaleUncString += '\t-'
 	    PDFUncString += '\t-'
 	    AlphaSUncString += '\t-'
+            ZweightString += '\t-'
 	  else:
 #	    print "%s%(bkg): ", '%s'%(bkg)
 #	    print "histoDict['%s'%(bkg)].Integral(): ", histoDict['%s'%(bkg)].Integral()
@@ -228,17 +233,22 @@ def SignalRegionCard(workspaceDirectory):
             ScaleUncString += '\t-'
 	    PDFUncString += '\t-'
 	    AlphaSUncString += '\t-'
+            if bkg == 'DY':
+                ZweightString += '\t%.3f'%ZweightsErrs['%s'%(bkg)]
+            else:
+                ZweightString += '\t-'
+
 
 
 	outputFile = workspaceDirectory+"WR_%s_NR_%s_BoostedSignalRegion.txt"%(WRmass,NRmass)
 	print "processNumberString: ", processNumberString
     	dctmp = open(outputFile,'w')
     	binString+='\n'; processString+='\n'; processNumberString+='\n'; rateString +='\n'; lumiString+='\n';
-    	jecString+='\n'; jerString+='\n'; puString+='\n'; muResIDString+='\n'; muResolString+='\n'; muTrigString+='\n'; ScaleUncString+='\n'; PDFUncString+='\n'; AlphaSUncString+='\n'; LSFString+='\n'
+    	jecString+='\n'; jerString+='\n'; puString+='\n'; muResIDString+='\n'; muResolString+='\n'; muTrigString+='\n'; ScaleUncString+='\n'; PDFUncString+='\n'; AlphaSUncString+='\n'; LSFString+='\n'; ZweightString+='\n'
 
     	datacard+=binString+processString+processNumberString+rateString+divider
 
-    	datacard+=lumiString+jecString+jerString+puString+muResIDString+muResolString+muTrigString+ScaleUncString+PDFUncString+AlphaSUncString+LSFString
+    	datacard+=lumiString+jecString+jerString+puString+muResIDString+muResolString+muTrigString+ZweightString+ScaleUncString+PDFUncString+AlphaSUncString+LSFString
 	datacard+='DYNorm lnN - - 1.03 - - - -\n'
 	datacard+='Syst shapeN2 - - - - - - 1\n'
 #        datacard+='topNorm rateParam BoostedSignalRegion TT 0.674 [0.5392,0.8088]\n' + \
