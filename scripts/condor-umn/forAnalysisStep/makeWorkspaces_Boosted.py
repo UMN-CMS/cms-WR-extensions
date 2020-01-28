@@ -24,7 +24,7 @@ for ibin in range(800, 8001,steps):
 binBoundariesArray = array.array('d', binBoundaries)
 Nbins = len(binBoundaries) - 1
 
-def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF,doSignal):
+def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF,doSignal, normToOne):
     print "ZPeakSF: ", ZPeakSF
     histoDict = {}
 
@@ -262,9 +262,14 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 	    wrMass = sample.split('_')[1][2:]
 	    nuMass = sample.split('_')[2][1:]
             temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
+            if(normToOne):
+                norm = 1.0/float(temp.Integral(1, temp.GetNbinsX()))
+            else:
+                norm = 1.0
+            weightScale = norm*weights[sample]
 	    histoDict['WR_%s_NR_%s'%(wrMass,nuMass)] = temp.Rebin(Nbins, 'WR_%s_NR_%s'%(wrMass,nuMass), binBoundariesArray)
             histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].SetDirectory(0)
-            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].Scale(weights[sample])
+            histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].Scale(weightScale)
 	    temp2 = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 	    histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)] = temp2.Rebin(Nbins, 'WR_%s_NR_%s_Numerator'%(wrMass,nuMass), binBoundariesArray)
 	    histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].SetDirectory(0)
@@ -278,11 +283,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sUp'%(syst))
 		histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weights[sample])
+                histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weightScale)
                 temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst))
 		histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
+                histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weightScale)
 
             histoDict['WR_%s_NR_%s_LSFUp'%(wrMass,nuMass)] = histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].Clone('WR_%s_NR_%s_LSFUp'%(wrMass,nuMass))
             histoDict['WR_%s_NR_%s_LSFUp'%(wrMass,nuMass)].SetDirectory(0)
@@ -695,23 +700,6 @@ def ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights
                     temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst)).Rebin(Nbins, 'ttV_temp', binBoundariesArray)
                     histoDictZPeak['ttV_%sDown'%(syst)].Add(temp,weights[sample])
 
-        elif 'WR' in sample:
-            wrMass = sample.split('_')[1][3:]
-            nuMass = sample.split('_')[2][4:]
-            temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF')
-            histoDictZPeak['WR_%s_NR_%s'%(wrMass,nuMass)] = temp.Rebin(Nbins, 'WR_%s_NR_%s'%(wrMass,nuMass), binBoundariesArray)	    
-            histoDictZPeak['WR_%s_NR_%s'%(wrMass,nuMass)].SetDirectory(0)
-            histoDictZPeak['WR_%s_NR_%s'%(wrMass,nuMass)].Scale(weights[sample])
-
-            for syst in systs:
-		temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sUp'%(syst))
-                histoDictZPeak['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst), binBoundariesArray)		
-                histoDictZPeak['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDictZPeak['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weights[sample])
-                temp = tfile.Get('analysis/eventsPassBoostZMASSRECO/leadAK8JetMuonMass_noLSF_%sDown'%(syst))
-                histoDictZPeak['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst), binBoundariesArray)
-                histoDictZPeak['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDictZPeak['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
 	elif 'SingleMuon' in sample:
             if 'SingleMuon--Run2016B' in sample or 'SingleMuon--Run2017B' in sample or 'SingleMuon--Run2018A' in sample:
@@ -956,23 +944,6 @@ def FSBWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights):
                     histoDictFSB['DY_%sDown'%(syst)].Add(temp,weights[sample])
 
 
-        elif 'WR' in sample:
-            wrMass = sample.split('_')[1][3:]
-            nuMass = sample.split('_')[2][4:]
-            temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass')
-            histoDictFSB['WR_%s_NR_%s'%(wrMass,nuMass)] = temp.Rebin(Nbins, 'WR_%s_NR_%s'%(wrMass,nuMass), binBoundariesArray)
-            histoDictFSB['WR_%s_NR_%s'%(wrMass,nuMass)].SetDirectory(0)
-            histoDictFSB['WR_%s_NR_%s'%(wrMass,nuMass)].Scale(weights[sample])
-
-            for syst in systs:
-                temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sUp'%(syst))
-                histoDictFSB['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst), binBoundariesArray)
-                histoDictFSB['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDictFSB['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weights[sample])
-                temp = tfile.Get('analysis/eventsPassBoostFSBRECO/leadAK8JetElectronMass_%sDown'%(syst))
-                histoDictFSB['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst), binBoundariesArray)
-                histoDictFSB['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
-                histoDictFSB['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
         elif 'SingleElectron' in sample or 'EGamma'in sample:
             if 'SingleElectron--Run2016B' in sample or 'SingleElectron--Run2017B' in sample or 'EGamma--Run2018A' in sample:
@@ -1076,7 +1047,7 @@ else:
     print "GIVE ME A SAMPLE LIST WITH YEAR IN NAME!!!"
     exit(0)
 
-if(len(sys.argv) == 5):
+if(len(sys.argv) >= 5 ):
     doSignalStr = sys.argv[4]
     if(doSignalStr == "True"):
         doSignal = True
@@ -1084,6 +1055,14 @@ if(len(sys.argv) == 5):
         doSignal = False
 else:
     doSignal = True
+if(len(sys.argv) == 6):
+    normToOneStr = sys.argv[5]
+    if(normToOneStr == "norm"):
+        normToOne = True
+    else:
+        normToOne = False
+else:
+    normToOne = False
 
 #integratedLuminosity = 137400.0
 LSFSF = 0.87
@@ -1135,14 +1114,15 @@ for sample,xsec in xsecs.items():
 	print "sample: ", sample
 	backgroundEventsWeight = samplesLocation+sample+".root"
 	weight = 1.0
+        print "STARTING EVENT WEIGHT: "+str(weight)
 	if "WRto" in sample:
-#            weight *= integratedLuminosity/1000
 	    weight *= integratedLuminosity/100
 #	elif "DY" in sample:
 #	    weight *= integratedLuminosity*0.937
 	else:
             weight *= integratedLuminosity
         weight *= xsecs[sample]
+        print "EVENT WEIGHT WITH XSEC: "+str(weight)
         eventsWeight = 0
         eventsWeight = getEventsWeight(r.TFile.Open(backgroundEventsWeight, "read"),directory=samplesLocation)
         if (eventsWeight == 0):
@@ -1151,9 +1131,14 @@ for sample,xsec in xsecs.items():
         print "Found # events:"+str(eventsWeight)
 	numberOfEvents[sample] = eventsWeight
         weight /= eventsWeight
+        print "EVENT WEIGHT WITH EVENTSWEIGHT: "+str(weight)
 	print "Scale: "+str(weight)
 	weights_DY[sample] = weight
-        weights[sample] = weight*LSFSF
+        weight *= LSFSF
+        if(normToOne):
+            weights[sample] = 1.0
+        else:
+            weights[sample] = weight
 
 
 histoDictFSB = {}
@@ -1169,7 +1154,7 @@ ZPeakSF = ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, w
 print "ZPeakSF: ", ZPeakSF
 
 print "MAKING SIGNAL REGION WORKSPACE"
-SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF, doSignal)
+SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF, doSignal, normToOne)
 
 #print "MAKING ZPEAK REGION WORKSPACE"
 #ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights)
