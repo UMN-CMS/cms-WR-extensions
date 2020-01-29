@@ -250,7 +250,7 @@ def SignalRegionCard(workspaceDirectory):
 
     	datacard+=lumiString+jecString+jerString+puString+muResIDString+muResolString+muTrigString+ZweightString+ScaleUncString+PDFUncString+AlphaSUncString+LSFString
 	datacard+='DYNorm lnN - - 1.03 - - - -\n'
-	datacard+='Syst lnN - - - - - - 1.2\n'
+	datacard+='Syst lnN - - - - - - 1.3\n'
 #        datacard+='topNorm rateParam BoostedSignalRegion TT 0.674 [0.5392,0.8088]\n' + \
 #        'DYNorm rateParam BoostedSignalRegion DY 1.069 [1.061,1.077]\n' + \
         datacard+='* autoMCStats 0\n'
