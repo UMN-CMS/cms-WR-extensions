@@ -148,7 +148,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool resolvedFSBJetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion, bool ISO);
-      bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
+      bool electronSelection(const edm::Event& iEvent, eventBits& myEvent, bool isSignal, std::string year);
       bool additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, int JetCorrectionRegion);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedMuonSelection(const edm::Event&, eventBits&);
@@ -181,7 +181,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       void setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent);
       bool WRresonanceStudy(const edm::Event& iEvent, eventBits& myEvent);
 
-      double getZweight(const edm::Event& iEvent, eventBits& myEvent);
+      std::vector<double> getZweight(const edm::Event& iEvent, eventBits& myEvent);
       double PUPPIweight(double puppipt, double puppieta, bool isMC);
       void LHEinfo(const edm::Event& iEvent, eventBits& myEvent);
       void loadCMSSWPath();
