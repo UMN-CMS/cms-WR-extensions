@@ -39,7 +39,7 @@ void Zweight::setup(const std::string& era) {
 
 }
 
-double Zweight::getZweight(double zm, double zpt) {
+std::vector<double> Zweight::getZweight(double zm, double zpt) {
 
   int xbin = m_Zweights->GetXaxis()->FindBin(zm);
   int ybin = m_Zweights->GetYaxis()->FindBin(zpt);
@@ -49,6 +49,12 @@ double Zweight::getZweight(double zm, double zpt) {
   else if (ybin > m_Zweights->GetYaxis()->GetNbins()) ybin -= 1;
 
   double weight = m_Zweights->GetBinContent(xbin,ybin);
+  double error = m_Zweights->GetBinError(xbin,ybin);
 
-  return weight;
+  std::vector<double> Zweights;
+  Zweights.push_back(weight);
+  Zweights.push_back(weight+error);
+  Zweights.push_back(weight-error);
+
+  return Zweights;
 }

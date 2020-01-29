@@ -19,7 +19,7 @@ class Zweight {
   
   void setup(const std::string& era);
   
-  double getZweight(double zm, double zpt);
+  std::vector<double> getZweight(double zm, double zpt);
 
   private:
   TH2D* m_Zweights; 

@@ -63,6 +63,8 @@ class eventHistos {
   void fillCombine_FSBResMuIDDown(eventBits& event);
   void fillCombine_ElHLTUp(eventBits& event);
   void fillCombine_ElHLTDown(eventBits& event);
+  void fillCombine_ZweightUp(eventBits& event);
+  void fillCombine_ZweightDown(eventBits& event);
 
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
@@ -240,6 +242,14 @@ class eventHistos {
   TH1D* m_leadAK8JetMuonMass_MuTrigDown;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuTrigUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuTrigDown;
+
+  TH1D* m_leadAK8JetMuonMass_ZweightUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_ZweightUp;
+  TH1D* m_resolvedRECOmass_ZweightUp;
+
+  TH1D* m_leadAK8JetMuonMass_ZweightDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_ZweightDown;
+  TH1D* m_resolvedRECOmass_ZweightDown;
 
   TH1D* m_leadAK8JetMuonMass_MuResolUp;
   TH1D* m_leadAK8JetMuonMass_MuResolDown;

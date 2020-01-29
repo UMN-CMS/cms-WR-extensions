@@ -279,6 +279,10 @@ public:
   double egamma_SF_HLT_Up   ;
   double egamma_SF_HLT_Down ;
 
+  double Zweight;
+  double Zweight_Up;
+  double Zweight_Down;
+
   std::vector<double>   PDFWeights_Scale;
   std::vector<double> PDFWeights_Error;
   std::vector<double> PDFWeights_AlphaS;
