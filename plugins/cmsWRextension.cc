@@ -1827,7 +1827,7 @@ bool cmsWRextension::passFlavorSideband_Fast(const edm::Event& iEvent, eventBits
   }
   myRECOevent.FSBcutProgress++;
   jetSelection(iEvent, myRECOevent);
-  electronSelection(iEvent, myRECOevent);
+  electronSelection(iEvent, myRECOevent, m_isSignal, m_era);
   std::cout << "done with electronSelection" <<std::endl;
 
 
@@ -2274,7 +2274,7 @@ bool cmsWRextension::preSelectBoostReco(const edm::Event& iEvent, const edm::Eve
 
   std::cout << "beginning preselection" << std::endl;
   muonSelection(iEvent, myRECOevent);
-  electronSelection(iEvent, myRECOevent);
+  electronSelection(iEvent, myRECOevent, m_isSignal, m_era);
   jetSelection(iEvent, myRECOevent);
 //  additionalElectrons(iEvent, myRECOevent, true, 0);
 
@@ -2367,7 +2367,7 @@ bool cmsWRextension::preSelectReco_Fast(const edm::Event& iEvent, const edm::Eve
   myRECOevent.cutProgress++;
 
   muonSelection(iEvent, myRECOevent);
-  electronSelection(iEvent, myRECOevent);
+  electronSelection(iEvent, myRECOevent, m_isSignal, m_era);
   jetSelection(iEvent, myRECOevent);
 
 
@@ -3471,7 +3471,7 @@ void cmsWRextension::LHEinfo(const edm::Event& iEvent, eventBits& myEvent){
 
 
 }
-bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEvent) {  //Flavor sideband
+bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEvent, bool isSignal, std::string year) {  //Flavor sideband
   std::cout<<"STARTING ELECTRON SELECTION"<<std::endl;
   std::vector<const pat::Electron*> highPTelectrons200;
 
@@ -3507,7 +3507,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   )  == true &&     
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          )  == true &&  
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&  
-         vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true     
+        ((vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true) || (isSignal == true && year == "2017"))
     ) {
         if (iElec->pt() < 200) {
           myEvent.nAdditionalHEEP_noISO++;    

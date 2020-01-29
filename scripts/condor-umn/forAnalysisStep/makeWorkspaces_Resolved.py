@@ -11,7 +11,7 @@ import tdrstyle
 import array
 
 binBoundaries = []
-#    binBoundaries = [800, 1000, 1200, 1500, 1800, 8000]
+#binBoundaries = [800, 1000, 1200, 1500, 1800, 8000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 8000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000,4000,8000]
@@ -267,8 +267,19 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 if histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j) == 0:
                     histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j,0)
                     histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j,0)
+		elif math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j) > 1:
+                    print "math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)", math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)
+		    histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j, histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 +  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)))
+		    histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j,0.000001)
+		elif histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 -  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)) < 0:
+                    histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j, histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 +  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)))
+                    histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j, 0.000001) 
 #               lif math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j) < 1:
 		else:
+		    print "nominal PDF case"
+                    print "math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)", math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)
+		    print "histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 +  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)): ", histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 +  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j))
+		    print "histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 -  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)): ", histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 -  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j))
                     histoDict['WR_%s_NR_%s_PDFUp'%(wrMass,nuMass)].SetBinContent(j, histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 +  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)))
                     histoDict['WR_%s_NR_%s_PDFDown'%(wrMass,nuMass)].SetBinContent(j, histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetBinContent(j)*(1 -  math.sqrt(SquaredBinError[j])/histoDict['WR_%s_NR_%s_Numerator'%(wrMass,nuMass)].GetBinContent(j)))
 #		else:
@@ -381,6 +392,9 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
             signalMasses.append(line)
 
         for WRmass,NRmass in signalMasses:
+#            for j in range(1,histoDict['WR_%s_NR_%s'%(wrMass,nuMass)].GetNbinsX()+1):
+#                if (histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].GetBinContent(j) < 0):
+#                    histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].SetBinContent(j,0.0000001)
             histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Write()
             histoDict['WR_%s_NR_%s_Numerator'%(WRmass,NRmass)].Write()
             for syst in systs:
@@ -976,8 +990,8 @@ for sample,xsec in xsecs.items():
 	weight = 1.0
 	if "WRto" in sample:
 #            weight *= integratedLuminosity/1000
-	    weight *= integratedLuminosity/1000
-#	elif "DY" in sample:
+	    weight *= integratedLuminosity/100
+#	elif "DY" in sample
 #	    weight *= integratedLuminosity*0.937
 	else:
             weight *= integratedLuminosity
