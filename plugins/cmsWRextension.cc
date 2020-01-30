@@ -3507,7 +3507,7 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   )  == true &&     
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          )  == true &&  
          vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     )  == true &&  
-        ((vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true) || (isSignal == true && year == "2017"))
+        ((vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   )  == true) || (isSignal == true && (year == "2017" || year == "2018")))
     ) {
         if (iElec->pt() < 200) {
           myEvent.nAdditionalHEEP_noISO++;    
