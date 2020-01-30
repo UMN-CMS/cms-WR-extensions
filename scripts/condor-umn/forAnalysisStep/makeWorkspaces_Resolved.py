@@ -14,10 +14,10 @@ binBoundaries = []
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 8000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 8000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000]
-#binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000,4000,8000]
-steps = 400
-for ibin in range(800, 8001,steps):
-    binBoundaries.append(ibin)
+binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000,4000,8000]
+#steps = 400
+#for ibin in range(800, 8001,steps):
+#    binBoundaries.append(ibin)
 #print binBoundaries
 #    binBoundaries = [800, 1000, 1200, 1600, 2000, 8000]
 #    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 6000]
