@@ -337,7 +337,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     ttbarEst_SystUp.Scale(1.2)
     ttbarEst_SystDown.Scale(0.8)
 
-    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion_400GeVBins.root'    
+    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion.root'    
     outputWorkspace = r.TFile(outputFile, "RECREATE")
 
     MuMuJJ = outputWorkspace.mkdir("MuMuJJ")
