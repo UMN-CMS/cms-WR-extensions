@@ -41,6 +41,7 @@ globalTagsByDataset['Run2016H-17Jul2018*'] = '94X_dataRun2_v10'
 
 globalTagsByDataset['RunIIFall17MiniAODv2*'] = '94X_mc2017_realistic_v17'
 globalTagsByDataset['2017Run_WR_Dilep'] = '94X_mc2017_realistic_v17'
+globalTagsByDataset['2018Run_WR_Dilep'] = '102X_upgrade2018_realistic_v19'
 globalTagsByDataset['Run2017A-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017B-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017C-31Mar2018*'] = '94X_dataRun2_v11'
@@ -289,7 +290,7 @@ with open(localInputListFile, 'r') as f:
 	secondaryDatasetName = split[0].split("/")[2]
 	print "secondaryDatasetName: ", secondaryDatasetName
 	outputFile = dataset
-    elif("WRtoNLtoLLJJ_2017" in options.inputList):
+    elif("WRtoNLtoLLJJ_2017" in options.inputList) or ("WRtoNLtoLLJJ_2018" in options.inputList):
         print "Running on 2017 signals"
 	print "split[0]: ", split[0]
 	dataset= split[0]
@@ -316,7 +317,10 @@ with open(localInputListFile, 'r') as f:
         outputFile = dataset
 	TypeOfFile = "USER"
 	primaryDatasetName = dataset
-	secondaryDatasetName = "2017Run_WR_Dilep"
+	if("WRtoNLtoLLJJ_2017" in options.inputList):
+	    secondaryDatasetName = "2017Run_WR_Dilep"
+	else:
+	    secondaryDatasetName = "2018Run_WR_Dilep"
 
     else:
         print "RUNNING ON NORMAL STUFF"
@@ -347,7 +351,7 @@ with open(localInputListFile, 'r') as f:
     # must pass isMC=false flag to cmsRun now (defaults to true)
     if "USER" in TypeOfFile:
       print "Running on Korean private samples"
-      if "WRtoNLtoLLJJ_2017" in options.inputList:
+      if "WRtoNLtoLLJJ_2017" in options.inputList or "WRtoNLtoLLJJ_2018" in options.inputList:
 	config.Data.ignoreLocality = True
 	config.Site.whitelist = ['T2*']
 	privateSamples = True
@@ -397,7 +401,7 @@ with open(localInputListFile, 'r') as f:
     if("WR_datasets" not in options.inputList):
       makeDirAndCheck(thisWorkDir)
       outputFileNames = []
-      if("WRtoNLtoLLJJ_2017" in options.inputList):
+      if("WRtoNLtoLLJJ_2017" in options.inputList) or ("WRtoNLtoLLJJ_2018" in options.inputList):
 	outputFileNames.append(dataset)
 	print "WRtoNLtoLLJJ_2017"
       else:
