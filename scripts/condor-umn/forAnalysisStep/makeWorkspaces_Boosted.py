@@ -1145,6 +1145,8 @@ for sample,xsec in xsecs.items():
                 weights[sample] = 1.0
             else:
                 weights[sample] = weight
+	else:
+	    weights[sample] = weight
 
 
 histoDictFSB = {}
