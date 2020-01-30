@@ -1141,7 +1141,6 @@ for sample,xsec in xsecs.items():
 	weights_DY[sample] = weight
         weight *= LSFSF
 	if "WRto" in sample:
-	    weight *= integratedLuminosity/100
             if(normToOne):
                 weights[sample] = 1.0
             else:
