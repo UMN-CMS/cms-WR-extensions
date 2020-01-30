@@ -1140,10 +1140,12 @@ for sample,xsec in xsecs.items():
 	print "Scale: "+str(weight)
 	weights_DY[sample] = weight
         weight *= LSFSF
-        if(normToOne):
-            weights[sample] = 1.0
-        else:
-            weights[sample] = weight
+	if "WRto" in sample:
+	    weight *= integratedLuminosity/100
+            if(normToOne):
+                weights[sample] = 1.0
+            else:
+                weights[sample] = weight
 
 
 histoDictFSB = {}
