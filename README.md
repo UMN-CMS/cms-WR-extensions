@@ -125,5 +125,5 @@ python dualFit_makeWorkspaces.py False
 ```
 python makeCardsMuMuJJ_Resolved.py ../../../Output/Full2016_3rd/Workspace/
 
-python makeCardsMuMuJJ_Boosted_fit.py ../../../Output/Full2016_3rd/Workspace/
+python makeCardsMuMuJJ_Boosted.py ../../../Output/Full2016_3rd/Workspace/
 ```
