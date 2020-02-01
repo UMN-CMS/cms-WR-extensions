@@ -1945,9 +1945,17 @@ void eventHistos::fillCombine_MuTrigUp(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_Trig_WeightUp/event.Muon_Trig_Weight;
+      if(event.Muon_Trig_Weight==0 || isnan(event.Muon_Trig_WeightUp/event.Muon_Trig_Weight)){
+	weight = event.FSBweight;
+      }else{
+        weight = event.FSBweight*event.Muon_Trig_WeightUp/event.Muon_Trig_Weight;
+      }
     }else{
-      weight = event.weight*event.Muon_Trig_WeightUp/event.Muon_Trig_Weight;
+      if(event.Muon_Trig_Weight==0 || isnan(event.Muon_Trig_WeightUp/event.Muon_Trig_Weight)){
+        weight = event.weight;
+      }else{
+        weight = event.weight*event.Muon_Trig_WeightUp/event.Muon_Trig_Weight;
+      }
     }
   }else{
     weight = 1.;
@@ -1963,9 +1971,17 @@ void eventHistos::fillCombine_MuTrigDown(eventBits& event) {
   double weight = 0.0;
   if(event.isMC){
     if(m_FSB == true){
-      weight = event.FSBweight*event.Muon_Trig_WeightDown/event.Muon_Trig_Weight;
+      if(event.Muon_Trig_Weight==0 || isnan(event.Muon_Trig_WeightUp/event.Muon_Trig_Weight)){
+        weight = event.FSBweight;
+      }else{
+        weight = event.FSBweight*event.Muon_Trig_WeightDown/event.Muon_Trig_Weight;
+      }
     }else{
-      weight = event.weight*event.Muon_Trig_WeightDown/event.Muon_Trig_Weight;
+      if(event.Muon_Trig_Weight==0 || isnan(event.Muon_Trig_WeightUp/event.Muon_Trig_Weight)){
+        weight = event.weight;
+      }else{
+        weight = event.weight*event.Muon_Trig_WeightDown/event.Muon_Trig_Weight;
+      }
     }
   }else{
     weight = 1.;

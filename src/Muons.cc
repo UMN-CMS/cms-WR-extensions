@@ -647,6 +647,7 @@ std::vector<double> Muons::MuonTriggerWeight_ResFSB(double MuonPt, double MuonEt
 }
 std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, double MuonPt_2, double MuonEta_2, std::string era, bool isSignal, std::string analysis){
   std::cout << "Inside MuonTriggerWeight" << std::endl;
+  std::cout << "MuonPt: " << MuonPt << " MuonEta: " << MuonEta << " MuonPt_2: " << MuonPt_2 << " MuonEta_2: " << MuonEta_2 << std::endl;
 
   double muPtForId = 0.;
   double muEtaForId = 0.;
@@ -765,10 +766,18 @@ std::vector<double> Muons::MuonTriggerWeight(double MuonPt, double MuonEta, doub
       muTrigDATAEffUp_2 = muTrigDATAEff_2 + Muon_Trig_DataEff2017Up->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
       muTrigDATAEffDown_2 = muTrigDATAEff_2 - Muon_Trig_DataEff2017Down->GetBinContent(Muon_Trig_DataEff2017->FindBin(muPtForId_2,muEtaForId_2));
 
+      std::cout << "muTrigDATAEff_1: " << muTrigDATAEff_1 << " muTrigDATAEff_2: " << muTrigDATAEff_2 << " muTrigMCEffUp_1: " << muTrigMCEffUp_1 << " muTrigMCEffUp_2: " << muTrigMCEffUp_2 << std::endl;
+
       if(analysis == "Resolved"){
+	if ((muTrigMCEff_1 == 0) && (muTrigMCEff_2 == 0)){
+        muTrigWeight = 1.;
+        muTrigWeightUp = 1.;
+        muTrigWeightDown = 1.;
+	}else{
         muTrigWeight = (1-(1-muTrigDATAEff_1)*(1-muTrigDATAEff_2))/(1-(1-muTrigMCEff_1)*(1-muTrigMCEff_2));
         muTrigWeightUp = (1-(1-muTrigDATAEffUp_1)*(1-muTrigDATAEffUp_2))/(1-(1-muTrigMCEffUp_1)*(1-muTrigMCEffUp_2));
         muTrigWeightDown = (1-(1-muTrigDATAEffDown_1)*(1-muTrigDATAEffDown_2))/(1-(1-muTrigMCEffDown_1)*(1-muTrigMCEffDown_2));
+	}
       }else if(analysis == "Boosted"){
         muTrigWeight = (1-(1-muTrigDATAEff_1))/(1-(1-muTrigMCEff_1));
         muTrigWeightUp = (1-(1-muTrigDATAEffUp_1))/(1-(1-muTrigMCEffUp_1));
