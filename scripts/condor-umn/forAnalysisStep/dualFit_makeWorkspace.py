@@ -103,7 +103,7 @@ def findNearBinCenter(val, hist):
         if not (nextDistance <= distance): #ERR ON THE HIGH SIDE
             break
     return closest
-def addUncertainty(mainHist, uncHist):
+def addUncertainty(mainHist, uncHist, scale=1.0):
     print "mainHist.GetName(): ", mainHist.GetName()
     for ibin in range(1, mainHist.GetNbinsX()+1):
         binE = mainHist.GetBinError(ibin)
@@ -114,7 +114,8 @@ def addUncertainty(mainHist, uncHist):
 #	    addE = addE + addE*15
 #        elif mainHist.GetName() == "EMu" and ibin > 3:
 #            addE = addE + addE*15
-	print "addE: ", addE
+	print "addE*scale: "+str(addE)+"*"+str(scale)
+        addE *= scale
 
         newE = math.sqrt(binE * binE + addE * addE)
             
@@ -275,6 +276,10 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     exit(0)
 
 workspaceFolder = sys.argv[1]
+if(len(sys.argv) == 3):
+    scale = float(sys.argv[2])
+else:
+    scale = 1.0
 
 
 #BINNING WORK
@@ -485,9 +490,9 @@ for ibin in range(1, EmuHist.GetNbinsX()+1):
 
 #ADDING UNCERTAINTIES
 print "Adding DY unc"
-addUncertainty(DYtemplate, bigBinDYsplit)
+addUncertainty(DYtemplate, bigBinDYsplit, scale)
 print "Adding ttbar unc"
-addUncertainty(EMUtemplate, bigBinEMUsplit)
+addUncertainty(EMUtemplate, bigBinEMUsplit, scale)
 
 print "TEMPLATES DONE!"
 
