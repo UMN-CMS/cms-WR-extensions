@@ -110,10 +110,10 @@ def addUncertainty(mainHist, uncHist):
         binCenter = mainHist.GetBinCenter(ibin)
         nearBin = findNearBinCenter(binCenter, uncHist)
         addE = uncHist.GetBinError(nearBin)
-#	if mainHist.GetName() == "DY" and ibin > 5:
-#	    addE = addE + addE*15
-#        elif mainHist.GetName() == "EMu" and ibin > 3:
-#            addE = addE + addE*15
+#	if "DY" in  mainHist.GetName() and ibin > 5:
+#	    addE = addE + addE*99
+#        elif "EMu" in  mainHist.GetName() and ibin > 3:
+#            addE = addE + addE*99
 	print "addE: ", addE
 
         newE = math.sqrt(binE * binE + addE * addE)
@@ -269,23 +269,26 @@ def createSystematicTemplate(DYhisto, DYhistoBigBin, Systhisto):
 
 print "STARTING"
 
-if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
+if len(sys.argv) == 3 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "WRONG"
-    print "Specify the workspace folder"
+    print "Specify the workspace folder and the year!"
     exit(0)
 
 workspaceFolder = sys.argv[1]
+year = sys.argv[2]
 
 
 #BINNING WORK
 #OG binEdgeList = [800., 1000., 1200., 1500., 1800., 8000.]
 #binning = array("d",binEdgeList)
 
-binEdgeListDY = [800., 1200., 1600., 2000., 2400., 2800., 8000.]
+#binEdgeListDY = [800., 1200., 1600., 2000., 2400., 2800., 8000.]
+binEdgeListDY = [800, 1000, 1200, 1400, 1700, 2000, 2400, 2800, 8000]
 binningDY = array("d",binEdgeListDY)
 nBinsDY = len(binningDY) - 1
 
-binEdgeListEMU = [800., 1200., 1600., 2000., 8000.]
+#binEdgeListEMU = [800., 1200., 1600., 2000., 8000.]
+binEdgeListEMU = [800, 1000, 1200, 1400, 1700, 2000, 8000]
 binningEMU = array("d",binEdgeListEMU)
 nBinsEMU = len(binningEMU) - 1
 
@@ -336,6 +339,8 @@ for key in fileA.GetListOfKeys():
 	    	continue
 	    elif "DY" in hist.GetName():
 		continue
+            elif "EMu" in hist.GetName():
+                continue
     	    else:
             	fileA.Get(folder+hist.GetName()).Write()
 
@@ -350,22 +355,26 @@ ttVhist = fileA.Get(folder+"ttV")
 WJetsHist = fileA.Get(folder+"WJets")
 
 #DY SYSTEMATICS
-DYhist_JECUp = fileA.Get(folder+"DY_JECUp")
-DYhist_JECDown = fileA.Get(folder+"DY_JECDown")
-DYhist_JERUp = fileA.Get(folder+"DY_JERUp")
-DYhist_JERDown = fileA.Get(folder+"DY_JERDown")
-DYhist_PUUp = fileA.Get(folder+"DY_PUUp")
-DYhist_PUDown = fileA.Get(folder+"DY_PUDown")
-DYhist_MuIDUp = fileA.Get(folder+"DY_MuIDUp")
-DYhist_MuIDDown = fileA.Get(folder+"DY_MuIDDown")
-DYhist_MuResolUp = fileA.Get(folder+"DY_MuResolUp")
-DYhist_MuResolDown = fileA.Get(folder+"DY_MuResolDown")
-DYhist_MuTrigUp = fileA.Get(folder+"DY_MuTrigUp")
-DYhist_MuTrigDown = fileA.Get(folder+"DY_MuTrigDown")
-DYhist_LSFUp = fileA.Get(folder+"DY_LSFUp")
-DYhist_LSFDown = fileA.Get(folder+"DY_LSFDown")
-DYhist_MuZweightUp = fileA.Get(folder+"DY_ZweightUp")
-DYhist_MuZweightDown = fileA.Get(folder+"DY_ZweightDown")
+DYhist_JECUp = fileA.Get(folder+"DY_JEC_%sUp"%(year))
+DYhist_JECDown = fileA.Get(folder+"DY_JEC_%sDown"%(year))
+DYhist_JERUp = fileA.Get(folder+"DY_JER_%sUp"%(year))
+DYhist_JERDown = fileA.Get(folder+"DY_JER_%sDown"%(year))
+DYhist_PUUp = fileA.Get(folder+"DY_PU_%sUp"%(year))
+DYhist_PUDown = fileA.Get(folder+"DY_PU_%sDown"%(year))
+DYhist_MuIDUp = fileA.Get(folder+"DY_MuID_%sUp"%(year))
+DYhist_MuIDDown = fileA.Get(folder+"DY_MuID_%sDown"%(year))
+DYhist_MuResolUp = fileA.Get(folder+"DY_MuResol_%sUp"%(year))
+DYhist_MuResolDown = fileA.Get(folder+"DY_MuResol_%sDown"%(year))
+DYhist_MuTrigUp = fileA.Get(folder+"DY_MuTrig_%sUp"%(year))
+DYhist_MuTrigDown = fileA.Get(folder+"DY_MuTrig_%sDown"%(year))
+DYhist_LSFUp = fileA.Get(folder+"DY_LSF_%sUp"%(year))
+DYhist_LSFDown = fileA.Get(folder+"DY_LSF_%sDown"%(year))
+DYhist_MuZweightUp = fileA.Get(folder+"DY_Zweight_%sUp"%(year))
+DYhist_MuZweightDown = fileA.Get(folder+"DY_Zweight_%sDown"%(year))
+
+#EMu SYSTEMATICS
+#EMuhist_SystUp = fileA.Get(folder+"EMu_Syst_%sUp"%(year))
+#EMuhist_SystDown = fileA.Get(folder+"EMu_Syst_%sDown"%(year))
 
 
 #MAKE ENVELOPE HISTOGRAMS
@@ -492,22 +501,25 @@ addUncertainty(EMUtemplate, bigBinEMUsplit)
 print "TEMPLATES DONE!"
 
 ####CREATING DY SYSTEMATIC HISTOGRAMS#############################
-DYhist_JECUp_temp = DYhist_JECUp.Rebin(6, "", binningDY)
-DYhist_JECDown_temp = DYhist_JECDown.Rebin(6, "", binningDY)
-DYhist_JERUp_temp = DYhist_JERUp.Rebin(6, "", binningDY)
-DYhist_JERDown_temp = DYhist_JERDown.Rebin(6, "", binningDY)
-DYhist_PUUp_temp = DYhist_PUUp.Rebin(6, "", binningDY)
-DYhist_PUDown_temp = DYhist_PUDown.Rebin(6, "", binningDY)
-DYhist_MuIDUp_temp = DYhist_MuIDUp.Rebin(6, "", binningDY)
-DYhist_MuIDDown_temp = DYhist_MuIDDown.Rebin(6, "", binningDY)
-DYhist_MuResolUp_temp = DYhist_MuResolUp.Rebin(6, "", binningDY)
-DYhist_MuResolDown_temp = DYhist_MuResolDown.Rebin(6, "", binningDY)
-DYhist_MuTrigUp_temp = DYhist_MuTrigUp.Rebin(6, "", binningDY)
-DYhist_MuTrigDown_temp = DYhist_MuTrigDown.Rebin(6, "", binningDY)
-DYhist_MuZweightUp_temp = DYhist_MuZweightUp.Rebin(6, "", binningDY)
-DYhist_MuZweightDown_temp = DYhist_MuZweightDown.Rebin(6, "", binningDY)
-DYhist_LSFUp_temp = DYhist_LSFUp.Rebin(6, "", binningDY)
-DYhist_LSFDown_temp = DYhist_LSFDown.Rebin(6, "", binningDY)
+DYhist_JECUp_temp = DYhist_JECUp.Rebin(nBinsDY, "", binningDY)
+DYhist_JECDown_temp = DYhist_JECDown.Rebin(nBinsDY, "", binningDY)
+DYhist_JERUp_temp = DYhist_JERUp.Rebin(nBinsDY, "", binningDY)
+DYhist_JERDown_temp = DYhist_JERDown.Rebin(nBinsDY, "", binningDY)
+DYhist_PUUp_temp = DYhist_PUUp.Rebin(nBinsDY, "", binningDY)
+DYhist_PUDown_temp = DYhist_PUDown.Rebin(nBinsDY, "", binningDY)
+DYhist_MuIDUp_temp = DYhist_MuIDUp.Rebin(nBinsDY, "", binningDY)
+DYhist_MuIDDown_temp = DYhist_MuIDDown.Rebin(nBinsDY, "", binningDY)
+DYhist_MuResolUp_temp = DYhist_MuResolUp.Rebin(nBinsDY, "", binningDY)
+DYhist_MuResolDown_temp = DYhist_MuResolDown.Rebin(nBinsDY, "", binningDY)
+DYhist_MuTrigUp_temp = DYhist_MuTrigUp.Rebin(nBinsDY, "", binningDY)
+DYhist_MuTrigDown_temp = DYhist_MuTrigDown.Rebin(nBinsDY, "", binningDY)
+DYhist_MuZweightUp_temp = DYhist_MuZweightUp.Rebin(nBinsDY, "", binningDY)
+DYhist_MuZweightDown_temp = DYhist_MuZweightDown.Rebin(nBinsDY, "", binningDY)
+DYhist_LSFUp_temp = DYhist_LSFUp.Rebin(nBinsDY, "", binningDY)
+DYhist_LSFDown_temp = DYhist_LSFDown.Rebin(nBinsDY, "", binningDY)
+
+#EMuhist_SystUp_temp = EMuhist_SystUp.Rebin(nBinsEMU, "", binningEMU)
+#EMuhist_SystDown_temp = EMuhist_SystDown.Rebin(nBinsEMU, "", binningEMU)
 
 DY_JECUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_JECUp_temp)
 DY_JECDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_JECDown_temp)
@@ -521,29 +533,33 @@ DY_MuTrigUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_MuTr
 DY_MuTrigDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_MuTrigDown_temp)
 DYhist_MuZweightUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_MuZweightUp_temp)
 DYhist_MuZweightDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_MuZweightDown_temp)
-
 DY_MuIDUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_MuIDUp_temp)
 DY_MuIDDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_MuIDDown_temp)
 DY_LSFUpTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_LSFUp_temp)
 DY_LSFDownTemplate = createSystematicTemplate(DYtemplate, bigBinDY, DYhist_LSFDown_temp)
 
-DY_JECUpTemplate.SetName("DY_JECUp")
-DY_JECDownTemplate.SetName("DY_JECDown")
-DY_JERUpTemplate.SetName("DY_JERUp")
-DY_JERDownTemplate.SetName("DY_JERDown")
-DY_PUUpTemplate.SetName("DY_PUUp")
-DY_PUDownTemplate.SetName("DY_PUDown")
-DY_MuResolUpTemplate.SetName("DY_MuResolUp")
-DY_MuResolDownTemplate.SetName("DY_MuResolDown")
-DY_MuTrigUpTemplate.SetName("DY_MuTrigUp")
-DY_MuTrigDownTemplate.SetName("DY_MuTrigDown")
-DYhist_MuZweightUpTemplate.SetName("DY_ZweightUp")
-DYhist_MuZweightDownTemplate.SetName("DY_ZweightDown")
+#EMu_SystUpTemplate = createSystematicTemplate(EMUtemplate, bigBinEMU, EMuhist_SystUp_temp)
+#EMu_SystDownTemplate = createSystematicTemplate(EMUtemplate, bigBinEMU, EMuhist_SystDown_temp)
 
-DY_MuIDUpTemplate.SetName("DY_MuIDUp")
-DY_MuIDDownTemplate.SetName("DY_MuIDDown")
-DY_LSFUpTemplate.SetName("DY_LSFUp")
-DY_LSFDownTemplate.SetName("DY_LSFDown")
+DY_JECUpTemplate.SetName("DY_JEC_%sUp"%(year))
+DY_JECDownTemplate.SetName("DY_JEC_%sDown"%(year))
+DY_JERUpTemplate.SetName("DY_JER_%sUp"%(year))
+DY_JERDownTemplate.SetName("DY_JER_%sDown"%(year))
+DY_PUUpTemplate.SetName("DY_PU_%sUp"%(year))
+DY_PUDownTemplate.SetName("DY_PU_%sDown"%(year))
+DY_MuResolUpTemplate.SetName("DY_MuResol_%sUp"%(year))
+DY_MuResolDownTemplate.SetName("DY_MuResol_%sDown"%(year))
+DY_MuTrigUpTemplate.SetName("DY_MuTrig_%sUp"%(year))
+DY_MuTrigDownTemplate.SetName("DY_MuTrig_%sDown"%(year))
+DYhist_MuZweightUpTemplate.SetName("DY_Zweight_%sUp"%(year))
+DYhist_MuZweightDownTemplate.SetName("DY_Zweight_%sDown"%(year))
+DY_MuIDUpTemplate.SetName("DY_MuID_%sUp"%(year))
+DY_MuIDDownTemplate.SetName("DY_MuID_%sDown"%(year))
+DY_LSFUpTemplate.SetName("DY_LSF_%sUp"%(year))
+DY_LSFDownTemplate.SetName("DY_LSF_%sDown"%(year))
+
+#EMu_SystUpTemplate.SetName("EMu_Syst_%sUp"%(year))
+#EMu_SystDownTemplate.SetName("EMu_Syst_%sDown"%(year))
 
 DY_JECUpTemplate.Write()
 DY_JECDownTemplate.Write()
@@ -559,9 +575,11 @@ DY_MuTrigUpTemplate.Write()
 DY_MuTrigDownTemplate.Write()
 DYhist_MuZweightUpTemplate.Write()
 DYhist_MuZweightDownTemplate.Write()
-
 DY_LSFUpTemplate.Write()
 DY_LSFDownTemplate.Write()
+
+#EMu_SystUpTemplate.Write()
+#EMu_SystDownTemplate.Write()
 
 #SAVING DY AND EMU################################################
 DYtemplate.SetName("DY")

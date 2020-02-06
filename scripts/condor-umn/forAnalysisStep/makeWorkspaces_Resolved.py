@@ -24,7 +24,7 @@ binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000,4000,8000]
 binBoundariesArray = array.array('d', binBoundaries)
 Nbins = len(binBoundaries) - 1
 
-def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF,doSignal):
+def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF,doSignal, year):
     print "ZPeakSF: ", ZPeakSF
 
     histoDict = {}
@@ -52,11 +52,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
             	histoDict['DiBoson'].Scale(weights[sample])
 		for syst in systs:
 		    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-		    histoDict['DiBoson_%sUp'%(syst)] = temp.Rebin(Nbins, 'DiBoson_%sUp'%(syst), binBoundariesArray)
+		    histoDict['DiBoson_%sUp'%(syst)] = temp.Rebin(Nbins, 'DiBoson_%s_%sUp'%(syst,year), binBoundariesArray)
 	            histoDict['DiBoson_%sUp'%(syst)].SetDirectory(0)
 	            histoDict['DiBoson_%sUp'%(syst)].Scale(weights[sample])
 		    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-		    histoDict['DiBoson_%sDown'%(syst)] = temp.Rebin(Nbins, 'DiBoson_%sDown'%(syst), binBoundariesArray)
+		    histoDict['DiBoson_%sDown'%(syst)] = temp.Rebin(Nbins, 'DiBoson_%s_%sDown'%(syst,year), binBoundariesArray)
                     histoDict['DiBoson_%sDown'%(syst)].SetDirectory(0)
                     histoDict['DiBoson_%sDown'%(syst)].Scale(weights[sample])
 
@@ -77,11 +77,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 histoDict['TriBoson'].Scale(weights[sample])
                 for syst in systs:
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-                    histoDict['TriBoson_%sUp'%(syst)] = temp.Rebin(Nbins, 'TriBoson_%sUp'%(syst), binBoundariesArray)
+                    histoDict['TriBoson_%sUp'%(syst)] = temp.Rebin(Nbins, 'TriBoson_%s_%sUp'%(syst,year), binBoundariesArray)
                     histoDict['TriBoson_%sUp'%(syst)].SetDirectory(0)
                     histoDict['TriBoson_%sUp'%(syst)].Scale(weights[sample])
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-                    histoDict['TriBoson_%sDown'%(syst)] = temp.Rebin(Nbins, 'TriBoson_%sDown'%(syst), binBoundariesArray)
+                    histoDict['TriBoson_%sDown'%(syst)] = temp.Rebin(Nbins, 'TriBoson_%s_%sDown'%(syst,year), binBoundariesArray)
                     histoDict['TriBoson_%sDown'%(syst)].SetDirectory(0)
                     histoDict['TriBoson_%sDown'%(syst)].Scale(weights[sample])
             else:
@@ -101,11 +101,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 histoDict['ttV'].Scale(weights[sample])
                 for syst in systs:
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-                    histoDict['ttV_%sUp'%(syst)] = temp.Rebin(Nbins, 'ttV_%sUp'%(syst), binBoundariesArray)
+                    histoDict['ttV_%sUp'%(syst)] = temp.Rebin(Nbins, 'ttV_%s_%sUp'%(syst,year), binBoundariesArray)
                     histoDict['ttV_%sUp'%(syst)].SetDirectory(0)
                     histoDict['ttV_%sUp'%(syst)].Scale(weights[sample])
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-                    histoDict['ttV_%sDown'%(syst)] = temp.Rebin(Nbins, 'ttV_%sDown'%(syst), binBoundariesArray)
+                    histoDict['ttV_%sDown'%(syst)] = temp.Rebin(Nbins, 'ttV_%s_%sDown'%(syst,year), binBoundariesArray)
                     histoDict['ttV_%sDown'%(syst)].SetDirectory(0)
                     histoDict['ttV_%sDown'%(syst)].Scale(weights[sample])
             else:
@@ -125,11 +125,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 histoDict['ST'].Scale(weights[sample])
                 for syst in systs:
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-		    histoDict['ST_%sUp'%(syst)] = temp.Rebin(Nbins, 'ST_%sUp'%(syst), binBoundariesArray)
+		    histoDict['ST_%sUp'%(syst)] = temp.Rebin(Nbins, 'ST_%s_%sUp'%(syst,year), binBoundariesArray)
                     histoDict['ST_%sUp'%(syst)].SetDirectory(0)
                     histoDict['ST_%sUp'%(syst)].Scale(weights[sample])
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-		    histoDict['ST_%sDown'%(syst)] = temp.Rebin(Nbins, 'ST_%sDown'%(syst), binBoundariesArray)
+		    histoDict['ST_%sDown'%(syst)] = temp.Rebin(Nbins, 'ST_%s_%sDown'%(syst,year), binBoundariesArray)
                     histoDict['ST_%sDown'%(syst)].SetDirectory(0)
                     histoDict['ST_%sDown'%(syst)].Scale(weights[sample])
             else:
@@ -148,11 +148,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 histoDict['WJets'].Scale(weights[sample])
                 for syst in systs:
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-		    histoDict['WJets_%sUp'%(syst)] = temp.Rebin(Nbins, 'WJets_%sUp'%(syst), binBoundariesArray)
+		    histoDict['WJets_%sUp'%(syst)] = temp.Rebin(Nbins, 'WJets_%s_%sUp'%(syst,year), binBoundariesArray)
                     histoDict['WJets_%sUp'%(syst)].SetDirectory(0)
                     histoDict['WJets_%sUp'%(syst)].Scale(weights[sample])
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-		    histoDict['WJets_%sDown'%(syst)] = temp.Rebin(Nbins, 'WJets_%sDown'%(syst), binBoundariesArray)
+		    histoDict['WJets_%sDown'%(syst)] = temp.Rebin(Nbins, 'WJets_%s_%sDown'%(syst,year), binBoundariesArray)
                     histoDict['WJets_%sDown'%(syst)].SetDirectory(0)
                     histoDict['WJets_%sDown'%(syst)].Scale(weights[sample])
 
@@ -164,19 +164,19 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 histoDict['DY'].Scale(weights[sample]*ZPeakSF)
                 for syst in systs:
 		    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-		    histoDict['DY_%sUp'%(syst)] = temp.Rebin(Nbins, 'DY_%sUp'%(syst), binBoundariesArray)
+		    histoDict['DY_%sUp'%(syst)] = temp.Rebin(Nbins, 'DY_%s_%sUp'%(syst,year), binBoundariesArray)
                     histoDict['DY_%sUp'%(syst)].SetDirectory(0)
                     histoDict['DY_%sUp'%(syst)].Scale(weights[sample]*ZPeakSF)
                     temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-		    histoDict['DY_%sDown'%(syst)] = temp.Rebin(Nbins, 'DY_%sDown'%(syst), binBoundariesArray)
+		    histoDict['DY_%sDown'%(syst)] = temp.Rebin(Nbins, 'DY_%s_%sDown'%(syst,year), binBoundariesArray)
                     histoDict['DY_%sDown'%(syst)].SetDirectory(0)
                     histoDict['DY_%sDown'%(syst)].Scale(weights[sample]*ZPeakSF)
                 temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_ZweightUp')
-                histoDict['DY_ZweightUp'] = temp.Rebin(Nbins, 'DY_ZweightUp', binBoundariesArray)
+                histoDict['DY_ZweightUp'] = temp.Rebin(Nbins, 'DY_Zweight_%sUp'%(year), binBoundariesArray)
                 histoDict['DY_ZweightUp'].SetDirectory(0)
                 histoDict['DY_ZweightUp'].Scale(weights[sample]*ZPeakSF)
                 temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_ZweightDown')
-                histoDict['DY_ZweightDown'] = temp.Rebin(Nbins, 'DY_ZweightDown', binBoundariesArray)
+                histoDict['DY_ZweightDown'] = temp.Rebin(Nbins, 'DY_Zweight_%sDown'%(year), binBoundariesArray)
                 histoDict['DY_ZweightDown'].SetDirectory(0)
                 histoDict['DY_ZweightDown'].Scale(weights[sample]*ZPeakSF)
 
@@ -213,11 +213,11 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
             SignalDenominators['WR_%s_NR_%s'%(wrMass,nuMass)] = tfile.Get('analysis/allEvents/m_Scale_muR1_muF1').GetBinContent(1)/numberOfEvents[sample]
             for syst in systs:
                 temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst))
-		histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst), binBoundariesArray)
+		histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%s_%sUp'%(wrMass,nuMass,syst,year), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].SetDirectory(0)
                 histoDict['WR_%s_NR_%s_%sUp'%(wrMass,nuMass,syst)].Scale(weights[sample])
                 temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst))
-		histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst), binBoundariesArray)
+		histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)] = temp.Rebin(Nbins, 'WR_%s_NR_%s_%s_%sDown'%(wrMass,nuMass,syst,year), binBoundariesArray)
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].SetDirectory(0)
                 histoDict['WR_%s_NR_%s_%sDown'%(wrMass,nuMass,syst)].Scale(weights[sample])
 
@@ -331,8 +331,8 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 
     ttbarEst.Scale(ttbarSF)
 
-    ttbarEst_SystUp = ttbarEst.Clone('EMu_SystUp')
-    ttbarEst_SystDown = ttbarEst.Clone('EMu_SystDown')
+    ttbarEst_SystUp = ttbarEst.Clone('EMu_Syst_%sUp'%(year))
+    ttbarEst_SystDown = ttbarEst.Clone('EMu_Syst_%sDown'%(year))
 
     ttbarEst_SystUp.Scale(1.2)
     ttbarEst_SystDown.Scale(0.8)
@@ -922,10 +922,13 @@ lumi2017 = 41530.0
 lumi2018 = 59740.0
 if '2016' in sampleList:
     integratedLuminosity = lumi2016
+    year = '2016'
 elif '2017' in sampleList:
     integratedLuminosity = lumi2017
+    year = '2017'
 elif '2018' in sampleList:
     integratedLuminosity = lumi2018
+    year = '2018'
 else:
     print "GIVE ME A SAMPLE LIST WITH YEAR IN NAME!!!"
     exit(0)
@@ -1020,7 +1023,7 @@ print "ZPeakSF: ", ZPeakSF
 
 
 print "MAKING SIGNAL REGION WORKSPACE"
-SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF, doSignal)
+SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, weights, numberOfEvents, ZPeakSF, doSignal, year)
 
 #print "MAKING ZPEAK REGION WORKSPACE"
 #ZPeakWorksapce(sampleNames,samplesLocation,workspaceOutputDirectory, weights)

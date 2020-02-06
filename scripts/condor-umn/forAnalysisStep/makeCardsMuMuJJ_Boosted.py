@@ -8,7 +8,7 @@ import sys
 import time
 import array
 
-def SignalRegionCard(workspaceDirectory):
+def SignalRegionCard(workspaceDirectory, year):
 
     workspace = workspaceDirectory+'WR_NR_MuMuJJ_BoostedSignalRegion.root'
 
@@ -39,14 +39,14 @@ def SignalRegionCard(workspaceDirectory):
     for bkg in bkgs:
         histoDict['%s'%(bkg)] = tfile.Get('MuMuJJ/%s'%(bkg))
 	for syst in systs:
-	    histoDict['%s_%sUp'%(bkg,syst)] = tfile.Get('MuMuJJ/%s_%sUp'%(bkg,syst))
-            histoDict['%s_%sDown'%(bkg,syst)] = tfile.Get('MuMuJJ/%s_%sDown'%(bkg,syst))
+	    histoDict['%s_%sUp'%(bkg,syst)] = tfile.Get('MuMuJJ/%s_%s_%sUp'%(bkg,syst,year))
+            histoDict['%s_%sDown'%(bkg,syst)] = tfile.Get('MuMuJJ/%s_%s_%sDown'%(bkg,syst,year))
 
     for WRmass,NRmass in signalMasses:
 	histoDict['WR_%s_NR_%s'%(WRmass,NRmass)] = tfile.Get('MuMuJJ/WR_%s_NR_%s'%(WRmass,NRmass))
 	for syst in systs:
-            histoDict['WR_%s_NR_%s_%sUp'%(WRmass,NRmass,syst)] = tfile.Get('MuMuJJ/WR_%s_NR_%s_%sUp'%(WRmass,NRmass,syst))
-            histoDict['WR_%s_NR_%s_%sDown'%(WRmass,NRmass,syst)] = tfile.Get('MuMuJJ/WR_%s_NR_%s_%sDown'%(WRmass,NRmass,syst))
+            histoDict['WR_%s_NR_%s_%sUp'%(WRmass,NRmass,syst)] = tfile.Get('MuMuJJ/WR_%s_NR_%s_%s_%sUp'%(WRmass,NRmass,syst,year))
+            histoDict['WR_%s_NR_%s_%sDown'%(WRmass,NRmass,syst)] = tfile.Get('MuMuJJ/WR_%s_NR_%s_%s_%sDown'%(WRmass,NRmass,syst,year))
 	for syst in systs_pdf:
 	    histoDict['WR_%s_NR_%s_%s'%(WRmass,NRmass,syst)] = tfile.Get('MuMuJJ/WR_%s_NR_%s_%s'%(WRmass,NRmass,syst))
 
@@ -145,9 +145,9 @@ def SignalRegionCard(workspaceDirectory):
             'jmax * number of processes minus 1\n' + \
             'kmax * number of nuisance parameters\n' + \
             divider + \
-	    'shapes * BoostedSignalRegion WR_NR_MuMuJJ_BoostedSignalRegion.root MuMuJJ/$PROCESS MuMuJJ/$PROCESS_$SYSTEMATIC\n' + \
+	    'shapes * BoostedSignalRegion%s WR_NR_MuMuJJ_BoostedSignalRegion.root MuMuJJ/$PROCESS MuMuJJ/$PROCESS_$SYSTEMATIC\n'%(year) + \
 	    divider + \
-	    'bin             BoostedSignalRegion\n' + \
+	    'bin             BoostedSignalRegion%s\n'%(year) + \
             'observation     -1.0\n' + \
             divider
 
@@ -155,25 +155,25 @@ def SignalRegionCard(workspaceDirectory):
     	processString = 'process'
     	processNumberString = 'process'
     	rateString = 'rate'
-    	lumiString = 'lumi\tlnN'
-    	jecString = 'JEC\tshapeN2'
-    	jerString = 'JER\tshapeN2'
-    	puString = 'PU\tshapeN2'
-    	muResIsoString = 'MuResIso\tshapeN2'
-	muResIDString = 'MuID\tshapeN2'
-	muResolString = 'MuResol\tshapeN2'
-	muTrigString = 'MuTrig\tshapeN2'
-	LSFString = 'LSF\tshapeN2'
+    	lumiString = 'lumi_%s\tlnN'%(year)
+    	jecString = 'JEC_%s\tshapeN2'%(year)
+    	jerString = 'JER_%s\tshapeN2'%(year)
+    	puString = 'PU_%s\tshapeN2'%(year)
+    	muResIsoString = 'MuResIso_%s\tshapeN2'%(year)
+	muResIDString = 'MuID_%s\tshapeN2'%(year)
+	muResolString = 'MuResol_%s\tshapeN2'%(year)
+	muTrigString = 'MuTrig_%s\tshapeN2'%(year)
+	LSFString = 'LSF_%s\tshapeN2'%(year)
 	ScaleUncString = 'Scale\tlnN'
 	PDFUncString = 'PDF\tshapeN2'
 	AlphaSUncString = 'AlphaS\tshapeN2'
-        ZweightString = 'Zweight\tshapeN2'
+        ZweightString = 'Zweight_%s\tshapeN2'%(year)
 
 	print "WR_%s_NR_%s%(WRmass,NRmass): ", 'WR_%s_NR_%s'%(WRmass,NRmass)
 	print "histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral(): ", histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral()
         if histoDict['WR_%s_NR_%s'%(WRmass,NRmass)].Integral() > 0:
 	    print "INSIDE HERE"
-            binString += " BoostedSignalRegion"
+            binString += " BoostedSignalRegion%s"%(year)
             processString += ' WR_%s_NR_%s'%(WRmass,NRmass)
             processNumberString += ' 0'
             rateString += ' -1'
@@ -195,7 +195,7 @@ def SignalRegionCard(workspaceDirectory):
     	for bkg in Allbkgs:
 	  if bkg == 'EMu':
 	    sampleNumber += 1
-            binString += " BoostedSignalRegion"
+            binString += " BoostedSignalRegion%s"%(year)
             processString += ' %s'%(bkg)
             processNumberString += ' %s'%(sampleNumber)
             rateString += ' -1'
@@ -217,7 +217,7 @@ def SignalRegionCard(workspaceDirectory):
 #	    print "histoDict['%s'%(bkg)].Integral(): ", histoDict['%s'%(bkg)].Integral()
             if histoDict['%s'%(bkg)].Integral() <= 0.: continue
 	    sampleNumber += 1
-    	    binString += " BoostedSignalRegion"
+    	    binString += " BoostedSignalRegion%s"%(year)
     	    processString += ' %s'%(bkg)
     	    processNumberString += ' %s'%(sampleNumber)
     	    rateString += ' -1'
@@ -249,8 +249,8 @@ def SignalRegionCard(workspaceDirectory):
     	datacard+=binString+processString+processNumberString+rateString+divider
 
     	datacard+=lumiString+jecString+jerString+puString+muResIDString+muResolString+muTrigString+ZweightString+ScaleUncString+PDFUncString+AlphaSUncString+LSFString
-	datacard+='DYNorm lnN - - 1.03 - - - -\n'
-	datacard+='Syst lnN - - - - - - 1.3\n'
+	datacard+='DYNorm_%s lnN - - 1.03 - - - -\n'%(year)
+	datacard+='Syst_%s lnN - - - - - - 1.3\n'%(year)
 #        datacard+='topNorm rateParam BoostedSignalRegion TT 0.674 [0.5392,0.8088]\n' + \
 #        'DYNorm rateParam BoostedSignalRegion DY 1.069 [1.061,1.077]\n' + \
         datacard+='* autoMCStats 0\n'
@@ -600,8 +600,9 @@ if len(sys.argv) == 2 and (sys.argv[1] == "help" or sys.argv[1] == "h"):
     print "=========="
 
 workspaceDirectory = sys.argv[1]
+year = sys.argv[2]
 
-SignalRegionCard(workspaceDirectory)
+SignalRegionCard(workspaceDirectory, year)
 
 #ZPeakCard(workspaceDirectory)
 
