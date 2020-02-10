@@ -276,9 +276,9 @@ if len(sys.argv) == 3 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     exit(0)
 
 workspaceFolder = sys.argv[1]
-year = sys.argv[3]
-if(len(sys.argv) == 3):
-    scale = float(sys.argv[2])
+year = sys.argv[2]
+if(len(sys.argv) == 4):
+    scale = float(sys.argv[3])
 else:
     scale = 1.0
 
@@ -287,13 +287,11 @@ else:
 #OG binEdgeList = [800., 1000., 1200., 1500., 1800., 8000.]
 #binning = array("d",binEdgeList)
 
-#binEdgeListDY = [800., 1200., 1600., 2000., 2400., 2800., 8000.]
-binEdgeListDY = [800, 1000, 1200, 1400, 1700, 2000, 2400, 2800, 8000]
+binEdgeListDY = [800., 1200., 1600., 2000., 2400., 2800., 8000.]
 binningDY = array("d",binEdgeListDY)
 nBinsDY = len(binningDY) - 1
 
-#binEdgeListEMU = [800., 1200., 1600., 2000., 8000.]
-binEdgeListEMU = [800, 1000, 1200, 1400, 1700, 2000, 8000]
+binEdgeListEMU = [800., 1200., 1600., 2000., 8000.]
 binningEMU = array("d",binEdgeListEMU)
 nBinsEMU = len(binningEMU) - 1
 
