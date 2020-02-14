@@ -21,10 +21,11 @@ binBoundaries = []
 #for ibin in range(2400, 8001,steps):
 #    binBoundaries.append(ibin)
 
-steps = 400
-for ibin in range(800, 8001,steps):
-    binBoundaries.append(ibin)
+#steps = 100
+#for ibin in range(800, 8001,steps):
+#    binBoundaries.append(ibin)
 #print binBoundaries
+binBoundaries = [800, 1000, 1200, 1400, 1700, 8000]
 #    binBoundaries = [800, 1000, 1200, 1600, 2000, 8000]
 #    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 6000]
 binBoundariesArray = array.array('d', binBoundaries)
