@@ -10,7 +10,13 @@ import array
 
 def SignalRegionCard(workspaceDirectory, year):
 
-    workspace = workspaceDirectory+'WR_NR_MuMuJJ_BoostedSignalRegion.root'
+    if year == "2016":
+        workspace = workspaceDirectory+'WR_NR_MuMuJJ_BoostedSignalRegion2016.root'
+    elif year == "2017":
+        workspace = workspaceDirectory+'WR_NR_MuMuJJ_BoostedSignalRegion2017.root'
+    elif year == "2018":
+        workspace = workspaceDirectory+'WR_NR_MuMuJJ_BoostedSignalRegion2018.root'
+
 
     tfile = r.TFile.Open(workspace)
 
@@ -145,7 +151,7 @@ def SignalRegionCard(workspaceDirectory, year):
             'jmax * number of processes minus 1\n' + \
             'kmax * number of nuisance parameters\n' + \
             divider + \
-	    'shapes * BoostedSignalRegion%s WR_NR_MuMuJJ_BoostedSignalRegion.root MuMuJJ/$PROCESS MuMuJJ/$PROCESS_$SYSTEMATIC\n'%(year) + \
+	    'shapes * BoostedSignalRegion%s WR_NR_MuMuJJ_BoostedSignalRegion%s.root MuMuJJ/$PROCESS MuMuJJ/$PROCESS_$SYSTEMATIC\n'%(year,year) + \
 	    divider + \
 	    'bin             BoostedSignalRegion%s\n'%(year) + \
             'observation     -1.0\n' + \

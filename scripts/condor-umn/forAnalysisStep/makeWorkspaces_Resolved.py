@@ -337,7 +337,13 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     ttbarEst_SystUp.Scale(1.2)
     ttbarEst_SystDown.Scale(0.8)
 
-    outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion.root'    
+    if year == "2016":
+        outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion2016.root'    
+    elif year == "2017":
+        outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion2017.root'
+    elif year == "2018":
+        outputFile = workspaceOutputDirectory+'WR_NR_MuMuJJ_ResolvedSignalRegion2018.root'
+
     outputWorkspace = r.TFile(outputFile, "RECREATE")
 
     MuMuJJ = outputWorkspace.mkdir("MuMuJJ")
