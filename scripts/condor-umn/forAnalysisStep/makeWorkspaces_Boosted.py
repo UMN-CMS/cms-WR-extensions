@@ -12,7 +12,7 @@ import array
 
 binBoundaries = []
 #binBoundaries = [800, 1200, 1600, 2000, 8000]
-#binBoundaries = [800, 1000, 1200, 1500, 1800, 8000]
+binBoundaries = [800, 1000, 1200, 1500, 1800, 8000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 8000]
 #binBoundaries = [800, 1200, 1600, 2000, 2400, 8000]
 #binBoundaries = [800, 1000, 1200, 1500, 1800, 2100, 2400, 3000,4000,8000]
@@ -21,9 +21,9 @@ binBoundaries = []
 #for ibin in range(2400, 8001,steps):
 #    binBoundaries.append(ibin)
 
-steps = 400
-for ibin in range(800, 8001,steps):
-    binBoundaries.append(ibin)
+#steps = 400
+#for ibin in range(800, 8001,steps):
+#    binBoundaries.append(ibin)
 #print binBoundaries
 #    binBoundaries = [800, 1000, 1200, 1600, 2000, 8000]
 #    binBoundaries = [200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 6000]
@@ -427,6 +427,13 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     print "TriBoson FSB: ", histoDictFSB['TriBoson'].Integral()
     print "ttV FSB: ", histoDictFSB['ttV'].Integral()
 
+    print "data FSB: ", ttbarEst.GetBinError(3)
+    print "DiBoson FSB: ", histoDictFSB['DiBoson'].GetBinError(3)
+    print "ST FSB: ", histoDictFSB['ST'].GetBinError(3)
+    print "WJets FSB: ", histoDictFSB['WJets'].GetBinError(3)
+    print "DY FSB: ", histoDictFSB['DY'].GetBinError(3)
+    print "TriBoson FSB: ", histoDictFSB['TriBoson'].GetBinError(3)
+    print "ttV FSB: ", histoDictFSB['ttV'].GetBinError(3)
 
     ttbarEst.Add(histoDictFSB['DiBoson'],-1)
     ttbarEst.Add(histoDictFSB['ST'],-1)
@@ -434,7 +441,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
     ttbarEst.Add(histoDictFSB['DY'],-1)
     ttbarEst.Add(histoDictFSB['TriBoson'],-1)
     ttbarEst.Add(histoDictFSB['ttV'],-1)
-    print "data FSB: ", ttbarEst.GetBinContent(5)
+    print "data FSB: ", ttbarEst.GetBinContent(3)
 
     ttbarEst.Scale(ttbarSF)
 
