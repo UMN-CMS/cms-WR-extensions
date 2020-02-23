@@ -197,6 +197,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     histoDict['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WJets' in sample and not 'TTWJets' in sample  and not 'ttWJets' in sample:
+	    if 'WJetsToLNu_HT-100To200' in sample:
 		temp =  tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass')
 		histoDict['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDict['WJets'].SetDirectory(0)
@@ -217,6 +218,18 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                 histoDict['WJets_LSFDown'] = histoDict['WJets'].Clone("WJets_LSF_%sDown"%(year))
                 histoDict['WJets_LSFDown'].SetDirectory(0)
                 histoDict['WJets_LSFDown'].Scale(LSFSFDown/LSFSF)
+
+	    else:
+	 	temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass').Rebin(Nbins, 'WJets_temp', binBoundariesArray)
+                histoDict['WJets'].Add(temp,weights[sample])
+                histoDict['WJets_LSFUp'].Add(temp,weights[sample]*LSFSFUp/LSFSF)
+                histoDict['WJets_LSFDown'].Add(temp,weights[sample]*LSFSFDown/LSFSF)
+                for syst in systs:
+                    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sUp'%(syst)).Rebin(Nbins, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sUp'%(syst)].Add(temp,weights[sample])
+                    temp = tfile.Get('analysis/eventsFailResPassBoostRECO/leadAK8JetMuonMass_%sDown'%(syst)).Rebin(Nbins, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sDown'%(syst)].Add(temp,weights[sample])
+
 
         elif 'DY' in sample:
             if 'DYJetsToLL_M-50_HT-100to200' in sample:

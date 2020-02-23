@@ -142,6 +142,7 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
                     histoDict['ST_%sDown'%(syst)].Add(temp,weights[sample])
 
         elif 'WJets' in sample and not 'TTWJets' in sample and not 'ttWJets' in sample:
+	    if 'WJetsToLNu_HT-100To200' in sample:
 		temp =  tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass')
 		histoDict['WJets'] = temp.Rebin(Nbins, 'WJets', binBoundariesArray)
                 histoDict['WJets'].SetDirectory(0)
@@ -155,6 +156,15 @@ def SignalRegionWorkspace(sampleNames,samplesLocation,workspaceOutputDirectory, 
 		    histoDict['WJets_%sDown'%(syst)] = temp.Rebin(Nbins, 'WJets_%s_%sDown'%(syst,year), binBoundariesArray)
                     histoDict['WJets_%sDown'%(syst)].SetDirectory(0)
                     histoDict['WJets_%sDown'%(syst)].Scale(weights[sample])
+	    else:
+                temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass').Rebin(Nbins, 'WJets_temp', binBoundariesArray)
+                histoDict['WJets'].Add(temp,weights[sample])
+                for syst in systs:
+                    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sUp'%(syst)).Rebin(Nbins, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sUp'%(syst)].Add(temp,weights[sample])
+                    temp = tfile.Get('analysis/eventsPassResFailBoostRECO/resolvedRECOmass_%sDown'%(syst)).Rebin(Nbins, 'WJets_temp', binBoundariesArray)
+                    histoDict['WJets_%sDown'%(syst)].Add(temp,weights[sample])
+
 
         elif 'DY' in sample:
             if 'DYJetsToLL_M-50_HT-100to200' in sample:
