@@ -3724,7 +3724,7 @@ bool cmsWRextension::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
     if (CHF == 0) continue;
     if (CHM == 0) continue;
     //if (CEMF > .99) continue;
-    if (CEMF > .90) continue; 
+    if ((m_era == "2016" && CEMF > .90) || ((m_era == "2017" || m_era == "2018") && CEMF > .80) continue; 
 
     fJetUnc->setJetEta(iJet->eta());
     fJetUnc->setJetPt(iJet->pt());
@@ -3906,7 +3906,7 @@ bool cmsWRextension::resolvedFSBJetSelection(const edm::Event& iEvent, eventBits
     if (CHF == 0) continue;
     if (CHM == 0) continue;
     //if (CEMF > .99) continue;
-    if (CEMF > .90) continue; 
+    if ((m_era == "2016" && CEMF > .90) || ((m_era == "2017" || m_era == "2018") && CEMF > .80) continue;
     //MUST BE AWAY FROM LEPTONS
 
     fJetUnc->setJetPt(iJet->pt());
@@ -4214,7 +4214,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
     //ADDITIONAL CUTS BECAUSE OF TIGHT ETA CUT
     if (CHF == 0) continue;
     if (CHM == 0) continue;
-    if (CEMF > .99) continue;
+    if (m_era == "2016" && CEMF > .99) continue;
     //ANALYSIS SPECIFIC CUTS
    // if (MUF <= .05) continue;
     //JETS PASSING CUTS
