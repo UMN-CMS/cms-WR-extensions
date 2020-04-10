@@ -79,10 +79,10 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
-import FWCore.Utilities.FileUtils as FileUtils
-#mylist = FileUtils.loadListFromFile ('DY600Files.txt')
+#import FWCore.Utilities.FileUtils as FileUtils
+#mylist = FileUtils.loadListFromFile ('WRtoNLtoLLJJ_WR5000_N1800_5.txt')
 #readFiles = cms.untracked.vstring( *mylist)
 
 #mylistEvents = FileUtils.loadListFromFile ('events_TTbarLeptonic.txt')
@@ -92,10 +92,10 @@ import FWCore.Utilities.FileUtils as FileUtils
 process.source = cms.Source ("PoolSource",
 #          fileNames = readFiles,
 	  fileNames = cms.untracked.vstring (options.inputFiles),
-#          eventsToProcess = cms.untracked.VEventRange(eventsToProcess),
+ #         eventsToProcess = cms.untracked.VEventRange(eventsToProcess),
 #	  lumisToProcess = cms.untracked.VLuminosityBlockRange("1:342735-1:342740" )
 #	  e = cms.EventID(1,9946613, 52351) 
-# 	  skipEvents = cms.untracked.uint32(118000)
+# 	  skipEvents = cms.untracked.uint32(27000)
 )
 
 #import FWCore.ParameterSet.Config as cms
@@ -188,7 +188,7 @@ if options.era == '2016':
 	muonPaths = cms.vstring("HLT_Mu50_v", "HLT_TkMu50_v")
 	electronPaths = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v")
 elif options.era == '2017':
-	muonPaths = cms.vstring("HLT_Mu50_v")
+	muonPaths = cms.vstring("HLT_Mu50_v", "HLT_OldMu100", "HLT_TkMu100")
 	electronPaths = cms.vstring("HLT_Ele35_WPTight_Gsf_v","HLT_Photon200_v","HLT_Ele115_CaloIdVT_GsfTrkIdT_v")
 elif options.era == '2018':
 	muonPaths = cms.vstring("HLT_Mu50", "HLT_OldMu100", "HLT_TkMu100")
@@ -224,7 +224,9 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               muonPathsToPass = muonPaths,
 			      LHEEventProduct = cms.untracked.InputTag("source"),
 			      ScaleIDRange = cms.untracked.vint32(1001,1045),
-			      PDFErrorIDRange = cms.untracked.vint32(1046,1146),
+#                              PDFErrorIDRange = cms.untracked.vint32(1615,1715),
+                              PDFErrorIDRange = cms.untracked.vint32(1046,1146),
+#			      PDFErrorIDRange = cms.untracked.vint32(2009,2109),
 			      PDFAlphaSIDRange = cms.untracked.vint32(1147,1148),
 			      PDFAlphaSScaleValue = cms.untracked.vdouble(0.116,0.120),
                               muonFiltersToPass = cms.vstring(""),
