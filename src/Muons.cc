@@ -2,6 +2,7 @@
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 #include "ExoAnalysis/cmsWRextensions/interface/GeneralizedEndpoint.h"
+#include "ExoAnalysis/cmsWRextensions/interface/GEScaleSyst.h"
 
 //C++ CLASSES
 #include <iostream>
@@ -946,6 +947,36 @@ std::vector<double> Muons::GeneralizedEndpointMethod_Data(const pat::Muon* Mu){
   Weights.push_back(CorrectpT_Down/Mu->pt());
 
   return Weights;
+
+}
+
+std::vector<double> Muons::GE(const pat::Muon* Mu, std::string era){
+
+  double CorrectpT      = 0.;
+  double CorrectpT_Up   = 0.;
+  double CorrectpT_Down = 0.;
+
+  if(era == "2016"){
+    CorrectpT      = myGE.GEScaleCorrPt(0, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+    CorrectpT_Up   = myGE.GEScaleCorrPt(0, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+    CorrectpT_Down = myGE.GEScaleCorrPt(0, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+  }else if (era == "2017"){
+    CorrectpT      = myGE.GEScaleCorrPt(1700, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+    CorrectpT_Up   = myGE.GEScaleCorrPt(170001, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+    CorrectpT_Down = myGE.GEScaleCorrPt(170002, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+  }else if (era == "2018"){
+    CorrectpT      = myGE.GEScaleCorrPt(1800, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+    CorrectpT_Up   = myGE.GEScaleCorrPt(180001, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+    CorrectpT_Down = myGE.GEScaleCorrPt(180002, Mu->pt(), Mu->eta(), Mu->phi(), Mu->charge());
+  }
+
+  std::vector<double> Weights;
+  Weights.push_back(CorrectpT/Mu->pt());
+  Weights.push_back(CorrectpT_Up/Mu->pt());
+  Weights.push_back(CorrectpT_Down/Mu->pt());
+
+  return Weights;
+
 
 }
 

@@ -9,6 +9,7 @@
 #include "DataFormats/PatCandidates/interface/Muon.h"
 #include "ExoAnalysis/cmsWRextensions/interface/RoccoR.h"
 #include "ExoAnalysis/cmsWRextensions/interface/GeneralizedEndpoint.h"
+#include "ExoAnalysis/cmsWRextensions/interface/GEScaleSyst.h"
 //ROOT CLASSES
 #include "TH2D.h"
 #include "TObjString.h"
@@ -30,6 +31,8 @@ class Muons {
   std::vector<double> RochesterMethod_MCSmear(const pat::Muon* Mu, std::string era);
   std::vector<double> GeneralizedEndpointMethod(const pat::Muon* Mu);
   std::vector<double> GeneralizedEndpointMethod_Data(const pat::Muon* Mu);
+  std::vector<double> GE(const pat::Muon* Mu, std::string era);
+
 
   double muidweight;
   double muidweightUp;
@@ -60,6 +63,8 @@ class Muons {
   double muRecoWeightDown;
 
   GeneralizedEndpoint myGeneralizedEndpoint;
+
+  GEScaleSyst myGE;
 
   private:
 /*  void fillGen(eventBits& event);

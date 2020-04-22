@@ -3127,10 +3127,18 @@ bool cmsWRextension::additionalMuons(const edm::Event& iEvent, eventBits& myEven
 
   if(myEvent.mySubleadMuon !=0){
     if(m_isMC){
-      myEvent.secondBoostMuonScale = myMuons.RochesterMethod_MCSmear(myEvent.mySubleadMuon, m_era);
+      if(myEvent.mySubleadMuon->pt() < 200){
+        myEvent.secondBoostMuonScale = myMuons.RochesterMethod_MCSmear(myEvent.mySubleadMuon, m_era);
+      }else{
+        myEvent.secondBoostMuonScale = myMuons.GE(myEvent.mySubleadMuon, m_era);
+      }
     }
     else{
-      myEvent.secondBoostMuonScale = myMuons.RochesterMethod_DataScale(myEvent.mySubleadMuon, m_era);
+      if(myEvent.mySubleadMuon->pt() < 200){
+        myEvent.secondBoostMuonScale = myMuons.RochesterMethod_DataScale(myEvent.mySubleadMuon, m_era);
+      }else{
+        myEvent.secondBoostMuonScale = myMuons.GE(myEvent.mySubleadMuon, m_era);
+      }
     }
 
   }
@@ -3268,10 +3276,18 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
   if (resMus.size()   > 1) std::sort(resMus.begin(),   resMus.end(),   ::wrTools::compareEtCandidatePointer); 
 
   if(m_isMC){
-    myEvent.leadFSBMuonScale = myMuons.RochesterMethod_MCSmear(resMus[0], m_era);
+    if(resMus[0]->pt() < 200){
+      myEvent.leadFSBMuonScale = myMuons.RochesterMethod_MCSmear(resMus[0], m_era);
+    }else{
+      myEvent.leadFSBMuonScale = myMuons.GE(resMus[0], m_era);
+    }
   }
   else{
-    myEvent.leadFSBMuonScale = myMuons.RochesterMethod_DataScale(resMus[0], m_era);
+    if(resMus[0]->pt() < 200){
+      myEvent.leadFSBMuonScale = myMuons.RochesterMethod_DataScale(resMus[0], m_era);
+    }else{
+      myEvent.leadFSBMuonScale = myMuons.GE(resMus[0], m_era);
+    }
   }  
 
   //NOW WE TAKE THE LEAD ELECTRON AND MUON AS OUR LEADS
@@ -3332,12 +3348,30 @@ bool cmsWRextension::resolvedMuonSelection(const edm::Event& iEvent, eventBits& 
   std::sort(resolvedANAMuons.begin(), resolvedANAMuons.end(), ::wrTools::compareEtCandidatePointer);
 
   if(m_isMC){
-    myEvent.leadResMuonScale = myMuons.RochesterMethod_MCSmear(resolvedANAMuons[0], m_era);
-    myEvent.secondResMuonScale = myMuons.RochesterMethod_MCSmear(resolvedANAMuons[1], m_era);
+    if(resolvedANAMuons[0]->pt() < 200){
+      myEvent.leadResMuonScale = myMuons.RochesterMethod_MCSmear(resolvedANAMuons[0], m_era);
+    }else{
+      myEvent.leadResMuonScale = myMuons.GE(resolvedANAMuons[0], m_era);
+    }
+
+    if(resolvedANAMuons[1]->pt() < 200){
+     myEvent.secondResMuonScale = myMuons.RochesterMethod_MCSmear(resolvedANAMuons[1], m_era);
+    }else{
+      myEvent.secondResMuonScale = myMuons.GE(resolvedANAMuons[1], m_era);
+    }
   }
   else{
-    myEvent.leadResMuonScale = myMuons.RochesterMethod_DataScale(resolvedANAMuons[0], m_era);
-    myEvent.secondResMuonScale = myMuons.RochesterMethod_DataScale(resolvedANAMuons[1], m_era);
+    if(resolvedANAMuons[0]->pt() < 200){
+      myEvent.leadResMuonScale = myMuons.RochesterMethod_DataScale(resolvedANAMuons[0], m_era);
+    }else{
+      myEvent.leadResMuonScale = myMuons.GE(resolvedANAMuons[0], m_era);
+    }
+
+    if(resolvedANAMuons[1]->pt() < 200){
+      myEvent.secondResMuonScale = myMuons.RochesterMethod_DataScale(resolvedANAMuons[1], m_era);
+    }else{
+      myEvent.secondResMuonScale = myMuons.GE(resolvedANAMuons[1], m_era);
+    }
   }
 
   std::cout << "high pT lead muon" << std::endl;
@@ -3589,14 +3623,14 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
       if (highPTMuons[0]->pt() < 200){
         myEvent.leadBoostMuonScale = myMuons.RochesterMethod_MCSmear(highPTMuons[0], m_era);
       }else{
-        myEvent.leadBoostMuonScale = myMuons.GeneralizedEndpointMethod(highPTMuons[0]);
+        myEvent.leadBoostMuonScale = myMuons.GE(highPTMuons[0], m_era);
       }
     }
     else{
       if (highPTMuons[0]->pt() < 200){
         myEvent.leadBoostMuonScale = myMuons.RochesterMethod_DataScale(highPTMuons[0], m_era);
       }else{
-        myEvent.leadBoostMuonScale = myMuons.GeneralizedEndpointMethod_Data(highPTMuons[0]);
+        myEvent.leadBoostMuonScale = myMuons.GE(highPTMuons[0], m_era);
       }
     }
 
