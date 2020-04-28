@@ -1497,6 +1497,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 11, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 12, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 13, m_isSignal);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 18, m_isSignal);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 19, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 32, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 33, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 34, m_isSignal);

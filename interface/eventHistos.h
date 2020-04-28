@@ -246,15 +246,21 @@ class eventHistos {
   TH1D* m_leadAK8JetMuonMass_ZweightUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_ZweightUp;
   TH1D* m_resolvedRECOmass_ZweightUp;
+  TH1D* m_leadAK8JetElectronMass_ZweightUp;
+  TH1D* m_resolvedFSBRECOmass_ZweightUp;
 
   TH1D* m_leadAK8JetMuonMass_ZweightDown;
   TH1D* m_leadAK8JetMuonMass_noLSF_ZweightDown;
   TH1D* m_resolvedRECOmass_ZweightDown;
+  TH1D* m_leadAK8JetElectronMass_ZweightDown;
+  TH1D* m_resolvedFSBRECOmass_ZweightDown;
 
   TH1D* m_leadAK8JetMuonMass_MuResolUp;
   TH1D* m_leadAK8JetMuonMass_MuResolDown;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuResolUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuResolDown;
+  TH1D* m_leadAK8JetElectronMass_MuResolUp;
+  TH1D* m_leadAK8JetElectronMass_MuResolDown;
 
   TH1D* m_resolvedRECOmass_MuResIsoUp;
   TH1D* m_resolvedRECOmass_MuResIsoDown;

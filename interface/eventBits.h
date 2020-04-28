@@ -505,6 +505,8 @@ public:
   double leadAK8JetMuonMassVal_MuResolDown;
   double leadAK8JetMuonMassVal_noLSF_MuResolUp;
   double leadAK8JetMuonMassVal_noLSF_MuResolDown;
+  double leadAK8JetElectronMassVal_MuResolUp;
+  double leadAK8JetElectronMassVal_MuResolDown;
 
   double leadAK8JetMuonMassVal_JERUp;
   double leadAK8JetMuonMassVal_JERDown;
