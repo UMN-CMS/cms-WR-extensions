@@ -173,7 +173,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   //COUNTING FOUND OBJECTS
-  if (jetPass >= 2 && (muonPass+elecPass) >= 2)) {
+  if (jetPass >= 2 && (muonPass+elecPass) == 2)) {
     std::cout <<"PASSES"<<std::endl;
     return true; 
   }
