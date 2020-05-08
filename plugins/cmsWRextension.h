@@ -86,10 +86,14 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 #include "ExoAnalysis/cmsWRextensions/interface/eventInfo.h"
 #include "ExoAnalysis/cmsWRextensions/interface/tools.h"
 #include "ExoAnalysis/cmsWRextensions/interface/Muons.h"
+#include "ExoAnalysis/cmsWRextensions/interface/Zweight.h"
 
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
+
+#include "SimDataFormats/GeneratorProducts/interface/LHEEventProduct.h" // -- LHE info like PDF
+#include "SimDataFormats/GeneratorProducts/interface/LHERunInfoProduct.h" // -- ??
 
 #include "TRandom3.h"
 //
@@ -131,23 +135,26 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool passZsidebandCutGEN(const edm::Event&, eventBits&);
       bool passResRECO (const edm::Event&, eventBits&);
       bool passFSBResRECO (const edm::Event&, eventBits&);
+      std::vector<bool> passResRECO_Fast (const edm::Event&, eventBits&);
+      std::vector<bool> passFSBResRECO_Fast (const edm::Event&, eventBits&);
       bool passBoostRECO(const edm::Event&, eventBits&);
       bool passExtensionRECO_ZPeak(const edm::Event&, eventBits&);
       void passExtensionRECO_Fast(const edm::Event&, eventBits&);
       bool passFlavorSideband(const edm::Event&, eventBits&);
       bool passFlavorSideband_Fast(const edm::Event&, eventBits&);
       bool selectHighPtISOMuon(const edm::Event&, eventBits&);
-      bool jetSelection(const edm::Event& iEvent, const edm::EventSetup&, eventBits& myEvent);
+      bool jetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedJetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedFSBJetSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool genJetAnalyzer(const edm::Event& iEvent, eventBits& myEvent);
       bool additionalMuons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion, bool ISO);
-      bool electronSelection(const edm::Event& iEvent, eventBits& myEvent);
-      bool additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, bool ZPeak, int JetCorrectionRegion);
+      bool electronSelection(const edm::Event& iEvent, eventBits& myEvent, bool isSignal, std::string year);
+      bool additionalElectrons(const edm::Event& iEvent, eventBits& myEvent, bool flavorSideband, int JetCorrectionRegion);
       bool muonSelection(const edm::Event& iEvent, eventBits& myEvent);
       bool resolvedMuonSelection(const edm::Event&, eventBits&);
+      bool resolvedElectronSelection(const edm::Event&, eventBits&);
       bool resolvedFSBleptonSelection(const edm::Event&, eventBits&);
-      bool subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak, bool useResMu);
+      int subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak, bool useResMu);
       int subLeadingMuonZMass_Nominal(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
       int subLeadingMuonZMass_JECUp(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
       int subLeadingMuonZMass_JECDown(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak);
@@ -166,49 +173,80 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool sameSign(eventBits& myEvent, bool noISO);
       //bool massCut(const edm::Event& iEvent, eventBits& myEvent);
       bool genCounter(const edm::Event& iEvent, eventBits& myEvent);
+      bool ZFinder(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_Resolved(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_FSB(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent);
+      bool WRresonanceStudy(const edm::Event& iEvent, eventBits& myEvent);
 
-      double PUPPIweight(double puppipt, double puppieta);
+      std::vector<double> getZweight(const edm::Event& iEvent, eventBits& myEvent);
+      double PUPPIweight(double puppipt, double puppieta, bool isMC);
+      void LHEinfo(const edm::Event& iEvent, eventBits& myEvent);
       void loadCMSSWPath();
       // ----------member data ---------------------------
       eventHistos m_allEvents;
-      eventHistos m_eventsPassingWR2016;
-      eventHistos m_eventsPassingExtensionGEN;
-      eventHistos m_eventsPassingExtensionRECO;
-      eventHistos m_eventsPassingExtensionRECO2016VETO;
-      eventHistos m_eventsPassingExtensionRECO2016VETO_noTrig;
-      eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
-      eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
-      eventHistos m_eventsPassingExtensionRECO2016VETOZMASS;
-      eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
-      eventHistos m_eventsPassingWR2016RECO;
+
+      eventHistos m_allOnShellEvents;
+      eventHistos m_allOffShellEvents;
+      eventHistos m_eventsFailResPassBoostRECO_onShell;
+      eventHistos m_eventsFailResPassBoostRECO_offShell;
+//      eventHistos m_eventsPassingWR2016;
+//      eventHistos m_eventsPassingExtensionGEN;
+//      eventHistos m_eventsPassingExtensionRECO;
+//      eventHistos m_eventsPassingExtensionRECO2016VETO;
+//      eventHistos m_eventsPassingExtensionRECO2016VETO_noTrig;
+//      eventHistos m_eventsPassingExtensionRECO2016VETOMASSMETCUT;
+//      eventHistos m_eventsPassingExtensionRECO2016VETOMASSCUT;
+//      eventHistos m_eventsPassingExtensionRECO2016VETOSINGLEMUON;
+//      eventHistos m_eventsPassingWR2016RECO;
+      eventHistos m_eventsFailResFailBoostGEN;
+      eventHistos m_eventsPassResPassBoostGEN;
+      eventHistos m_eventsPassResFailBoostGEN;
+      eventHistos m_eventsFailResPassBoostGEN;
 
       eventHistos m_eventsFailResFailBoostRECO;
       eventHistos m_eventsPassResPassBoostRECO;
       eventHistos m_eventsPassResFailBoostRECO;
       eventHistos m_eventsFailResPassBoostRECO;
 
-      eventHistos m_eventsFailResFailBoostGEN;
-      eventHistos m_eventsPassResPassBoostGEN;
-      eventHistos m_eventsPassResFailBoostGEN;
-      eventHistos m_eventsFailResPassBoostGEN;
- 
+      eventHistos m_eventsPassResFailBoostRECO_mll450;
+      eventHistos m_eventsPassResFailBoostRECO_mll400;
+      eventHistos m_eventsPassResFailBoostRECO_mll500;
+      eventHistos m_eventsPassResFailBoostRECO_mll550;
+      eventHistos m_eventsPassResFailBoostRECO_mll600;
+
+      eventHistos m_eventsPassResLowMassCRRECO;
       eventHistos m_eventsPassResZMASSRECO;
       eventHistos m_eventsPassResFSBRECO;
+      eventHistos m_eventsPassResFSBLowMassCRRECO;
+      eventHistos m_eventsPassResFSBLowMassCRRECO_failBox;
+      eventHistos m_eventsPassResFSBLowMassCRRECO_oppoBox;
+      eventHistos m_eventsPassJetSelection;
 
-      eventHistos m_eventsFailResFailBoostGEN_boostMod;
-      eventHistos m_eventsPassResPassBoostGEN_boostMod;
-      eventHistos m_eventsPassResFailBoostGEN_boostMod;
-      eventHistos m_eventsFailResPassBoostGEN_boostMod;
+      eventHistos m_eventsPassResFSBRECO_mll450;
+      eventHistos m_eventsPassResFSBRECO_mll400;
+      eventHistos m_eventsPassResFSBRECO_mll500;
+      eventHistos m_eventsPassResFSBRECO_mll550;
+      eventHistos m_eventsPassResFSBRECO_mll600;
 
-      eventHistos m_eventsFailResFailBoostGEN_resMod;
-      eventHistos m_eventsPassResPassBoostGEN_resMod;
-      eventHistos m_eventsPassResFailBoostGEN_resMod;
-      eventHistos m_eventsFailResPassBoostGEN_resMod;
+      eventHistos m_eventsPassBoostFSBLowMassCRRECO;
+      eventHistos m_eventsPassBoostFSBLowMassCRRECO_failBox;
+      eventHistos m_eventsPassBoostFSBLowMassCRRECO_oppoBox;
+      eventHistos m_eventsPassBoostFSBRECO;
+      eventHistos m_eventsPassBoostLowMassCRRECO;
+      eventHistos m_eventsPassBoostZMASSRECO;
+
+//      eventHistos m_eventsFailResFailBoostGEN_boostMod;
+//      eventHistos m_eventsPassResPassBoostGEN_boostMod;
+//      eventHistos m_eventsPassResFailBoostGEN_boostMod;
+//      eventHistos m_eventsFailResPassBoostGEN_boostMod;
+//
+//      eventHistos m_eventsFailResFailBoostGEN_resMod;
+//      eventHistos m_eventsPassResPassBoostGEN_resMod;
+//      eventHistos m_eventsPassResFailBoostGEN_resMod;
+//      eventHistos m_eventsFailResPassBoostGEN_resMod;
 
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt50;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt100;
@@ -220,21 +258,22 @@ class cmsWRextension : public edm::EDAnalyzer {
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_noTrig;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_noISO_samesign_noTrig;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_samesign;
       //eventHistos m_eventsPassingFlavorSidebandRECOelePt200_all;
 
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_A;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_B;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_C;
-      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_D;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_A;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_B;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_C;
+//      eventHistos m_eventsPassingFlavorSidebandRECOelePt200_D;
+//
+//      eventHistos m_eventsPassingFlavorSidebandRECOres;
 
-      eventHistos m_eventsPassingFlavorSidebandRECOres;
-
+      int flavor;
       HEEP myHEEP;
       egammaEffi myEgammaEffi;
       eventInfo myEventInfo;
       Muons myMuons;
+      Zweight myZweights;
       edm::EDGetToken m_genParticleToken;
       edm::EDGetToken m_genJetsToken;
       edm::EDGetToken m_AK8genJetsToken;
@@ -256,6 +295,10 @@ class cmsWRextension : public edm::EDAnalyzer {
       edm::EDGetToken m_trigObjsToken;
       edm::EDGetToken m_PUInfoToken;
       edm::EDGetToken m_rhoLabel;
+      edm::EDGetToken LHEEventProductToken;
+      edm::EDGetTokenT< double > prefweight_token;
+      edm::EDGetTokenT< double > prefweightup_token;
+      edm::EDGetTokenT< double > prefweightdown_token;
       bool m_wantHardProcessMuons;
       bool m_doGen;
       bool m_amcatnlo;
@@ -264,11 +307,13 @@ class cmsWRextension : public edm::EDAnalyzer {
       bool m_isMC;
       bool m_doTrig;
       bool m_doFast;
+      bool m_checkZ;
       double m_MCL;    //MASS UPPER AND LOWER CUTS
       double m_MCU;
 
+      bool m_foundZ;
       
-      double m_highPTleptonCut = 200;
+      double m_highPTleptonCut = 60;
       double m_subleadPTleptonCut = 10;
       double m_leptonEtaCut = 2.4;
       double m_muonIsoCut = .05;
@@ -292,6 +337,12 @@ class cmsWRextension : public edm::EDAnalyzer {
 
       JME::JetResolution resolution;
       JME::JetResolutionScaleFactor resolution_sf;
+      JME::JetResolution resolution_AK4;
+      JME::JetResolutionScaleFactor resolution_sf_AK4;
+
+      std::vector< int > ScaleIDRange_, PDFErrorIDRange_, PDFAlphaSIDRange_;
+      std::string PDFErrorType_;
+      std::vector< double > PDFAlphaSScaleValue_;
 
       TRandom3* r;
 

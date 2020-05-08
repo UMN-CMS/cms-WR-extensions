@@ -105,7 +105,7 @@ skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
 {
   //now do what ever initialization is needed
   edm::Service<TFileService> fs;
-  m_allEvents.book((fs->mkdir("allEvents")), 4, "skim", false);
+  m_allEvents.book((fs->mkdir("allEvents")), 4, "skim", false, false);
   if(m_isMC) {
     m_genEventInfoToken = consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
     m_amcatnlo = iConfig.getUntrackedParameter<bool> ("amcatnlo", false);   //DO AMC@NLO STYLE EVENT WEIGHTING
@@ -141,7 +141,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     myRECOevent.weight = 1;
   }
   
-  m_allEvents.fill(myRECOevent, 1);
+  m_allEvents.fill(myRECOevent, 1, false);
   std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myRECOevent.weight <<std::endl;
 
 

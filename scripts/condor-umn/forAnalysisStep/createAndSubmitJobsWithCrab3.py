@@ -27,7 +27,10 @@ from httplib import HTTPException
 #    https://twiki.cern.ch/twiki/bin/view/CMSPublic/WorkBookMiniAOD
 globalTagsByDataset = {}
 # latest miniaod v2
+#globalTagsByDataset['RunIISummer16MiniAODv2*'] = '80X_mcRun2_asymptotic_2016_TrancheIV_v8'
 globalTagsByDataset['RunIISummer16MiniAODv3*'] = '94X_mcRun2_asymptotic_v3'
+globalTagsByDataset['suoh-CMSSW_9_4_6_patch1'] = '94X_mcRun2_asymptotic_v3'
+globalTagsByDataset['shjeon-CMSSW_9_4_6_patch1'] = '94X_mcRun2_asymptotic_v3'
 globalTagsByDataset['Run2016B-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016C-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016D-17Jul2018*'] = '94X_dataRun2_v10'
@@ -37,6 +40,8 @@ globalTagsByDataset['Run2016G-17Jul2018*'] = '94X_dataRun2_v10'
 globalTagsByDataset['Run2016H-17Jul2018*'] = '94X_dataRun2_v10'
 
 globalTagsByDataset['RunIIFall17MiniAODv2*'] = '94X_mc2017_realistic_v17'
+globalTagsByDataset['2017Run_WR_Dilep'] = '94X_mc2017_realistic_v17'
+globalTagsByDataset['2018Run_WR_Dilep'] = '102X_upgrade2018_realistic_v19'
 globalTagsByDataset['Run2017A-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017B-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017C-31Mar2018*'] = '94X_dataRun2_v11'
@@ -46,11 +51,14 @@ globalTagsByDataset['Run2017F-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017G-31Mar2018*'] = '94X_dataRun2_v11'
 globalTagsByDataset['Run2017H-31Mar2018*'] = '94X_dataRun2_v11'
 
-globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v12'
-globalTagsByDataset['Run2018A-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018B-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018C-17Sept2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
-globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v11'
+globalTagsByDataset['RunIIAutumn18MiniAOD*'] = '102X_upgrade2018_realistic_v19'
+globalTagsByDataset['Run2018A-17Sep2018*'] = '102X_dataRun2_v11'
+globalTagsByDataset['Run2018B-17Sep2018*'] = '102X_dataRun2_v11'
+globalTagsByDataset['Run2018C-17Sep2018*'] = '102X_dataRun2_v11'
+#globalTagsByDataset['Run2018A-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+#globalTagsByDataset['Run2018B-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+#globalTagsByDataset['Run2018C-17Sep2018*'] = '102X_dataRun2_Sep2018Rereco_v1'
+globalTagsByDataset['Run2018D-Prompt*']     = '102X_dataRun2_Prompt_v14'
 
 def crabSubmit(config):
     try:
@@ -182,8 +190,8 @@ shutil.copy2(options.inputList,localInputListFile)
 # check if we have a proxy
 proc = subprocess.Popen(['voms-proxy-info','--all'],stderr=subprocess.PIPE,stdout=subprocess.PIPE)
 out,err = proc.communicate()
-#print 'output----->',output
-#print 'err------>',err
+print 'output----->',out
+print 'err------>',err
 if 'Proxy not found' in err or 'timeleft  : 00:00:00' in out:
   # get a proxy
   print 'you have no valid proxy; let\'s get one via voms-proxy-init:'
@@ -212,12 +220,15 @@ config.JobType.inputFiles = []
 config.JobType.psetName    = '' # overridden per dataset
 # need to execute the user_script
 #config.JobType.scriptExe = 'user_script.sh'
-config.JobType.maxMemoryMB = 7000
+config.JobType.maxMemoryMB = 5000
+#config.JobType.maxMemoryMB = 7000
+#config.JobType.priority = 400
 config.Data.inputDataset = '' # overridden per dataset
 config.Data.inputDBS = 'global'
 config.Data.splitting = 'FileBased' #LumiBased for data
 config.Data.unitsPerJob = 1 # overridden per dataset
 config.Data.totalUnits = -1 # overridden per dataset
+config.Data.allowNonValidInputDataset = True
 # no publishing
 config.Data.publication = False
 config.Data.outputDatasetTag = 'WR' #overridden for data
@@ -259,32 +270,111 @@ with open(localInputListFile, 'r') as f:
     if '#' in split[0]: # skip comments
       continue
 
-    dataset = split[0]
-    nUnits = int(split[1]) #also used for total lumis for data
-    nUnitsPerJob = int(split[2])
-    datasetNoSlashes = dataset[1:len(dataset)].replace('/','__')
+    if("WR_datasets" in options.inputList):
+	print "Running on private signals"
+	dataset= split[0].split("/")[1]
+	print "dataset: ", dataset
+
+	InputFileList = "../../../samples/signals/" + dataset + ".txt"
+
+	config.Data.userInputFiles = open(InputFileList).readlines()
+	print "config.Data.userInputFiles: ", config.Data.userInputFiles
+    	nUnits = 20
+    	nUnitsPerJob = 1
+    	datasetName = InputFileList.split('/')[5][:-4]
+    	print "datasetName: ", datasetName
+    	thisWorkDir = workDir+'/'+datasetName
+    	isData = 'Run201' in datasetName
+    	makeDirAndCheck(thisWorkDir)
+	config.Data.outputPrimaryDataset = datasetName
+	secondaryDatasetName = split[0].split("/")[2]
+	print "secondaryDatasetName: ", secondaryDatasetName
+	outputFile = dataset
+    elif("WRtoNLtoLLJJ_2017" in options.inputList) or ("WRtoNLtoLLJJ_2018" in options.inputList):
+        print "Running on 2017 signals"
+	print "split[0]: ", split[0]
+	dataset= split[0]
+	print "options.inputList[:43]: ", options.inputList[:43]
+
+	InputFileList = options.inputList[:43] + dataset + ".txt"
+
+	signalFiles = []
+#	print "InputFileList: ", InputFileList
+	with open(InputFileList, 'r') as fSignalFile:
+	    for lineSignalFile in fSignalFile:
+#		print "lineSignalFile: ", lineSignalFile
+		if len(lineSignalFile) == 1: continue
+		signalFiles.append(lineSignalFile.split()[1])
+
+	config.Data.userInputFiles = signalFiles
+	print "len(signalFiles): ", len(signalFiles)
+	nUnits = len(signalFiles)
+        nUnitsPerJob = 1
+	datasetName = dataset
+	thisWorkDir = workDir+'/'+datasetName
+        isData = 'Run201' in datasetName
+        config.Data.outputPrimaryDataset = datasetName
+        outputFile = dataset
+	TypeOfFile = "USER"
+	primaryDatasetName = dataset
+	if("WRtoNLtoLLJJ_2017" in options.inputList):
+	    secondaryDatasetName = "2017Run_WR_Dilep"
+	else:
+	    secondaryDatasetName = "2018Run_WR_Dilep"
+
+    else:
+        print "RUNNING ON NORMAL STUFF"
+    	dataset = split[0]
+    	nUnits = int(split[1]) #also used for total lumis for data
+    	nUnitsPerJob = int(split[2])
+    	datasetNoSlashes = dataset[1:len(dataset)].replace('/','__')
     # datasetNameNoSlashes looks like SinglePhoton__Run2015D-PromptReco-v3
     # so split to just get Run2015D-PromptReco-v3
     # and use that as the outputDatasetTag to get it into the EOS path
-    primaryDatasetName = datasetNoSlashes.split('__')[0]
-    secondaryDatasetName = datasetNoSlashes.split('__')[1]
-    datasetName = datasetNoSlashes
-    datasetName = datasetName.split('__')[0]+'__'+datasetName.split('__')[1] # get rid of part after last slash
-    thisWorkDir = workDir+'/'+datasetName
-    isData = 'Run201' in datasetName
-    if not isData:
-      datasetName=datasetName.split('__')[0]
-    else:
-      config.Data.outputDatasetTag=secondaryDatasetName
+    	primaryDatasetName = datasetNoSlashes.split('__')[0]
+    	secondaryDatasetName = datasetNoSlashes.split('__')[1]
+        print "secondaryDatasetName: ", secondaryDatasetName
+	print "datasetNoSlashes.split('__'): ", datasetNoSlashes.split('__')
+	if len(datasetNoSlashes.split('__')) < 4:
+	    TypeOfFile = "NULL"
+	else:
+	    TypeOfFile = datasetNoSlashes.split('__')[3]
+    	datasetName = datasetNoSlashes
+    	datasetName = datasetName.split('__')[0]+'__'+datasetName.split('__')[1] # get rid of part after last slash
+    	print "datasetName: ", datasetName
+   	thisWorkDir = workDir+'/'+datasetName
+   	isData = 'Run201' in datasetName
+    	if not isData:
+      	    datasetName=datasetName.split('__')[0]
+    	else:
+      	    config.Data.outputDatasetTag=secondaryDatasetName
     # must pass isMC=false flag to cmsRun now (defaults to true)
+    if "USER" in TypeOfFile:
+      print "Running on Korean private samples"
+      if "WRtoNLtoLLJJ_2017" in options.inputList or "WRtoNLtoLLJJ_2018" in options.inputList:
+	config.Data.ignoreLocality = True
+	config.Site.whitelist = ['T2*']
+	privateSamples = True
+      else:
+#       privateSamples = False
+      	privateSamples = True
+     	config.Data.inputDBS = 'phys03'
+      	config.Data.ignoreLocality = True
+      	config.Site.whitelist = ['T2*']
+    else: privateSamples = False
+
+    if 'DYJets' in primaryDatasetName: checkZ = True
+    else: checkZ = False
+
     if isData:
+#      config.JobType.priority = 500
       config.JobType.pyCfgParams = ['isMC=False']
       if '2016' in datasetName:
-      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_271036-284044_13TeV_23Sep2016ReReco_Collisions16_JSON.txt'
+      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_271036-284044_13TeV_ReReco_07Aug2017_Collisions16_JSON.txt'
       elif '2017' in datasetName:
      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_294927-306462_13TeV_EOY2017ReReco_Collisions17_JSON.txt'
       elif '2018' in datasetName:
-      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_314472-325175_13TeV_PromptReco_Collisions18_JSON.txt'
+      	options.jsonFile = '/uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/samples/data/Cert_314472-325175_13TeV_17SeptEarlyReReco2018ABC_PromptEraD_Collisions18_JSON.txt'
     #Handle the ext1 vs non ext case specially
     if not isData:
       isAMCATNLO = 'amcatnlo' in datasetName
@@ -297,7 +387,7 @@ with open(localInputListFile, 'r') as f:
       config.Data.outputDatasetTag='WR_ext'+extN
     #NOT CURRENTLY USED IN WR ANALYSIS
     #if options.doFast is not None:
-    if options.doFast: 
+    if options.doFast == True: 
         print "Running condensed analysis"
         if isData:
             config.JobType.pyCfgParams = ['doFast=True','isMC=False']
@@ -308,36 +398,42 @@ with open(localInputListFile, 'r') as f:
     if 'backup' in dataset:
       datasetName=datasetName+'_backup'
       config.Data.outputDatasetTag='LQ_backup'
-    config.Data.inputDataset = dataset
-    #print 'make dir:',thisWorkDir
-    makeDirAndCheck(thisWorkDir)
-    outputFileNames = []
-    outputFileNames.append(dataset[1:dataset.find('_Tune')])
-    outputFileNames.append(dataset[1:dataset.find('_13TeV')])
-    outputFileNames.append(dataset.split('/')[1])
+    if("WR_datasets" not in options.inputList):
+      makeDirAndCheck(thisWorkDir)
+      outputFileNames = []
+      if("WRtoNLtoLLJJ_2017" in options.inputList) or ("WRtoNLtoLLJJ_2018" in options.inputList):
+	outputFileNames.append(dataset)
+	print "WRtoNLtoLLJJ_2017"
+      else:
+        print "inputDataset: ", dataset
+        config.Data.inputDataset = dataset
+    	outputFileNames.append(dataset[1:dataset.find('_Tune')])
+    	outputFileNames.append(dataset[1:dataset.find('_13TeV')])
+    	outputFileNames.append(dataset.split('/')[1])
+	print "outputFileNames: ", outputFileNames
     # get the one with the shortest filename
-    outputFile = sorted(outputFileNames, key=len)[0]
-    if isData:
-      outputFile = outputFile + '_' + config.Data.outputDatasetTag 
-    if 'ext' in dataset:
-      extN = dataset[dataset.find('_ext')+4]
-      outputFile = outputFile+'_ext'+extN
-    if 'backup' in dataset:
-      outputFile = outputFile+'_backup'
-    storagePath=config.Data.outLFNDirBase+primaryDatasetName+'/'+config.Data.outputDatasetTag+'/'+'YYMMDD_hhmmss/0000/'+outputFile+'_999.root'
+    	outputFile = sorted(outputFileNames, key=len)[0]
+    	if isData:
+      	    outputFile = outputFile + '_' + config.Data.outputDatasetTag 
+    	if 'ext' in dataset:
+      	    extN = dataset[dataset.find('_ext')+4]
+      	    outputFile = outputFile+'_ext'+extN
+    	if 'backup' in dataset:
+    	    outputFile = outputFile+'_backup'
+    	storagePath=config.Data.outLFNDirBase+primaryDatasetName+'/'+config.Data.outputDatasetTag+'/'+'YYMMDD_hhmmss/0000/'+outputFile+'_999.root'
     #print 'will store (example):',storagePath
     #print '\twhich has length:',len(storagePath)
-    if len(storagePath) > 255:
-      print
-      print 'we might have a problem with output path lengths too long (if we want to run crab over these).'
-      print 'example output will look like:'
-      print storagePath
-      print 'which has length:',len(storagePath)
-      print 'cowardly refusing to submit the jobs; exiting'
-      exit(-2)
-    else:
-      print
-      print 'will use storage path like:',storagePath
+    	if len(storagePath) > 255:
+   	   print
+    	   print 'we might have a problem with output path lengths too long (if we want to run crab over these).'
+   	   print 'example output will look like:'
+   	   print storagePath
+   	   print 'which has length:',len(storagePath)
+   	   print 'cowardly refusing to submit the jobs; exiting'
+   	   exit(-2)
+   	else:
+   	   print
+   	   print 'will use storage path like:',storagePath
 
     if not os.path.isfile(options.cmsswCfg):
       # try relative path
@@ -360,39 +456,93 @@ with open(localInputListFile, 'r') as f:
     # for MC it will look like DYJetsToLL_M-100to200_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8__RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     # so split to just get RunIISpring15MiniAODv2-74X_mcRun2_asymptotic_v2-v1
     for datasetKey,tag in globalTagsByDataset.iteritems():
+#      print "Key:  "+datasetKey
+#      print "Name: "+secondaryDatasetName
       if re.match(re.compile(datasetKey),secondaryDatasetName):
         globalTag = tag
         config.JobType.pyCfgParams = ['reco=%s'%(tag.split('_')[0])]
 	print "tag: ", tag
-	print "in for loop"
-	if isData:
+ 	print "options.doFast: ", options.doFast
+	print "isData: ", isData
+	print "privateSamples: ", privateSamples 
+        if options.doFast:
+          if isData:
+                print "isData"
+                if '94X_dataRun2_v10' in tag:
+                        print "in 2016"
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=False','checkZ=False']
+                elif '94X_dataRun2_v11' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=False','checkZ=False']
+                elif '102X' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=False','checkZ=False']
+          elif isAMCATNLO:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
+                elif '102X_upgrade2018_realistic_v19' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','ISmcatnlo=True','isMC=True','isSignal=False','checkZ=False']
+          else:
+	     if privateSamples:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isSignal=True','isMC=True','checkZ=False']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isSignal=True','isMC=True','checkZ=False']
+                elif '102X_upgrade2018_realistic_v19' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isSignal=True','isMC=True','checkZ=False']
+	     elif checkZ:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True','checkZ=True']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True','checkZ=True']
+                elif '102X_upgrade2018_realistic_v19' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True','checkZ=True']
+	     else:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2016','isMC=True','checkZ=False']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2017','isMC=True','checkZ=False']
+                elif '102X_upgrade2018_realistic_v19' in tag:
+                        config.JobType.pyCfgParams = ['doFast=True','era=2018','isMC=True','checkZ=False']
+
+	else:
+	  if isData:
 		print "isData"
 		if '94X_dataRun2_v10' in tag:
 			print "in 2016"
-			config.JobType.pyCfgParams = ['era=2016','isMC=False']
+			config.JobType.pyCfgParams = ['era=2016','isMC=False','checkZ=False']
         	elif '94X_dataRun2_v11' in tag:
-			config.JobType.pyCfgParams = ['era=2017','isMC=False']
+			config.JobType.pyCfgParams = ['era=2017','isMC=False','checkZ=False']
 		elif '102X' in tag:
-			config.JobType.pyCfgParams = ['era=2018','isMC=False']
-	elif isAMCATNLO:
+			config.JobType.pyCfgParams = ['era=2018','isMC=False','checkZ=False']
+	  elif isAMCATNLO:
 		if '94X_mcRun2_asymptotic_v3' in tag:
                         config.JobType.pyCfgParams = ['era=2016','ISmcatnlo=True']
                 elif '94X_mc2017_realistic_v17' in tag:
                         config.JobType.pyCfgParams = ['era=2017','ISmcatnlo=True']
                 elif '102X_upgrade2018_realistic_v12' in tag:
                         config.JobType.pyCfgParams = ['era=2018','ISmcatnlo=True']
-	else:
+	  else:
+	     if privateSamples:
                 if '94X_mcRun2_asymptotic_v3' in tag:
-                        config.JobType.pyCfgParams = ['era=2016']
+                        config.JobType.pyCfgParams = ['era=2016','isSignal=True','isMC=True']
                 elif '94X_mc2017_realistic_v17' in tag:
-                        config.JobType.pyCfgParams = ['era=2017']
+                        config.JobType.pyCfgParams = ['era=2017','isSignal=True','isMC=True']
                 elif '102X_upgrade2018_realistic_v12' in tag:
-                        config.JobType.pyCfgParams = ['era=2018']
+                        config.JobType.pyCfgParams = ['era=2018','isSignal=True','isMC=True']
+	     else:
+                if '94X_mcRun2_asymptotic_v3' in tag:
+                        config.JobType.pyCfgParams = ['era=2016','isMC=True']
+                elif '94X_mc2017_realistic_v17' in tag:
+                        config.JobType.pyCfgParams = ['era=2017','isMC=True']
+                elif '102X_upgrade2018_realistic_v12' in tag:
+                        config.JobType.pyCfgParams = ['era=2018','isMC=True']
     if globalTag=='':
       print 'WARNING: Using default global tag as specified in template cfg (are you sure it\'s the right one?)'
     else:
       print 'INFO: Overriding global tag to:',globalTag,'for dataset:',datasetName
 
+    print "config.JobType.pyCfgParams: ", config.JobType.pyCfgParams
     # substitute the output filename at the end
     config_txt += '\nprocess.TFileService.fileName = "'+outputFile+'.root"\n'
     # substitute the global tag name at the end if needed, and feed it into rootTupleEvent

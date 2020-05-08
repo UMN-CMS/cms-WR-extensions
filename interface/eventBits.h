@@ -25,6 +25,7 @@ public:
   int run;
   int lumi;
   int event;
+  int m_flavor;
   double weight;
   double FSBweight;
   double FSBweight_E;
@@ -36,6 +37,7 @@ public:
   int RECOcategory;
 
   bool isMC;
+  bool hasPVertex;
 
   std::string outputTag;  //LABELLING THE DATA
 
@@ -70,6 +72,7 @@ public:
   int JetContainingBothDaughters;
   double secondGENMuonRECOjetDR;
   double secondRECOMuonRECOjetDR;
+  int nMuonOutSideJetFSB;
 
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs;
   std::vector<std::pair<const baconhep::TAddJet*, const pat::Electron*>> myElectronJetPairs_JECUp;
@@ -91,8 +94,6 @@ public:
 
   std::vector<const pat::Jet*>      myJetCandsHighPt;
   std::vector<const pat::Jet*>      myJetCands;
-  std::vector<const pat::Jet*>      myResCandJets;
-  std::vector<const pat::Jet*>      myResFSBCandJets;
   std::vector<const pat::Electron*> myElectronCandsHighPt200;
   std::vector<const pat::Electron*> myElectronCandsHighPt150;
   std::vector<const pat::Electron*> myElectronCandsHighPt100;
@@ -101,8 +102,21 @@ public:
   std::vector<const pat::Electron*> myElectronCandsHighPt200_noISO;
   std::vector<const pat::Muon*>     myMuonCandsHighPt;
   std::vector<const pat::Muon*>     resolvedANAMuons;
+  std::vector<const pat::Electron*> resolvedANAElectrons;
   std::vector<const pat::Muon*>     myMuonCands;
   const pat::MET*                   myMET;
+
+  std::vector<const baconhep::TAddJet*>      myResCandJets;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JECUp;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JECDown;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JERUp;
+  std::vector<const baconhep::TAddJet*>      myResCandJets_JERDown;
+
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JECUp;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JECDown;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JERUp;
+  std::vector<const baconhep::TAddJet*>      myResFSBCandJets_JERDown;
 
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt;
   std::vector<const baconhep::TAddJet*>   myAddJetCandsHighPt_JECUp;
@@ -118,6 +132,12 @@ public:
 
   const pat::Muon*                  resFSBMuon;
   const pat::Electron*              resFSBElec;
+
+  std::vector<double> leadResMuonScale;
+  std::vector<double> secondResMuonScale;
+  std::vector<double> leadBoostMuonScale;
+  std::vector<double> secondBoostMuonScale;
+  std::vector<double> leadFSBMuonScale;
   
 
   const pat::Electron*              myElectronCand;
@@ -130,9 +150,13 @@ public:
 
   const reco::GenParticle*          firstMuon;
   const reco::GenParticle*          secondMuon;
+  const reco::GenParticle*          firstElectron;
+  const reco::GenParticle*          secondElectron;
 
   const reco::Candidate*            NR;
   const reco::Candidate*            WR;
+
+  const reco::GenParticle*          myZ;
 
   const reco::GenParticle*          genSecondMuon;
 
@@ -142,12 +166,15 @@ public:
 
   math::XYZTLorentzVector     daughterClusterVector;
 
+  bool muonTrigPassBit;
+
   int secondInDecayMuon;
 
   //EVENT VALUES
   int neutrinoDecays;
   int cutProgress;
   int ResCutProgress;
+  int ResElecCutProgress;
   int FSBcutProgress;
   int ResFSBCutProgress;
   bool passesWR2016;
@@ -160,6 +187,8 @@ public:
 
   int    muonCands;
   int    NresolvedANAMuonCands;
+  int    NresolvedANAElectronCands;
+  int    NresolvedANAFSBLeptonCands;
   int    electronCands50;
   int    electronCands100;
   int    electronCands150;
@@ -183,7 +212,14 @@ public:
   int    nHighPtMuonsOutsideJet_JERUp;
   int    nHighPtMuonsOutsideJet_JERDown;
 
+  double NRenergy;
+
+  double eventNumber;
+  double lumiSection;
+
   int    nSecondElectronCands;
+
+  int	 nResFSBMuons;
 
   int    myEventFlavor  ;
 
@@ -194,6 +230,10 @@ public:
   float  puWeight	;
   float  puWeight_Up    ;
   float  puWeight_Down  ;
+
+  double _prefiringweight;
+  double _prefiringweightup;
+  double _prefiringweightdown;
 
   double Muon_HighPtID_Weight;
   double Muon_HighPtID_WeightUp;
@@ -215,6 +255,14 @@ public:
   double Muon_LooseTkIso2nd_WeightUp;
   double Muon_LooseTkIso2nd_WeightDown;
 
+  double Muon_RECO_Weight;
+  double Muon_RECO_WeightUp;
+  double Muon_RECO_WeightDown;
+
+  double Muon_RECO2nd_Weight;
+  double Muon_RECO2nd_WeightUp;
+  double Muon_RECO2nd_WeightDown;
+
   double Muon_Trig_Weight;
   double Muon_Trig_WeightUp;
   double Muon_Trig_WeightDown;
@@ -227,6 +275,18 @@ public:
   double egamma_SF      ;
   double egamma_SF_Up   ;
   double egamma_SF_Down ;
+  double egamma_SF_HLT      ;
+  double egamma_SF_HLT_Up   ;
+  double egamma_SF_HLT_Down ;
+
+  double Zweight;
+  double Zweight_Up;
+  double Zweight_Down;
+
+  std::vector<double>   PDFWeights_Scale;
+  std::vector<double> PDFWeights_Error;
+  std::vector<double> PDFWeights_AlphaS;
+
 
   double HEEP_SF_noISO        ;
   double HEEP_SF_E_noISO      ;
@@ -235,7 +295,19 @@ public:
 
   double myGenLSF;
 
+  double wrShellMass;
+
+  //GEN Z
+  double genZmass;
+  double genZpt;
+
+  bool boostedRECOmassAbove600;
+  bool boostedFSBRECOmassAbove600;
+
   //RESOLVED ANA   
+  bool resolvedRECOmassAbove600;
+  bool resolvedFSBRECOmassAbove600;
+
   double resJetDR;
   double resolvedRECOmass;
   double resSubleadMuJet1dR;
@@ -243,6 +315,13 @@ public:
   double resLeadMuJet1dR;
   double resLeadMuJet2dR;
 
+  double resolvedRECOmass_MuResolUp;
+  double resolvedRECOmass_MuResolDown;
+
+  double resolvedRECOmass_JECUp;
+  double resolvedRECOmass_JECDown;
+  double resolvedRECOmass_JERUp;
+  double resolvedRECOmass_JERDown;
 
   double resMLL;
   double resolvedSubleadMuPt;
@@ -254,12 +333,19 @@ public:
   double resFSBMuonJet1dR;
   double resFSBMuonJet2dR;
 
+  double resolvedFSBRECOmass_JECUp;
+  double resolvedFSBRECOmass_JECDown;
+  double resolvedFSBRECOmass_JERUp;
+  double resolvedFSBRECOmass_JERDown;
+  double resolvedFSBRECOmass_MuResolUp;
+  double resolvedFSBRECOmass_MuResolDown;
 
   double resFSBElec_pt ;
   double resFSBElec_phi;
   double resFSBElec_eta;
 
   double resFSBMuon_pt ;
+  double resFSBMuon_p ;
   double resFSBMuon_phi;
   double resFSBMuon_eta;
 
@@ -415,6 +501,13 @@ public:
   double leadAK8JetMuonPhiVal_JECUp;
   double leadAK8JetMuonPhiVal_JECDown;
 
+  double leadAK8JetMuonMassVal_MuResolUp;
+  double leadAK8JetMuonMassVal_MuResolDown;
+  double leadAK8JetMuonMassVal_noLSF_MuResolUp;
+  double leadAK8JetMuonMassVal_noLSF_MuResolDown;
+  double leadAK8JetElectronMassVal_MuResolUp;
+  double leadAK8JetElectronMassVal_MuResolDown;
+
   double leadAK8JetMuonMassVal_JERUp;
   double leadAK8JetMuonMassVal_JERDown;
   double leadAK8JetMuonMassVal_noLSF_JERUp;
@@ -476,6 +569,8 @@ public:
   double selectedJetTau21;
   double selectedJetLSF3;
   double selectedJetMaxSubJetCSV;
+  double selectedJetEnergy;
+  double selectedJetEnergyUncorr;
 
   double mydRlsfLep_subleadMuon;
 

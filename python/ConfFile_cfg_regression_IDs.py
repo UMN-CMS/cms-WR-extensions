@@ -41,6 +41,21 @@ options.register( 'era',
                   VarParsing.multiplicity.singleton,
                   VarParsing.varType.string,
                   "Year of Run II")
+
+options.register( 'isSignal',
+                  False,
+                  VarParsing.multiplicity.singleton,
+                  VarParsing.varType.bool,
+                  "True when running over signal MC samples"
+               )
+
+options.register( 'checkZ',
+		  True,
+		  VarParsing.multiplicity.singleton,
+		  VarParsing.varType.bool,
+		  "True when running over Drell-Yan MC samples"
+	       )
+
 options.parseArguments()
 
 #LOCAL VARIABLE DEFINITIONS
@@ -64,13 +79,31 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(200) )
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
+#import FWCore.Utilities.FileUtils as FileUtils
+#mylist = FileUtils.loadListFromFile ('WRtoNLtoLLJJ_WR5000_N1800_5.txt')
+#readFiles = cms.untracked.vstring( *mylist)
+
+#mylistEvents = FileUtils.loadListFromFile ('events_TTbarLeptonic.txt')
+#mylistEvents = FileUtils.loadListFromFile ('events_WR4000_N100.txt')
+#eventsToProcess = cms.untracked.vstring( *mylistEvents)
 
 process.source = cms.Source ("PoolSource",
+#          fileNames = readFiles,
 	  fileNames = cms.untracked.vstring (options.inputFiles),
- 	  #skipEvents = cms.untracked.uint32(1200)
+ #         eventsToProcess = cms.untracked.VEventRange(eventsToProcess),
+#	  lumisToProcess = cms.untracked.VLuminosityBlockRange("1:342735-1:342740" )
+#	  e = cms.EventID(1,9946613, 52351) 
+# 	  skipEvents = cms.untracked.uint32(27000)
 )
+
+#import FWCore.ParameterSet.Config as cms
+#import PhysicsTools.PythonAnalysis.LumiList as LumiList
+#myLumis = LumiList.LumiList(filename = 'DYevents.json').getCMSSWString().split(',')
+#print "myLumis: ", myLumis
+#process.source.lumisToProcess = cms.untracked.VLuminosityBlockRange()
+#process.source.lumisToProcess.extend(myLumis)
 
 process.options = cms.untracked.PSet(
     SkipEvent = cms.untracked.vstring('ProductNotFound')
@@ -122,15 +155,25 @@ process.tuneIDMuons = cms.EDFilter("PATMuonSelector",
 from ExoAnalysis.cmsWRextensions.tools import addHEEPV70ElesMiniAOD
 addHEEPV70ElesMiniAOD(process,useStdName=False)
 
-from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
+#from JMEAnalysis.JetToolbox.jetToolbox_cff import jetToolbox
 #jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])
-jetToolbox( process, 'ak8', 'jetSequence', 'out', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addSoftDropSubjets=True, addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])  
+#jetToolbox( process, 'ak8', 'jetSequence', 'noOutput', PUMethod='Puppi', miniAOD=True, runOnMC=options.isMC, addSoftDrop=True , addSoftDropSubjets=True, addNsub=True, JETCorrPayload='AK8PFPuppi', JETCorrLevels=['L1FastJet','L2Relative', 'L3Absolute'])  
 
 process.options.allowUnscheduled = cms.untracked.bool(True)
 ##this is our example analysis module reading the results, you will have your own module
 #process.heepIdExample = cms.EDAnalyzer("HEEPV70PATExample",
 #                                       eles=cms.InputTag("slimmedElectrons"),
 #                                       )
+process.load("SimGeneral.HepPDTESSource.pythiapdt_cfi")
+process.printTree = cms.EDAnalyzer("ParticleTreeDrawer",
+                                   src = cms.InputTag("prunedGenParticles"),    
+                                   printP4 = cms.untracked.bool(False),
+                                   printPtEtaPhi = cms.untracked.bool(False),
+                                   printVertex = cms.untracked.bool(False),
+                                   printStatus = cms.untracked.bool(False),
+                                   printIndex = cms.untracked.bool(True),
+#                                   status = cms.untracked.vint32( 3 )
+                                   )
 
 #process.p = cms.Path(
 #    process.heepSequence*
@@ -140,12 +183,16 @@ process.options.allowUnscheduled = cms.untracked.bool(True)
 process.muonSelectionSeq = cms.Sequence(cms.ignore(process.badGlobalMuonTagger) * cms.ignore(process.cloneGlobalMuonTagger) * process.removeBadAndCloneGlobalMuons * process.tunePMuons * process.tuneIDMuons)
 
 muonPaths = cms.vstring("HLT_Mu50_v", "HLT_TkMu50_v")
+electronPaths = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Photon175_v")
 if options.era == '2016':
 	muonPaths = cms.vstring("HLT_Mu50_v", "HLT_TkMu50_v")
+	electronPaths = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v")
 elif options.era == '2017':
-	muonPaths = cms.vstring("HLT_Mu50_v")
+	muonPaths = cms.vstring("HLT_Mu50_v", "HLT_OldMu100", "HLT_TkMu100")
+	electronPaths = cms.vstring("HLT_Ele35_WPTight_Gsf_v","HLT_Photon200_v","HLT_Ele115_CaloIdVT_GsfTrkIdT_v")
 elif options.era == '2018':
 	muonPaths = cms.vstring("HLT_Mu50", "HLT_OldMu100", "HLT_TkMu100")
+	electronPaths = cms.vstring("HLT_Ele32WPTight_Gsf_v","HLT_Photon200_v","HLT_Ele115_CaloIdVT_GsfTrkIdT_v")
 
 process.analysis = cms.EDAnalyzer('cmsWRextension',
                               genJets = cms.InputTag("slimmedGenJets"),
@@ -160,8 +207,10 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               recoJets = cms.InputTag("slimmedJets"),
                               AK4recoCHSJets = cms.InputTag("slimmedJets"),
                               AK8recoCHSJets = cms.InputTag("slimmedJetsAK8"),
-                              AK8recoPUPPIJets = cms.InputTag("selectedPatJetsAK8PFPuppi"),
-                              subJetName         = cms.InputTag('selectedPatJetsAK8PFPuppiSoftDropPacked'),
+                              AK8recoPUPPIJets = cms.InputTag("slimmedJetsAK8"),
+#                              AK8recoPUPPIJets = cms.InputTag("selectedPatJetsAK8PFPuppi"),
+                              subJetName         = cms.InputTag('slimmedJetsAK8PFPuppiSoftDropPacked:SubJets'),
+#                              subJetName         = cms.InputTag('selectedPatJetsAK8PFPuppiSoftDropPacked'),
                               #AK8recoPUPPIJets = cms.InputTag("AK8PFJetsPuppi"),
           		              jettinessPUPPI  = cms.untracked.string("NjettinessAK8Puppi"),
 			                  jecUncName  = (cms.untracked.string('AK8Puppi')),
@@ -173,15 +222,22 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               trigResults = cms.InputTag("TriggerResults","","HLT"),
                               trigObjs = cms.InputTag("selectedPatTrigger"),
                               muonPathsToPass = muonPaths,
+			      LHEEventProduct = cms.untracked.InputTag("source"),
+			      ScaleIDRange = cms.untracked.vint32(1001,1045),
+#                              PDFErrorIDRange = cms.untracked.vint32(1615,1715),
+                              PDFErrorIDRange = cms.untracked.vint32(1046,1146),
+#			      PDFErrorIDRange = cms.untracked.vint32(2009,2109),
+			      PDFAlphaSIDRange = cms.untracked.vint32(1147,1148),
+			      PDFAlphaSScaleValue = cms.untracked.vdouble(0.116,0.120),
                               muonFiltersToPass = cms.vstring(""),
-			                  #electronPathsToPass = cms.vstring("HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v"),
-			                  electronPathsToPass = cms.vstring("HLT_Ele27_WPTight_Gsf_v", "HLT_Ele115_CaloIdVT_GsfTrkIdT_v", "HLT_Photon175_v"),
-			                  electronFiltersToPass = cms.vstring(""),
+			      electronPathsToPass = electronPaths,
+			      electronFiltersToPass = cms.vstring(""),
                               doTrig = cms.untracked.bool(True),
                               wantHardProcessMuons = cms.untracked.bool(True),
                               doGen = cms.untracked.bool(True),
-                              isSignal = cms.untracked.bool(False),
+                              isSignal = cms.untracked.bool(options.isSignal),
                               doFast = cms.untracked.bool(options.doFast),
+                              checkZ = cms.untracked.bool(options.checkZ),
                               isMC = cms.untracked.bool(options.isMC),
 			                  amcatnlo = cms.untracked.bool(options.ISmcatnlo),
                               #MCL = cms.untracked.double(100),
@@ -204,5 +260,30 @@ process.heepIDVarValueMaps.elesMiniAOD  = 'selectedElectrons'
 process.electronMVAValueMapProducer.srcMiniAOD = cms.InputTag('selectedElectrons')
 process.heepElectrons.src = cms.InputTag('selectedElectrons')
 
+####EE L1 Prefiring Correction ####
+from PhysicsTools.PatUtils.l1ECALPrefiringWeightProducer_cfi import l1ECALPrefiringWeightProducer
+if options.era == '2016':
+  process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
+      DataEra = cms.string("2016BtoH"),
+      UseJetEMPt = cms.bool(True),
+      PrefiringRateSystematicUncty = cms.double(0.2),
+      SkipWarnings = False)
+elif options.era == '2017':
+  process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
+      DataEra = cms.string("2017BtoF"), #Use 2016BtoH for 2016
+      UseJetEMPt = cms.bool(True),
+      PrefiringRateSystematicUncty = cms.double(0.2),
+      SkipWarnings = False)
+elif options.era == '2018':
+  process.prefiringweight = l1ECALPrefiringWeightProducer.clone(
+      DataEra = cms.string("2018AtoD"), #Use 2016BtoH for 2016
+      UseJetEMPt = cms.bool(True),
+      PrefiringRateSystematicUncty = cms.double(0.2),
+      SkipWarnings = False)
+
+
+
+#process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
+#                           * process.muonSelectionSeq * process.analysis )#* process.printTree)
 process.totalPath = cms.Path(process.selectedElectrons * process.heepSequence
-                           * process.muonSelectionSeq * process.analysis)
+                           * process.muonSelectionSeq * process.prefiringweight * process.analysis )#* process.printTree)

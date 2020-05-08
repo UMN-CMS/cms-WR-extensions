@@ -14,6 +14,7 @@
 //ROOT CLASSES
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TTree.h"
 #include "TObjString.h"
 //C++ CLASSES
 #include <iostream>
@@ -25,30 +26,46 @@
 class eventHistos {
   public:
   eventHistos();
-  void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, int FSB);
-  void fill(eventBits& event, int systematicRegion);
+  void book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, int FSB, bool isSignal);
+  void fill(eventBits& event, int systematicRegion, bool isSignal);
 
 
 
   private:
   void fillGen(eventBits& event);
   void fillReco(eventBits& event);
-  void fillWeight(eventBits& event);
+  void fillWeight(eventBits& event, int systematicRegion, bool isSignal);
   void fillCutProgress(eventBits& event);
-  void fillCombine_Nominal(eventBits& event);
+  void fillCombine_Nominal(eventBits& event, bool isSignal);
   void fillCombine_JECUp(eventBits& event);
   void fillCombine_JECDown(eventBits& event);
   void fillCombine_JERUp(eventBits& event);
   void fillCombine_JERDown(eventBits& event);
   void fillCombine_PUUp(eventBits& event);
   void fillCombine_PUDown(eventBits& event);
-  void fillCombine_MuHPtUp(eventBits& event);
-  void fillCombine_MuHPtDown(eventBits& event);
+  void fillCombine_MuBoostIDUp(eventBits& event);
+  void fillCombine_MuBoostIDDown(eventBits& event);
   void fillCombine_MuLUp(eventBits& event);
   void fillCombine_MuLDown(eventBits& event);
   void fillCombine_HEEPUp(eventBits& event);
   void fillCombine_HEEPDown(eventBits& event);
- 
+  void fillCombine_MuTrigUp(eventBits& event);
+  void fillCombine_MuTrigDown(eventBits& event);
+  void fillCombine_MuResolUp(eventBits& event);
+  void fillCombine_MuResolDown(eventBits& event);
+  void fillCombine_MuResIDUp(eventBits& event);
+  void fillCombine_MuResIDDown(eventBits& event);
+  void fillCombine_AK4JECUp(eventBits& event);
+  void fillCombine_AK4JECDown(eventBits& event);
+  void fillCombine_AK4JERUp(eventBits& event);
+  void fillCombine_AK4JERDown(eventBits& event);
+  void fillCombine_FSBResMuIDUp(eventBits& event);
+  void fillCombine_FSBResMuIDDown(eventBits& event);
+  void fillCombine_ElHLTUp(eventBits& event);
+  void fillCombine_ElHLTDown(eventBits& event);
+  void fillCombine_ZweightUp(eventBits& event);
+  void fillCombine_ZweightDown(eventBits& event);
+
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
   int m_FSB;
@@ -87,9 +104,16 @@ class eventHistos {
 
   TH1D* m_eventFlavor       ;
 
+  TH1D* m_wrShellMass;
+
   TH1D* m_cutProgress;
+  TH1D* m_cutProgressNoWeight;
   TH1D* m_ResCutProgress;
+  TH1D* m_ResCutProgressNoWeight;
+  TH1D* m_ResFSBCutProgress;
+  TH1D* m_ResFSBCutProgressNoWeight;
   TH1D* m_FSBcutProgress;
+  TH1D* m_FSBcutProgressNoWeight;
 
   TH1D* m_parton1Et;
   TH1D* m_parton2Et;
@@ -124,6 +148,7 @@ class eventHistos {
   TH1D* m_dRlsfLep_subleadMuon;
   TH2D* m_recoLSF_v_selJetPt;
   TH2D* m_genLSF_v_recoLSF;
+  TH2D* m_genE_v_recoE;
   TH2D* m_lsfLepDR_v_recoLSF;
   TH2D* m_lsfLepDR_v_selJetPt;
 
@@ -180,6 +205,9 @@ class eventHistos {
   TH1D* m_leadAK8JetElectronMass_HEEPUp;
   TH1D* m_leadAK8JetElectronMass_HEEPDown;
 
+  TH1D* m_leadAK8JetElectronMass_ElHLTUp;
+  TH1D* m_leadAK8JetElectronMass_ElHLTDown;
+
   TH1D* m_leadAK8JetMuonMass_JECUp;
   TH1D* m_leadAK8JetMuonMass_JECDown;
   TH1D* m_leadAK8JetMuonMass_noLSF_JECUp;
@@ -195,15 +223,59 @@ class eventHistos {
   TH1D* m_leadAK8JetMuonMass_noLSF_PUUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_PUDown;
 
-  TH1D* m_leadAK8JetMuonMass_MuHPtUp;
-  TH1D* m_leadAK8JetMuonMass_MuHPtDown;
-  TH1D* m_leadAK8JetMuonMass_noLSF_MuHPtUp;
-  TH1D* m_leadAK8JetMuonMass_noLSF_MuHPtDown;
+  TH1D* m_leadAK8JetMuonMass_MuIDUp;
+  TH1D* m_leadAK8JetMuonMass_MuIDDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIDUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIDDown;
 
   TH1D* m_leadAK8JetMuonMass_MuLUp;
   TH1D* m_leadAK8JetMuonMass_MuLDown;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuLUp;
   TH1D* m_leadAK8JetMuonMass_noLSF_MuLDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuIsoUp;
+  TH1D* m_leadAK8JetMuonMass_MuIsoDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIsoUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuIsoDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuTrigUp;
+  TH1D* m_leadAK8JetMuonMass_MuTrigDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuTrigUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuTrigDown;
+
+  TH1D* m_leadAK8JetMuonMass_ZweightUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_ZweightUp;
+  TH1D* m_resolvedRECOmass_ZweightUp;
+  TH1D* m_leadAK8JetElectronMass_ZweightUp;
+  TH1D* m_resolvedFSBRECOmass_ZweightUp;
+
+  TH1D* m_leadAK8JetMuonMass_ZweightDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_ZweightDown;
+  TH1D* m_resolvedRECOmass_ZweightDown;
+  TH1D* m_leadAK8JetElectronMass_ZweightDown;
+  TH1D* m_resolvedFSBRECOmass_ZweightDown;
+
+  TH1D* m_leadAK8JetMuonMass_MuResolUp;
+  TH1D* m_leadAK8JetMuonMass_MuResolDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuResolUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_MuResolDown;
+  TH1D* m_leadAK8JetElectronMass_MuResolUp;
+  TH1D* m_leadAK8JetElectronMass_MuResolDown;
+
+  TH1D* m_resolvedRECOmass_MuResIsoUp;
+  TH1D* m_resolvedRECOmass_MuResIsoDown;
+  TH1D* m_resolvedRECOmass_MuResIDUp;
+  TH1D* m_resolvedRECOmass_MuResIDDown;
+  TH1D* m_resolvedRECOmass_MuTrigUp;
+  TH1D* m_resolvedRECOmass_MuTrigDown;
+  TH1D* m_resolvedRECOmass_PUUp;
+  TH1D* m_resolvedRECOmass_PUDown;
+  TH1D* m_resolvedRECOmass_MuResolUp;
+  TH1D* m_resolvedRECOmass_MuResolDown;
+  TH1D* m_resolvedRECOmass_JECUp;
+  TH1D* m_resolvedRECOmass_JECDown;
+  TH1D* m_resolvedRECOmass_JERUp;
+  TH1D* m_resolvedRECOmass_JERDown;
 
   TH1D* m_leadSubleadingJetsMuonsPt ;
   TH1D* m_leadSubleadingAK8JetsMuonsPt ;
@@ -257,6 +329,10 @@ class eventHistos {
   TH1D* m_selectedJetMaxDRGenDaughters;
   TH1D* m_selectedJetLSF3;
   TH1D* m_selectedJetMaxSubJetCSV;
+  TH1D* m_selectedJetEnergy;
+  TH1D* m_selectedJetEnergyUncorr;
+
+  TH1D* m_NRenergy;
 
   TH1D* m_DrDaughters;
   TH1D* m_nWRDaughters;
@@ -305,6 +381,10 @@ class eventHistos {
   TH1D* m_subleadMuon_selMuonPt;
 
   TH1D* m_dRmuon2;
+  //
+  TH1D* m_genZmass;
+  TH1D* m_genZpt;
+  TH2D* m_genZptVSreco;
   //RESOLVED ANA   
   TH1D* m_resJetDR;
   TH1D* m_resolvedRECOmass;
@@ -321,6 +401,10 @@ class eventHistos {
   TH1D* m_resMLL;
   TH1D* m_resolvedSubleadMuPt;
 
+  TTree* tree_evtNumVSlumiSec;
+  TVectorT<double>* m_evtNum;
+  TH1D* m_lumiSec;
+
   TH1D* m_resFSBJetDR;
   TH1D* m_resolvedFSBRECOmass; 
   TH1D* m_resFSBElecJet1dR;
@@ -328,6 +412,22 @@ class eventHistos {
   TH1D* m_resFSBMuonJet1dR;
   TH1D* m_resFSBMuonJet2dR;
 
+  TH1D* m_resolvedFSBRECOmass_JECUp;
+  TH1D* m_resolvedFSBRECOmass_JECDown;
+  TH1D* m_resolvedFSBRECOmass_JERUp;
+  TH1D* m_resolvedFSBRECOmass_JERDown;
+  TH1D* m_resolvedFSBRECOmass_PUUp;
+  TH1D* m_resolvedFSBRECOmass_PUDown;
+  TH1D* m_resolvedFSBRECOmass_MuIDUp;
+  TH1D* m_resolvedFSBRECOmass_MuIDDown;
+  TH1D* m_resolvedFSBRECOmass_MuIsoUp;
+  TH1D* m_resolvedFSBRECOmass_MuIsoDown;
+  TH1D* m_resolvedFSBRECOmass_HEEPUp;
+  TH1D* m_resolvedFSBRECOmass_HEEPDown;
+  TH1D* m_resolvedFSBRECOmass_MuTrigUp;
+  TH1D* m_resolvedFSBRECOmass_MuTrigDown;
+  TH1D* m_resolvedFSBRECOmass_MuResolUp;
+  TH1D* m_resolvedFSBRECOmass_MuResolDown;
 
   TH1D* m_resFSBElec_pt ;
   TH1D* m_resFSBElec_phi;
@@ -411,6 +511,335 @@ class eventHistos {
   TH1D* m_selElectron_noISO_endcap_trackPnt        ; 
   TH1D* m_selElectron_noISO_endcap_innerLostHits   ; 
   TH1D* m_selElectron_noISO_endcap_dxy             ; 
+
+  TH1D* m_Scale_muR1_muF1	;
+  TH1D* m_Scale_muR2_muF1	;
+  TH1D* m_Scale_muRp5_muF1	;
+  TH1D* m_Scale_muR1_muF2	;
+  TH1D* m_Scale_muR2_muF2	;
+  TH1D* m_Scale_muR1_muFp5	;
+  TH1D* m_Scale_muRp5_muFp5	;
+  TH1D* m_Error_1047		;
+  TH1D* m_Error_1048            ;
+  TH1D* m_Error_1049            ;
+  TH1D* m_Error_1050            ;
+  TH1D* m_Error_1051            ;
+  TH1D* m_Error_1052            ;
+  TH1D* m_Error_1053            ;
+  TH1D* m_Error_1054            ;
+  TH1D* m_Error_1055            ;
+  TH1D* m_Error_1056            ;
+  TH1D* m_Error_1057            ;
+  TH1D* m_Error_1058            ;
+  TH1D* m_Error_1059            ;
+  TH1D* m_Error_1060            ;
+  TH1D* m_Error_1061            ;
+  TH1D* m_Error_1062            ;
+  TH1D* m_Error_1063            ;
+  TH1D* m_Error_1064            ;
+  TH1D* m_Error_1065            ;
+  TH1D* m_Error_1066            ;
+  TH1D* m_Error_1067            ;
+  TH1D* m_Error_1068            ;
+  TH1D* m_Error_1069            ;
+  TH1D* m_Error_1070            ;
+  TH1D* m_Error_1071            ;
+  TH1D* m_Error_1072            ;
+  TH1D* m_Error_1073            ;
+  TH1D* m_Error_1074            ;
+  TH1D* m_Error_1075            ;
+  TH1D* m_Error_1076            ;
+  TH1D* m_Error_1077            ;
+  TH1D* m_Error_1078            ;
+  TH1D* m_Error_1079            ;
+  TH1D* m_Error_1080            ;
+  TH1D* m_Error_1081            ;
+  TH1D* m_Error_1082            ;
+  TH1D* m_Error_1083            ;
+  TH1D* m_Error_1084            ;
+  TH1D* m_Error_1085            ;
+  TH1D* m_Error_1086            ;
+  TH1D* m_Error_1087            ;
+  TH1D* m_Error_1088            ;
+  TH1D* m_Error_1089            ;
+  TH1D* m_Error_1090            ;
+  TH1D* m_Error_1091            ;
+  TH1D* m_Error_1092            ;
+  TH1D* m_Error_1093            ;
+  TH1D* m_Error_1094            ;
+  TH1D* m_Error_1095            ;
+  TH1D* m_Error_1096            ;
+  TH1D* m_Error_1097            ;
+  TH1D* m_Error_1098            ;
+  TH1D* m_Error_1099            ;
+  TH1D* m_Error_1100            ;
+  TH1D* m_Error_1101            ;
+  TH1D* m_Error_1102            ;
+  TH1D* m_Error_1103            ;
+  TH1D* m_Error_1104            ;
+  TH1D* m_Error_1105            ;
+  TH1D* m_Error_1106            ;
+  TH1D* m_Error_1107            ;
+  TH1D* m_Error_1108            ;
+  TH1D* m_Error_1109            ;
+  TH1D* m_Error_1110            ;
+  TH1D* m_Error_1111            ;
+  TH1D* m_Error_1112            ;
+  TH1D* m_Error_1113            ;
+  TH1D* m_Error_1114            ;
+  TH1D* m_Error_1115            ;
+  TH1D* m_Error_1116            ;
+  TH1D* m_Error_1117            ;
+  TH1D* m_Error_1118            ;
+  TH1D* m_Error_1119            ;
+  TH1D* m_Error_1120            ;
+  TH1D* m_Error_1121            ;
+  TH1D* m_Error_1122            ;
+  TH1D* m_Error_1123            ;
+  TH1D* m_Error_1124            ;
+  TH1D* m_Error_1125            ;
+  TH1D* m_Error_1126            ;
+  TH1D* m_Error_1127            ;
+  TH1D* m_Error_1128            ;
+  TH1D* m_Error_1129            ;
+  TH1D* m_Error_1130            ;
+  TH1D* m_Error_1131            ;
+  TH1D* m_Error_1132            ;
+  TH1D* m_Error_1133            ;
+  TH1D* m_Error_1134            ;
+  TH1D* m_Error_1135            ;
+  TH1D* m_Error_1136            ;
+  TH1D* m_Error_1137            ;
+  TH1D* m_Error_1138            ;
+  TH1D* m_Error_1139            ;
+  TH1D* m_Error_1140            ;
+  TH1D* m_Error_1141            ;
+  TH1D* m_Error_1142            ;
+  TH1D* m_Error_1143            ;
+  TH1D* m_Error_1144            ;
+  TH1D* m_Error_1145            ;
+  TH1D* m_Error_1146            ;
+  TH1D* m_leadAK8JetMuonMass_Scale_muR2_muF1	;
+  TH1D* m_leadAK8JetMuonMass_Scale_muRp5_muF1	;
+  TH1D* m_leadAK8JetMuonMass_Scale_muR1_muF2	;
+  TH1D* m_leadAK8JetMuonMass_Scale_muR2_muF2	;
+  TH1D* m_leadAK8JetMuonMass_Scale_muR1_muFp5	;
+  TH1D* m_leadAK8JetMuonMass_Scale_muRp5_muFp5	;
+  TH1D* m_leadAK8JetMuonMass_Error_1047		;
+  TH1D* m_leadAK8JetMuonMass_Error_1048         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1049         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1050         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1051         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1052         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1053         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1054         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1055         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1056         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1057         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1058         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1059         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1060         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1061         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1062         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1063         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1064         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1065         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1066         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1067         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1068         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1069         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1070         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1071         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1072         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1073         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1074         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1075         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1076         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1077         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1078         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1079         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1080         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1081         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1082         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1083         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1084         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1085         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1086         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1087         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1088         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1089         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1090         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1091         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1092         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1093         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1094         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1095         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1096         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1097         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1098         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1099         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1100         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1101         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1102         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1103         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1104         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1105         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1106         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1107         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1108         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1109         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1110         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1111         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1112         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1113         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1114         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1115         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1116         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1117         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1118         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1119         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1120         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1121         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1122         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1123         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1124         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1125         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1126         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1127         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1128         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1129         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1130         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1131         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1132         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1133         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1134         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1135         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1136         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1137         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1138         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1139         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1140         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1141         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1142         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1143         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1144         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1145         ;
+  TH1D* m_leadAK8JetMuonMass_Error_1146         ;
+
+  TH1D* m_resolvedRECOmass_Scale_muR2_muF1	;
+  TH1D* m_resolvedRECOmass_Scale_muRp5_muF1	;
+  TH1D* m_resolvedRECOmass_Scale_muR1_muF2	;
+  TH1D* m_resolvedRECOmass_Scale_muR2_muF2	;
+  TH1D* m_resolvedRECOmass_Scale_muR1_muFp5	;
+  TH1D* m_resolvedRECOmass_Scale_muRp5_muFp5	;
+  TH1D* m_resolvedRECOmass_Error_1047		;
+  TH1D* m_resolvedRECOmass_Error_1048           ;
+  TH1D* m_resolvedRECOmass_Error_1049           ;
+  TH1D* m_resolvedRECOmass_Error_1050           ;
+  TH1D* m_resolvedRECOmass_Error_1051           ;
+  TH1D* m_resolvedRECOmass_Error_1052           ;
+  TH1D* m_resolvedRECOmass_Error_1053           ;
+  TH1D* m_resolvedRECOmass_Error_1054           ;
+  TH1D* m_resolvedRECOmass_Error_1055           ;
+  TH1D* m_resolvedRECOmass_Error_1056           ;
+  TH1D* m_resolvedRECOmass_Error_1057           ;
+  TH1D* m_resolvedRECOmass_Error_1058           ;
+  TH1D* m_resolvedRECOmass_Error_1059           ;
+  TH1D* m_resolvedRECOmass_Error_1060           ;
+  TH1D* m_resolvedRECOmass_Error_1061           ;
+  TH1D* m_resolvedRECOmass_Error_1062           ;
+  TH1D* m_resolvedRECOmass_Error_1063           ;
+  TH1D* m_resolvedRECOmass_Error_1064           ;
+  TH1D* m_resolvedRECOmass_Error_1065           ;
+  TH1D* m_resolvedRECOmass_Error_1066           ;
+  TH1D* m_resolvedRECOmass_Error_1067           ;
+  TH1D* m_resolvedRECOmass_Error_1068           ;
+  TH1D* m_resolvedRECOmass_Error_1069           ;
+  TH1D* m_resolvedRECOmass_Error_1070           ;
+  TH1D* m_resolvedRECOmass_Error_1071           ;
+  TH1D* m_resolvedRECOmass_Error_1072           ;
+  TH1D* m_resolvedRECOmass_Error_1073           ;
+  TH1D* m_resolvedRECOmass_Error_1074           ;
+  TH1D* m_resolvedRECOmass_Error_1075           ;
+  TH1D* m_resolvedRECOmass_Error_1076           ;
+  TH1D* m_resolvedRECOmass_Error_1077           ;
+  TH1D* m_resolvedRECOmass_Error_1078           ;
+  TH1D* m_resolvedRECOmass_Error_1079           ;
+  TH1D* m_resolvedRECOmass_Error_1080           ;
+  TH1D* m_resolvedRECOmass_Error_1081           ;
+  TH1D* m_resolvedRECOmass_Error_1082           ;
+  TH1D* m_resolvedRECOmass_Error_1083           ;
+  TH1D* m_resolvedRECOmass_Error_1084           ;
+  TH1D* m_resolvedRECOmass_Error_1085           ;
+  TH1D* m_resolvedRECOmass_Error_1086           ;
+  TH1D* m_resolvedRECOmass_Error_1087           ;
+  TH1D* m_resolvedRECOmass_Error_1088           ;
+  TH1D* m_resolvedRECOmass_Error_1089           ;
+  TH1D* m_resolvedRECOmass_Error_1090           ;
+  TH1D* m_resolvedRECOmass_Error_1091           ;
+  TH1D* m_resolvedRECOmass_Error_1092           ;
+  TH1D* m_resolvedRECOmass_Error_1093           ;
+  TH1D* m_resolvedRECOmass_Error_1094           ;
+  TH1D* m_resolvedRECOmass_Error_1095           ;
+  TH1D* m_resolvedRECOmass_Error_1096           ;
+  TH1D* m_resolvedRECOmass_Error_1097           ;
+  TH1D* m_resolvedRECOmass_Error_1098           ;
+  TH1D* m_resolvedRECOmass_Error_1099           ;
+  TH1D* m_resolvedRECOmass_Error_1100           ;
+  TH1D* m_resolvedRECOmass_Error_1101           ;
+  TH1D* m_resolvedRECOmass_Error_1102           ;
+  TH1D* m_resolvedRECOmass_Error_1103           ;
+  TH1D* m_resolvedRECOmass_Error_1104           ;
+  TH1D* m_resolvedRECOmass_Error_1105           ;
+  TH1D* m_resolvedRECOmass_Error_1106           ;
+  TH1D* m_resolvedRECOmass_Error_1107           ;
+  TH1D* m_resolvedRECOmass_Error_1108           ;
+  TH1D* m_resolvedRECOmass_Error_1109           ;
+  TH1D* m_resolvedRECOmass_Error_1110           ;
+  TH1D* m_resolvedRECOmass_Error_1111           ;
+  TH1D* m_resolvedRECOmass_Error_1112           ;
+  TH1D* m_resolvedRECOmass_Error_1113           ;
+  TH1D* m_resolvedRECOmass_Error_1114           ;
+  TH1D* m_resolvedRECOmass_Error_1115           ;
+  TH1D* m_resolvedRECOmass_Error_1116           ;
+  TH1D* m_resolvedRECOmass_Error_1117           ;
+  TH1D* m_resolvedRECOmass_Error_1118           ;
+  TH1D* m_resolvedRECOmass_Error_1119           ;
+  TH1D* m_resolvedRECOmass_Error_1120           ;
+  TH1D* m_resolvedRECOmass_Error_1121           ;
+  TH1D* m_resolvedRECOmass_Error_1122           ;
+  TH1D* m_resolvedRECOmass_Error_1123           ;
+  TH1D* m_resolvedRECOmass_Error_1124           ;
+  TH1D* m_resolvedRECOmass_Error_1125           ;
+  TH1D* m_resolvedRECOmass_Error_1126           ;
+  TH1D* m_resolvedRECOmass_Error_1127           ;
+  TH1D* m_resolvedRECOmass_Error_1128           ;
+  TH1D* m_resolvedRECOmass_Error_1129           ;
+  TH1D* m_resolvedRECOmass_Error_1130           ;
+  TH1D* m_resolvedRECOmass_Error_1131           ;
+  TH1D* m_resolvedRECOmass_Error_1132           ;
+  TH1D* m_resolvedRECOmass_Error_1133           ;
+  TH1D* m_resolvedRECOmass_Error_1134           ;
+  TH1D* m_resolvedRECOmass_Error_1135           ;
+  TH1D* m_resolvedRECOmass_Error_1136           ;
+  TH1D* m_resolvedRECOmass_Error_1137           ;
+  TH1D* m_resolvedRECOmass_Error_1138           ;
+  TH1D* m_resolvedRECOmass_Error_1139           ;
+  TH1D* m_resolvedRECOmass_Error_1140           ;
+  TH1D* m_resolvedRECOmass_Error_1141           ;
+  TH1D* m_resolvedRECOmass_Error_1142           ;
+  TH1D* m_resolvedRECOmass_Error_1143           ;
+  TH1D* m_resolvedRECOmass_Error_1144           ;
+  TH1D* m_resolvedRECOmass_Error_1145           ;
+  TH1D* m_resolvedRECOmass_Error_1146           ;
+  TH1D* m_Error_alphasUp			;
+  TH1D* m_Error_alphasDown			;
+  TH1D* m_leadAK8JetMuonMass_alphasUp		;
+  TH1D* m_leadAK8JetMuonMass_alphasDown		;
+  TH1D* m_resolvedRECOmass_alphasUp		;
+  TH1D* m_resolvedRECOmass_alphasDown		;
+
+  Double_t evtNum, lumiSec, BoostSRmass;
 
 };
 

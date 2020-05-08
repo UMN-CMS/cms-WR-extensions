@@ -5,6 +5,7 @@ import subprocess
 from shutil import copyfile
 import copy
 import collections
+import array
 """
 Style options mostly from CMS's tdrStyle.C
 """
@@ -32,6 +33,7 @@ def saveHists(weight,backgroundName,file,directory="",prefix="",filter=""):
             saveHists(weight,backgroundName,dir,directory=newDir, prefix=prefix,filter=filter)
         if key.GetClassName() in histObjectNames and filter in prefix:
             hist = file.Get(key.GetName())
+	    if hist.Integral() == 0: continue
             drawoptions = ""
             if key.GetClassName() in hists2d:
                 drawoptions = "colz"
@@ -82,7 +84,6 @@ def addHist(weight,backgroundName,hist,name,width=500,height=500, drawoptions=""
     hist.SetLineColor(colors[backgroundName])
     print "ADDING HIST"
     print backgroundName
-    print hist.GetName()
     hist.SetName(backgroundName)
     if name not in stackList:
         print "New Plot!"
@@ -106,14 +107,15 @@ if len(sys.argv) == 2 and (sys.argv[1] == "--help" or sys.argv[1] == "-h"):
     print "Text file contain list of datasets:"
     print "Directory where the dataset ROOTs are stored:"
     print "Destination directory to put combined files in:"
+    print "Samples year"
     print "OPTIONAL: Lumi adjustment factor (35.9 fb-1 scaling default)"
     print "=========="
     print "EXAMPLE:"
     print ""
-    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext.txt /afs/cern.ch/work/a/aevans/public/thesis/backgroundStacks/ /afs/cern.ch/work/a/aevans/public/thesis/backgroundPlots/ 1.0"
+    print "python datasetsStackPlot.py ../../../samples/backgrounds/fullBackgroundDatasetList2018_no_ext.txt /uscms_data/d3/mkrohn/WR/FullRun2/CMSSW_10_4_0_patch1/src/ExoAnalysis/cmsWRextensions/Output/Full2018/ ~/nobackup/backgroundStacks/2018/ 2018 1.0"
     print ""
     exit(0)
-if len(sys.argv) != 5:
+if len(sys.argv) != 6:
     print "inputs not understood, try --help/-h"
     exit(1)
 #proceed with input parsing
@@ -122,10 +124,19 @@ backgroundsList = sys.argv[1]
 backgroundsROOToutputDir = sys.argv[2]
 backgroundsROOTdestination = sys.argv[3]
 eventsWeightsDir = backgroundsROOToutputDir
-lumiAdjust = sys.argv[4]
+year = sys.argv[4]
+lumiAdjust = sys.argv[5]
 #in case you want to compare with only a fraction of the 2016 data *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
 #lumiAdjust *= 0.6641282341721065  #FUDGE FACTOR CAUSE I'M MISSING EVENTS FOR THE MUON DATA 5.339658e8 / 804010088
-integratedLuminosity = 35900.0
+if(year=="2016"):
+    integratedLuminosity = 35900.0
+elif(year=="2017"):
+#    integratedLuminosity = 13000.0
+    integratedLuminosity = 41500.0
+elif(year=="2018"):
+#    integratedLuminosity = 25000.0
+#    integratedLuminosity = 31930.0
+    integratedLuminosity = 59970.0
 integratedLuminosity *= float(lumiAdjust)
 
 with open(backgroundsList) as f:
@@ -139,7 +150,7 @@ for line in lines:
         lineNum+=1
         continue
     xsec = 0.0
-    if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0]):
+    if ("SingleMuon" in line.split()[0] or "SingleElectron" in line.split()[0] or "EGamma" in line.split()[0]):
         name = line.split()[0].strip().split("/")[1]+"--"+line.split()[0].strip().split("/")[2]
         colors[name] = int(line.split()[5].strip())
         print "Found: "+name
@@ -168,35 +179,144 @@ colors = {'QCD_HT100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'QCD_HT1000to1500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'QCD_HT1500to2000_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'QCD_HT2000toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT300to500_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT500to700_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT700to1000_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT1000to1500_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT1500to2000_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT2000toInf_TuneCP5_13TeV-madgraph-pythia8': ROOT.kOrange,
+          'QCD_HT300to500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT500to700_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT700to1000_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT1000to1500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT1500to2000_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
+          'QCD_HT2000toInf_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kOrange,
           'WW_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
           'WZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
           'ZZ_TuneCUETP8M1_13TeV-pythia8': ROOT.kRed-2,
+          'WW_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
+          'WZ_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
+          'ZZ_TuneCP5_13TeV-pythia8': ROOT.kRed-2,
+	  'WWW_4F_TuneCUETP8M1_13TeV-amcatnlo-pythia8': ROOT.kRed+2,
+	  'WWZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8': ROOT.kRed+2,
+	  'WZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8': ROOT.kRed+2,
+	  'ZZZ_TuneCUETP8M1_13TeV-amcatnlo-pythia8':ROOT.kRed+2,
+	  'TTWJetsToLNu_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8': ROOT.kGreen-1,
+	  'TTWJetsToQQ_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8' : ROOT.kGreen-1,
+	  'ttZJets_13TeV_madgraphMLM-pythia8': ROOT.kGreen-1,
           'ST_s-channel_4f_InclusiveDecays_13TeV-amcatnlo-pythia8': ROOT.kRed,
           'ST_t-channel_antitop_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
           'ST_t-channel_top_4f_inclusiveDecays_TuneCUETP8M2T4_13TeV-powhegV2-madspin': ROOT.kRed,
           'ST_tW_antitop_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
           'ST_tW_top_5f_inclusiveDecays_13TeV-powheg-pythia8_TuneCUETP8M2T4': ROOT.kRed,
+          'ST_t-channel_antitop_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8': ROOT.kRed,
+          'ST_t-channel_top_4f_inclusiveDecays_TuneCP5_13TeV-powhegV2-madspin-pythia8': ROOT.kRed,
+          'ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8': ROOT.kRed,
+          'ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8': ROOT.kRed,
+          'ST_s-channel_4f_leptonDecays_TuneCP5_PSweights_13TeV-amcatnlo-pythia8': ROOT.kRed,
+          'ST_t-channel_antitop_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8': ROOT.kRed,
+          'ST_t-channel_top_4f_InclusiveDecays_TuneCP5_13TeV-powheg-madspin-pythia8': ROOT.kRed,
+	  'ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-madgraph-pythia8': ROOT.kRed,
+          'ST_s-channel_top_leptonDecays_13TeV-PSweights_powheg-pythia': ROOT.kRed,
+          'ST_t-channel_antitop_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1': ROOT.kRed,
+          'ST_t-channel_top_4f_inclusiveDecays_13TeV-powhegV2-madspin-pythia8_TuneCUETP8M1': ROOT.kRed,
           'DYJetsToLL_Zpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-400To650_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
           'DYJetsToLL_Pt-650ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kGreen+3,
+	  'DYJetsToLL_M-50_HT-100to200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-200to400_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-400to600_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-100to200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-1200to2500_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-200to400_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-2500toInf_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-400to600_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-600to800_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-800to1200_TuneCP5_PSweights_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-100to200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-200to400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-400to600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-600to800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-800to1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-1200to2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+          'DYJetsToLL_M-50_HT-2500toInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kGreen+3,
+	  'DYJetsToLL_M-50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlack,
           'WJetsToLNu_Wpt-0To50_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Wpt-50To100_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-400To600_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
           'WJetsToLNu_Pt-600ToInf_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-100To200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-200To400_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-400To600_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-600To800_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-800To1200_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-1200To2500_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_HT-2500ToInf_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+	  'WJetsToLNu_TuneCUETP8M1_13TeV-madgraphMLM-pythia8': ROOT.kBlue+2,
+          'WJetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8' : ROOT.kBlue+2,
           'TT_TuneCUETP8M2T4_13TeV-powheg-pythia8': ROOT.kGray,
-          'SingleElectron--Run2016B-03Feb2017_ver2-v2'          : 794,
-          'SingleElectron--Run2016C-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016D-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016E-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016F-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016G-03Feb2017-v1'               : 794,
-          'SingleElectron--Run2016H-03Feb2017_ver2-v1'          : 794,
-          'SingleElectron--Run2016H-03Feb2017_ver3-v1'          : 794,
+          'TTTo2L2Nu_TuneCP5_13TeV-powheg-pythia8': ROOT.kGray,
+          'TTToSemiLeptonic_TuneCP5_PSweights_13TeV-powheg-pythia8': ROOT.kGray,
+          'TTToSemiLeptonic_TuneCP5_13TeV-powheg-pythia8' : ROOT.kGray,
+          'TTJets_TuneCP5_13TeV-madgraphMLM-pythia8': ROOT.kGray,
+          'TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8': ROOT.kGray,
+	  'TTToSemilepton_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8': ROOT.kGray,
+	  'TTTo2L2Nu_TuneCUETP8M2_ttHtranche3_13TeV-powheg-pythia8': ROOT.kGray,
+          'WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8' : ROOT.kOrange,
+          'WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8' :  ROOT.kOrange,
+          'WWZ_TuneCP5_13TeV-amcatnlo-pythia8'    : ROOT.kOrange,
+          'WZZ_TuneCP5_13TeV-amcatnlo-pythia8'    :  ROOT.kOrange,
+          'ZZZ_TuneCP5_13TeV-amcatnlo-pythia8'    :  ROOT.kOrange,
+          'ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8' : ROOT.kRed,
+          'ttZJets_TuneCP5_13TeV_madgraphMLM_pythia8' : ROOT.kRed,
+          'SingleElectron--Run2016B-17Jul2018_ver2-v1'          : 794,
+          'SingleElectron--Run2016C-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016D-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016E-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016F-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016G-17Jul2018-v1'               : 794,
+          'SingleElectron--Run2016H-17Jul2018-v1'          : 794,
+          'SingleElectron--Run2017B-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017C-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017D-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017E-31Mar2018-v1'          : 794,
+          'SingleElectron--Run2017F-31Mar2018-v1'          : 794,
+          'EGamma--Run2018A-17Sep2018-v2'          : 794,
+          'EGamma--Run2018B-17Sep2018-v1'          : 794,
+          'EGamma--Run2018C-17Sep2018-v1'          : 794,
+          'EGamma--Run2018D-PromptReco-v2'          : 794,
+          'SingleMuon--Run2016B-17Jul2018_ver2-v1'          : 794,
+          'SingleMuon--Run2016C-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016D-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016E-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016F-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016G-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2016H-17Jul2018-v1'          : 794,
+          'SingleMuon--Run2017B-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017C-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017D-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017E-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2017F-31Mar2018-v1'          : 794,
+          'SingleMuon--Run2018A-17Sep2018-v2'          : 794,
+          'SingleMuon--Run2018B-17Sep2018-v1'          : 794,
+          'SingleMuon--Run2018C-17Sep2018-v1'          : 794,
+          'SingleMuon--Run2018D-PromptReco-v2'          : 794,
           'WR_M-5000_ToLNu_M-1650'                              : ROOT.kBlack,
           'WR_M-5000_ToLNu_M-1000'                              : ROOT.kBlack,
           'WR_M-5000_ToLNu_M-500'                              : ROOT.kBlack,
@@ -242,7 +362,7 @@ for background,xsec in xsecs.items():
     backgroundEventsWeight = eventsWeightsDir+background+".root"
     print backgroundEventsWeight
     weight = 1.0
-    if ("SingleElectron" not in background and "SingleMuon" not in background):  #MC ONLY
+    if ("SingleElectron" not in background and "SingleMuon" not in background and "EGamma" not in background):  #MC ONLY
         weight *= integratedLuminosity
         weight *= xsecs[background]
         print "Lumi*xsec="+str(weight)
@@ -254,6 +374,9 @@ for background,xsec in xsecs.items():
             continue
         print "Found # events:"+str(eventsWeight)
         weight /= eventsWeight
+#	if "tW" in background and (year == "2017" or year == "2018"):
+#	    print "Reducing ST weight"
+#	    weight /= 35.1316
         print "DONE CALCULATING"
     print "Scale: "+str(weight)
  #   saveHists(weight,background,ROOT.TFile.Open(ahaddOut, "read"),directory=backgroundsROOToutputDir)
@@ -262,28 +385,56 @@ for background,xsec in xsecs.items():
 #Loop over stacks and make save stackhists
 
 #c = ROOT.TCanvas("c","c",1000,1000)
+binBoundaries = [800, 1000, 1200, 1500, 1800, 8000]
+binBoundariesArray = array.array('d', binBoundaries)
+
 for plot,stack in stackList.items():
-    stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     pos = 1
+    dummy = 0
+    histType = stack[0].__class__.__name__
+    # For 2D just add the histos together
+    # So make a clone of 0th one to add rest to
+    if "TH2" in histType:
+        dummy = stack[0].Clone()
+    # For 1D add the histos to a stack
+    # So make a dummy stack
+    elif "TH1" in histType:
+        dummy = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
+    #stackHist = ROOT.THStack(plot.split("/")[-1][:-5],plot.split("/")[-1][:-5])
     print stack
-    #print stack.GetName()
+    print "plot: ", plot
+    print "Hist name: ", plot.split("/")[-1][:-5]
     for hist in stack:
-        print hist.__class__.__name__
+        # For 2D, skip the 0th hist since dummy is a clone
+        if "TH2" in histType and pos == 1:
+            pos+=1
+            continue
+	if "leadAK8JetMuonMass" in plot.split("/")[-1][:-5]:
+	    print "hist.GetNbinsX(): ", hist.GetNbinsX()
+	    print "REBINNING"
+	    temp = hist.Rebin(5,hist.GetName(),binBoundariesArray)
+            print "temp.GetNbinsX(): ", temp.GetNbinsX()
+	else:
+	    temp = hist
+
+        print histType 
         #myHist = copy.deepcopy(hist)
     #    print "Adding"
-        print "STACK TIME"
+        print "ADDING..."
         print hist.GetName()
+	print "Integral: ", hist.Integral()
         #hist.SetFillColor(pos)
-        hist.Draw("HIST")
-        stackHist.Add(hist)
+        temp.Draw("HIST")
+        dummy.Add(temp)
         if pos == 9:
             pos+=2
         else:
             pos+=1
     ROOT.gStyle.SetPalette(55)
 #stackHist.Draw()
-    print "THIS MANY HISTS"
-    print stackHist.GetNhists()
+    if "TH1" in histType:
+        print "THIS MANY HISTS IN STACK"
+        print dummy.GetNhists()
 #c.BuildLegend()
 #c.SaveAs(plot)
-    stackHist.SaveAs(plot)
+    dummy.SaveAs(plot)

@@ -37,7 +37,7 @@ cd ExoAnalysis/
 git clone git@github.com:UMN-CMS/cmsWRextensions.git
 cd ..
 
-git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v1
+git clone git@github.com:Michael-Krohn/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X
 git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
@@ -48,14 +48,16 @@ Example incantations to drive the crab3 interface python (in progress):
 MC
 python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt -c ExoAnalysis/cmsWRextensions/python/ConfFile_cfg_regression_IDs.py
 
+2017 Signal Samples:
+python createAndSubmitJobsWithCrab3.py -i ../../../samples/signals/WRtoNLtoLLJJ_2017/WRtoNLtoLLJJ.txt -v 2017Signal -d runBackgroundMC -c ../../../python/ConfFile_cfg_regression_IDs.py -f True
+
 DATA
 python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/data/data_datasets_SingleMuon.txt -c ../../../python/ConfFile_cfg_regression_IDs.py -v Electron_Regression
 ```
 Example incantations to run the analysis by hand:
 ```
-cmsRun python/ConfFile_cfg.py inputFiles_load=samples/backgrounds/WJetsToLNu_Pt-100To250_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8.txt outputFile=out.root >& out.txt &
+cmsRun python/ConfFile_cfg_regression_IDs.py inputFiles=root://cmsxrootd.fnal.gov//store/user/suoh/WRtoNLtoLLJJ_WR7000_N2800/CMSSW_9_4_6_patch1__MINIAOD/190418_080016/0000/MINIAOD_28.root doFast=True isSignal=True isMC=True checkZ=False >& out.txt &
 
-cmsRun python/ConfFile_cfg.py inputFiles=root://cms-xrd-global.cern.ch///store/mc/RunIISummer16MiniAODv2/WJetsToLNu_Pt-250To400_TuneCUETP8M1_13TeV-amcatnloFXFX-pythia8/MINIAODSIM/PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6-v1/70000/AC65E566-52D0-E611-ACAA-1866DAEA812C.root outputFile=out.root >& out.txt &
 ```
 
 ## Legacy Run II (**IN PROGRESS** as of 1-22-2019)
@@ -73,12 +75,14 @@ cd HEEP
 git checkout HEEPV70  #this is currently the default branch for now but may change in the future
 cd ..
 
+git cms-merge-topic lathomas:L1Prefiring_M
+
 mkdir ExoAnalysis
 cd ExoAnalysis/
-git clone git@github.com:UMN-CMS/cmsWRextensions.git
+git clone git@github.com:UMN-CMS/cmsWRextensions.git -b tweaksFor104X
 cd ..
 
-git clone git@github.com:cms-jet/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X_v1
+git clone git@github.com:Michael-Krohn/JetToolbox.git JMEAnalysis/JetToolbox -b jetToolbox_102X
 git clone https://github.com/Michael-Krohn/BaconAna.git
 
 scram b -j32
@@ -104,17 +108,22 @@ Steps for running Combine:
 
 1.Set doFast to true. This can be done by setting -f True for the createAndSubmitJobsWithCrab3.py script.
 
-2.Make the workspaces:
+2.Make the workspaces for fitting(ttbar SF is hard-coded within these scripts):
 ```
-python makeWorkspaces.py ../../../samples/allSamples_temp.txt ../../../Output/doFast/ ../../../Output/doFast/Workspace/
+python makeWorkspaces_Resolved.py ../../../samples/allSamples2016.txt ../../../Output/Full2016_3rd/ ../../../Output/Full2016_3rd/Workspace/
+
+python makeWorkspaces_Boosted.py ../../../samples/allSamples2016.txt ../../../Output/Full2016_3rd/ ../../../Output/Full2016_3rd/Workspace/
+```
+3.Do the fits and make the workspaces for combione:
+```
+python dualFit_makeWorkspaces.py True
+
+python dualFit_makeWorkspaces.py False
 ```
 
 3.Make the datacards:
 ```
-python makeCardsMuMuJJ.py ../../../Output/doFast/Workspace/
-```
+python makeCardsMuMuJJ_Resolved.py ../../../Output/Full2016_3rd/Workspace/
 
-4.Combine cards and run limits:
-```
-./runLimits.sh
+python makeCardsMuMuJJ_Boosted.py ../../../Output/Full2016_3rd/Workspace/
 ```

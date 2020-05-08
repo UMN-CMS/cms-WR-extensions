@@ -1,0 +1,336 @@
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_10.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_11.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_12.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_13.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_14.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_15.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_16.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_17.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_10.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_11.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_12.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_13.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_14.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_15.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_16.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_17.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_18.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_19.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_1.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_20.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_21.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_22.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_23.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_24.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_25.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_2.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_3.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_4.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_5.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_6.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_7.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_8.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_18_9.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_19.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_1.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_20.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_10.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_11.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_12.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_13.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_14.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_15.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_16.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_17.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_18.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_19.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_1.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_21.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_20.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_21.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_22.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_23.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_24.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_25.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_2.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_22.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_3.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_23.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_4.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_24.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_5.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_6.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_7.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_8.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_2_9.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_10.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_11.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_12.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_13.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_14.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_15.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_16.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_17.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_18.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_19.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_1.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_20.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_21.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_22.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_23.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_24.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_25.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_2.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_3.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_4.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_5.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_6.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_7.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_8.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_3_9.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_4.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_10.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_11.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_12.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_13.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_14.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_15.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_16.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_17.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_18.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_19.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_1.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_20.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_21.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_22.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_23.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_24.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_25.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_2.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_3.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_4.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_5.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_6.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_7.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_8.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_5_9.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_10.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_11.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_12.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_13.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_14.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_15.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_16.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_17.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_18.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_19.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_1.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_20.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_21.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_22.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_23.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_24.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_25.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_2.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_3.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_4.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_5.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_6.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_7.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_8.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_6_9.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_7.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_8.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_10.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_11.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_12.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_13.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_14.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_15.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_16.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_17.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_18.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_19.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_1.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_20.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_21.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_22.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_23.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_24.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_25.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_2.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_3.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_4.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_5.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_6.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_7.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_8.root
+
+WRtoNLtoLLJJ_WR6000_N5900	root://cms-xrdr.sdfarm.kr:1094//xrd/store/user/shjeon/2018Run_WR_Dilep/CRAB/WRtoNLtoLLJJ_WR6000_N5900/CMSSW_10_2_11__MINIAOD/MINIAOD_9_9.root
+

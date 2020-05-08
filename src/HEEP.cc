@@ -17,7 +17,7 @@ HEEP::HEEP () {
 
 std::vector<double> HEEP::ScaleFactor(double ElectronEt, double ElectronEta, std::string era) {
 
-  double scaleFactor = 0.;
+  double scaleFactor = 1.0;
   double scaleFactor_Up = 0.;
   double scaleFactor_Down = 0.;
 

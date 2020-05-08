@@ -26,6 +26,7 @@ class egammaEffi {
   egammaEffi();
   void Initialize(std::string era);
   std::vector<double> ScaleFactor(double ElectronEta, double ElectronPt, std::string era);
+  std::vector<double> HLT_ScaleFactor(double ElectronEta, double ElectronPt, std::string era);
 
 
 
@@ -34,8 +35,19 @@ class egammaEffi {
   TH2D* m_egamma_sf2017;
   TH2D* m_egamma_sf2018;
 
+  TH2D* m_egamma__HLT_sf2016_barrel;
+  TH2D* m_egamma__HLT_sf2016_endcap;
+  TH2D* m_egamma__HLT_sf2017_barrel;
+  TH2D* m_egamma__HLT_sf2017_endcap;
+  TH2D* m_egamma__HLT_sf2018_barrel;
+  TH2D* m_egamma__HLT_sf2018_endcap;
+
   int m_nEtaBins;
   int m_nPtBins;
+  int m_nEtaBins_HLT_barrel;
+  int m_nPtBins_HLT_barrel;
+  int m_nEtaBins_HLT_endcap;
+  int m_nPtBins_HLT_endcap;
 
 
 };

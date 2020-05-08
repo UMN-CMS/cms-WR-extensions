@@ -6,6 +6,7 @@ eventBits::eventBits() {
   run = -1;
   lumi = -1;
   event = 0;
+  m_flavor = 0;
   weight = 1.0;
   FSBweight = 1.0;
   FSBweight_noISO = 1.0;
@@ -19,6 +20,11 @@ eventBits::eventBits() {
   passResGen       = false;
   passGenCounter   = false;
 
+  hasPVertex = false;
+
+  eventNumber = -999;
+  lumiSection = -999;
+
   mySubleadMuon = NULL;
   myElectronCand = NULL;
   myMuonCand = NULL;
@@ -29,11 +35,18 @@ eventBits::eventBits() {
   firstMuon = NULL;
   secondMuon = NULL;
 
+  firstElectron = NULL;
+  secondElectron = NULL;
+
   resFSBMuon = NULL;
   resFSBElec = NULL;
 
   NR = NULL;
   WR = NULL;
+
+  myZ = NULL;
+
+  muonTrigPassBit = false;
 
   secondElectronCand = NULL;
 
@@ -45,59 +58,119 @@ eventBits::eventBits() {
 
   count = 0;
 
+  NresolvedANAMuonCands = -10000.0;
+  NresolvedANAElectronCands = -10000.0;
+  NresolvedANAFSBLeptonCands = -10000.0;
+
   cutProgress = -1;
+  ResCutProgress = -1;
+  ResFSBCutProgress = -1;
+  ResElecCutProgress = -1;
   FSBcutProgress = -1;
+  ResFSBCutProgress = -1;
+
 
   nSecondElectronCands = -10000.0;
+  nMuonOutSideJetFSB = -10000.0;
 
-  puWeight = -10000.0;
+  egamma_SF = 1.0;
+  egamma_SF_Up = -10000.0;
+  egamma_SF_Down = -10000.0;
+
+  egamma_SF_HLT = 1.0;
+  egamma_SF_HLT_Up = -10000.0;
+  egamma_SF_HLT_Down = -10000.0;
+
+  puWeight = 1.0;
   puWeight_Up = -10000.0;
   puWeight_Down = -10000.0;
 
-  Muon_HighPtID_Weight = -10000.0;
+  _prefiringweight = 1.0;
+  _prefiringweightup = -10000.0;
+  _prefiringweightdown = -10000.0;
+
+  Muon_HighPtID_Weight = 1.0;
   Muon_HighPtID_WeightUp = -10000.0;
   Muon_HighPtID_WeightDown = -10000.0;
 
-  Muon_HighPtID2nd_Weight = -10000.0;
+  Muon_HighPtID2nd_Weight = 1.0;
   Muon_HighPtID2nd_WeightUp = -10000.0;
   Muon_HighPtID2nd_WeightDown = -10000.0;
 
-  Muon_LooseID_Weight = -10000.0;
+  Muon_LooseID_Weight = 1.0;
   Muon_LooseID_WeightUp = -10000.0;
   Muon_LooseID_WeightDown = -10000.0;
 
-  Muon_LooseTkIso_Weight = -10000.0;
+  Muon_LooseTkIso_Weight = 1.0;
   Muon_LooseTkIso_WeightUp = -10000.0;
   Muon_LooseTkIso_WeightDown = -10000.0;
 
-  Muon_LooseTkIso2nd_Weight = -10000.0;
+  Muon_LooseTkIso2nd_Weight = 1.0;
   Muon_LooseTkIso2nd_WeightUp = -10000.0;
   Muon_LooseTkIso2nd_WeightDown = -10000.0;
 
-  Muon_Trig_Weight = -10000.0;
+  Muon_RECO_Weight = 1.0;
+  Muon_RECO_WeightUp = -10000.0;
+  Muon_RECO_WeightDown = -10000.0;
+
+  Muon_RECO2nd_Weight = 1.0;
+  Muon_RECO2nd_WeightUp = -10000.0;
+  Muon_RECO2nd_WeightDown = -10000.0;
+
+  Muon_Trig_Weight = 1.0;
   Muon_Trig_WeightUp = -10000.0;
   Muon_Trig_WeightDown = -10000.0;
 
-  HEEP_SF  = -10000.0;
+  Zweight = 1.0;
+  Zweight_Up = -10000.0;
+  Zweight_Down = -10000.0;
+
+  HEEP_SF  = 1.0;
   HEEP_SF_Up  = -10000.0;
   HEEP_SF_Down  = -10000.0;
   HEEP_SF_E  = -10000.0;
   HEEP_SF_B  = -10000.0;
 
-  HEEP_SF_noISO  = -10000.0;
+  HEEP_SF_noISO  = 1.0;
   HEEP_SF_E_noISO  = -10000.0;
   HEEP_SF_B_noISO  = -10000.0;
 
   secondInDecayMuon = -10000.0;
 
   mydRlsfLep_subleadMuon = -10000.0;
+  //
+  genZmass = -10000.0;
+  genZpt   = -10000.0;
+
+  boostedRECOmassAbove600 = false;
+  boostedFSBRECOmassAbove600 = false;
+
   //RES ANALYSIS
+  resolvedRECOmassAbove600 = false;
+  resolvedFSBRECOmassAbove600 = false;
+
   resJetDR           = -10000.0; 
   resolvedRECOmass   = -10000.0; 
   resSubleadMuJet1dR = -10000.0; 
   resSubleadMuJet2dR = -10000.0;  
   resLeadMuJet1dR = -10000.0; 
   resLeadMuJet2dR = -10000.0;  
+
+  resolvedRECOmass_MuResolUp = -10000.0;
+  resolvedRECOmass_MuResolDown = -10000.0;
+
+  resolvedRECOmass_JECUp   = -10000.0;
+  resolvedRECOmass_JECDown   = -10000.0;
+  resolvedRECOmass_JERUp   = -10000.0;
+  resolvedRECOmass_JERDown   = -10000.0;
+
+  resolvedFSBRECOmass = -10000.0;
+  resolvedFSBRECOmass_JECUp = -10000.0;
+  resolvedFSBRECOmass_JECDown = -10000.0;
+  resolvedFSBRECOmass_JERUp = -10000.0;
+  resolvedFSBRECOmass_JERDown = -10000.0;
+  resolvedFSBRECOmass_MuResolUp = -10000.0;
+  resolvedFSBRECOmass_MuResolDown = -10000.0;
 
   resFSBElec_pt  = -10000.0;
   resFSBElec_phi = -10000.0;
@@ -107,6 +180,7 @@ eventBits::eventBits() {
   resFSBMuon_phi = -10000.0;
   resFSBMuon_eta = -10000.0;
 
+  nResFSBMuons = -10000.0;
 
   resMLL             = -10000.0;
   resolvedSubleadMuPt= -10000.0;
@@ -134,6 +208,8 @@ eventBits::eventBits() {
   resLeadMuParton2dR         = -10000.0;
   
   minPartonMuon2dR           = -10000.0;
+
+  wrShellMass = -10000.0;
 
   parton1EtVal = -10000.0;
   parton2EtVal = -10000.0;
@@ -215,6 +291,10 @@ eventBits::eventBits() {
   leadAK8JetMuonMassVal_JERUp = -10000.0;
   leadAK8JetMuonMassVal_JERDown = -10000.0;
   leadAK8JetMuonPtVal = -10000.0;
+  leadAK8JetMuonMassVal_MuResolUp = -10000.0;
+  leadAK8JetMuonMassVal_MuResolDown = -10000.0;
+  leadAK8JetMuonMassVal_noLSF_MuResolUp = -10000.0;
+  leadAK8JetMuonMassVal_noLSF_MuResolDown = -10000.0;
   leadAK8JetMuonEtaVal = -10000.0;
 
   leadAK8JetElectronMassVal = -10000.0;
@@ -222,6 +302,8 @@ eventBits::eventBits() {
   leadAK8JetElectronMassVal_JECDown = -10000.0;
   leadAK8JetElectronMassVal_JERUp = -10000.0;
   leadAK8JetElectronMassVal_JERDown = -10000.0;
+  leadAK8JetElectronMassVal_MuResolUp = -10000.0;
+  leadAK8JetElectronMassVal_MuResolDown = -10000.0;
   leadAK8JetElectronPtVal = -10000.0;
   leadAK8JetElectronEtaVal = -10000.0;
 
@@ -257,6 +339,8 @@ eventBits::eventBits() {
   selectedJetTau21= -10000.0;
   selectedJetLSF3= -10000.0;
   selectedJetMaxSubJetCSV= -10000.0;
+  selectedJetEnergy = -10000.0;
+  selectedJetEnergyUncorr = -10000.0;
 
   selectedElectron_noISO_Pt = -10000.0;
   selectedElectron_noISO_Phi = -10000.0;
@@ -303,6 +387,8 @@ eventBits::eventBits() {
   mynPartons         = -1;
   nAdditionalHEEP    = -1;
   nHighPtMuonsOutsideJet = -1;
+
+  NRenergy = -10000.0;
 
   myEventFlavor      = -1;
 
@@ -372,6 +458,7 @@ void eventBits::clear() {
   nVtx = -1;
   nPU = -1;
   nPUmean = -1;
+  FSBweight = 1.0;
 
   count = 0;
   
@@ -379,19 +466,27 @@ void eventBits::clear() {
   cutProgress = 0;
   FSBcutProgress = 0;
 
-  puWeight = 0.0;
+  egamma_SF = 1.0;
+  egamma_SF_Up = -10000.0;
+  egamma_SF_Down = -10000.0;
+
+  egamma_SF_HLT = 1.0;
+  egamma_SF_HLT_Up = -10000.0;
+  egamma_SF_HLT_Down = -10000.0;
+
+  puWeight = 1.0;
   puWeight_Up = 0.0;
   puWeight_Down = 0.0;
 
-  Muon_HighPtID_Weight = 0.0;
+  Muon_HighPtID_Weight = 1.0;
   Muon_HighPtID_WeightUp = 0.0;
   Muon_HighPtID_WeightDown = 0.0;
 
-  Muon_LooseID_Weight = 0.0;
+  Muon_LooseID_Weight = 1.0;
   Muon_LooseID_WeightUp = 0.0;
   Muon_LooseID_WeightDown = 0.0;
 
-  HEEP_SF = 0.0;
+  HEEP_SF = 1.0;
   HEEP_SF_Up = 0.0;
   HEEP_SF_Down = 0.0;
   HEEP_SF_E  = 0.0;
