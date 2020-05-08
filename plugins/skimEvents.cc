@@ -79,7 +79,7 @@ class skimEvents : public edm::stream::EDFilter<> {
     edm::EDGetToken m_genEventInfoToken;
     edm::EDGetToken m_recoMuonToken;
     edm::EDGetToken m_recoElecToken;
-    edm::EDGetToken m_AK8recoJetsToken;
+    edm::EDGetToken m_AK4recoJetsToken;
     edm::EDGetToken m_metToken;
     bool m_isMC;
     bool m_amcatnlo;
@@ -99,7 +99,7 @@ class skimEvents : public edm::stream::EDFilter<> {
 skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
   m_recoMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("recoMuons"))),
   m_recoElecToken (consumes<std::vector<pat::Electron>> (iConfig.getParameter<edm::InputTag>("recoElectrons"))),
-  m_AK8recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoJets"))),
+  m_AK4recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK4recoJets"))),
   m_metToken (consumes<std::vector<pat::MET>> (iConfig.getParameter<edm::InputTag>("met"))),  
   m_isMC (iConfig.getUntrackedParameter<bool>("isMC",true))
 {
@@ -132,13 +132,11 @@ bool
 skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   eventBits myRECOevent;
+  //EVENT WEIGHTING + ACCOUNTING
   if(m_isMC) {
     edm::Handle<GenEventInfoProduct> eventInfo;
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
-    if(!m_amcatnlo)
-      myRECOevent.weight = eventInfo->weight();
-    else
-      myRECOevent.weight = eventInfo->weight()/fabs(eventInfo->weight());
+    myRECOevent.weight = eventInfo->weight()/fabs(eventInfo->weight());
   } else {
     myRECOevent.weight = 1;
   }
@@ -146,31 +144,36 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   m_allEvents.fill(myRECOevent, 1);
   std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myRECOevent.weight <<std::endl;
 
+
+  //MUON FINDING
   int muonPass = 0;
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
   for(std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
-    if (iMuon->pt() < 50 || fabs(iMuon->eta()) > 2.8) continue;
+    if (iMuon->pt() < 53 || fabs(iMuon->eta()) > 2.5) continue;
     muonPass++;
   }
 
+  //ELECTRON FINDING
   int elecPass = 0;
   edm::Handle<std::vector<pat::Electron>> recoElectrons;
   iEvent.getByToken(m_recoElecToken, recoElectrons);
   for(std::vector<pat::Electron>::const_iterator iElectron = recoElectrons->begin(); iElectron != recoElectrons->end(); iElectron++) {
-    if (iElectron->pt() < 50 || fabs(iElectron->eta()) > 2.8) continue;
+    if (iElectron->pt() < 53 || fabs(iElectron->eta()) > 2.5) continue;
     elecPass++;
   }
 
+  //JET FINDING
   int jetPass = 0;
-  edm::Handle<std::vector<pat::Jet>> ak8recoJets;
-  iEvent.getByToken(m_AK8recoJetsToken, ak8recoJets);
-  for(std::vector<pat::Jet>::const_iterator iJet = ak8recoJets->begin(); iJet != ak8recoJets->end(); iJet++) {
-    if (iJet->pt() < 50 || fabs(iJet->eta()) > 2.8) continue;
+  edm::Handle<std::vector<pat::Jet>> ak4recoJets;
+  iEvent.getByToken(m_AK4recoJetsToken, ak4recoJets);
+  for(std::vector<pat::Jet>::const_iterator iJet = ak4recoJets->begin(); iJet != ak4recoJets->end(); iJet++) {
+    if (iJet->pt() < 40 || fabs(iJet->eta()) > 2.5 continue;
     jetPass++;
   }
 
-  if (jetPass > 0 && (muonPass > 0 || elecPass > 0)) {
+  //COUNTING FOUND OBJECTS
+  if (jetPass >= 2 && (muonPass+elecPass) >= 2)) {
     std::cout <<"PASSES"<<std::endl;
     return true; 
   }
