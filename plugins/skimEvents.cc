@@ -150,7 +150,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
   for(std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
-    if (iMuon->pt() < 40 || fabs(iMuon->eta()) > 2.5) continue;
+    if (iMuon->pt() < 25 || fabs(iMuon->eta()) > 2.5) continue;
     muonPass++;
   }
 
@@ -159,7 +159,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Electron>> recoElectrons;
   iEvent.getByToken(m_recoElecToken, recoElectrons);
   for(std::vector<pat::Electron>::const_iterator iElectron = recoElectrons->begin(); iElectron != recoElectrons->end(); iElectron++) {
-    if (iElectron->pt() < 40 || fabs(iElectron->eta()) > 2.5) continue;
+    if (iElectron->pt() < 25 || fabs(iElectron->eta()) > 2.5) continue;
     elecPass++;
   }
 
