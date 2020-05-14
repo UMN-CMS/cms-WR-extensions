@@ -108,7 +108,7 @@ skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
   m_allEvents.book((fs->mkdir("allEvents")), 4, "skim", false, false);
   if(m_isMC) {
     m_genEventInfoToken = consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
-    m_amcatnlo = iConfig.getUntrackedParameter<bool> ("amcatnlo", false);   //DO AMC@NLO STYLE EVENT WEIGHTING
+    //m_amcatnlo = iConfig.getUntrackedParameter<bool> ("amcatnlo", false);   //DO AMC@NLO STYLE EVENT WEIGHTING
   }
 
 }
@@ -137,8 +137,9 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
     edm::Handle<GenEventInfoProduct> eventInfo;
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
     myRECOevent.weight = eventInfo->weight()/fabs(eventInfo->weight());
+    myRECOevent.count = eventInfo->weight()/fabs(eventInfo->weight());
   } else {
-    myRECOevent.weight = 1;
+    myRECOevent.count = 1;
   }
   
   m_allEvents.fill(myRECOevent, 1, false);
@@ -168,12 +169,12 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Jet>> ak4recoJets;
   iEvent.getByToken(m_AK4recoJetsToken, ak4recoJets);
   for(std::vector<pat::Jet>::const_iterator iJet = ak4recoJets->begin(); iJet != ak4recoJets->end(); iJet++) {
-    if (iJet->pt() < 40 || fabs(iJet->eta()) > 2.5 continue;
+    if (iJet->pt() < 40 || fabs(iJet->eta()) > 2.5) continue;
     jetPass++;
   }
 
   //COUNTING FOUND OBJECTS
-  if (jetPass >= 2 && (muonPass+elecPass) == 2)) {
+  if (jetPass >= 2 && (muonPass+elecPass) >= 2) {
     std::cout <<"PASSES"<<std::endl;
     return true; 
   }
