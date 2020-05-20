@@ -46,13 +46,13 @@ scram b -j32
 Example incantations to drive the crab3 interface python (in progress):
 ```
 MC
-python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList_no_ext_noDiBoson.txt -c ExoAnalysis/cmsWRextensions/python/ConfFile_cfg_regression_IDs.py
+python createAndSubmitJobsWithCrab3.py -d runBackgroundMC -i ../../../samples/backgrounds/fullBackgroundDatasetList2016_no_ext.txt -c ../../../python/ConfFile_cfg_regression_IDs.py -f True
 
 2017 Signal Samples:
 python createAndSubmitJobsWithCrab3.py -i ../../../samples/signals/WRtoNLtoLLJJ_2017/WRtoNLtoLLJJ.txt -v 2017Signal -d runBackgroundMC -c ../../../python/ConfFile_cfg_regression_IDs.py -f True
 
 DATA
-python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/data/data_datasets_SingleMuon.txt -c ../../../python/ConfFile_cfg_regression_IDs.py -v Electron_Regression
+python createAndSubmitJobsWithCrab3.py -d runBackgroundData -i ../../../samples/data/data_datasets_SingleMuon2016.txt -c ../../../python/ConfFile_cfg_regression_IDs.py -v Electron_Regression -f True
 ```
 Example incantations to run the analysis by hand:
 ```
