@@ -58,7 +58,7 @@ for dataset in datasets:
     if("SingleElectron" in dataset or "SingleMuon" in dataset or "EGamma" in dataset): #DATA
         ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset.split("--")[0]+"/"+dataset.split("--")[1]+"*/*/*/*.root"
     else:
-        ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*.root"
+        ahaddCommand = "./ahadd.py "+ahaddOut+" "+datasetsROOToutputDir+"/"+dataset+"/"+"*/*/*/*"+dataset.split("_")[0]+"*.root"
     print ahaddCommand
     subprocess.call(ahaddCommand, shell=True)   
 print "CHECKING FOR EXT DATASETS"

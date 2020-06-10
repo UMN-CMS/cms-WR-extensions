@@ -210,4 +210,19 @@ namespace wrTools {
     }
     return false;
   }
+  double HoverE2018_cutCalc(      double rho, double eta, double energy ) {
+    double val = -10000.0;
+    val = (-0.4 + 0.4 * fabs(eta))*rho/energy + 0.05;
+    return val;
+  }
+  double EMhadDepIso2018_cutCalc( double rho, double eta, double et     ) {
+    double val = -10000.0;
+    if (et <= 50.0 ) {
+      val = 2.5 + ( 0.15 + 0.07 * fabs(eta) ) * rho;
+    }
+    else if ( et > 50.0 ) {
+      val = 2.5 + 0.03 * (et - 50.0) + ( 0.15 + 0.07 * fabs(eta) ) * rho;
+    }
+    return val;
+  }
 }

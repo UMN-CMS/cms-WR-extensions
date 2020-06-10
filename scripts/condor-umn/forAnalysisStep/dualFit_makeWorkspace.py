@@ -115,9 +115,11 @@ def addUncertainty(mainHist, uncHist, scale=1.0):
 #        elif mainHist.GetName() == "EMu" and ibin > 3:
 #            addE = addE + addE*15
 	print "addE*scale: "+str(addE)+"*"+str(scale)
+	print "oldE: "+str(binE)
         addE *= scale
 
         newE = math.sqrt(binE * binE + addE * addE)
+	print "newE: "+str(newE)
             
         mainHist.SetBinError(ibin, newE)
 

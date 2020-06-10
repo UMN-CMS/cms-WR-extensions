@@ -76,6 +76,7 @@ class skimEvents : public edm::stream::EDFilter<> {
      // ----------member data ---------------------------
 
     eventHistos m_allEvents;
+    eventHistos m_passingEvents;
     edm::EDGetToken m_genEventInfoToken;
     edm::EDGetToken m_recoMuonToken;
     edm::EDGetToken m_recoElecToken;
@@ -105,7 +106,9 @@ skimEvents::skimEvents(const edm::ParameterSet& iConfig) :
 {
   //now do what ever initialization is needed
   edm::Service<TFileService> fs;
-  m_allEvents.book((fs->mkdir("allEvents")), 4, "skim", false, false);
+ // TFileDirectory histoFolder, uint16_t flavor, std::string tag, int Region, bool isSignal
+  m_allEvents.book((    fs->mkdir("allEvents")),     4, "skim", false, false);
+  m_passingEvents.book((fs->mkdir("passingEvents")), 4, "skim", false, false);
   if(m_isMC) {
     m_genEventInfoToken = consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
     //m_amcatnlo = iConfig.getUntrackedParameter<bool> ("amcatnlo", false);   //DO AMC@NLO STYLE EVENT WEIGHTING
@@ -132,18 +135,22 @@ bool
 skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   eventBits myRECOevent;
+  myRECOevent.m_flavor = 4;
   //EVENT WEIGHTING + ACCOUNTING
   if(m_isMC) {
+    std::cout << "MC EVENTS" << std::endl;
     edm::Handle<GenEventInfoProduct> eventInfo;
     iEvent.getByToken(m_genEventInfoToken, eventInfo);
     myRECOevent.weight = eventInfo->weight()/fabs(eventInfo->weight());
     myRECOevent.count = eventInfo->weight()/fabs(eventInfo->weight());
   } else {
+    std::cout << "DATA EVENTS" << std::endl;
     myRECOevent.count = 1;
+    myRECOevent.weight = 1;
   }
   
-  m_allEvents.fill(myRECOevent, 1, false);
   std::cout <<"THIS EVENT HAS A WEIGHT OF: "<<myRECOevent.weight <<std::endl;
+  std::cout <<"THIS EVENT HAS A COUNT OF: "<<myRECOevent.count <<std::endl;
 
 
   //MUON FINDING
@@ -151,7 +158,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Muon>> recoMuons;
   iEvent.getByToken(m_recoMuonToken, recoMuons);
   for(std::vector<pat::Muon>::const_iterator iMuon = recoMuons->begin(); iMuon != recoMuons->end(); iMuon++) {
-    if (iMuon->pt() < 25 || fabs(iMuon->eta()) > 2.5) continue;
+    if (iMuon->pt() < 50 || fabs(iMuon->eta()) > 2.5) continue;
     muonPass++;
   }
 
@@ -160,7 +167,7 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   edm::Handle<std::vector<pat::Electron>> recoElectrons;
   iEvent.getByToken(m_recoElecToken, recoElectrons);
   for(std::vector<pat::Electron>::const_iterator iElectron = recoElectrons->begin(); iElectron != recoElectrons->end(); iElectron++) {
-    if (iElectron->pt() < 25 || fabs(iElectron->eta()) > 2.5) continue;
+    if (iElectron->pt() < 50 || fabs(iElectron->eta()) > 2.5) continue;
     elecPass++;
   }
 
@@ -174,8 +181,11 @@ skimEvents::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
   }
 
   //COUNTING FOUND OBJECTS
+  
+  m_allEvents.fill(myRECOevent, 1, false);
   if (jetPass >= 2 && (muonPass+elecPass) >= 2) {
     std::cout <<"PASSES"<<std::endl;
+    m_passingEvents.fill(myRECOevent, 1, false);
     return true; 
   }
   std::cout << "FAILS"<<std::endl;

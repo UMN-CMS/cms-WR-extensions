@@ -86,6 +86,7 @@ Accesses GenParticle collection to plot various kinematic variables associated w
 
 #include "JetMETCorrections/Modules/interface/JetResolution.h"
 
+
 //ROOT includes
 #include "TH1D.h"
 #include "TTree.h"
@@ -3265,7 +3266,8 @@ bool cmsWRextension::resolvedFSBleptonSelection(const edm::Event& iEvent, eventB
     }
     
     //how to check if everything passed:
-    const bool heepIDVID = vidResult->cutFlowPassed();
+  //  const bool heepIDVID = vidResult->cutFlowPassed();
+    const bool heepIDVID = electronPassesHEEP(iEvent, myEvent, &(*iElec), false);
 
     if (!heepIDVID) continue;
 
@@ -3413,7 +3415,8 @@ bool cmsWRextension::resolvedElectronSelection(const edm::Event& iEvent, eventBi
      std::cout << "ERROR CANNOT FIND ELECTRON VID RESULTS" << std::endl;
      return false;
    }
-   const bool heepIDVID = vidResult->cutFlowPassed();
+   //const bool heepIDVID = vidResult->cutFlowPassed();
+   const bool heepIDVID = electronPassesHEEP(iEvent, myEvent, &(*iElectron), false);
    if (!heepIDVID) continue;
 
    resolvedANAElectrons.push_back(&(*iElectron));
@@ -3529,7 +3532,8 @@ bool cmsWRextension::electronSelection(const edm::Event& iEvent, eventBits& myEv
       return false;
     }
     //how to check if everything passed:
-    const bool heepIDVID = vidResult->cutFlowPassed();
+    //const bool heepIDVID = vidResult->cutFlowPassed();
+    const bool heepIDVID = electronPassesHEEP(iEvent, myEvent, &(*iElec), false);
 
     //MUST PASS ALL BUT ISO
     if ( vidResult->getCutResultByIndex(cutnrs::HEEPV70::ET           )  == true && 
@@ -6372,6 +6376,77 @@ bool cmsWRextension::WRresonanceStudy(const edm::Event& iEvent, eventBits& myEve
   }
  
   return foundIt;
+
+}
+bool cmsWRextension::electronPassesHEEP(const edm::Event& iEvent, eventBits& myEvent, const pat::Electron* electron, bool noIso) {
+  std::string year = m_era;
+  bool isSignal = m_isSignal;
+  const vid::CutFlowResult* vidResult =  electron->userData<vid::CutFlowResult>("heepElectronID_HEEPV70");
+  if(vidResult == NULL) {
+    std::cout << "ERROR CANNOT FIND ELECTRON VID RESULTS" << std::endl;
+    return false;
+  }
+  edm::Handle<double> rhoHandle;
+  iEvent.getByToken(m_rhoLabel, rhoHandle);
+  double rho = *(rhoHandle.product());
+
+  double electron_dEtaInSeed         = vidResult->getValueCutUpon(cutnrs::HEEPV70::DETAINSEED);
+  double electron_dPhiIn             = vidResult->getValueCutUpon(cutnrs::HEEPV70::DPHIIN);
+  double electron_HoverE             = vidResult->getValueCutUpon(cutnrs::HEEPV70::HADEM);
+  double electron_sig_ietaieta_5x5   = vidResult->getValueCutUpon(cutnrs::HEEPV70::SIGMAIETAIETA);
+  double electron_EM_had_depIso      = vidResult->getValueCutUpon(cutnrs::HEEPV70::EMHADD1ISO);
+  double electron_trackIso           = vidResult->getValueCutUpon(cutnrs::HEEPV70::TRKISO);
+  double electron_innerLostHits      = vidResult->getValueCutUpon(cutnrs::HEEPV70::MISSHITS);
+  double electron_dxy                = vidResult->getValueCutUpon(cutnrs::HEEPV70::DXY);
+  double electron_eta                = vidResult->getValueCutUpon(cutnrs::HEEPV70::ETA);
+  double electron_et                 = vidResult->getValueCutUpon(cutnrs::HEEPV70::ET);
+
+
+  bool pass_electron_et                 = vidResult->getCutResultByIndex(cutnrs::HEEPV70::ET           );
+  bool pass_electron_eta                = vidResult->getCutResultByIndex(cutnrs::HEEPV70::ETA          );
+  bool pass_electron_dEtaInSeed         = vidResult->getCutResultByIndex(cutnrs::HEEPV70::DETAINSEED   );
+  bool pass_electron_dPhiIn             = vidResult->getCutResultByIndex(cutnrs::HEEPV70::DPHIIN       );
+  bool pass_electron_sig_ietaieta_5x5   = vidResult->getCutResultByIndex(cutnrs::HEEPV70::SIGMAIETAIETA);       
+  bool pass_electron_e2x5_over_5x5      = vidResult->getCutResultByIndex(cutnrs::HEEPV70::E2X5OVER5X5  );
+  bool pass_electron_trackIso           = vidResult->getCutResultByIndex(cutnrs::HEEPV70::TRKISO       ) || noIso;
+  bool pass_electron_dxy                = vidResult->getCutResultByIndex(cutnrs::HEEPV70::DXY          ); 
+  bool pass_electron_innerLostHits      = vidResult->getCutResultByIndex(cutnrs::HEEPV70::MISSHITS     ); 
+  bool pass_electron_isEcalDriven       = vidResult->getCutResultByIndex(cutnrs::HEEPV70::ECALDRIVEN   ) || (isSignal == true && (year == "2017" || year == "2018"));
+
+  bool pass_electron_HoverE        = false;
+  bool pass_electron_EM_had_depIso = false;
+
+  if( (year == "2018") && (electron_eta > 1.566) ) {
+    double HoverE_cutVal      = ::wrTools::HoverE2018_cutCalc(     rho, electron_eta, electron->energy());
+    double EMhadDepIso_cutVal = ::wrTools::EMhadDepIso2018_cutCalc(rho, electron_eta, electron_et);
+    pass_electron_HoverE             = (electron_HoverE        < HoverE_cutVal );
+    pass_electron_EM_had_depIso      = (electron_EM_had_depIso < EMhadDepIso_cutVal ); 
+  }
+  else  {
+    pass_electron_HoverE             = vidResult->getCutResultByIndex(cutnrs::HEEPV70::HADEM        );
+    pass_electron_EM_had_depIso      = vidResult->getCutResultByIndex(cutnrs::HEEPV70::EMHADD1ISO   ); 
+  }
+
+  bool passesHEEP = pass_electron_et               &&
+                    pass_electron_eta              &&
+                    pass_electron_dEtaInSeed       &&
+                    pass_electron_dPhiIn           &&
+                    pass_electron_sig_ietaieta_5x5 &&
+                    pass_electron_e2x5_over_5x5    &&
+                    pass_electron_trackIso         &&
+                    pass_electron_dxy              &&
+                    pass_electron_innerLostHits    &&
+                    pass_electron_isEcalDriven     &&
+                    pass_electron_HoverE           &&
+                    pass_electron_EM_had_depIso    ;
+
+  //myEvent.HoverE_cutVal = HoverE_cutVal;
+  //myEvent.EMhadDepIso_cutVal = EMhadDepIso_cutVal;
+
+  //myEvent.HoverE_val = electron_HoverE;
+  //myEvent.EMhadDepIso_val = electron_EM_had_depIso;
+
+  return passesHEEP;
 
 }
 //TIGHTER VERSIONS

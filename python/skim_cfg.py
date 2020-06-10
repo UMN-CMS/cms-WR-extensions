@@ -34,11 +34,11 @@ process.TFileService = cms.Service("TFileService",
 process.skim = cms.EDFilter('skimEvents',
                               recoMuons = cms.InputTag("slimmedMuons"),
                               recoElectrons = cms.InputTag("slimmedElectrons"),
-                              AK4recoJets = cms.InputTag("slimmedJetsAK4"),
+                              AK4recoJets = cms.InputTag("slimmedJets"),
                               genInfo = cms.InputTag("generator"),
                               met = cms.InputTag("slimmedMETs"),
                               isMC = cms.untracked.bool(True),
-                              amcatnlo = cms.untracked.bool(False)
+                              #amcatnlo = cms.untracked.bool(False)
 )
 process.skimOutput = cms.OutputModule("PoolOutputModule",
         dataset = cms.untracked.PSet(
