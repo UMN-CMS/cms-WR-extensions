@@ -13,7 +13,7 @@ import shutil
 import math
 from multiprocessing import Process,Queue
 try:
-  from CRABClient.UserUtilities import config, getUsernameFromSiteDB
+  from CRABClient.UserUtilities import config, getUsernameFromCRIC
 except ImportError:
   print
   print 'ERROR: Could not load CRABClient.UserUtilities.  Please source the crab3 setup:'
@@ -232,7 +232,7 @@ config.Data.allowNonValidInputDataset = True
 # no publishing
 config.Data.publication = False
 config.Data.outputDatasetTag = 'WR' #overridden for data
-config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) + topDirName + '/'
+config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromCRIC()) + topDirName + '/'
 if options.eosDir is not None:
   # split of /eos/cms if it is there
   if options.eosDir.startswith('/eos/cms'):
@@ -245,10 +245,12 @@ if options.eosDir is not None:
   if not outputLFN[-1]=='/':
     outputLFN+='/'
   outputLFN+=options.tagName+'/'
-  if not getUsernameFromSiteDB() in outputLFN:
+#  if not getUsernameFromSiteDB() in outputLFN:
+  if not 'mkrohn' in outputLFN:
     outputLFN.rstrip('/')
     # make the LFN shorter, and in any case, the timestamp is put in by crab
-    config.Data.outLFNDirBase = outputLFN+'/%s/' % (getUsernameFromSiteDB()) + options.tagName + '/'
+#    config.Data.outLFNDirBase = outputLFN+'/%s/' % (getUsernameFromSiteDB()) + options.tagName + '/'
+    config.Data.outLFNDirBase = outputLFN+'/%s/' % ('mkrohn') + options.tagName + '/'
   else:
     config.Data.outLFNDirBase = outputLFN
 print 'Using outLFNDirBase:',config.Data.outLFNDirBase
