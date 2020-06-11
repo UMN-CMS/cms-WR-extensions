@@ -425,6 +425,12 @@ public:
   double selElectron_noISO_endcap_innerLostHits   ; 
   double selElectron_noISO_endcap_dxy             ; 
 
+  double HoverE_cutVal;
+  double EMhadDepIso_cutVal;
+
+  double HoverE_val;
+  double EMhadDepIso_val;
+
   double secondMuonWRjetdR;
 
 

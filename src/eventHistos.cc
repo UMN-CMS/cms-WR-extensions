@@ -23,6 +23,7 @@ eventHistos::eventHistos () {}
 void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string tag, int Region, bool isSignal) {
 
   //CREATED FOLDER IN HISTO
+  std::cout << "FLAVOR: " << flavor<< std::endl;
   m_flavor = flavor;
   m_histoFolder = histoFolder;
   m_FSB = Region;

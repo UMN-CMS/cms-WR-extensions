@@ -48,6 +48,8 @@ namespace wrTools {
  void printCutFlowResult(vid::CutFlowResult &cutflow);
  double HEMfailBox(bool upper_lower, bool eta_phi);
  bool InTheHEMfailBox(double eta, double phi, double radius);
+ double HoverE2018_cutCalc(      double rho, double eta, double energy );
+ double EMhadDepIso2018_cutCalc( double rho, double eta, double et     );
 
 };
 

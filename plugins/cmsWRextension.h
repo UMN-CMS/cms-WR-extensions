@@ -180,6 +180,7 @@ class cmsWRextension : public edm::EDAnalyzer {
       void setEventWeight_FSB_noISO(const edm::Event& iEvent, eventBits& myEvent);
       void setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventBits& myEvent);
       bool WRresonanceStudy(const edm::Event& iEvent, eventBits& myEvent);
+      bool electronPassesHEEP(const edm::Event& iEvent, eventBits& myEvent, const pat::Electron* electron, bool noIso); 
 
       std::vector<double> getZweight(const edm::Event& iEvent, eventBits& myEvent);
       double PUPPIweight(double puppipt, double puppieta, bool isMC);
