@@ -110,10 +110,10 @@ def addUncertainty(mainHist, uncHist, scale=1.0):
         binCenter = mainHist.GetBinCenter(ibin)
         nearBin = findNearBinCenter(binCenter, uncHist)
         addE = uncHist.GetBinError(nearBin)
-#	if mainHist.GetName() == "DY" and ibin > 5:
-#	    addE = addE + addE*15
-#        elif mainHist.GetName() == "EMu" and ibin > 3:
-#            addE = addE + addE*15
+	if mainHist.GetName() == "DY" and ibin > 5:
+	    addE = addE
+        elif "EMU" in  mainHist.GetName() and ibin > 3:
+            addE = 0.3377557255135028
 	print "addE*scale: "+str(addE)+"*"+str(scale)
         addE *= scale
 
@@ -291,7 +291,7 @@ binEdgeListDY = [800., 1200., 1600., 2000., 2400., 2800., 8000.]
 binningDY = array("d",binEdgeListDY)
 nBinsDY = len(binningDY) - 1
 
-binEdgeListEMU = [800., 1200., 1600., 2000., 8000.]
+binEdgeListEMU = [800., 1200., 1600., 8000.]
 binningEMU = array("d",binEdgeListEMU)
 nBinsEMU = len(binningEMU) - 1
 

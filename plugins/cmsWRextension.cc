@@ -115,6 +115,7 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_regMuonToken (consumes<std::vector<pat::Muon>> (iConfig.getParameter<edm::InputTag>("regMuons"))),
   m_recoJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("recoJets"))),
   m_AK4recoCHSJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK4recoCHSJets"))),
+  m_PackedPFCandiates (consumes<std::vector<pat::PackedCandidate> > (iConfig.getParameter<edm::InputTag>("packedpfcandidate"))),
   m_AK8recoPUPPIJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("AK8recoPUPPIJets"))),
   m_AK8recoPUPPISubJetsToken (consumes<std::vector<pat::Jet>> (iConfig.getParameter<edm::InputTag>("subJetName"))),
   m_offlineVerticesToken (consumes<std::vector<reco::Vertex>> (iConfig.getParameter<edm::InputTag>("vertices"))),
@@ -137,6 +138,8 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   m_flavorSideband (iConfig.getUntrackedParameter<bool>("flavorSideband", false)),  //SOON TO BE DEPRECATED
   m_outputTag (iConfig.getUntrackedParameter<string>("outputTag", "blah")),
   m_era (iConfig.getUntrackedParameter<string>("era", "2016"))
+
+
 
 {
    //now do what ever initialization is needed
@@ -334,6 +337,7 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   myRECOevent.lumiSection = iEvent.luminosityBlock();
 
   myRECOevent.hasPVertex = myEventInfo.PVselection(vertices);
+  std::cout << "myRECOevent.hasPVertex: " << myRECOevent.hasPVertex << endl;
 
   if(myRECOevent.hasPVertex){
   myRECOevent.nVtx = myEventInfo.nVtx;
@@ -389,6 +393,35 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   myRECOevent.cutProgress = 1;
   myRECOevent.ResCutProgress = 1;
   myRECOevent.ResFSBCutProgress = 1;
+
+//Playing with PackedCandidates - Delete 
+
+  edm::Handle<std::vector<pat::PackedCandidate>> PFCandidates;
+  iEvent.getByToken(m_PackedPFCandiates, PFCandidates);
+  assert(PFCandidates.isValid());
+  
+  int nPFCand = 0;
+  
+  for(std::vector<pat::PackedCandidate>::const_iterator pfcand = PFCandidates->begin(); pfcand != PFCandidates->end(); pfcand++) {
+     nPFCand = nPFCand + 1;
+     std::cout << "nPFCand: " << nPFCand << std::endl;
+
+     std::cout << "pfcand->energy(): " << pfcand->energy() << endl;
+
+  }
+
+  
+
+//  return;
+
+
+
+
+
+
+// End of PackedCandidate playing
+
+
 
   if (!m_doFast) {
     if(m_isMC && m_doGen) {
@@ -3591,6 +3624,7 @@ bool cmsWRextension::muonSelection(const edm::Event& iEvent, eventBits& myEvent)
   std::cout << "Muon Handle" << std::endl;
   edm::Handle<std::vector<pat::Muon>> highMuons;
   iEvent.getByToken(m_highMuonToken, highMuons);
+  std::cout << "Number of Muons: " << highMuons->size() << std::endl;
 //  std::cout << "Vertex Handle" << std::endl;
 
 //  edm::Handle<std::vector<reco::Vertex>> vertices;
@@ -4162,7 +4196,7 @@ bool cmsWRextension::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
     if(csv3 > maxCSV) maxCSV=csv3;
     if(csv4 > maxCSV) maxCSV=csv4;
 
-    std::cout << " iJet->pt(): " <<  iJet->pt() << std::endl;
+    std::cout << " iJet->pt(): " <<  iJet->pt() << " iJet->eta(): " << iJet->eta() << " iJet->phi(): " << iJet->phi() << std::endl;
     if ( iJet->pt() < 180 ) continue;
     //GETS ALL THE RELEVANT JET ID QUANTITIES
     double NHF  =                iJet->neutralHadronEnergyFraction();

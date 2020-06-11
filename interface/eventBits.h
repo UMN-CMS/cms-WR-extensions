@@ -60,6 +60,10 @@ public:
   std::vector<const reco::GenParticle*> myGenLeptons;
   std::vector<const reco::GenParticle*> genWRDaughters;
 
+  std::vector<const reco::Candidate*> genWHadronicDaughters;
+  std::vector<const reco::GenParticle*> genInjectedLepton;
+
+
   //GEN jet studies
   int nDaughters;
   double MaxDR_genDaughter_CandJet;
