@@ -79,21 +79,21 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(20000))
+#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
-#import FWCore.Utilities.FileUtils as FileUtils
+import FWCore.Utilities.FileUtils as FileUtils
 #mylist = FileUtils.loadListFromFile ('WRtoNLtoLLJJ_WR5000_N1800_5.txt')
 #readFiles = cms.untracked.vstring( *mylist)
 
-#mylistEvents = FileUtils.loadListFromFile ('events_TTbarLeptonic.txt')
+#mylistEvents = FileUtils.loadListFromFile ('events_ttbar2017.txt')
 #mylistEvents = FileUtils.loadListFromFile ('events_WR4000_N100.txt')
 #eventsToProcess = cms.untracked.vstring( *mylistEvents)
 
 process.source = cms.Source ("PoolSource",
 #          fileNames = readFiles,
 	  fileNames = cms.untracked.vstring (options.inputFiles),
- #         eventsToProcess = cms.untracked.VEventRange(eventsToProcess),
-#	  lumisToProcess = cms.untracked.VLuminosityBlockRange("1:342735-1:342740" )
+#          eventsToProcess = cms.untracked.VEventRange(eventsToProcess),
+#	  lumisToProcess = cms.untracked.VLuminosityBlockRange("1:4412-1:4413" )
 #	  e = cms.EventID(1,9946613, 52351) 
 # 	  skipEvents = cms.untracked.uint32(27000)
 )
@@ -120,7 +120,7 @@ process.badGlobalMuonTagger = cms.EDFilter("BadGlobalMuonTagger",
     muonPtCut = cms.double(20),
     selectClones = cms.bool(False),
     taggingMode = cms.bool(True),
-    verbose     = cms.untracked.bool(False)
+    verbose     = cms.untracked.bool(True)
 )
 process.cloneGlobalMuonTagger = process.badGlobalMuonTagger.clone(
     selectClones = cms.bool(True)
@@ -240,6 +240,7 @@ process.analysis = cms.EDAnalyzer('cmsWRextension',
                               checkZ = cms.untracked.bool(options.checkZ),
                               isMC = cms.untracked.bool(options.isMC),
 			                  amcatnlo = cms.untracked.bool(options.ISmcatnlo),
+			      packedpfcandidate = cms.InputTag("packedPFCandidates"),
                               #MCL = cms.untracked.double(100),
                               #MCU = cms.untracked.double(8000),
                               outputTag = cms.untracked.string(options.gitTag),
