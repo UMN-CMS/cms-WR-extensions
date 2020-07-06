@@ -3,4 +3,4 @@
 /SingleMuon/Run2018A-17Sep2018-v2/MINIAOD    -1 30   NA  2018_Data_SingleMuon 794     
 /SingleMuon/Run2018B-17Sep2018-v1/MINIAOD         -1 30   NA  2018_Data_SingleMuon 794        
 /SingleMuon/Run2018C-17Sep2018-v1/MINIAOD         -1 30   NA  2018_Data_SingleMuon 794       
-/SingleMuon/Run2018D-PromptReco-v2/MINIAOD         -1 30   NA  2018_Data_SingleMuon 794        
+/SingleMuon/Run2018D-22Jan2019-v2/MINIAOD         -1 30   NA  2018_Data_SingleMuon 794        
