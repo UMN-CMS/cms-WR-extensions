@@ -43,6 +43,7 @@ eventBits::eventBits() {
 
   NR = NULL;
   WR = NULL;
+  firstLepton = NULL;
 
   myZ = NULL;
 
@@ -57,6 +58,7 @@ eventBits::eventBits() {
   daughterClusterVector = math::XYZTLorentzVector(0,0,0,0);
 
   count = 0;
+  countNoKfactor = 0;
 
   NresolvedANAMuonCands = -10000.0;
   NresolvedANAElectronCands = -10000.0;
@@ -450,6 +452,8 @@ eventBits::eventBits() {
   selElectron_noISO_endcap_trackPnt         = -10000.0; 
   selElectron_noISO_endcap_innerLostHits    = -10000.0; 
   selElectron_noISO_endcap_dxy              = -10000.0; 
+
+  signalKfactor = 1.0;
 }
 void eventBits::clear() {
   run = -1;
@@ -461,6 +465,7 @@ void eventBits::clear() {
   FSBweight = 1.0;
 
   count = 0;
+  countNoKfactor = 0;
   
   ResCutProgress = 0;
   cutProgress = 0;
@@ -599,6 +604,8 @@ void eventBits::clear() {
   selectedJetTransMET = 0.0;
 
   myEventMass = 0.0;
+
+  signalKfactor = 1.0;
 
 }
 
