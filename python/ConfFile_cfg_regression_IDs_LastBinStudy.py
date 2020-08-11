@@ -5,6 +5,8 @@ import os
 #INPUT PARSING SECTION
 options = VarParsing ('analysis')
 
+isMC = False
+
 options.register ('gitTag',
 				  'applePie',
 				  VarParsing.multiplicity.singleton,
@@ -44,7 +46,7 @@ from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 from Configuration.AlCa.autoCond import autoCond
 
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
-if not options.isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
+if not isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
