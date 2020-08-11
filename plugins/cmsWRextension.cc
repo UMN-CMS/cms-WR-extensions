@@ -204,6 +204,12 @@ cmsWRextension::cmsWRextension(const edm::ParameterSet& iConfig):
   resolution_AK4 = JME::JetResolution(Form(resPath_AK4.c_str()));
   resolution_sf_AK4 = JME::JetResolutionScaleFactor(Form(resPathSF_AK4.c_str()));
 
+  std::string kfactorFilePath = jecPathname + "kfactor.root";
+  TFile *kfactorFile = TFile::Open(kfactorFilePath.c_str());
+  kfactor = (TH1D*) kfactorFile->Get("kfactor_all");
+  kfactor->SetDirectory(0);
+  kfactorFile->Close();
+
   ScaleIDRange_ = iConfig.getUntrackedParameter< std::vector<int> >("ScaleIDRange");
   PDFErrorIDRange_ = iConfig.getUntrackedParameter< std::vector<int> >("PDFErrorIDRange");
   PDFAlphaSIDRange_ = iConfig.getUntrackedParameter< std::vector<int> >("PDFAlphaSIDRange");
@@ -976,6 +982,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResZMASSRECO.fill(myRECOevent, 19, m_isSignal);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 34, m_isSignal);
         m_eventsPassResZMASSRECO.fill(myRECOevent, 35, m_isSignal);
+        m_eventsPassResZMASSRECO.fill(myRECOevent, 36, m_isSignal);
+        m_eventsPassResZMASSRECO.fill(myRECOevent, 37, m_isSignal);
       }
       if(passesResRECOAllRegions[1]){
         m_eventsPassResZMASSRECO.fill(myRECOevent, 24, m_isSignal);
@@ -1043,6 +1051,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFSBRECO.fill(  myRECOevent, 19, m_isSignal);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 34, m_isSignal);
         m_eventsPassResFSBRECO.fill(  myRECOevent, 35, m_isSignal);
+        m_eventsPassResFSBRECO.fill(  myRECOevent, 36, m_isSignal);
+        m_eventsPassResFSBRECO.fill(  myRECOevent, 37, m_isSignal);
 /*	if(myRECOevent.subleadMuon_selElectronMass > 450){
 	  std::cout << "filling m_eventsPassResFSBRECO_mll450" << std::endl;
           m_eventsPassResFSBRECO_mll450.fill(  myRECOevent, 1);
@@ -1133,6 +1143,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 19, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 34, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 35, m_isSignal);
+        m_eventsPassResFailBoostRECO.fill(myRECOevent, 36, m_isSignal);
+        m_eventsPassResFailBoostRECO.fill(myRECOevent, 37, m_isSignal);
 /*	if(myRECOevent.subleadMuon_selMuonMass > 450){
 	  m_eventsPassResFailBoostRECO_mll450.fill(myRECOevent, 1);
 	}
@@ -1274,6 +1286,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 19., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 34., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 35., m_isSignal);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 36., m_isSignal);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 37., m_isSignal);
         if ( onShell){
           m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 1 ,m_isSignal);
 	  m_eventsFailResPassBoostRECO_onShell.fill( myRECOevent, 6 ,m_isSignal);
@@ -1424,6 +1438,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 19., m_isSignal);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 34., m_isSignal);
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 35., m_isSignal);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 36., m_isSignal);
+        m_eventsPassBoostZMASSRECO.fill(myRECOevent, 37., m_isSignal);
       }
       if(myRECOevent.myAddJetCandsHighPt_noLSF_JECUp.size() > 0 && myRECOevent.myMuonCandsHighPt.size() > 0 && myRECOevent.myMuonJetPairs_noLSF_JECUp.size() > 0 && muonTrigPass && addMuons_JECUp && ZMASS_JECUp==1 && myRECOevent.electronCands200 == 0){
         m_eventsPassBoostZMASSRECO.fill(myRECOevent, 2., m_isSignal);
@@ -1536,6 +1552,8 @@ void cmsWRextension::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 33, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 34, m_isSignal);
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 35, m_isSignal);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 36, m_isSignal);
+        m_eventsPassBoostFSBRECO.fill(myRECOevent, 37, m_isSignal);
       }
       if(myRECOevent.myElectronJetPairs_JECUp.size() > 0 && electronTrigPass && !ZMASS_FSB_JECUp && addMuons_JECUp && !addElectrons_JECUp){
         m_eventsPassBoostFSBRECO.fill(myRECOevent, 2, m_isSignal);
@@ -1646,7 +1664,8 @@ void cmsWRextension::setEventWeight_Resolved(const edm::Event& iEvent, eventBits
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
 
-      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.countNoKfactor = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.count = eventInfo->weight()*myEvent.signalKfactor/fabs(eventInfo->weight());
       myEvent.weight = myEvent.count;
       myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_HighPtID2nd_Weight*myEvent.Muon_LooseTkIso2nd_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight*myEvent.Muon_RECO2nd_Weight*myEvent.puWeight;
       if(m_foundZ){
@@ -1667,7 +1686,8 @@ void cmsWRextension::setEventWeight(const edm::Event& iEvent, eventBits& myEvent
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
       
-      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.countNoKfactor = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.count = eventInfo->weight()*myEvent.signalKfactor/fabs(eventInfo->weight());
       myEvent.weight = myEvent.count;
 	myEvent.weight = myEvent.weight*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent.Muon_Trig_Weight*myEvent._prefiringweight*myEvent.Muon_RECO_Weight*myEvent.puWeight;
 	std::cout << "myEvent.Muon_HighPtID_Weight: " << myEvent.Muon_HighPtID_Weight << "myEvent.Muon_LooseID_Weight: " << myEvent.Muon_LooseID_Weight << "myEvent.Muon_LooseTkIso_Weight: " << myEvent.Muon_LooseTkIso_Weight << "myEvent.Muon_Trig_Weight: " << myEvent.Muon_Trig_Weight << "myEvent._prefiringweight: " << myEvent._prefiringweight << "myEvent.weight: " << myEvent.weight << " myEvent.Muon_RECO_Weight: " << myEvent.Muon_RECO_Weight << std::endl;
@@ -1690,7 +1710,8 @@ void cmsWRextension::setEventWeight_ResolvedFSB(const edm::Event& iEvent, eventB
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
 
-      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.countNoKfactor = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.count = eventInfo->weight()*myEvent.signalKfactor/fabs(eventInfo->weight());
       myEvent.FSBweight = myEvent.count;
       myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.Muon_HighPtID_Weight*myEvent.Muon_LooseTkIso_Weight*myEvent._prefiringweight*myEvent.Muon_Trig_Weight*myEvent.Muon_RECO_Weight*myEvent.puWeight;      
       if(m_foundZ){
@@ -1711,7 +1732,8 @@ void cmsWRextension::setEventWeight_FSB(const edm::Event& iEvent, eventBits& myE
       edm::Handle<GenEventInfoProduct> eventInfo;
       iEvent.getByToken(m_genEventInfoToken, eventInfo);
 
-      myEvent.count = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.countNoKfactor = eventInfo->weight()/fabs(eventInfo->weight());
+      myEvent.count = eventInfo->weight()*myEvent.signalKfactor/fabs(eventInfo->weight());
       myEvent.FSBweight = myEvent.count;
       myEvent.FSBweight = myEvent.FSBweight*myEvent.HEEP_SF*myEvent.egamma_SF*myEvent.egamma_SF_HLT*myEvent.Muon_LooseID_Weight*myEvent._prefiringweight*myEvent.puWeight;
       if(m_foundZ){
@@ -4877,6 +4899,8 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
 
   myEvent.neutrinoDecays = 0;
 
+  bool foundFirstLepton = false;
+
   //LOOP OVER GEN PARTICLES
   //9900024 WR 9900014 NRu 9900012 NRe 9900016 NRt
   for (std::vector<reco::GenParticle>::const_iterator iParticle = genParticles->begin(); iParticle != genParticles->end(); iParticle++) {
@@ -4888,8 +4912,10 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
 //    if(iParticle->fromHardProcessFinalState() && abs(iParticle->pdgId()) == 13) myGenMuons.push_back(&(*iParticle));
     if( ! iParticle->isHardProcess() ) continue;  //ONLY HARD PROCESS AND NOT INCOMING
     if( iParticle->status() == 21 )    continue;
-    if(iParticle->pdgId() == 13) {
+    if((abs(iParticle->pdgId()) == 13 || abs(iParticle->pdgId()) == 11) && !foundFirstLepton) {
         std::cout << "MUON HAS MOTHER WITH ID: " << iParticle->mother()->pdgId() << std::endl;
+	myEvent.firstLepton = &(*iParticle);
+	foundFirstLepton = true;
     }
 
 
@@ -4898,6 +4924,7 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
       if ( abs(iParticle->mother()->pdgId()) == 9900024 || abs(iParticle->mother()->pdgId()) == 34) {
         const reco::Candidate* WR = iParticle->mother();
         myEvent.WR = WR;
+	std::cout << "GEN WR mass: " << myEvent.WR->mass() << std::endl;
         std::cout << "WR DAUGHTERS: "<<iParticle->pdgId()<<std::endl;
         if ( abs(iParticle->pdgId()) == 13 ) { //it's the first muon
           std::cout << "FIRST MUON" << std::endl;
@@ -4913,9 +4940,9 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
           myGenElectrons.push_back(firstElectron);
         }
       }
-      if ( abs(iParticle->pdgId()) == 9900024 ||  abs(iParticle->mother()->pdgId()) == 34) {
-        std::cout << "WR with mass: "<< iParticle->mass() << std::endl;
-      }
+/*      if(){
+	
+      }*/
       if ( abs(iParticle->pdgId()) == 9900012 || abs(iParticle->pdgId()) == 9900014 || abs(iParticle->pdgId()) == 9900016) {
         std::cout << "NR CAND: " << iParticle->pdgId() << " WITH MOTHER: " << iParticle->mother()->pdgId() << std::endl;
         if ( abs(iParticle->mother()->pdgId()) == 9900012 || abs(iParticle->mother()->pdgId()) == 9900014 || abs(iParticle->mother()->pdgId()) == 9900016) {
@@ -4988,6 +5015,17 @@ bool cmsWRextension::signalGENidentifier(const edm::Event& iEvent, eventBits& my
   myEvent.myGenMuons = myGenMuons;
 
   if (myEvent.neutrinoDecays != 0) return false;
+
+  std::cout << "myEvent.firstLepton->mass(): " << myEvent.firstLepton->mass() << std::endl;
+  std::cout << "myEvent.NR->mass(): " << myEvent.NR->mass() << std::endl;
+
+  std::cout << "Initial signal k factor: " << myEvent.signalKfactor << std::endl;
+  double WRgenMass = (myEvent.firstLepton->p4() + myEvent.NR->p4()).mass();
+  cout << "WRgenMass: " << WRgenMass << std::endl;
+  if(WRgenMass > 0){
+    myEvent.signalKfactor = kfactor->GetBinContent(kfactor->FindBin(WRgenMass));
+    std::cout << "signal k factor: " << myEvent.signalKfactor << std::endl;
+  }
 
   return true;
 }  

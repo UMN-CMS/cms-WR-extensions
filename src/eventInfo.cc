@@ -48,10 +48,10 @@ eventInfo::eventInfo () {
   fPUDataHist2016_up->Divide(fPUMCHist2016);
   fPUDataHist2016_down->Divide(fPUMCHist2016);
 
-  std::cout << "Original Reweighting" << std::endl;
+/*  std::cout << "Original Reweighting" << std::endl;
   for(int i=1; i<fPUDataHist2016->GetNbinsX()+1; i++){
      std::cout << "bin: " << i << " amount: " << fPUDataHist2016->GetBinContent(i) << std::endl;
-  }
+  }*/
 
   float fPUMCValues2016_Signal[100] = {0.000829312873542,0.00124276120498,0.00339329181587,0.00408224735376,0.00383036590008,0.00659159288946,0.00816022734493,	0.00943640833116,0.0137777376066,0.017059392038,0.0213193035468,0.0247343174676,0.0280848773878,0.0323308476564,0.0370394341409,0.0456917721191,0.0558762890594,0.0576956187107,0.0625325287017,0.0591603758776,0.0656650815128,0.0678329011676,0.0625142146389,0.0548068448797,0.0503893295063,0.040209818868,	0.0374446988111,0.0299661572042,0.0272024759921,0.0219328403791,0.0179586571619,0.0142926728247,0.00839941654725,0.00522366397213,0.00224457976761,0.000779274977993,0.000197066585944,	7.16031761328e-05,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0};
 
@@ -65,10 +65,10 @@ eventInfo::eventInfo () {
   fPUDataHist2016_Signal->Divide(fPUMCHist2016_Signal);
   fPUDataHist2016_Signal_up->Divide(fPUMCHist2016_Signal);
   fPUDataHist2016_Signal_down->Divide(fPUMCHist2016_Signal);
-  std::cout << "Original Signal Reweighting" << std::endl;
+/*  std::cout << "Original Signal Reweighting" << std::endl;
   for(int i=1; i<fPUDataHist2016_Signal->GetNbinsX()+1; i++){
      std::cout << "bin: " << i << " amount: " << fPUDataHist2016_Signal->GetBinContent(i) << std::endl;
-  }
+  }*/
 
 
   std::string PU_Data2017="${CMSSW_BASE}/src/ExoAnalysis/cmsWRextensions/data/2017/pileUp_Cert_294927-306462_13TeV_Collisions17_JSON.root";
@@ -158,6 +158,7 @@ bool eventInfo::PVselection(edm::Handle<std::vector<reco::Vertex>> vertices) {
 
   for (std::vector<reco::Vertex>::const_iterator it=vertices->begin(); it!=vertices->end(); ++it) {
     if (!it->isFake() && it->ndof()>4 && it->position().Rho()<2. && std::abs(it->position().Z())<24.) {
+      std::cout << "Vertex position: (" << it->position().X() << "," << it->position().Y() << "," << it->position().Z() << ")" << std::endl;
       Nvtx++;
       if(firstGoodVertex == vertices->end()){
         firstGoodVertex = it;

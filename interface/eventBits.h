@@ -42,7 +42,8 @@ public:
   std::string outputTag;  //LABELLING THE DATA
 
   //DOES THIS EVENT COUNT AS AN EVENT OR A NEGATIVE EVENT?
-  int count;
+  double count;
+  int countNoKfactor;
 
   //BASIC FUNCTIONS
   bool passesGenCuts();
@@ -159,6 +160,7 @@ public:
 
   const reco::Candidate*            NR;
   const reco::Candidate*            WR;
+  const reco::GenParticle*          firstLepton;
 
   const reco::GenParticle*          myZ;
 
@@ -667,6 +669,8 @@ public:
   double myEventMass_JECDown;
   double myEventMass_JERUp;
   double myEventMass_JERDown;
+
+  double signalKfactor;
 
 private:
 

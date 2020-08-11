@@ -65,6 +65,8 @@ class eventHistos {
   void fillCombine_ElHLTDown(eventBits& event);
   void fillCombine_ZweightUp(eventBits& event);
   void fillCombine_ZweightDown(eventBits& event);
+  void fillCombine_PrefireUp(eventBits& event);
+  void fillCombine_PrefireDown(eventBits& event);
 
   TFileDirectory m_histoFolder;
   uint32_t m_flavor;
@@ -75,6 +77,7 @@ class eventHistos {
 
   //GEN PLOTS
   TH1D* m_eventsWeight;
+  TH1D* m_eventsWeightNoKfactor;
   TH1D* m_RECOpasses;
   TH1D* m_finalEventWeight;
 
@@ -254,6 +257,18 @@ class eventHistos {
   TH1D* m_resolvedRECOmass_ZweightDown;
   TH1D* m_leadAK8JetElectronMass_ZweightDown;
   TH1D* m_resolvedFSBRECOmass_ZweightDown;
+
+  TH1D* m_leadAK8JetMuonMass_PrefireUp;
+  TH1D* m_leadAK8JetMuonMass_noLSF_PrefireUp;
+  TH1D* m_resolvedRECOmass_PrefireUp;
+  TH1D* m_leadAK8JetElectronMass_PrefireUp;
+  TH1D* m_resolvedFSBRECOmass_PrefireUp;
+
+  TH1D* m_leadAK8JetMuonMass_PrefireDown;
+  TH1D* m_leadAK8JetMuonMass_noLSF_PrefireDown;
+  TH1D* m_resolvedRECOmass_PrefireDown;
+  TH1D* m_leadAK8JetElectronMass_PrefireDown;
+  TH1D* m_resolvedFSBRECOmass_PrefireDown;
 
   TH1D* m_leadAK8JetMuonMass_MuResolUp;
   TH1D* m_leadAK8JetMuonMass_MuResolDown;

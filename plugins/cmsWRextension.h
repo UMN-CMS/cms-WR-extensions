@@ -350,6 +350,8 @@ class cmsWRextension : public edm::EDAnalyzer {
 
       std::string cmsswPath;
 
+      TH1D* kfactor;
+
 };
 
 //define this as a plug-in
