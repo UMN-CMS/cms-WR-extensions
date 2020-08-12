@@ -131,7 +131,7 @@ analyzeLastBin::analyzeLastBin(const edm::ParameterSet& iConfig):
   m_outputTag (iConfig.getUntrackedParameter<string>("outputTag", "blah")),
   m_era (iConfig.getUntrackedParameter<string>("era", "2016"))
 
-
+  
 
 {
    //now do what ever initialization is needed
@@ -147,17 +147,6 @@ analyzeLastBin::analyzeLastBin(const edm::ParameterSet& iConfig):
     m_electronFiltersToPass = iConfig.getParameter<std::vector<std::string> >("electronFiltersToPass");
     m_genericTriggerEventFlag = new GenericTriggerEventFlag( iConfig, consumesCollector(), *this );
   }
-  if (m_isMC){
-    std::cout << "CREATING GEN EVENT INFO TOKENS" << std::endl;
-    m_genEventInfoToken =consumes<GenEventInfoProduct> (iConfig.getParameter<edm::InputTag>("genInfo"));
-    m_amcatnlo = iConfig.getUntrackedParameter<bool>("amcatnlo",false);
-  }
-  if (m_isMC && m_doGen){
-    std::cout << "CREATING GEN PARTICLE TOKENS" << std::endl;
-    m_genParticleToken = consumes<std::vector<reco::GenParticle>> (iConfig.getParameter<edm::InputTag>("genParticles"));
-    m_genJetsToken      =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("genJets"));
-    m_AK8genJetsToken   =consumes<std::vector<reco::GenJet>> (iConfig.getParameter<edm::InputTag>("AK8genJets"));
-  }
 
   std::cout << "Inside myEgammaEffi.Initialize" << std::endl;
   myEgammaEffi.Initialize(m_era);
@@ -167,7 +156,7 @@ analyzeLastBin::analyzeLastBin(const edm::ParameterSet& iConfig):
   m_foundZ           = false;
 
   loadCMSSWPath();
-  std::string jecPathname = cmsswPath + "/src/ExoAnalysis/analyzeLastBins/data/";
+  std::string jecPathname = cmsswPath + "/src/ExoAnalysis/cmsWRextensions/data/";
   std::string resPath;
   std::string resPathSF;
   std::string resPath_AK4;
@@ -223,6 +212,10 @@ analyzeLastBin::~analyzeLastBin() {
 // ------------ method called for each event  ------------
 void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
+  m_doFast = true;
+  m_isMC = false;
+  m_doReco = true;
+
   std::cout << "Beginning event analysis:" << std::endl;
 
   std::cout << "iEvent.luminosityBlock(): " << iEvent.luminosityBlock() << std::endl;
@@ -381,7 +374,7 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   //THIS PART OF THE CODE RUNS THE ANALYSIS IN FAST MODE.  THE GOAL HERE IS TO PRODUCE ALL THE NECESSARY INFORMATION FOR HIGGS COMBINE
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  if (m_doFast && myRECOevent.hasPVertex){
+  if (myRECOevent.hasPVertex){
     std::cout << "Inside doFast running" << std::endl;
 
     std::vector<bool> passesResRECOAllRegions = passResRECO_Fast(iEvent , myRECOevent);
@@ -469,7 +462,7 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 
   }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  if ((m_doReco || !m_isMC) && m_doFast && myRECOevent.hasPVertex){
+  if (myRECOevent.hasPVertex){
     std::cout << "RUNNING CONDENSED ANALYSIS FOR HIGGS COMBINE" << std::endl;
     if(preSelectReco_Fast(iEvent, iSetup, myRECOevent)) {
       std::cout<< "starting passExtensionRECO_Fast" << std::endl;
@@ -1507,7 +1500,7 @@ bool analyzeLastBin::resolvedJetSelection(const edm::Event& iEvent, eventBits& m
   std::vector<const baconhep::TAddJet*> resCandJets_JERUp;
   std::vector<const baconhep::TAddJet*> resCandJets_JERDown;
 
-  std::string jecPathname = cmsswPath + "/src/ExoAnalysis/analyzeLastBins/data/";
+  std::string jecPathname = cmsswPath + "/src/ExoAnalysis/cmsWRextensions/data/";
 
   edm::Handle<double> rhoHandle;
   iEvent.getByToken(m_rhoLabel, rhoHandle);
@@ -3103,18 +3096,13 @@ analyzeLastBin::beginJob()
   std::cout << "BOOKING PLOTS" << std::endl;
   edm::Service<TFileService> fs; 
 
-  if (m_doReco && m_doFast) {
-    flavor = 5;
-    std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
-    m_allEvents.book((fs->mkdir("allEvents")), 5, m_outputTag, false, m_isSignal);
+  flavor = 5;
+  std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
+  m_allEvents.book((fs->mkdir("allEvents")), 5, m_outputTag, false, m_isSignal);
 
-    m_eventsFailResPassBoostRECO_onShell.book((fs->mkdir( "eventsFailResPassBoostRECO_onShell" )),            5, m_outputTag, false, m_isSignal);
-    m_eventsFailResPassBoostRECO_offShell.book((fs->mkdir("eventsFailResPassBoostRECO_offShell")),            5, m_outputTag, false, m_isSignal);
+  m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")),            5, m_outputTag, false, m_isSignal);
+  m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")),            5, m_outputTag, false, m_isSignal);
 
-    m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")),            5, m_outputTag, false, m_isSignal);
-    m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")),            5, m_outputTag, false, m_isSignal);
-
-  }
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
