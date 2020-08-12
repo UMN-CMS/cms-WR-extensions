@@ -378,6 +378,7 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
     std::cout << "Inside doFast running" << std::endl;
 
     std::vector<bool> passesResRECOAllRegions = passResRECO_Fast(iEvent , myRECOevent);
+    ZMASSres         = subLeadingMuonZMass(iEvent, myRECOevent, false, true);
 
     if(myRECOevent.NresolvedANAElectronCands > 0)  tooManyResElectrons = true;
     if(myRECOevent.NresolvedANAMuonCands > 2)      tooManyResMuons = true;
@@ -2999,6 +3000,74 @@ static const float DRCUT = 0.4;
 //static const float DRCUT = 0.6;
 //static const float DRCUT = 0.7;
 //static const float DRCUT = 0.8;
+int analyzeLastBin::subLeadingMuonZMass(const edm::Event& iEvent, eventBits& myEvent, bool ZPeak, bool useResMu) {  //THIS SELECTION IS A SIDEBAND BASED OF THE MUON FLAVOR SELECTION ONLY
+  //CHECK IF WE HAVE A SUBLEADING MUON
+  std::cout << "Inside subLeadingMuonZMass" << std::endl;
+  const pat::Muon* subleadMuon;
+  const pat::Muon* selMuon;
+  double leadMuScale = 0.;
+  double secondMuScale = 0.;
+  if (useResMu) {
+    if(myEvent.resolvedANAMuons.size() < 2) return false;
+    if(myEvent.resolvedANAMuons[0] == NULL) return false;
+    if(myEvent.resolvedANAMuons[1] == NULL) return false;
+    subleadMuon = myEvent.resolvedANAMuons[1];
+    selMuon     = myEvent.resolvedANAMuons[0];
+    secondMuScale = myEvent.secondResMuonScale[0];
+    leadMuScale   = myEvent.leadResMuonScale[0];
+  } else {
+    if(myEvent.mySubleadMuon == NULL) return false;
+    if(myEvent.myMuonCand    == NULL) return false;
+    subleadMuon = myEvent.mySubleadMuon;
+    selMuon     = myEvent.myMuonCand;
+    secondMuScale = myEvent.secondBoostMuonScale[0];
+    leadMuScale   = myEvent.leadBoostMuonScale[0];
+  }
+  if (!useResMu) {
+    const baconhep::TAddJet*  selJet;
+    if(ZPeak){
+      selJet  = myEvent.myMuonJetPairs_noLSF[0].first;
+    }else{
+      selJet  = myEvent.myMuonJetPairs[0].first;
+    }
+
+    myEvent.subleadMuon_selJetdPhi  = fabs(reco::deltaPhi(subleadMuon->phi(),selJet->phi));
+  }
+  myEvent.subleadMuon_selMuondPhi = fabs(reco::deltaPhi(subleadMuon->phi(),selMuon->phi()));
+  myEvent.subleadMuon_selMuonMass = (subleadMuon->p4()*secondMuScale + selMuon->p4()*leadMuScale).mass();
+  myEvent.subleadMuon_selMuonPt   = (subleadMuon->p4() + selMuon->p4()).pt();
+  myEvent.subleadMuonPt           = subleadMuon->pt();
+  myEvent.subleadMuonEt           = subleadMuon->et();
+  myEvent.subleadMuonEta           = subleadMuon->eta();
+  myEvent.subleadMuonPhi           = subleadMuon->phi();
+
+  if (!useResMu) {
+    //double dPhi = fabs(::wrTools::dPhi(myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi));
+    //
+    double dRlsfLep_subleadMuon = sqrt( ::wrTools::dR2(myEvent.lsfLeptonEta, myEvent.subleadMuonEta, myEvent.lsfLeptonPhi, myEvent.subleadMuonPhi ));
+    myEvent.mydRlsfLep_subleadMuon = dRlsfLep_subleadMuon;
+  }
+  double subleadMuon_selMuondR = sqrt( ::wrTools::dR2(selMuon->eta(), myEvent.subleadMuonEta, selMuon->phi(), myEvent.subleadMuonPhi ));
+  myEvent.subleadMuon_selMuondR = subleadMuon_selMuondR;
+  if(useResMu){
+    if(myEvent.subleadMuon_selMuonMass < 150 && myEvent.subleadMuon_selMuonMass > 60){
+       return 1;
+    }else if(myEvent.subleadMuon_selMuonMass > 200){
+      return 2;
+    }else{
+      return 0;
+    }
+  }else{
+    if(myEvent.subleadMuon_selMuonMass < 150 && myEvent.subleadMuon_selMuonMass > 60){
+      return 1;
+    }else if(myEvent.subleadMuon_selMuonMass > 200){
+      return 2;
+    }else{
+      return 0;
+    }
+  }
+}
+
 bool analyzeLastBin::electronPassesHEEP(const edm::Event& iEvent, eventBits& myEvent, const pat::Electron* electron, bool noIso) {
   std::string year = m_era;
   bool isSignal = m_isSignal;
