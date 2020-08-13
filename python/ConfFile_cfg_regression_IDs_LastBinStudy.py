@@ -48,7 +48,7 @@ from Configuration.AlCa.autoCond import autoCond
 process.GlobalTag = GlobalTag(process.GlobalTag, '94X_mcRun2_asymptotic_v3') #
 if not isMC: process.GlobalTag = GlobalTag(process.GlobalTag, '94X_dataRun2_v10')
 
-#process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(2000))
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 import FWCore.Utilities.FileUtils as FileUtils
 #mylist = FileUtils.loadListFromFile ('WRtoNLtoLLJJ_WR5000_N1800_5.txt')

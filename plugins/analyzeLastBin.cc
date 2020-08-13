@@ -420,6 +420,7 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
         std::cout << "PASSING SR" << std::endl;
         myRECOevent.ResCutProgress++;
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 1, m_isSignal);
+        m_eventsPassResFailBoostRECO.fill(myRECOevent, 2, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 6, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 7, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 20, m_isSignal);
@@ -522,6 +523,7 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 	myRECOevent.cutProgress++;
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 1., m_isSignal);
+        m_eventsFailResPassBoostRECO.fill(myRECOevent, 2., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 6., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 7., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 8., m_isSignal);
@@ -3165,12 +3167,12 @@ analyzeLastBin::beginJob()
   std::cout << "BOOKING PLOTS" << std::endl;
   edm::Service<TFileService> fs; 
 
-  flavor = 5;
-  std::cout << "BOOKING PLOTS FLAVOR 5" << std::endl;
-  m_allEvents.book((fs->mkdir("allEvents")), 5, m_outputTag, false, m_isSignal);
+  flavor = 2;
+  std::cout << "BOOKING PLOTS FLAVOR 2" << std::endl;
+  m_allEvents.book((fs->mkdir("allEvents")), 2, m_outputTag, false, m_isSignal);
 
-  m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")),            5, m_outputTag, false, m_isSignal);
-  m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")),            5, m_outputTag, false, m_isSignal);
+  m_eventsFailResPassBoostRECO.book((fs->mkdir("eventsFailResPassBoostRECO")),            2, m_outputTag, false, m_isSignal);
+  m_eventsPassResFailBoostRECO.book((fs->mkdir("eventsPassResFailBoostRECO")),            2, m_outputTag, false, m_isSignal);
 
 }
 
