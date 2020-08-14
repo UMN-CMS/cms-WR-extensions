@@ -185,6 +185,7 @@ eventBits::eventBits() {
   nResFSBMuons = -10000.0;
 
   resMLL             = -10000.0;
+  resMElEl             = -10000.0;
   resolvedSubleadMuPt= -10000.0;
 
   //GEN THINGS

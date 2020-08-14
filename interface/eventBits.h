@@ -330,6 +330,7 @@ public:
   double resolvedRECOmass_JERDown;
 
   double resMLL;
+  double resMElEl;
   double resolvedSubleadMuPt;
 
   double resFSBJetDR;

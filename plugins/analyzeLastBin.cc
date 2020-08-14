@@ -419,46 +419,7 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
       if(passesResRECOAllRegions[0] && myRECOevent.subleadMuon_selMuonMass > 400){
         std::cout << "PASSING SR" << std::endl;
         myRECOevent.ResCutProgress++;
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 1, m_isSignal);
         m_eventsPassResFailBoostRECO.fill(myRECOevent, 2, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 6, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 7, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 20, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 21, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 16, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 17, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 18, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 19, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 34, m_isSignal);
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 35, m_isSignal);
-/*	if(myRECOevent.subleadMuon_selMuonMass > 450){
-	  m_eventsPassResFailBoostRECO_mll450.fill(myRECOevent, 1);
-	}
-	if(myRECOevent.subleadMuon_selMuonMass > 400){
-          m_eventsPassResFailBoostRECO_mll400.fill(myRECOevent, 1);
-        }
-        if(myRECOevent.subleadMuon_selMuonMass > 500){
-          m_eventsPassResFailBoostRECO_mll500.fill(myRECOevent, 1);
-        }
-        if(myRECOevent.subleadMuon_selMuonMass > 550){
-          m_eventsPassResFailBoostRECO_mll550.fill(myRECOevent, 1);
-        }
-        if(myRECOevent.subleadMuon_selMuonMass > 600){
-          m_eventsPassResFailBoostRECO_mll600.fill(myRECOevent, 1);
-        }*/
-      }
-      if(passesResRECOAllRegions[1] && myRECOevent.subleadMuon_selMuonMass > 400){
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 24, m_isSignal);
-      }
-      if(passesResRECOAllRegions[2] && myRECOevent.subleadMuon_selMuonMass > 400){
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 25, m_isSignal);
-      }
-      if(passesResRECOAllRegions[3] && myRECOevent.subleadMuon_selMuonMass > 400){
-	std::cout << "Filling Res JERUp" << std::endl;
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 26, m_isSignal);
-      }
-      if(passesResRECOAllRegions[4] && myRECOevent.subleadMuon_selMuonMass > 400){
-        m_eventsPassResFailBoostRECO.fill(myRECOevent, 27, m_isSignal);
       }
     }
 
@@ -522,18 +483,7 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
 //        passesFastBoostRECO = true;
 	myRECOevent.cutProgress++;
 	std::cout << "doFast myRECOevent.weight: " << myRECOevent.weight << std::endl;
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 1., m_isSignal);
         m_eventsFailResPassBoostRECO.fill(myRECOevent, 2., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 6., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 7., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 8., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 9., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 16., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 17., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 18., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 19., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 34., m_isSignal);
-        m_eventsFailResPassBoostRECO.fill(myRECOevent, 35., m_isSignal);
 
       }
       ZMASS_Nom = 0;
@@ -547,7 +497,6 @@ void analyzeLastBin::analyze(const edm::Event& iEvent, const edm::EventSetup& iS
   }
 
   std::cout << "TIME TO FILL ALL EVENTS" << std::endl;
-  m_allEvents.fill(myRECOevent, 1, m_isSignal);
   std::cout << "Done with event" << std::endl;
   
 }
@@ -1718,7 +1667,7 @@ bool analyzeLastBin::jetSelection(const edm::Event& iEvent,  eventBits& myEvent)
   iEvent.getByToken(m_rhoLabel, rhoHandle);
   double rho = *(rhoHandle.product());
 
-  std::string jecPathname = cmsswPath + "/src/ExoAnalysis/analyzeLastBins/data/";
+  std::string jecPathname = cmsswPath + "/src/ExoAnalysis/cmsWRextensions/data/";
   if(m_isMC){
 	if (m_era == "2016") {
       fJetUnc = new JetCorrectionUncertainty(Form("%s/2016/Summer16_07Aug2017_V11_MC_Uncertainty_AK8PFPuppi.txt",jecPathname.c_str()));
@@ -2641,8 +2590,8 @@ void analyzeLastBin::passExtensionRECO_Fast(const edm::Event& iEvent, eventBits&
 bool analyzeLastBin::passResRECO(const edm::Event& iEvent, eventBits& myEvent) {
   std::cout << "RES SELECTION CALL" << std::endl;
   std::cout << "RES LEPTON SELECTION CALL" << std::endl;
-  if ( !resolvedMuonSelection(iEvent, myEvent) || !resolvedJetSelection(iEvent, myEvent) ) return false;
   resolvedElectronSelection(iEvent, myEvent);
+  if ( !resolvedMuonSelection(iEvent, myEvent) || !resolvedJetSelection(iEvent, myEvent) ) return false;
   std::cout << "RES JET SELECTION CALL" << std::endl;
 //  if ( !resolvedJetSelection(iEvent, myEvent) )  return false;
 

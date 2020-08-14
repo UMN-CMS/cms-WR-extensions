@@ -1,6 +1,6 @@
 import subprocess as sp
 
-fileList = "resMuMu"
+fileList = "resElEl"
 years = ['2016', '2017', '2018']
 
 haddcommand = "hadd -f "+fileList+"_all.root "

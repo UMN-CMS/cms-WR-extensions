@@ -854,6 +854,31 @@ class eventHistos {
   TH1D* m_resolvedRECOmass_alphasUp		;
   TH1D* m_resolvedRECOmass_alphasDown		;
 
+
+  TH1D* m_resLeadMu_pt     ; 
+  TH1D* m_resLeadMu_eta    ; 
+  TH1D* m_resLeadMu_phi    ; 
+  TH1D* m_resSubLeadMu_pt  ; 
+  TH1D* m_resSubLeadMu_eta ; 
+  TH1D* m_resSubLeadMu_phi ; 
+
+  TH1D* m_resLeadEl_pt     ; 
+  TH1D* m_resLeadEl_eta    ; 
+  TH1D* m_resLeadEl_phi    ; 
+  TH1D* m_resSubLeadEl_pt  ; 
+  TH1D* m_resSubLeadEl_eta ; 
+  TH1D* m_resSubLeadEl_phi ; 
+  TH1D* m_resElEl_mass     ; 
+
+  TH1D* m_resLeadJet_pt    ; 
+  TH1D* m_resLeadJet_eta   ; 
+  TH1D* m_resLeadJet_phi   ; 
+  TH1D* m_resSubLeadJet_pt ; 
+  TH1D* m_resSubLeadJet_eta; 
+  TH1D* m_resSubLeadJet_phi; 
+//  TH1D* m_resolvedRECOmass ; 
+  TH1D* m_resMuMu_mass     ; 
+
   Double_t evtNum, lumiSec, BoostSRmass;
 
 };

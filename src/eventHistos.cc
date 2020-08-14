@@ -328,7 +328,6 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_genZptVSreco                               =  m_histoFolder.make<TH2D>("genZptVSreco", "Gen Z Pt versus reco mumu pt;  RECO mumu pt (GeV) ; GEN Z pt (GeV)" , 50, 0.0, 1000, 50, 0.0, 1000);
   //RESOLVED ANA   
     m_resJetDR                   = m_histoFolder.make<TH1D>("resJetDR"                ,";resolved jets deltaR", 80, 0.0, 8.0);
-    m_resolvedRECOmass           = m_histoFolder.make<TH1D>("resolvedRECOmass"        ,";resolved RECO 4-object mass", 60, 0.0, 6000);
     m_resolvedGENmass            = m_histoFolder.make<TH1D>("resolvedGENmass"         ,";resolved GEN 4-object mass" , 60, 0.0, 6000);
 
     m_resSubleadMuJet1dR         = m_histoFolder.make<TH1D>("resSubleadMuJet1dR"      ,";resolved sublead muon lead jet dR"     , 80, 0.0, 8.0);
@@ -368,6 +367,38 @@ void eventHistos::book(TFileDirectory histoFolder, uint16_t flavor, std::string 
     m_lsfLepDR_v_recoLSF                         =  m_histoFolder.make<TH2D>("lsfLepDR_v_recoLSF", "lsf lepton and subleadMuon dR vs recoLSF", 100, 0.0, 1.0, 20, 0.0, 1.0); 
     m_lsfLepDR_v_selJetPt                        =  m_histoFolder.make<TH2D>("lsfLepDR_v_selJetPt","lsf lepton and subleadMuon dR vs selected Jet pT", 100, 0.0, 1.0, 20, 0.0, 2000); 
 
+
+    //////////////////////////NEW PLOTS TIME////////////////////////////////////////////////////
+
+    m_resLeadMu_pt           = m_histoFolder.make<TH1D>("resLeadMu_pt" , ";resolved lead mu pt" , 60, 0.0, 6000);
+    m_resLeadMu_eta          = m_histoFolder.make<TH1D>("resLeadMu_eta", ";resolved lead mu eta", 10, -3, 3);
+    m_resLeadMu_phi          = m_histoFolder.make<TH1D>("resLeadMu_phi", ";resolved lead mu phi", 10, -3.5, 3.5);
+
+    m_resSubLeadMu_pt        = m_histoFolder.make<TH1D>("resSubLeadMu_pt" , ";resolved sub lead mu pt", 60, 0.0, 6000);
+    m_resSubLeadMu_eta       = m_histoFolder.make<TH1D>("resSubLeadMu_eta", ";resolved sub lead mu pt", 10, -3, 3);
+    m_resSubLeadMu_phi       = m_histoFolder.make<TH1D>("resSubLeadMu_phi", ";resolved sub lead mu pt", 10, -3.5, 3.5);
+
+    m_resLeadEl_pt           = m_histoFolder.make<TH1D>("resLeadEl_pt" , ";resolved lead el pt" , 60, 0.0, 6000);
+    m_resLeadEl_eta          = m_histoFolder.make<TH1D>("resLeadEl_eta", ";resolved lead el eta", 10, -3, 3);
+    m_resLeadEl_phi          = m_histoFolder.make<TH1D>("resLeadEl_phi", ";resolved lead el phi", 10, -3.5, 3.5);
+
+    m_resSubLeadEl_pt        = m_histoFolder.make<TH1D>("resSubLeadEl_pt" , ";resolved sub lead el pt", 60, 0.0, 6000);
+    m_resSubLeadEl_eta       = m_histoFolder.make<TH1D>("resSubLeadEl_eta", ";resolved sub lead el pt", 10, -3, 3);
+    m_resSubLeadEl_phi       = m_histoFolder.make<TH1D>("resSubLeadEl_phi", ";resolved sub lead el pt", 10, -3.5, 3.5);
+
+    m_resElEl_mass          = m_histoFolder.make<TH1D>("resolvedElEl_mass", ";resolved ElEl mass", 60, 0.0, 6000);
+
+    m_resLeadJet_pt          = m_histoFolder.make<TH1D>("resLeadJet_pt" , ";resolved lead jet pt" , 60, 0.0, 6000);
+    m_resLeadJet_eta         = m_histoFolder.make<TH1D>("resLeadJet_eta", ";resolved lead jet eta", 10, -3, 3);
+    m_resLeadJet_phi         = m_histoFolder.make<TH1D>("resLeadJet_phi", ";resolved lead jet phi", 10, -3.5, 35);
+
+    m_resSubLeadJet_pt       = m_histoFolder.make<TH1D>("resSubLeadJet_pt" , ";resolved sub lead jet pt" , 60, 0.0, 6000);
+    m_resSubLeadJet_eta      = m_histoFolder.make<TH1D>("resSubLeadJet_eta", ";resolved sub lead jet eta", 10, -3, 3);
+    m_resSubLeadJet_phi      = m_histoFolder.make<TH1D>("resSubLeadJet_phi", ";resolved sub lead jet phi", 10, -3.5, 3.5);
+
+    m_resolvedRECOmass       = m_histoFolder.make<TH1D>("resolvedRECOmass"        ,";resolved RECO 4-object mass", 60, 0.0, 6000);
+
+    m_resMuMu_mass          = m_histoFolder.make<TH1D>("resolvedMuMu_mass", ";resolved MuMu mass", 60, 0.0, 6000);
 
 //
 //
@@ -1232,209 +1263,43 @@ void eventHistos::fillGen(eventBits& event) {
 
 }
 void eventHistos::fillReco(eventBits& event) {
-  double weight = 0.0;
-  if(m_FSB == 1)
-    weight = event.FSBweight;
-  else if(m_FSB == 2)
-    weight = event.FSBweight_noISO;
-  else
-    weight = event.weight;
+  double weight = 1.0;
 
   std::cout << "fillRECO" << std::endl;
-  std::cout << "event.leadAK8JetMuonMassVal: " << event.leadAK8JetMuonMassVal << std::endl;
   std::cout << "weight: " << weight << std::endl;
-  std::cout << "event.leadAK8JetElectronMassVal: " << event.leadAK8JetElectronMassVal << std::endl;
-  m_wrShellMass->Fill(event.wrShellMass, weight);
-  m_leadSubleadingJetsMuonsPt->Fill(event.leadSubleadingJetsMuonsPtVal, weight);
-  m_leadSubleadingAK8JetsMuonsPt->Fill(event.leadSubleadingAK8JetsMuonsPtVal, weight);
-  m_leadAK8JetMuonPt->Fill(event.leadAK8JetMuonPtVal, weight);
-  m_leadAK8JetElectronPt->Fill(event.leadAK8JetElectronPtVal, weight);
-  m_leadAK8JetElectronPt_noISO->Fill(event.leadAK8JetElectronPtVal_noISO, weight);
-  m_leadSubleadingJetsMuonsMass->Fill(event.leadSubleadingJetsMuonsMassVal, weight);
-  m_leadSubleadingAK8JetsMuonsMass->Fill(event.leadSubleadingAK8JetsMuonsMassVal, weight);
-  m_leadAK8JetMuonMass->Fill(event.leadAK8JetMuonMassVal, weight);
-  m_leadAK8JetMuonMass_noLSF->Fill(event.leadAK8JetMuonMassVal_noLSF, weight);
-  m_leadAK8JetDiMuonMass->Fill(event.leadAK8JetDiMuonMassVal, weight);
-  m_leadAK8JetElectronMass->Fill(event.leadAK8JetElectronMassVal, weight);
-  m_leadAK8JetElectronMass_noISO->Fill(event.leadAK8JetElectronMassVal_noISO, weight);
-  m_subleadMuon_selJetdPhi ->   Fill(event.subleadMuon_selJetdPhi ,weight); 
-  m_subleadMuon_selMuondPhi-> Fill(event.subleadMuon_selMuondPhi,weight);
-  m_subleadMuon_selMuonMass-> Fill(event.subleadMuon_selMuonMass,weight);
-  m_subleadMuon_selMuonZMass->Fill(event.subleadMuon_selMuonMass,weight);
-  m_subleadMuon_selMuonZMass_Weight1->Fill(event.subleadMuon_selMuonMass,1.0);
-  m_subleadMuon_selMuonPt  -> Fill(event.subleadMuon_selMuonPt  ,weight); 
 
-  m_subleadMuon_selElectronPhi-> Fill(event.subleadMuon_selElectronPhi,weight);
-  m_subleadMuon_selElectronMass-> Fill(event.subleadMuon_selElectronMass,weight);
-  m_subleadMuon_selElectronZMass->Fill(event.subleadMuon_selElectronMass,weight);
-  m_subleadMuon_selElectronPt  -> Fill(event.subleadMuon_selElectronPt  ,weight); 
+  if ( event.resolvedANAMuons.size() > 1) {
+    m_resLeadMu_pt        ->Fill(event.resolvedANAMuons[0]->pt()      , weight) ;   
+    m_resLeadMu_eta       ->Fill(event.resolvedANAMuons[0]->eta()      , weight) ;   
+    m_resLeadMu_phi       ->Fill(event.resolvedANAMuons[0]->phi()      , weight) ;   
 
-  m_subleadMuonPt           ->   Fill(event.subleadMuonPt           ,weight);
-  m_subleadMuonEt           ->   Fill(event.subleadMuonEt           ,weight); 
-  m_subleadMuonEta          ->   Fill(event.subleadMuonEta          ,weight); 
-  m_subleadMuonPhi          ->   Fill(event.subleadMuonPhi          ,weight); 
-  m_dRmuon2                 ->   Fill(event.dRmuon2, weight);
-  m_secondMuonWRjetdR       ->   Fill(event.secondMuonWRjetdR, weight);
+    m_resSubLeadMu_pt     ->Fill(event.resolvedANAMuons[1]->pt()       , weight) ;   
+    m_resSubLeadMu_eta    ->Fill(event.resolvedANAMuons[1]->eta()      , weight) ;   
+    m_resSubLeadMu_phi    ->Fill(event.resolvedANAMuons[1]->phi()      , weight) ;   
+  }
+  if ( event.resolvedANAElectrons.size() > 1) {
+    m_resLeadEl_pt        ->Fill(event.resolvedANAElectrons[0]->pt()      , weight) ;   
+    m_resLeadEl_eta       ->Fill(event.resolvedANAElectrons[0]->eta()      , weight) ;   
+    m_resLeadEl_phi       ->Fill(event.resolvedANAElectrons[0]->phi()      , weight) ;   
 
-  m_nSecondElectronCands   -> Fill(event.nSecondElectronCands, weight);
-  m_secondElecJetDR        -> Fill(event.secondElecJetDR     , weight);
-  m_secondElecPt           -> Fill(event.secondElecPt        , weight);
+    m_resSubLeadEl_pt     ->Fill(event.resolvedANAElectrons[1]->pt()       , weight) ;   
+    m_resSubLeadEl_eta    ->Fill(event.resolvedANAElectrons[1]->eta()      , weight) ;   
+    m_resSubLeadEl_phi    ->Fill(event.resolvedANAElectrons[1]->phi()      , weight) ;   
 
-                                                               
-  m_MET                    ->Fill(event.MET                    ,weight); 
-  m_MET_selJetdPhi         ->Fill(event.MET_selJetdPhi         ,weight); 
-  m_MET_selMuondPhi        ->Fill(event.MET_selMuondPhi        ,weight); 
-  m_MET_selElectrondPhi        ->Fill(event.MET_selElectrondPhi        ,weight); 
-  m_MET_selJetMass         ->Fill(event.MET_selJetMass         ,weight); 
-  m_MET_selMuonMass        ->Fill(event.MET_selMuonMass        ,weight); 
-  m_MET_selElectronMass        ->Fill(event.MET_selElectronMass        ,weight); 
-  m_MET_selJetPt           ->Fill(event.MET_selJetPt           ,weight); 
-  m_MET_selMuonPt          ->Fill(event.MET_selMuonPt          ,weight); 
-  m_MET_selElectronPt          ->Fill(event.MET_selElectronPt          ,weight); 
+    m_resElEl_mass        ->Fill(event.resMElEl      , weight) ;  
+  }
 
-  m_selectedJetTransMET    ->Fill(event.selectedJetTransMET    ,weight);
+  m_resLeadJet_pt       ->Fill(event.myResCandJets[0]->pT       , weight) ;   
+  m_resLeadJet_eta      ->Fill(event.myResCandJets[0]->eta      , weight) ;   
+  m_resLeadJet_phi      ->Fill(event.myResCandJets[0]->phi      , weight) ;   
 
-  m_secondHighPtMuonPt->Fill(event.secondHighPtMuonPt, weight);
-  m_secondHighPtMuonPhi->Fill(event.secondHighPtMuonPhi, weight);
-  m_secondHighPtMuonEta->Fill(event.secondHighPtMuonEta, weight);
-  m_selectedJetSecondHighPtMuonDR->Fill(event.selectedJetSecondHighPtMuonDR, weight);
+  m_resSubLeadJet_pt    ->Fill(event.myResCandJets[1]->pT       , weight) ;   
+  m_resSubLeadJet_eta   ->Fill(event.myResCandJets[1]->eta      , weight) ;   
+  m_resSubLeadJet_phi   ->Fill(event.myResCandJets[1]->phi      , weight) ;   
 
-  m_selectedMuonPt  ->Fill(event.selectedMuonPt  ,weight); 
-  m_selectedElectronPt  ->Fill(event.selectedElectronPt  ,weight); 
-  m_selectedJetPt   ->Fill(event.selectedJetPt   ,weight);  
-  m_selectedMuonPhi ->Fill(event.selectedMuonPhi ,weight);  
-  m_selectedElectronPhi ->Fill(event.selectedElectronPhi ,weight);  
-  m_selectedJetPhi  ->Fill(event.selectedJetPhi  ,weight);   
-  m_selectedMuonEta ->Fill(event.selectedMuonEta ,weight);   
-  m_selectedElectronEta ->Fill(event.selectedElectronEta ,weight);   
-  m_selectedElectronEta_Weight1->Fill(event.selectedElectronEta, 1.0);
-  m_selectedJetEta  ->Fill(event.selectedJetEta  ,weight); 
-  m_selectedJetMass->Fill(event.selectedJetMass  , weight);
-  m_selectedJetTau21->Fill(event.selectedJetTau21, weight);
-  m_selectedJetMaxDRGenDaughters->Fill(event.MaxDR_genDaughter_CandJet, weight);
-  m_selectedJetLSF3->Fill(event.selectedJetLSF3, weight);
-  m_selectedJetEnergy->Fill(event.selectedJetEnergy, weight);
-  m_selectedJetEnergyUncorr->Fill(event.selectedJetEnergyUncorr, weight);
-  m_recoLSF_v_selJetPt  ->Fill(event.selectedJetPt,event.selectedJetLSF3, weight);
-  m_genLSF_v_recoLSF ->Fill(event.myGenLSF,event.selectedJetLSF3, weight);
-  m_genE_v_recoE->Fill(event.NRenergy, event.selectedJetEnergy, weight);
-  m_selectedJetMaxSubJetCSV->Fill(event.selectedJetMaxSubJetCSV, weight);
+  m_resolvedRECOmass    ->Fill(event.resolvedRECOmass      , weight) ;   
 
-  m_dRlsfLep_subleadMuon -> Fill(event.mydRlsfLep_subleadMuon, weight);
-  m_lsfLepDR_v_recoLSF   -> Fill(event.mydRlsfLep_subleadMuon, event.selectedJetLSF3, weight);
-  m_lsfLepDR_v_selJetPt  -> Fill(event.mydRlsfLep_subleadMuon, event.selectedJetPt, weight);
-
-  m_secondGENMuon_selMuondR ->Fill(event.secondGENMuon_selMuondR, weight);
-  m_subleadMuon_selMuondR   ->Fill(event.subleadMuon_selMuondR, weight);
-
-  m_DrDaughters->Fill(event.dR_Daughters, weight);
-  m_nWRDaughters->Fill(event.nDaughters, weight);
-  m_capturedBothDaughtersInSingleJet->Fill(event.capturedBothDaughtersInSingleJet, weight);
-  m_pickedCorrectJet->Fill(event.pickedCorrectJet, weight);
-  m_dPhiLeadMuonJetWithDaughters->Fill(event.dPhi_LeadMuonJetWithDaughters, weight);
-  m_selectedIncorrectJetMass->Fill(event.selectedIncorrectJetMass, weight);
-  m_JetWithDaughtersMass->Fill(event.JetWithDaughtersMass, weight);
-  m_secondGENMuonRECOjetDR->Fill(event.secondGENMuonRECOjetDR, weight);
-  m_secondRECOMuonRECOjetDR->Fill(event.secondRECOMuonRECOjetDR, weight);
-
-  m_selectedElectron_noISO_Pt  ->Fill(event.selectedElectron_noISO_Pt  ,weight); 
-  m_selectedElectron_noISO_Phi ->Fill(event.selectedElectron_noISO_Phi ,weight);  
-  m_selectedElectron_noISO_Eta ->Fill(event.selectedElectron_noISO_Eta ,weight);   
-
-  m_selectedJet_EleNoISO_Pt    ->Fill(event.selectedJet_EleNoISO_Pt   ,weight);  
-  m_selectedJet_EleNoISO_Phi   ->Fill(event.selectedJet_EleNoISO_Phi  ,weight);   
-  m_selectedJet_EleNoISO_Eta   ->Fill(event.selectedJet_EleNoISO_Eta  ,weight); 
-  m_selectedJet_EleNoISO_Mass  ->Fill(event.selectedJet_EleNoISO_Mass  , weight);
-  m_selectedJet_EleNoISO_Tau21 ->Fill(event.selectedJet_EleNoISO_Tau21, weight);
-
-  m_EtPlacementMuon2->Fill(event.secondInDecayMuon, weight);
-  m_nVertices->Fill(event.nVtx, weight);
-
-  m_vertexDiffTan->Fill(event.myVertexDiffTan,weight);
-  m_vertexDiffLon->Fill(event.myVertexDiffLon,weight);
-  
-  //m_nJets->Fill(event.myGenJets.size(), weight);
-  m_nAK8Jets->Fill(event.ak8jetCands, weight);
-  m_nMuonCands->Fill(event.muonCands, weight);
-  m_nElectronCands50-> Fill(event.electronCands50 , weight);
-  m_nElectronCands100->Fill(event.electronCands100, weight);
-  m_nElectronCands150->Fill(event.electronCands150, weight);
-  m_nElectronCands200->Fill(event.electronCands200, weight);
-  m_nElectronCands50_noISO-> Fill(event.electronCands50_noISO , weight);
-  m_nElectronCands200_noISO->Fill(event.electronCands200_noISO, weight);
-  m_nMuons10->Fill(event.muons10, weight);
-  m_nAdditionalHEEP->Fill(event.nAdditionalHEEP, weight);
-  m_nAdditionalHEEP_noISO->Fill(event.nAdditionalHEEP_noISO, weight);
-  m_nHighPtMuonsOutsideJet->Fill(event.nHighPtMuonsOutsideJet, weight);
-  m_nAK8Jets40->Fill(event.ak8jets40, weight);
-  m_nCandidateJets->Fill(event.myAddJetCandsHighPt_noLSF.size(), weight);
-  m_leadAK8JetMuonDR->Fill(event.leadAK8JetMuonDR,weight);
-  m_leadAK8JetMuonPhi->Fill(event.leadAK8JetMuonPhiVal, weight);
-  m_leadAK8JetElectronPhi->Fill(event.leadAK8JetElectronPhiVal, weight);
-  m_leadAK8JetElectronPhi_noISO->Fill(event.leadAK8JetElectronPhiVal_noISO, weight);
-
-
-  m_leadAK8JetMuonJetMuonEnergyFraction->Fill(event.leadAK8JetMuonJetMuonEnergyFraction, weight);
-  m_leadAK8JetElectronJetMuonEnergyFraction->Fill(event.leadAK8JetElectronJetMuonEnergyFraction, weight);
-  m_leadAK8JetElectronJetMuonEnergyFraction_noISO->Fill(event.leadAK8JetElectronJetMuonEnergyFraction_noISO, weight);
-
-  m_electronTrigger->Fill(event.electronTrigger, weight);
-  m_muonTrigger->Fill(event.muonTrigger, weight);
-
-  m_MuonWeight->Fill(event.Muon_LooseID_Weight, weight);
-  m_PUWeight->Fill(event.puWeight, weight);
-
-  m_HEEP_SF->Fill(event.HEEP_SF, weight);
-  m_HEEP_SF_E->Fill(event.HEEP_SF_E, weight);
-  m_HEEP_SF_B->Fill(event.HEEP_SF_B, weight);
-  m_FSBfinalEventWeight_E->Fill(event.FSBweight_E, weight);
-  m_FSBfinalEventWeight_B->Fill(event.FSBweight_B, weight);
-
-  m_HEEP_SF_noISO->Fill(event.HEEP_SF_noISO, weight);
-  m_HEEP_SF_E_noISO->Fill(event.HEEP_SF_E_noISO, weight);
-  m_HEEP_SF_B_noISO->Fill(event.HEEP_SF_B_noISO, weight);
-  m_FSBfinalEventWeight_E_noISO->Fill(event.FSBweight_E_noISO, weight);
-  m_FSBfinalEventWeight_B_noISO->Fill(event.FSBweight_B_noISO, weight);
-
-  m_finalEventWeight->Fill(weight, weight);
-  m_Electron_Reco_SF->Fill(event.egamma_SF, weight);
-  m_Electron_Reco_SF_noISO->Fill(event.egamma_SF_noISO, weight);
-
-  m_selElectron_barrel_dEtaInSeed        ->Fill(event.selElectron_barrel_dEtaInSeed       , weight); 
-  m_selElectron_barrel_dPhiIn            ->Fill(event.selElectron_barrel_dPhiIn           , weight); 
-  m_selElectron_barrel_HoverE            ->Fill(event.selElectron_barrel_HoverE           , weight); 
-  m_selElectron_barrel_sig_ietaieta_5x5  ->Fill(event.selElectron_barrel_sig_ietaieta_5x5 , weight); 
-//  m_selElectron_barrel_E2x5vE5x5       ->Fill(event.m_selElectron_barrel_E2x5vE5x5      , weight); 
-  m_selElectron_barrel_EM_had_depIso     ->Fill(event.selElectron_barrel_EM_had_depIso    , weight); 
-  m_selElectron_barrel_trackIso          ->Fill(event.selElectron_barrel_trackIso         , weight); 
-  m_selElectron_barrel_innerLostHits     ->Fill(event.selElectron_barrel_innerLostHits    , weight); 
-  m_selElectron_barrel_dxy               ->Fill(event.selElectron_barrel_dxy              , weight); 
-  m_selElectron_endcap_dEtaInSeed        ->Fill(event.selElectron_endcap_dEtaInSeed       , weight); 
-  m_selElectron_endcap_dPhiIn            ->Fill(event.selElectron_endcap_dPhiIn           , weight); 
-  m_selElectron_endcap_HoverE            ->Fill(event.selElectron_endcap_HoverE           , weight); 
-  m_selElectron_endcap_sig_ietaieta_5x5  ->Fill(event.selElectron_endcap_sig_ietaieta_5x5 , weight); 
-//  m_selElectron_endcap_E2x5vE5x5       ->Fill(event.m_selElectron_endcap_E2x5vE5x5      , weight); 
-  m_selElectron_endcap_EM_had_depIso     ->Fill(event.selElectron_endcap_EM_had_depIso    , weight); 
-  m_selElectron_endcap_trackIso          ->Fill(event.selElectron_endcap_trackIso         , weight); 
-  m_selElectron_endcap_innerLostHits     ->Fill(event.selElectron_endcap_innerLostHits    , weight); 
-  m_selElectron_endcap_dxy               ->Fill(event.selElectron_endcap_dxy              , weight); 
-
-  m_selElectron_noISO_barrel_dEtaInSeed        ->Fill(event.selElectron_noISO_barrel_dEtaInSeed       , weight); 
-  m_selElectron_noISO_barrel_dPhiIn            ->Fill(event.selElectron_noISO_barrel_dPhiIn           , weight); 
-  m_selElectron_noISO_barrel_HoverE            ->Fill(event.selElectron_noISO_barrel_HoverE           , weight); 
-  m_selElectron_noISO_barrel_sig_ietaieta_5x5  ->Fill(event.selElectron_noISO_barrel_sig_ietaieta_5x5 , weight); 
-  m_selElectron_noISO_barrel_EM_had_depIso     ->Fill(event.selElectron_noISO_barrel_EM_had_depIso    , weight); 
-  m_selElectron_noISO_barrel_trackIso          ->Fill(event.selElectron_noISO_barrel_trackIso         , weight); 
-  m_selElectron_noISO_barrel_innerLostHits     ->Fill(event.selElectron_noISO_barrel_innerLostHits    , weight); 
-  m_selElectron_noISO_barrel_dxy               ->Fill(event.selElectron_noISO_barrel_dxy              , weight); 
-  m_selElectron_noISO_endcap_dEtaInSeed        ->Fill(event.selElectron_noISO_endcap_dEtaInSeed       , weight); 
-  m_selElectron_noISO_endcap_dPhiIn            ->Fill(event.selElectron_noISO_endcap_dPhiIn           , weight); 
-  m_selElectron_noISO_endcap_HoverE            ->Fill(event.selElectron_noISO_endcap_HoverE           , weight); 
-  m_selElectron_noISO_endcap_sig_ietaieta_5x5  ->Fill(event.selElectron_noISO_endcap_sig_ietaieta_5x5 , weight); 
-  m_selElectron_noISO_endcap_EM_had_depIso     ->Fill(event.selElectron_noISO_endcap_EM_had_depIso    , weight); 
-  m_selElectron_noISO_endcap_trackIso          ->Fill(event.selElectron_noISO_endcap_trackIso         , weight); 
-  m_selElectron_noISO_endcap_innerLostHits     ->Fill(event.selElectron_noISO_endcap_innerLostHits    , weight); 
-  m_selElectron_noISO_endcap_dxy               ->Fill(event.selElectron_noISO_endcap_dxy              , weight); 
+  m_resMuMu_mass        ->Fill(event.resMLL      , weight) ;  
 
 }
 
